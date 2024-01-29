@@ -1,6 +1,6 @@
 generic-service:
   nameOverride: hmpps-subject-access-request-worker
-  productId: "" # productId for the product that this belongs too, i.e. DPS001, see README.md for details
+  productId: "DPS083" # productId for the product that this belongs too, i.e. DPS001, see README.md for details
 
   replicaCount: 4
 
