@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.integration
+package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration
 
 import org.junit.jupiter.api.Test
 
