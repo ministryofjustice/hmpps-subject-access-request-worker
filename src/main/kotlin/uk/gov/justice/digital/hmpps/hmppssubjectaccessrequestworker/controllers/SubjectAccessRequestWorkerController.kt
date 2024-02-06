@@ -15,6 +15,7 @@ class SubjectAccessRequestWorkerController() {
 //      response = get('/api-endpoint?unclaimed')
 //      time.wait(10 seconds)
 //    } while (response == [])
+//    CHOOSE ONE FROM THE RESPONSE LIST
 //    return response
 //  }
 //
