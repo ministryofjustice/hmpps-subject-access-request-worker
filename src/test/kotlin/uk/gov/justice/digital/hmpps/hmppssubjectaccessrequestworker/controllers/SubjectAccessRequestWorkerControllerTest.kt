@@ -1,10 +1,17 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.controllers
 
+// import okhttp3.mockwebserver.MockWebServer
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 
 class SubjectAccessRequestWorkerControllerTest {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -27,18 +34,25 @@ class SubjectAccessRequestWorkerControllerTest {
     claimAttempts = 0,
   )
 
-//  @Test
-//  fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequests`() {
-//    val mockClient = Mockito.mock(WebClient::class.java)
-//    Mockito.`when`(
-//      mockClient.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve()
-//        .bodyToMono(Array<SubjectAccessRequest>::class.java).block(),
-//    ).thenReturn(arrayOf(sampleSAR))
-//    val result = SubjectAccessRequestWorkerController()
-//      .pollForNewSubjectAccessRequests(mockClient)
-//
-//    val expected: SubjectAccessRequest = sampleSAR
-//    // verify(sarService, times(1)).createSubjectAccessRequest(ndeliusRequest, authentication, requestTime)
-//    Assertions.assertThat(result).isEqualTo(expected)
-//  }
+  @Test
+  fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequests`() {
+    val mockClient = Mockito.mock(WebClient::class.java)
+    val requestHeadersUriSpecMock = Mockito.mock(WebClient.RequestHeadersUriSpec::class.java)
+    val requestHeadersSpecMock = Mockito.mock(WebClient.RequestHeadersSpec::class.java)
+    val responseSpecMock = Mockito.mock(WebClient.ResponseSpec::class.java)
+    Mockito.`when`(mockClient.get())
+      .thenReturn(requestHeadersUriSpecMock)
+    Mockito.`when`(requestHeadersUriSpecMock.uri("/api/subjectAccessRequests?unclaimed=true"))
+      .thenReturn(requestHeadersSpecMock)
+    Mockito.`when`(requestHeadersSpecMock.retrieve())
+      .thenReturn(responseSpecMock)
+    Mockito.`when`(responseSpecMock.bodyToMono(Array<SubjectAccessRequest>::class.java))
+      .thenReturn(Mono.just(arrayOf(sampleSAR)))
+
+    val result = SubjectAccessRequestWorkerController()
+      .pollForNewSubjectAccessRequests(mockClient)
+
+    val expected: SubjectAccessRequest = sampleSAR
+    Assertions.assertThat(result).isEqualTo(expected)
+  }
 }

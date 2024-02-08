@@ -5,7 +5,6 @@ import org.springframework.context.event.EventListener
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
-import java.time.Duration
 
 @RestController
 class SubjectAccessRequestWorkerController() {
@@ -24,15 +23,20 @@ class SubjectAccessRequestWorkerController() {
 //    }
   }
 
-  fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest {
-    var response: Array<SubjectAccessRequest>?
-    do {
-      response = client.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
-      Thread.sleep(Duration.ofSeconds(10))
-    } while (response == null) // .isEmpty())
+  fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest? {
+//    var response: String?
+//    do {
+//      response = client.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve().bodyToMono(String::class.java).block() //.map(SubjectAccessRequest) }
+//      Thread.sleep(Duration.ofSeconds(10))
+//    } while (response == null) // .isEmpty())
     // CHOOSE ONE FROM THE RESPONSE LIST
-    return response.first()
+    //return response //.first()
+
+    val response: Array<SubjectAccessRequest>? = client.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
+    return response?.first()
   }
+
+
 
   fun doReport(sar: SubjectAccessRequest) {
     print("Would do report")
