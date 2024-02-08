@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.controllers
 
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestapi.models.Status
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestapi.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestapi.models
+package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models
 
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
