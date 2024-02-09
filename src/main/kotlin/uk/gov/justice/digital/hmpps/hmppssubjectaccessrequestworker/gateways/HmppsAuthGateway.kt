@@ -12,9 +12,9 @@ import java.util.*
 class HmppsAuthGateway(
   @Value("\${services.hmpps-auth.base-url}") hmppsAuthUrl: String,
   @Value("\${services.hmpps-auth.username}") var username: String,
-  @Value("\${services.hmpps-auth.password}") var password: String) {
+  @Value("\${services.hmpps-auth.password}") var password: String,
+) {
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsAuthUrl).build()
-
 
   fun getClientToken(): String {
     val encodedCredentials = Base64.getEncoder().encodeToString("$username:$password".toByteArray())
@@ -29,13 +29,13 @@ class HmppsAuthGateway(
         .bodyToMono(String::class.java)
         .block()
 
-        JSONParser(response).parseObject()["access_token"].toString()
-      } catch (exception: WebClientRequestException) {
-        throw RuntimeException("Connection to ${exception.uri.authority} failed.")
-      } catch (exception: WebClientResponseException.ServiceUnavailable) {
-        throw RuntimeException("${exception.request?.uri?.authority} is unavailable.")
-      } catch (exception: WebClientResponseException.Unauthorized) {
-        throw RuntimeException("Invalid credentials used.")
-      }
+      JSONParser(response).parseObject()["access_token"].toString()
+    } catch (exception: WebClientRequestException) {
+      throw RuntimeException("Connection to ${exception.uri.authority} failed.")
+    } catch (exception: WebClientResponseException.ServiceUnavailable) {
+      throw RuntimeException("${exception.request?.uri?.authority} is unavailable.")
+    } catch (exception: WebClientResponseException.Unauthorized) {
+      throw RuntimeException("Invalid credentials used.")
+    }
   }
 }

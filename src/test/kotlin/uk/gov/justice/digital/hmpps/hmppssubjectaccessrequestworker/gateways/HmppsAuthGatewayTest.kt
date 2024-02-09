@@ -20,11 +20,18 @@ class HmppsAuthGatewayTest(hmppsAuthGateway: HmppsAuthGateway) :
     beforeEach {
       hmppsAuthMockServer.start()
 
-      hmppsAuthMockServer.stubGetOAuthToken("username", "password")
+      hmppsAuthMockServer.stubGetOAuthToken("mock-username", "mock-password")
     }
 
     afterTest {
       hmppsAuthMockServer.stop()
+    }
+
+    it("provides an auth token when called with valid client credentials") {
+
+      val token = hmppsAuthGateway.getClientToken()
+
+      token.shouldBe("mock-bearer-token")
     }
 
     it("throws an exception if connection is refused") {
@@ -37,4 +44,23 @@ class HmppsAuthGatewayTest(hmppsAuthGateway: HmppsAuthGateway) :
       exception.message.shouldBe("Connection to localhost:3000 failed.")
     }
 
-  })
+    it("throws an exception if auth service is unavailable") {
+      hmppsAuthMockServer.stubServiceUnavailableForGetOAuthToken()
+
+      val exception = shouldThrow<RuntimeException> {
+        hmppsAuthGateway.getClientToken()
+      }
+
+      exception.message.shouldBe("localhost:3000 is unavailable.")
+    }
+
+    it("throws an exception if credentials are invalid") {
+      hmppsAuthMockServer.stubUnauthorizedForGetOAAuthToken()
+
+      val exception = shouldThrow<RuntimeException> {
+        hmppsAuthGateway.getClientToken()
+      }
+
+      exception.message.shouldBe("Invalid credentials used.")
+    }
+  },)
