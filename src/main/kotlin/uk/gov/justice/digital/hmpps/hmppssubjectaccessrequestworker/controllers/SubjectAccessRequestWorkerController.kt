@@ -1,44 +1,18 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.controllers
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services.SubjectAccessRequestWorkerService
 
 @RestController
-class SubjectAccessRequestWorkerController() {
+class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestService: SubjectAccessRequestWorkerService) {
   @EventListener(
     ApplicationReadyEvent::class,
   )
   fun startPolling() {
     print("STARTED POLLING")
-//    val webClient: WebClient = WebClient.create("https://localhost:3000")
-//    val chosenSAR: SubjectAccessRequest = this.pollForNewSubjectAccessRequests(webClient)
-//    val patchResponse = webClient.patch().uri("/users/{id}" + chosenSAR.id.toString()).retrieve() // .bodyToMono(String::class.java)
-//    val code = patchResponse.toBodilessEntity().block()?.statusCode
-//    if (code == HttpStatusCode.valueOf(200)) {
-//      doReport(chosenSAR)
-//      webClient.patch().uri("/users/{id}/claim")
-//    }
-  }
-
-  fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest? {
-//    var response: String?
-//    do {
-//      response = client.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve().bodyToMono(String::class.java).block() //.map(SubjectAccessRequest) }
-//      Thread.sleep(Duration.ofSeconds(10))
-//    } while (response == null) // .isEmpty())
-    // CHOOSE ONE FROM THE RESPONSE LIST
-    //return response //.first()
-
-    val response: Array<SubjectAccessRequest>? = client.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
-    return response?.first()
-  }
-
-
-
-  fun doReport(sar: SubjectAccessRequest) {
-    print("Would do report")
+    subjectAccessRequestService.startPolling()
   }
 }
