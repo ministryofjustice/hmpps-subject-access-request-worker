@@ -11,8 +11,8 @@ class WebClientService {
   fun getClient(url: String): WebClient {
     return WebClient.create(url)
   }
-  fun getUnclaimedSars(uri: String, client: WebClient): Array<SubjectAccessRequest>? {
-    return client.get().uri(uri).retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
+  fun getUnclaimedSars(client: WebClient): Array<SubjectAccessRequest>? {
+    return client.get().uri("/api/subjectAccessRequests?unclaimed=true").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
   }
 
   fun claim(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {

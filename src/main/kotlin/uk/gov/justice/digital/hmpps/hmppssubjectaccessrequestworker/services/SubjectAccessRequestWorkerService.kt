@@ -11,7 +11,7 @@ import java.time.Duration
 class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientService) {
 
   fun startPolling() {
-    val webClient = clientService.getClient("https://localhost:3000")
+    val webClient = clientService.getClient("http://localhost:8080")
     val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
     val patchResponseCode = clientService.claim(webClient, chosenSAR)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
@@ -24,7 +24,7 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
   fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest {
     var response: Array<SubjectAccessRequest>?
     do {
-      response = clientService.getUnclaimedSars("/api/subjectAccessRequests?unclaimed=true", client)
+      response = clientService.getUnclaimedSars(client)
       Thread.sleep(Duration.ofSeconds(1))
     } while (response == null) // .isEmpty())
     // CHOOSE ONE FROM THE RESPONSE LIST

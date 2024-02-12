@@ -50,7 +50,7 @@ class SubjectAccessRequestWorkerServiceTest {
     Mockito.`when`(responseSpecMock.bodyToMono(Array<SubjectAccessRequest>::class.java))
       .thenReturn(Mono.just(arrayOf(sampleSAR)))
 
-    Mockito.`when`(mockClientService.getUnclaimedSars("/api/subjectAccessRequests?unclaimed=true", mockClient)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(mockClientService.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
 
     val result = SubjectAccessRequestWorkerService(mockClientService)
       .pollForNewSubjectAccessRequests(mockClient)
@@ -64,9 +64,9 @@ class SubjectAccessRequestWorkerServiceTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val webClientServiceMock = Mockito.mock(WebClientService::class.java)
     Mockito.`when`(webClientServiceMock.getClient("https://localhost:3000")).thenReturn(mockClient)
-    Mockito.`when`(webClientServiceMock.getUnclaimedSars("/api/subjectAccessRequests?unclaimed=true", mockClient)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
     SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
-    verify(webClientServiceMock, Mockito.times(1)).getUnclaimedSars("/api/subjectAccessRequests?unclaimed=true", mockClient)
+    verify(webClientServiceMock, Mockito.times(1)).getUnclaimedSars(mockClient)
   }
 
   @Test
@@ -74,7 +74,7 @@ class SubjectAccessRequestWorkerServiceTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val webClientServiceMock = Mockito.mock(WebClientService::class.java)
     Mockito.`when`(webClientServiceMock.getClient("https://localhost:3000")).thenReturn(mockClient)
-    Mockito.`when`(webClientServiceMock.getUnclaimedSars("/api/subjectAccessRequests?unclaimed=true", mockClient)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(webClientServiceMock.complete(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
@@ -87,7 +87,7 @@ class SubjectAccessRequestWorkerServiceTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val webClientServiceMock = Mockito.mock(WebClientService::class.java)
     Mockito.`when`(webClientServiceMock.getClient("https://localhost:3000")).thenReturn(mockClient)
-    Mockito.`when`(webClientServiceMock.getUnclaimedSars("/api/subjectAccessRequests?unclaimed=true", mockClient)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(400))
     SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
     verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR)
