@@ -9,7 +9,7 @@ This is a skeleton project from which to create new kotlin projects from.
 # Instructions
 
 If this is a HMPPS project then the project will be created as part of bootstrapping - 
-see https://github.com/ministryofjustice/dps-project-bootstrap.
+see https://github.com/ministryofjustice/hmpps-project-bootstrap.
 
 ## Creating a CloudPlatform namespace
 
