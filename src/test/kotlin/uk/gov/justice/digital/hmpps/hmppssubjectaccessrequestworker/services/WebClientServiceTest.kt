@@ -27,8 +27,8 @@ class WebClientServiceTest {
     requestDateTime = requestTime,
     claimAttempts = 0,
   )
+
   @Test
   fun `getUnclaimedSars returns single SubjectAccessRequest`() {
-
   }
 }
