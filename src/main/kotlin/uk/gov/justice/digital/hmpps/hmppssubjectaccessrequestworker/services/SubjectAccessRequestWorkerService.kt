@@ -31,7 +31,7 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
     do {
       response = clientService.getUnclaimedSars(client, token)
       print("RESPONSE")
-      //print(response)
+      // print(response)
       Thread.sleep(Duration.ofSeconds(1))
     } while (response!!.isEmpty())
     return response.first()
