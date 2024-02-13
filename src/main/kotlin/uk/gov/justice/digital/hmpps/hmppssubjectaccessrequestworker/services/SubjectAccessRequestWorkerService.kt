@@ -27,14 +27,26 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
   }
 
   fun pollForNewSubjectAccessRequests(client: WebClient, token: String): SubjectAccessRequest {
-    var response: Array<SubjectAccessRequest>?
-    do {
-      response = clientService.getUnclaimedSars(client, token)
-      print("RESPONSE")
-      // print(response)
+    var response: Array<SubjectAccessRequest>? = emptyArray()
+//    do {
+//      response = clientService.getUnclaimedSars(client, token)
+//      print("RESPONSE")
+//      // print(response)
+//      Thread.sleep(Duration.ofSeconds(1))
+//    } while (response!!.isEmpty())
+
+//    do {
+//      response = clientService.getUnclaimedSars(client, token)
+//      Thread.sleep(Duration.ofSeconds(1))
+//    } while (response.isNullOrEmpty())
+//    return response.first()
+
+    while (response.isNullOrEmpty()) {
       Thread.sleep(Duration.ofSeconds(1))
-    } while (response!!.isEmpty())
+      response = clientService.getUnclaimedSars(client, token)
+    }
     return response.first()
+
   }
 
   fun doReport(sar: SubjectAccessRequest) {
