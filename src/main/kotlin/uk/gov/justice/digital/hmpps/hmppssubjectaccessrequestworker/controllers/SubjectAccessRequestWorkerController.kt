@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services.SubjectAccessRequestWorkerService
-import kotlin.math.log
 
 @RestController
 @Profile("!test")
