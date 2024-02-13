@@ -10,3 +10,6 @@ services:
     base-url: http://localhost:3000
     username: mock-username
     password: mock-password
+
+  poller:
+    run-once: true

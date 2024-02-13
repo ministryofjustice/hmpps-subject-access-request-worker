@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -7,13 +8,13 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Hmp
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service
-class WebClientService {
+class WebClientService (@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
 
   fun getClient(url: String): WebClient {
     return WebClient.create(url)
   }
   fun getToken(): String {
-    return HmppsAuthGateway("http://localhost:3000", "mock-username", "mock-password").getClientToken()
+    return hmppsAuthGateway.getClientToken()
   }
 
   fun getUnclaimedSars(client: WebClient, token: String): Array<SubjectAccessRequest>? {

@@ -7,13 +7,13 @@ import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatusCode
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
-class SubjectAccessRequestWorkerServiceTest {
+class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   private val dateFrom = "02/01/2023"
   private val dateFromFormatted = LocalDate.parse(dateFrom, formatter)
@@ -53,7 +53,7 @@ class SubjectAccessRequestWorkerServiceTest {
 
     Mockito.`when`(mockClientService.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mockClientService)
+    val result = SubjectAccessRequestWorkerService(mockClientService, "true")
       .pollForNewSubjectAccessRequests(mockClient, mockToken)
 
     val expected: SubjectAccessRequest = sampleSAR
@@ -68,7 +68,7 @@ class SubjectAccessRequestWorkerServiceTest {
     Mockito.`when`(webClientServiceMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(webClientServiceMock.getToken()).thenReturn(mockToken)
     Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
-    SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
+    SubjectAccessRequestWorkerService(webClientServiceMock, "true").startPolling()
     verify(webClientServiceMock, Mockito.times(1)).getUnclaimedSars(mockClient, mockToken)
   }
 
@@ -82,7 +82,7 @@ class SubjectAccessRequestWorkerServiceTest {
     Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(webClientServiceMock.complete(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
-    SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
+    SubjectAccessRequestWorkerService(webClientServiceMock, "true").startPolling()
     verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(webClientServiceMock, Mockito.times(1)).complete(mockClient, sampleSAR, mockToken)
   }
@@ -96,7 +96,7 @@ class SubjectAccessRequestWorkerServiceTest {
     Mockito.`when`(webClientServiceMock.getToken()).thenReturn(mockToken)
     Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(400))
-    SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
+    SubjectAccessRequestWorkerService(webClientServiceMock, "true").startPolling()
     verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(webClientServiceMock, Mockito.times(0)).complete(mockClient, sampleSAR, mockToken)
   }
