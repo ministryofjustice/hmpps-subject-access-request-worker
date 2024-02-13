@@ -46,7 +46,6 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
       response = clientService.getUnclaimedSars(client, token)
     }
     return response.first()
-
   }
 
   fun doReport(sar: SubjectAccessRequest) {
