@@ -10,8 +10,9 @@ import java.time.Duration
 
 @Service
 class SubjectAccessRequestWorkerService(
-  @Autowired val clientService: WebClientService, @Value("\${services.poller.run-once}")
-  private val runOnce: String? = "false"
+  @Autowired val clientService: WebClientService,
+  @Value("\${services.poller.run-once}")
+  private val runOnce: String? = "false",
 ) {
   fun startPolling() {
     val webClient = clientService.getClient("http://localhost:8080")
@@ -27,7 +28,7 @@ class SubjectAccessRequestWorkerService(
       clientService.complete(webClient, chosenSAR, token)
     }
 
-    if(runOnce == "true") {
+    if (runOnce == "true") {
       return
     } else {
       startPolling()

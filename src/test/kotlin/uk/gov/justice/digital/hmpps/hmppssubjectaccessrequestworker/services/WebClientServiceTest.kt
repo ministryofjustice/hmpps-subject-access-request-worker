@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class WebClientServiceTest : IntegrationTestBase()  {
+class WebClientServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   private val dateFrom = "02/01/2023"
   private val dateFromFormatted = LocalDate.parse(dateFrom, formatter)

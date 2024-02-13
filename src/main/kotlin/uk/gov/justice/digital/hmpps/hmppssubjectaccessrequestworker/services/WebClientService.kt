@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Hmp
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service
-class WebClientService (@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
+class WebClientService(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
 
   fun getClient(url: String): WebClient {
     return WebClient.create(url)
