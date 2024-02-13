@@ -38,6 +38,7 @@ class SubjectAccessRequestWorkerServiceTest {
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() {
     val mockClientService = Mockito.mock(WebClientService::class.java)
     val mockClient = Mockito.mock(WebClient::class.java)
+    val mockToken = "testtoken"
     val requestHeadersUriSpecMock = Mockito.mock(WebClient.RequestHeadersUriSpec::class.java)
     val requestHeadersSpecMock = Mockito.mock(WebClient.RequestHeadersSpec::class.java)
     val responseSpecMock = Mockito.mock(WebClient.ResponseSpec::class.java)
@@ -50,10 +51,10 @@ class SubjectAccessRequestWorkerServiceTest {
     Mockito.`when`(responseSpecMock.bodyToMono(Array<SubjectAccessRequest>::class.java))
       .thenReturn(Mono.just(arrayOf(sampleSAR)))
 
-    Mockito.`when`(mockClientService.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(mockClientService.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
 
     val result = SubjectAccessRequestWorkerService(mockClientService)
-      .pollForNewSubjectAccessRequests(mockClient)
+      .pollForNewSubjectAccessRequests(mockClient, mockToken)
 
     val expected: SubjectAccessRequest = sampleSAR
     Assertions.assertThat(result).isEqualTo(expected)
@@ -62,35 +63,41 @@ class SubjectAccessRequestWorkerServiceTest {
   @Test
   fun `startPolling calls pollForNewSubjectAccessRequests`() {
     val mockClient = Mockito.mock(WebClient::class.java)
+    val mockToken = "testtoken"
     val webClientServiceMock = Mockito.mock(WebClientService::class.java)
-    Mockito.`when`(webClientServiceMock.getClient("https://localhost:3000")).thenReturn(mockClient)
-    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(webClientServiceMock.getClient("http://localhost:8080")).thenReturn(mockClient)
+    Mockito.`when`(webClientServiceMock.getToken()).thenReturn(mockToken)
+    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
-    verify(webClientServiceMock, Mockito.times(1)).getUnclaimedSars(mockClient)
+    verify(webClientServiceMock, Mockito.times(1)).getUnclaimedSars(mockClient, mockToken)
   }
 
   @Test
   fun `startPolling calls claim and complete on happy path`() {
     val mockClient = Mockito.mock(WebClient::class.java)
+    val mockToken = "testtoken"
     val webClientServiceMock = Mockito.mock(WebClientService::class.java)
-    Mockito.`when`(webClientServiceMock.getClient("https://localhost:3000")).thenReturn(mockClient)
-    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
-    Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
-    Mockito.`when`(webClientServiceMock.complete(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
+    Mockito.`when`(webClientServiceMock.getClient("http://localhost:8080")).thenReturn(mockClient)
+    Mockito.`when`(webClientServiceMock.getToken()).thenReturn(mockToken)
+    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
+    Mockito.`when`(webClientServiceMock.complete(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
     SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
-    verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR)
-    verify(webClientServiceMock, Mockito.times(1)).complete(mockClient, sampleSAR)
+    verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
+    verify(webClientServiceMock, Mockito.times(1)).complete(mockClient, sampleSAR, mockToken)
   }
 
   @Test
   fun `startPolling doesn't call complete if claim patch fails`() {
     val mockClient = Mockito.mock(WebClient::class.java)
+    val mockToken = "testtoken"
     val webClientServiceMock = Mockito.mock(WebClientService::class.java)
-    Mockito.`when`(webClientServiceMock.getClient("https://localhost:3000")).thenReturn(mockClient)
-    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient)).thenReturn(arrayOf(sampleSAR))
-    Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(400))
+    Mockito.`when`(webClientServiceMock.getClient("http://localhost:8080")).thenReturn(mockClient)
+    Mockito.`when`(webClientServiceMock.getToken()).thenReturn(mockToken)
+    Mockito.`when`(webClientServiceMock.getUnclaimedSars(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(webClientServiceMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(400))
     SubjectAccessRequestWorkerService(webClientServiceMock).startPolling()
-    verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR)
-    verify(webClientServiceMock, Mockito.times(0)).complete(mockClient, sampleSAR)
+    verify(webClientServiceMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
+    verify(webClientServiceMock, Mockito.times(0)).complete(mockClient, sampleSAR, mockToken)
   }
 }

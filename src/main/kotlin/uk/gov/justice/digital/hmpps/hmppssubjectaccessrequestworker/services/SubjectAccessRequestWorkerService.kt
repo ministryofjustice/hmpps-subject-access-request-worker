@@ -30,9 +30,10 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
     var response: Array<SubjectAccessRequest>?
     do {
       response = clientService.getUnclaimedSars(client, token)
+      print("RESPONSE")
+      //print(response)
       Thread.sleep(Duration.ofSeconds(1))
-    } while (response == null) // .isEmpty())
-    // CHOOSE ONE FROM THE RESPONSE LIST
+    } while (response!!.isEmpty())
     return response.first()
   }
 
