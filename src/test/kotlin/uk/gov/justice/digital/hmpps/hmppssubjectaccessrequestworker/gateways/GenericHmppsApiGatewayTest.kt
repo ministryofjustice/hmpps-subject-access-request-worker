@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import org.mockito.Mockito
@@ -30,9 +31,6 @@ class GenericHmppsApiGatewayTest(
       complexityOfNeedMockServer.start()
 
       complexityOfNeedMockServer.stubGetSubjectAccessRequestData(
-        "mockPrn",
-        LocalDate.of(2000, 1, 30).toString(),
-        LocalDate.of(1999, 1, 30).toString(),
         """
           {
             "content": {
@@ -52,9 +50,9 @@ class GenericHmppsApiGatewayTest(
       val fromDate = LocalDate.of(1999, 1, 30).toString()
 
       it("authenticates using HMPPS Auth with credentials") {
-        val sarData = genericHmppsApiGateway.getSarData(
+        val response = genericHmppsApiGateway.getSarData(
           "http://localhost:4000",
-          "examplePrn",
+          "validPrn",
           null,
           toDate,
           fromDate,
@@ -64,15 +62,15 @@ class GenericHmppsApiGatewayTest(
       }
 
       it("retrieves data from the upstream service") {
-        val sarData = genericHmppsApiGateway.getSarData(
+        val response = genericHmppsApiGateway.getSarData(
           "http://localhost:4000",
-          "examplePrn",
+          "validPrn",
           null,
           toDate,
           fromDate,
         )
 
-        sarData.shouldBe(
+        response.shouldBe(
           """
           {
             "content": {
@@ -81,6 +79,23 @@ class GenericHmppsApiGatewayTest(
           }
           """.trimIndent(),
         )
+      }
+
+      it("returns an error if unable to get a response") {
+
+        complexityOfNeedMockServer.stubNotFoundForGetSubjectAccessRequestData()
+
+        val exception = shouldThrow<RuntimeException> {
+          genericHmppsApiGateway.getSarData(
+            "http://localhost:4000",
+            "personNotFoundInSystem",
+            null,
+            toDate,
+            fromDate,
+          )
+        }
+
+        exception.message.shouldBe("Connection to http://localhost:4000 failed.")
       }
     }
   },

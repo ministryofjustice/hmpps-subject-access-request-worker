@@ -1,10 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.matching
-import org.springframework.http.HttpStatus
 
 class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
@@ -14,11 +14,7 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
   private val sarEndpoint = "/subject-access-request"
 
   fun stubGetSubjectAccessRequestData(
-    prn: String,
-    fromDate: String,
-    toDate: String,
     responseBody: String,
-    status: HttpStatus = HttpStatus.OK,
   ) {
     stubFor(
       get(sarEndpoint)
@@ -26,8 +22,17 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
-            .withStatus(status.value())
+            .withStatus(200)
             .withBody(responseBody.trimIndent()),
+        ),
+    )
+  }
+
+  fun stubNotFoundForGetSubjectAccessRequestData() {
+    stubFor(
+      get(sarEndpoint)
+        .willReturn(
+          WireMock.notFound(),
         ),
     )
   }

@@ -11,14 +11,17 @@ class GenericHmppsApiGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) 
 
     val webClient: WebClient = WebClient.builder().baseUrl(serviceUrl).build()
 
-    val response = webClient
-      .get()
-      .uri("/subject-access-request")
-      .header("Authorization", "Bearer $clientToken")
-      .retrieve()
-      .bodyToMono(String::class.java)
-      .block()
-
-    return response
+    try {
+      val response = webClient
+        .get()
+        .uri("/subject-access-request")
+        .header("Authorization", "Bearer $clientToken")
+        .retrieve()
+        .bodyToMono(String::class.java)
+        .block()
+      return response
+    } catch (exception: RuntimeException) {
+      throw RuntimeException("Connection to $serviceUrl failed.")
+    }
   }
 }
