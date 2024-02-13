@@ -26,6 +26,8 @@ services:
     environment:
       - SYSTEM_CLIENT_ID=hmpps-integration-api-client
       - SYSTEM_CLIENT_SECRET=clientsecret
+      - SPRING_PROFILES_ACTIVE=dev
+      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
 
 networks:
   hmpps:

@@ -12,18 +12,22 @@ class WebClientService {
   fun getClient(url: String): WebClient {
     return WebClient.create(url)
   }
-  fun getUnclaimedSars(client: WebClient): Array<SubjectAccessRequest>? {
-    val token = HmppsAuthGateway("http://localhost:9090", "hmpps-integration-api-client", "clientsecret").getClientToken()
+  fun getToken(): String {
+    return HmppsAuthGateway("http://localhost:9090", "hmpps-integration-api-client", "clientsecret").getClientToken()
+  }
+
+  fun getUnclaimedSars(client: WebClient, token: String): Array<SubjectAccessRequest>? {
     return client.get().uri("/api/subjectAccessRequests?unclaimed=true").header("Authorization", "Bearer $token").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
   }
 
-  fun claim(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {
-    val patchResponse = client.patch().uri("/users/{id}" + chosenSAR.id.toString()).retrieve() // .bodyToMono(String::class.java)
+  fun claim(client: WebClient, chosenSAR: SubjectAccessRequest, token: String): HttpStatusCode? {
+    print("Claiming...")
+    val patchResponse = client.patch().uri("/api/subjectAccessRequests/" + chosenSAR.id.toString() + "/claim").header("Authorization", "Bearer $token").retrieve()
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
 
-  fun complete(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {
-    val patchResponse = client.patch().uri("/users/{id}/claim").retrieve()
+  fun complete(client: WebClient, chosenSAR: SubjectAccessRequest, token: String): HttpStatusCode? {
+    val patchResponse = client.patch().uri("/api/subjectAccessRequests/" + chosenSAR.id.toString() + "/complete").header("Authorization", "Bearer $token").retrieve()
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
 }

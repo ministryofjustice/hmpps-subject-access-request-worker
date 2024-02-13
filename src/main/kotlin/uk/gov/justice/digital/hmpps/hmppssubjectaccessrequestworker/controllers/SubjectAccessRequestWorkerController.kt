@@ -12,7 +12,7 @@ class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestSe
     ApplicationReadyEvent::class,
   )
   fun startPolling() {
-    print("STARTED POLLING")
+    print("STARTED POLLING ")
     subjectAccessRequestService.startPolling()
   }
 }

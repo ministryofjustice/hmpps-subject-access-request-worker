@@ -12,19 +12,24 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
 
   fun startPolling() {
     val webClient = clientService.getClient("http://localhost:8080")
-    val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
-    val patchResponseCode = clientService.claim(webClient, chosenSAR)
+    val token = clientService.getToken()
+    val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
+    print("CHOSEN: ")
+    print(chosenSAR)
+    val patchResponseCode = clientService.claim(webClient, chosenSAR, token)
+    print("PATCH RESPONSE: ")
+    print(patchResponseCode)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
       doReport(chosenSAR)
-      clientService.complete(webClient, chosenSAR)
+      clientService.complete(webClient, chosenSAR, token)
     }
-    return
+    startPolling()
   }
 
-  fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest {
+  fun pollForNewSubjectAccessRequests(client: WebClient, token: String): SubjectAccessRequest {
     var response: Array<SubjectAccessRequest>?
     do {
-      response = clientService.getUnclaimedSars(client)
+      response = clientService.getUnclaimedSars(client, token)
       Thread.sleep(Duration.ofSeconds(1))
     } while (response == null) // .isEmpty())
     // CHOOSE ONE FROM THE RESPONSE LIST
@@ -32,6 +37,6 @@ class SubjectAccessRequestWorkerService(@Autowired val clientService: WebClientS
   }
 
   fun doReport(sar: SubjectAccessRequest) {
-    print("Would do report")
+    print("Would do report ")
   }
 }
