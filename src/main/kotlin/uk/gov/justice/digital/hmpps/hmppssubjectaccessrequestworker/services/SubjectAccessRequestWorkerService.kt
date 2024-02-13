@@ -35,7 +35,7 @@ class SubjectAccessRequestWorkerService(
     var response: Array<SubjectAccessRequest>? = emptyArray()
 
     while (response.isNullOrEmpty()) {
-      Thread.sleep(Duration.ofSeconds(1))
+      Thread.sleep(Duration.ofSeconds(10))
       response = clientService.getUnclaimedSars(client, token)
     }
     return response.first()
