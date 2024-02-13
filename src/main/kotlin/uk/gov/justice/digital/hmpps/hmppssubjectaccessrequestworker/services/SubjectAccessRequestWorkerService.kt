@@ -18,11 +18,7 @@ class SubjectAccessRequestWorkerService(
     val webClient = clientService.getClient("http://localhost:8080")
     val token = clientService.getToken()
     val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
-    print("CHOSEN: ")
-    print(chosenSAR)
     val patchResponseCode = clientService.claim(webClient, chosenSAR, token)
-    print("PATCH RESPONSE: ")
-    print(patchResponseCode)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
       doReport(chosenSAR)
       clientService.complete(webClient, chosenSAR, token)
@@ -41,13 +37,11 @@ class SubjectAccessRequestWorkerService(
     while (response.isNullOrEmpty()) {
       Thread.sleep(Duration.ofSeconds(1))
       response = clientService.getUnclaimedSars(client, token)
-      print("RESPONSE")
-      print(response)
     }
     return response.first()
   }
 
   fun doReport(sar: SubjectAccessRequest) {
-    print("Would do report ")
+    // TODO
   }
 }

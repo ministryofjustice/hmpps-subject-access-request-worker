@@ -22,7 +22,6 @@ class WebClientService(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
   }
 
   fun claim(client: WebClient, chosenSAR: SubjectAccessRequest, token: String): HttpStatusCode? {
-    print("Claiming...")
     val patchResponse = client.patch().uri("/api/subjectAccessRequests/" + chosenSAR.id.toString() + "/claim").header("Authorization", "Bearer $token").retrieve()
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
