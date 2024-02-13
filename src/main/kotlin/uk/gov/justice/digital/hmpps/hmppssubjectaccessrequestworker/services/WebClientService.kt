@@ -13,7 +13,7 @@ class WebClientService {
     return WebClient.create(url)
   }
   fun getToken(): String {
-    return HmppsAuthGateway("\${services.hmpps-auth.base-url}", "hmpps-integration-api-client", "clientsecret").getClientToken()
+    return HmppsAuthGateway("http://localhost:3000", "hmpps-integration-api-client", "clientsecret").getClientToken()
   }
 
   fun getUnclaimedSars(client: WebClient, token: String): Array<SubjectAccessRequest>? {
