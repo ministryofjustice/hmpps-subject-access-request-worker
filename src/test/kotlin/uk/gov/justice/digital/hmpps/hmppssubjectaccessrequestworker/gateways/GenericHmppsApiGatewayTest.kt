@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.internal.verification.VerificationModeFactory
 import org.mockito.kotlin.verify
@@ -30,15 +31,7 @@ class GenericHmppsApiGatewayTest(
     beforeEach {
       complexityOfNeedMockServer.start()
 
-      complexityOfNeedMockServer.stubGetSubjectAccessRequestData(
-        """
-          {
-            "content": {
-              "additionalProp1": {}
-            }
-          }
-        """.trimIndent(),
-      )
+      complexityOfNeedMockServer.stubGetSubjectAccessRequestData()
     }
 
     afterTest {

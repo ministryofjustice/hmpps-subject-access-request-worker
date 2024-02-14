@@ -13,9 +13,7 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
 
   private val sarEndpoint = "/subject-access-request"
 
-  fun stubGetSubjectAccessRequestData(
-    responseBody: String,
-  ) {
+  fun stubGetSubjectAccessRequestData() {
     stubFor(
       get(sarEndpoint)
         .withHeader("Authorization", matching("Bearer ${HmppsAuthMockServer.TOKEN}"))
@@ -23,7 +21,13 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
-            .withBody(responseBody.trimIndent()),
+            .withBody("""
+              {
+                "content": {
+                  "additionalProp1": {}
+                }
+              }
+            """.trimIndent()),
         ),
     )
   }
