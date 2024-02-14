@@ -51,3 +51,6 @@ management:
 services:
   poller:
     run-once: false
+
+  sar-api:
+    base-url: http://hmpps-subject-access-request

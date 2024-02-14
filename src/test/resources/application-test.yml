@@ -13,3 +13,6 @@ services:
 
   poller:
     run-once: true
+
+  sar-api:
+    base-url: http://localhost:8080

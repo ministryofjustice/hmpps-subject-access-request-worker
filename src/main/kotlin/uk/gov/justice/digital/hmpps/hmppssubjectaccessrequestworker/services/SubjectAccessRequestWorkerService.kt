@@ -14,9 +14,11 @@ class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
   @Value("\${services.poller.run-once}")
   private val runOnce: String? = "false",
+  @Value("\${services.sar-api.base-url}")
+  private val sarUrl: String
 ) {
   fun startPolling() {
-    val webClient = sarGateway.getClient("http://localhost:8080")
+    val webClient = sarGateway.getClient(sarUrl)
     val token = sarGateway.getClientTokenFromHmppsAuth()
     val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
     val patchResponseCode = sarGateway.claim(webClient, chosenSAR, token)
