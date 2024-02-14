@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
+package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatusCode
@@ -8,16 +8,16 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Hmp
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service
-class WebClientService(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
+class SubjectAccessRequestGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
 
   fun getClient(url: String): WebClient {
     return WebClient.create(url)
   }
-  fun getToken(): String {
+  fun getClientTokenFromHmppsAuth(): String {
     return hmppsAuthGateway.getClientToken()
   }
 
-  fun getUnclaimedSars(client: WebClient, token: String): Array<SubjectAccessRequest>? {
+  fun getUnclaimed(client: WebClient, token: String): Array<SubjectAccessRequest>? {
     return client.get().uri("/api/subjectAccessRequests?unclaimed=true").header("Authorization", "Bearer $token").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
   }
 
@@ -31,3 +31,4 @@ class WebClientService(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
 }
+

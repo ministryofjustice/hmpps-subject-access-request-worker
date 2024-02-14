@@ -5,23 +5,24 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.Duration
 
 @Service
 class SubjectAccessRequestWorkerService(
-  @Autowired val clientService: WebClientService,
+  @Autowired val sarGateway: SubjectAccessRequestGateway,
   @Value("\${services.poller.run-once}")
   private val runOnce: String? = "false",
 ) {
   fun startPolling() {
-    val webClient = clientService.getClient("http://localhost:8080")
-    val token = clientService.getToken()
+    val webClient = sarGateway.getClient("http://localhost:8080")
+    val token = sarGateway.getClientTokenFromHmppsAuth()
     val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
-    val patchResponseCode = clientService.claim(webClient, chosenSAR, token)
+    val patchResponseCode = sarGateway.claim(webClient, chosenSAR, token)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
       doReport(chosenSAR)
-      clientService.complete(webClient, chosenSAR, token)
+      sarGateway.complete(webClient, chosenSAR, token)
     }
 
     if (runOnce == "true") {
@@ -36,7 +37,7 @@ class SubjectAccessRequestWorkerService(
 
     while (response.isNullOrEmpty()) {
       Thread.sleep(Duration.ofSeconds(10))
-      response = clientService.getUnclaimedSars(client, token)
+      response = sarGateway.getUnclaimed(client, token)
     }
     return response.first()
   }
