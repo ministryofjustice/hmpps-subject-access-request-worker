@@ -9,6 +9,7 @@ configurations {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   testImplementation("org.wiremock:wiremock-standalone:3.3.1")
   testImplementation("io.kotest:kotest-assertions-json-jvm:5.8.0")
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.0")
