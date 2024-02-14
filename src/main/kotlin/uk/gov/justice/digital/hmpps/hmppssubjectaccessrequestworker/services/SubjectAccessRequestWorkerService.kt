@@ -45,6 +45,6 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun doReport(sar: SubjectAccessRequest) {
-    // TODO
+    println("Would do report")
   }
 }
