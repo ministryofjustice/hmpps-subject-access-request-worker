@@ -7,6 +7,9 @@ spring:
     name: hmpps-subject-access-request-worker
   codec:
     max-in-memory-size: 10MB
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
@@ -14,7 +17,7 @@ spring:
       WRITE_DATES_AS_TIMESTAMPS: false
 
 server:
-  port: 8080
+  port: 8081
   servlet:
     context-path: /
   forward-headers-strategy: native
@@ -44,3 +47,10 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+services:
+  poller:
+    run-once: false
+
+  sar-api:
+    base-url: http://hmpps-subject-access-request
