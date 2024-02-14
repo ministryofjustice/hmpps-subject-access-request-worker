@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service
@@ -31,4 +30,3 @@ class SubjectAccessRequestGateway(@Autowired val hmppsAuthGateway: HmppsAuthGate
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
 }
-

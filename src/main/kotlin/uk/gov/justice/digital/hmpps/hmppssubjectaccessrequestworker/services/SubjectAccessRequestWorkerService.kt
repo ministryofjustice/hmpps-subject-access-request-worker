@@ -15,7 +15,7 @@ class SubjectAccessRequestWorkerService(
   @Value("\${services.poller.run-once}")
   private val runOnce: String? = "false",
   @Value("\${services.sar-api.base-url}")
-  private val sarUrl: String
+  private val sarUrl: String,
 ) {
   fun startPolling() {
     val webClient = sarGateway.getClient(sarUrl)
