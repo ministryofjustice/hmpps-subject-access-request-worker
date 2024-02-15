@@ -1,4 +1,0 @@
-generic-service:
-  namespace_secrets:
-    hmpps-subject-access-request-worker:
-
