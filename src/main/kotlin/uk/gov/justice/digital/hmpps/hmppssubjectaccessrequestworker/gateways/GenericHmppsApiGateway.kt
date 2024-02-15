@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class GenericHmppsApiGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
-  fun getSarData(serviceUrl: String?, prn: String?, crn: String?, dateFrom: String?, dateTo: String?): String {
+  fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: String? = null, dateTo: String? = null): String {
     val clientToken = hmppsAuthGateway.getClientToken()
 
     val webClient: WebClient = WebClient.builder().baseUrl(serviceUrl).build()
@@ -14,7 +14,14 @@ class GenericHmppsApiGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) 
     try {
       val response = webClient
         .get()
-        .uri("/subject-access-request")
+        .uri { builder ->
+          builder.path("/subject-access-request")
+            .queryParam("prn", prn)
+            .queryParam("crn", crn)
+            .queryParam("fromDate", dateFrom)
+            .queryParam("toDate", dateTo)
+            .build()
+        }
         .header("Authorization", "Bearer $clientToken")
         .retrieve()
         .bodyToMono(String::class.java)

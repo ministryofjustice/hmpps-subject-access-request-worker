@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.matching
@@ -11,7 +10,7 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 4000
   }
 
-  private val sarEndpoint = "/subject-access-request"
+  private val sarEndpoint = "/subject-access-request?prn=validPrn&crn&fromDate&toDate"
 
   fun stubGetSubjectAccessRequestData() {
     stubFor(
@@ -21,22 +20,15 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
-            .withBody("""
+            .withBody(
+              """
               {
                 "content": {
                   "additionalProp1": {}
                 }
               }
-            """.trimIndent()),
-        ),
-    )
-  }
-
-  fun stubNotFoundForGetSubjectAccessRequestData() {
-    stubFor(
-      get(sarEndpoint)
-        .willReturn(
-          WireMock.notFound(),
+              """.trimIndent(),
+            ),
         ),
     )
   }

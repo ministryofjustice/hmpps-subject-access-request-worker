@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.internal.verification.VerificationModeFactory
 import org.mockito.kotlin.verify
@@ -12,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers.ComplexityOfNeedMockServer
-import java.time.LocalDate
 
 @ActiveProfiles("test")
 @ContextConfiguration(
@@ -39,16 +37,11 @@ class GenericHmppsApiGatewayTest(
     }
 
     describe("getSarData") {
-      val toDate = LocalDate.of(2000, 1, 30).toString()
-      val fromDate = LocalDate.of(1999, 1, 30).toString()
 
       it("authenticates using HMPPS Auth with credentials") {
         val response = genericHmppsApiGateway.getSarData(
           "http://localhost:4000",
           "validPrn",
-          null,
-          toDate,
-          fromDate,
         )
 
         verify(mockHmppsAuthGateway, VerificationModeFactory.times(1)).getClientToken()
@@ -58,9 +51,6 @@ class GenericHmppsApiGatewayTest(
         val response = genericHmppsApiGateway.getSarData(
           "http://localhost:4000",
           "validPrn",
-          null,
-          toDate,
-          fromDate,
         )
 
         response.shouldBe(
@@ -76,15 +66,10 @@ class GenericHmppsApiGatewayTest(
 
       it("returns an error if unable to get a response") {
 
-        complexityOfNeedMockServer.stubNotFoundForGetSubjectAccessRequestData()
-
         val exception = shouldThrow<RuntimeException> {
           genericHmppsApiGateway.getSarData(
             "http://localhost:4000",
             "personNotFoundInSystem",
-            null,
-            toDate,
-            fromDate,
           )
         }
 
