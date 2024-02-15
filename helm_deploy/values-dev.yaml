@@ -8,6 +8,7 @@ generic-service:
     host: subject-access-request-worker-dev.hmpps.service.justice.gov.uk
 
   env:
+    SPRING_PROFILES_ACTIVE: dev
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
