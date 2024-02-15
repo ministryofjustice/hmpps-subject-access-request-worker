@@ -1,0 +1,5 @@
+generic-service:
+  namespace_secrets:
+    hmpps-subject-access-request-worker:
+      SYSTEM_CLIENT_ID: "SYSTEM_CLIENT_ID"
+      SYSTEM_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
