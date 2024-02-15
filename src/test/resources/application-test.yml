@@ -11,6 +11,9 @@ services:
     username: mock-username
     password: mock-password
 
+  document-storage:
+    url: http://localhost:4040
+
   poller:
     run-once: true
 

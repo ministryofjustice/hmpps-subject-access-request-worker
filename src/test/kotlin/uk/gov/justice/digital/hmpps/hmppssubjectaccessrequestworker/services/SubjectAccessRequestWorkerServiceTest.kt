@@ -7,6 +7,7 @@ import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatusCode
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
@@ -21,6 +22,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val dateTo = "02/01/2024"
   private val dateToFormatted = LocalDate.parse(dateTo, formatter)
   private val requestTime = LocalDateTime.now()
+  private val documentGateway: DocumentStorageGateway = Mockito.mock(DocumentStorageGateway::class.java)
   private val sampleSAR = SubjectAccessRequest(
     id = null,
     status = Status.Pending,
@@ -54,7 +56,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     Mockito.`when`(mocksarGateway.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mocksarGateway, "true", "http://localhost:8080")
+    val result = SubjectAccessRequestWorkerService(mocksarGateway, documentGateway, "true", "http://localhost:8080")
       .pollForNewSubjectAccessRequests(mockClient, mockToken)
 
     val expected: SubjectAccessRequest = sampleSAR
@@ -69,7 +71,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(websarGatewayMock.getClientTokenFromHmppsAuth()).thenReturn(mockToken)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
-    SubjectAccessRequestWorkerService(websarGatewayMock, "true", "http://localhost:8080").startPolling()
+    SubjectAccessRequestWorkerService(websarGatewayMock, documentGateway, "true", "http://localhost:8080").startPolling()
     verify(websarGatewayMock, Mockito.times(1)).getUnclaimed(mockClient, mockToken)
   }
 
@@ -83,7 +85,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(websarGatewayMock.complete(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
-    SubjectAccessRequestWorkerService(websarGatewayMock, "true", "http://localhost:8080").startPolling()
+    SubjectAccessRequestWorkerService(websarGatewayMock, documentGateway, "true", "http://localhost:8080").startPolling()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(websarGatewayMock, Mockito.times(1)).complete(mockClient, sampleSAR, mockToken)
   }
@@ -97,7 +99,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getClientTokenFromHmppsAuth()).thenReturn(mockToken)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(400))
-    SubjectAccessRequestWorkerService(websarGatewayMock, "true", "http://localhost:8080").startPolling()
+    SubjectAccessRequestWorkerService(websarGatewayMock, documentGateway, "true", "http://localhost:8080").startPolling()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(websarGatewayMock, Mockito.times(0)).complete(mockClient, sampleSAR, mockToken)
   }

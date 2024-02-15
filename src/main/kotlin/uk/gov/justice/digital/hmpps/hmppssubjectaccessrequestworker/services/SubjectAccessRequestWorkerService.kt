@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.Duration
@@ -12,6 +13,7 @@ import java.time.Duration
 @Service
 class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
+  @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Value("\${services.poller.run-once}")
   private val runOnce: String? = "false",
   @Value("\${services.sar-api.base-url}")
@@ -46,5 +48,10 @@ class SubjectAccessRequestWorkerService(
 
   fun doReport(sar: SubjectAccessRequest) {
     println("Would do report")
+  }
+
+  fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String): String {
+    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody)
+    return idsForReference
   }
 }
