@@ -12,9 +12,9 @@ import java.time.Duration
 @Service
 class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
-  @Value("\${services.poller.run-once}")
+  @Value("\${poller.run-once}")
   private val runOnce: String? = "false",
-  @Value("\${services.sar-api.base-url}")
+  @Value("\${sar.base-url}")
   private val sarUrl: String,
 ) {
   fun startPolling() {

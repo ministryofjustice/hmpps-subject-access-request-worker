@@ -1,9 +1,9 @@
-services:
-  hmpps-auth:
-    base-url: http://localhost:9090
-    username: hmpps-integration-api-client # until we get a client seeded
+hmpps:
+  auth:
+    url: http://localhost:9090/auth
+    username: hmpps-integration-api-client
     password: clientsecret
 
-  sar-api:
-    base-url: http://localhost:8080
+sar:
+  base-url: http://localhost:8080
 

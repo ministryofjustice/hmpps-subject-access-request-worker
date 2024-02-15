@@ -1,5 +1,5 @@
-services:
-  hmpps-auth:
-    base-url: http://hmpps-auth:8080
-    username: hmpps-integration-api-client # until we get a client seeded
+hmpps:
+  auth:
+    url: http://hmpps-auth:8080/auth
+    username: hmpps-integration-api-client
     password: clientsecret

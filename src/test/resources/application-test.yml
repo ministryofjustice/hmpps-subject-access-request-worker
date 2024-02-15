@@ -5,14 +5,14 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
-services:
-  hmpps-auth:
-    base-url: http://localhost:3000
+hmpps:
+  auth:
+    url: http://localhost:3000/auth
     username: mock-username
     password: mock-password
 
-  poller:
-    run-once: true
+poller:
+  run-once: true
 
-  sar-api:
-    base-url: http://localhost:8080
+sar:
+  base-url: http://localhost:8080

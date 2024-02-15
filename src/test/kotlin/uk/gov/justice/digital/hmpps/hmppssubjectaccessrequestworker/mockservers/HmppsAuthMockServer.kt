@@ -9,7 +9,7 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 3000
   }
 
-  private val authUrl = "/auth/oauth/token?grant_type=client_credentials"
+  private val authUrl = "/oauth/token?grant_type=client_credentials"
 
   fun stubGetOAuthToken(client: String, clientSecret: String) {
     stubFor(
