@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.Duration
+import java.time.LocalDate
 
 @Service
 class SubjectAccessRequestWorkerService(
@@ -23,7 +24,7 @@ class SubjectAccessRequestWorkerService(
     val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
     val patchResponseCode = sarGateway.claim(webClient, chosenSAR, token)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
-      doReport(chosenSAR)
+      doReport(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
       sarGateway.complete(webClient, chosenSAR, token)
     }
 
@@ -44,7 +45,7 @@ class SubjectAccessRequestWorkerService(
     return response.first()
   }
 
-  fun doReport(sar: SubjectAccessRequest) {
+  fun doReport(services: String, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null) {
     println("Would do report")
   }
 }
