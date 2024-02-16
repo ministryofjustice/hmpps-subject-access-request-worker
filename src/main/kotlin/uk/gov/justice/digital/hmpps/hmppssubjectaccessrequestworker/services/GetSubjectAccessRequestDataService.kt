@@ -5,13 +5,20 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Gen
 import java.time.LocalDate
 
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
-  fun execute(services: String, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null) {
-    val serviceInfo = services.split(',')
+  fun execute(services: String, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): Map<String, Any> {
+    val responseObject = mutableMapOf<String, Any>()
+    val serviceMap = mutableMapOf<String, String>()
 
-    val serviceUrls = serviceInfo.map {splitService -> splitService.trim()}.filterIndexed { index, _ ->  index % 2 != 0}
-
-    for (serviceUrl in serviceUrls) {
-      genericHmppsApiGateway.getSarData(serviceUrl, nomisId, ndeliusId, dateFrom, dateTo)
+    val serviceNames = services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
+    val serviceUrls = services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+    for (serviceName in serviceNames) {
+      serviceMap.put(serviceName, serviceUrls[serviceNames.indexOf(serviceName)])
     }
+
+    serviceMap.forEach { (service, serviceUrl) ->
+      val response: Any = genericHmppsApiGateway.getSarData(serviceUrl, nomisId, ndeliusId, dateFrom, dateTo)
+      responseObject.put(service, response)
+    }
+    return responseObject
   }
 }
