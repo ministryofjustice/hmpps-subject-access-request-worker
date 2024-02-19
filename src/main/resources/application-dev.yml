@@ -8,4 +8,4 @@ services:
     run-once: true
 
   sar-api:
-    base-url: https://subject-access-request-dev.hmpps.service.justice.gov.uk
+    base-url: https://subject-access-request-api-dev.hmpps.service.justice.gov.uk
