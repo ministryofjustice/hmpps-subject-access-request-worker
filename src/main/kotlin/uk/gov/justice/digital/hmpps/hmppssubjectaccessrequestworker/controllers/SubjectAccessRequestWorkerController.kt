@@ -13,7 +13,7 @@ class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestSe
   @EventListener(
     ApplicationReadyEvent::class,
   )
-  fun startPolling() {
+  suspend fun startPolling() {
     subjectAccessRequestService.startPolling()
   }
 }
