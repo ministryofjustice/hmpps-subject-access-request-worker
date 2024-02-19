@@ -3,7 +3,9 @@ services:
     base-url: https://sign-in.hmpps.service.justice.gov.uk
     username: ${SYSTEM_CLIENT_ID}
     password: ${SYSTEM_CLIENT_SECRET}
+
   poller:
     run-once: true
+
   sar-api:
-    base-url: http://subject-access-request-worker.hmpps.service.justice.gov.uk
+    base-url: https://subject-access-request-api.hmpps.service.justice.gov.uk
