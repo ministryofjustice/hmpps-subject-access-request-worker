@@ -51,6 +51,3 @@ management:
 services:
   poller:
     run-once: true
-
-  sar-api:
-    base-url: https://subject-access-request
