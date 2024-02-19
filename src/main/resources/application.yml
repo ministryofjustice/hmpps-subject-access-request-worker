@@ -47,7 +47,3 @@ management:
     info:
       cache:
         time-to-live: 2000ms
-
-services:
-  poller:
-    run-once: true

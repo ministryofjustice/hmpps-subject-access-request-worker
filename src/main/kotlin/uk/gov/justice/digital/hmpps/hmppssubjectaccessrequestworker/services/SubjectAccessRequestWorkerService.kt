@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import kotlinx.coroutines.delay
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
@@ -12,12 +13,16 @@ import java.time.Duration
 @Service
 class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
-  @Value("\${services.poller.run-once}")
-  private val runOnce: String? = "false",
   @Value("\${services.sar-api.base-url}")
   private val sarUrl: String,
 ) {
-  fun startPolling() {
+  suspend fun startPolling() {
+    while (true) {
+      doPoll()
+    }
+  }
+
+  suspend fun doPoll() {
     val webClient = sarGateway.getClient(sarUrl)
     val token = sarGateway.getClientTokenFromHmppsAuth()
     val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
@@ -26,19 +31,13 @@ class SubjectAccessRequestWorkerService(
       doReport(chosenSAR)
       sarGateway.complete(webClient, chosenSAR, token)
     }
-
-    if (runOnce == "true") {
-      return
-    } else {
-      startPolling()
-    }
   }
 
-  fun pollForNewSubjectAccessRequests(client: WebClient, token: String): SubjectAccessRequest {
+  suspend fun pollForNewSubjectAccessRequests(client: WebClient, token: String): SubjectAccessRequest {
     var response: Array<SubjectAccessRequest>? = emptyArray()
 
     while (response.isNullOrEmpty()) {
-      Thread.sleep(Duration.ofSeconds(10))
+      delay(10)
       response = sarGateway.getUnclaimed(client, token)
     }
     return response.first()
