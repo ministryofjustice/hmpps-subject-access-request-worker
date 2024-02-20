@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -15,7 +16,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class SubjectAccessRequestWorkerServiceTest() : IntegrationTestBase() {
+class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   private val dateFrom = "02/01/2023"
   private val dateFromFormatted = LocalDate.parse(dateFrom, formatter)
@@ -40,7 +41,7 @@ class SubjectAccessRequestWorkerServiceTest() : IntegrationTestBase() {
   private val mockGetSubjectAccessRequestDataService = Mockito.mock(GetSubjectAccessRequestDataService::class.java)
 
   @Test
-  fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() {
+  fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val mockToken = "testtoken"
     val requestHeadersUriSpecMock = Mockito.mock(WebClient.RequestHeadersUriSpec::class.java)
@@ -57,27 +58,26 @@ class SubjectAccessRequestWorkerServiceTest() : IntegrationTestBase() {
 
     Mockito.`when`(mockSarGateway.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, "true", "http://localhost:8080")
-      .pollForNewSubjectAccessRequests(mockClient, mockToken)
+    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, "http://localhost:8080").pollForNewSubjectAccessRequests(mockClient, mockToken)
 
     val expected: SubjectAccessRequest = sampleSAR
     Assertions.assertThat(result).isEqualTo(expected)
   }
 
   @Test
-  fun `startPolling calls pollForNewSubjectAccessRequests`() {
+  fun `doPoll calls pollForNewSubjectAccessRequests`() = runTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val mockToken = "testtoken"
     val websarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
     Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(websarGatewayMock.getClientTokenFromHmppsAuth()).thenReturn(mockToken)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
-    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, "true", "http://localhost:8080").startPolling()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, "http://localhost:8080").doPoll()
     verify(websarGatewayMock, Mockito.times(1)).getUnclaimed(mockClient, mockToken)
   }
 
   @Test
-  fun `startPolling calls claim and complete on happy path`() {
+  fun `startPolling calls claim and complete on happy path`() = runTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val mockToken = "testtoken"
     val websarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
@@ -86,13 +86,13 @@ class SubjectAccessRequestWorkerServiceTest() : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(websarGatewayMock.complete(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
-    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, "true", "http://localhost:8080").startPolling()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, "http://localhost:8080").doPoll()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(websarGatewayMock, Mockito.times(1)).complete(mockClient, sampleSAR, mockToken)
   }
 
   @Test
-  fun `startPolling doesn't call complete if claim patch fails`() {
+  fun `startPolling doesn't call complete if claim patch fails`() = runTest {
     val mockClient = Mockito.mock(WebClient::class.java)
     val mockToken = "testtoken"
     val websarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
@@ -100,7 +100,7 @@ class SubjectAccessRequestWorkerServiceTest() : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getClientTokenFromHmppsAuth()).thenReturn(mockToken)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(400))
-    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, "true", "http://localhost:8080").startPolling()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, "http://localhost:8080").doPoll()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(websarGatewayMock, Mockito.times(0)).complete(mockClient, sampleSAR, mockToken)
   }
@@ -109,7 +109,7 @@ class SubjectAccessRequestWorkerServiceTest() : IntegrationTestBase() {
   fun `do report calls getSubjectAccessRequestDataService with chosenSar details`() {
     val mockChosenSar = sampleSAR
 
-    val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, "true", "http://localhost:8080")
+    val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, "http://localhost:8080")
     subjectAccessRequestWorkerService.doReport(mockChosenSar)
   }
 }
