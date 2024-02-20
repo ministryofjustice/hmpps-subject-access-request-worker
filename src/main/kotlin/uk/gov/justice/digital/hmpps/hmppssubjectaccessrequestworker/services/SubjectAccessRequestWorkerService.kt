@@ -55,8 +55,12 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
-    getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
-    log.info("Would do report")
+    try {
+      getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+      log.info("Would do report")
+    } catch (exception: RuntimeException) {
+      throw RuntimeException("Failed to retrieve data from upstream services.")
+    }
   }
 
   fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String): String {
