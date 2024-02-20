@@ -60,7 +60,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     Mockito.`when`(mockSarGateway.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mocksarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
+    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
       .pollForNewSubjectAccessRequests(mockClient, mockToken)
 
     val expected: SubjectAccessRequest = sampleSAR
@@ -112,7 +112,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   fun `do report calls getSubjectAccessRequestDataService with chosenSar details`() {
     val mockChosenSar = sampleSAR
 
-    val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, "http://localhost:8080")
+    val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
     subjectAccessRequestWorkerService.doReport(mockChosenSar)
   }
 }
