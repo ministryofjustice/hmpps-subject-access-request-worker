@@ -47,3 +47,8 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+
+services:
+  document-storage:
+    base-url: http://localhost:4040
