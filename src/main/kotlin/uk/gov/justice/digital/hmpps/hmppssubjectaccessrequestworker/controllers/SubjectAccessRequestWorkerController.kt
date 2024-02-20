@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.controllers
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Profile
@@ -10,10 +11,14 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services.Sub
 @RestController
 @Profile("!test")
 class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestService: SubjectAccessRequestWorkerService) {
+
+  private val log = LoggerFactory.getLogger(this::class.java)
+
   @EventListener(
     ApplicationReadyEvent::class,
   )
   suspend fun startPolling() {
+    log.info("Starting polling...")
     subjectAccessRequestService.startPolling()
   }
 }
