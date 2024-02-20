@@ -10,6 +10,7 @@ configurations {
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.json:json:20230227")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
   testImplementation("org.wiremock:wiremock-standalone:3.3.1")

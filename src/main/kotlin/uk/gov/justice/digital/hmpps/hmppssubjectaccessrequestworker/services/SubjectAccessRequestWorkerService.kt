@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 
@@ -16,6 +17,7 @@ const val POLL_DELAY: Long = 10000
 class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
+  @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Value("\${services.sar-api.base-url}")
   private val sarUrl: String,
 ) {
@@ -55,5 +57,10 @@ class SubjectAccessRequestWorkerService(
   fun doReport(chosenSAR: SubjectAccessRequest) {
     getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Would do report")
+  }
+
+  fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String): String {
+    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody)
+    return idsForReference
   }
 }
