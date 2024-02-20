@@ -10,7 +10,7 @@ import java.util.UUID
 @Component
 class DocumentStorageGateway(
   @Autowired val hmppsAuthGateway: HmppsAuthGateway,
-  @Value("\${services.document-storage.url}") hmppsDocumentApiUrl: String,
+  @Value("\${services.document-storage.base-url}") hmppsDocumentApiUrl: String,
 ) {
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsDocumentApiUrl).build()
 
