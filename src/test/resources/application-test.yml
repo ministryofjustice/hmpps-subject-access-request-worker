@@ -12,6 +12,7 @@ services:
     password: mock-password
 
   document-storage:
-    url: http://localhost:4040
+    base-url: http://localhost:4040
+
   sar-api:
     base-url: http://localhost:8080
