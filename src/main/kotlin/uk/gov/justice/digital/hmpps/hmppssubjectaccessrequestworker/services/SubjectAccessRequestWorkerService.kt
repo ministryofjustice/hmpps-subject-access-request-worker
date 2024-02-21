@@ -32,23 +32,22 @@ class SubjectAccessRequestWorkerService(
 
   suspend fun doPoll() {
     val webClient = sarGateway.getClient(sarUrl)
-    val token = sarGateway.getClientTokenFromHmppsAuth()
-    val chosenSAR = this.pollForNewSubjectAccessRequests(webClient, token)
-    val patchResponseCode = sarGateway.claim(webClient, chosenSAR, token)
+    val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
+    val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
       log.info("Report found!")
       doReport(chosenSAR)
-      sarGateway.complete(webClient, chosenSAR, token)
+      sarGateway.complete(webClient, chosenSAR)
     }
   }
 
-  suspend fun pollForNewSubjectAccessRequests(client: WebClient, token: String): SubjectAccessRequest {
+  suspend fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest {
     var response: Array<SubjectAccessRequest>? = emptyArray()
 
     while (response.isNullOrEmpty()) {
       log.info("Polling in ${POLL_DELAY}ms")
       delay(POLL_DELAY)
-      response = sarGateway.getUnclaimed(client, token)
+      response = sarGateway.getUnclaimed(client)
     }
     return response.first()
   }
