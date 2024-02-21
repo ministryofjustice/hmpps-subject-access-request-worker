@@ -16,16 +16,19 @@ class SubjectAccessRequestGateway(@Autowired val hmppsAuthGateway: HmppsAuthGate
     return hmppsAuthGateway.getClientToken()
   }
 
-  fun getUnclaimed(client: WebClient, token: String): Array<SubjectAccessRequest>? {
+  fun getUnclaimed(client: WebClient): Array<SubjectAccessRequest>? {
+    val token = this.getClientTokenFromHmppsAuth()
     return client.get().uri("/api/subjectAccessRequests?unclaimed=true").header("Authorization", "Bearer $token").retrieve().bodyToMono(Array<SubjectAccessRequest>::class.java).block()
   }
 
-  fun claim(client: WebClient, chosenSAR: SubjectAccessRequest, token: String): HttpStatusCode? {
+  fun claim(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {
+    val token = this.getClientTokenFromHmppsAuth()
     val patchResponse = client.patch().uri("/api/subjectAccessRequests/" + chosenSAR.id.toString() + "/claim").header("Authorization", "Bearer $token").retrieve()
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
 
-  fun complete(client: WebClient, chosenSAR: SubjectAccessRequest, token: String): HttpStatusCode? {
+  fun complete(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {
+    val token = this.getClientTokenFromHmppsAuth()
     val patchResponse = client.patch().uri("/api/subjectAccessRequests/" + chosenSAR.id.toString() + "/complete").header("Authorization", "Bearer $token").retrieve()
     return patchResponse.toBodilessEntity().block()?.statusCode
   }
