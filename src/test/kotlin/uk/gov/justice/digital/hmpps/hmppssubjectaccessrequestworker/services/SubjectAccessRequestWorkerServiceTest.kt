@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -16,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Subje
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   private val dateFrom = "02/01/2023"
@@ -30,17 +33,21 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     dateFrom = dateFromFormatted,
     dateTo = dateToFormatted,
     sarCaseReferenceNumber = "1234abc",
-    services = "{1,2,4}",
-    nomisId = "",
+    services = "fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
+    nomisId = null,
     ndeliusCaseReferenceId = "1",
     requestedBy = "aName",
     requestDateTime = requestTime,
     claimAttempts = 0,
   )
 
+  private val mockSarGateway = Mockito.mock(SubjectAccessRequestGateway::class.java)
+  private val mockGetSubjectAccessRequestDataService = Mockito.mock(GetSubjectAccessRequestDataService::class.java)
+
+  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
+
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
-    val mocksarGateway = Mockito.mock(SubjectAccessRequestGateway::class.java)
     val mockClient = Mockito.mock(WebClient::class.java)
     val mockToken = "testtoken"
     val requestHeadersUriSpecMock = Mockito.mock(WebClient.RequestHeadersUriSpec::class.java)
@@ -55,9 +62,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(responseSpecMock.bodyToMono(Array<SubjectAccessRequest>::class.java))
       .thenReturn(Mono.just(arrayOf(sampleSAR)))
 
-    Mockito.`when`(mocksarGateway.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(mockSarGateway.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mocksarGateway, documentGateway, "http://localhost:8080")
+    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
       .pollForNewSubjectAccessRequests(mockClient, mockToken)
 
     val expected: SubjectAccessRequest = sampleSAR
@@ -72,7 +79,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(websarGatewayMock.getClientTokenFromHmppsAuth()).thenReturn(mockToken)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
-    SubjectAccessRequestWorkerService(websarGatewayMock, documentGateway, "http://localhost:8080").doPoll()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doPoll()
     verify(websarGatewayMock, Mockito.times(1)).getUnclaimed(mockClient, mockToken)
   }
 
@@ -86,7 +93,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(websarGatewayMock.complete(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(200))
-    SubjectAccessRequestWorkerService(websarGatewayMock, documentGateway, "http://localhost:8080").doPoll()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doPoll()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(websarGatewayMock, Mockito.times(1)).complete(mockClient, sampleSAR, mockToken)
   }
@@ -100,8 +107,27 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getClientTokenFromHmppsAuth()).thenReturn(mockToken)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient, mockToken)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR, mockToken)).thenReturn(HttpStatusCode.valueOf(400))
-    SubjectAccessRequestWorkerService(websarGatewayMock, documentGateway, "http://localhost:8080").doPoll()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doPoll()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR, mockToken)
     verify(websarGatewayMock, Mockito.times(0)).complete(mockClient, sampleSAR, mockToken)
+  }
+
+  @Test
+  fun `doReport calls getSubjectAccessRequestDataService with chosenSar details`() {
+    subjectAccessRequestWorkerService.doReport(sampleSAR)
+
+    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted)
+  }
+
+  @Test
+  fun `doReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
+      .thenThrow(RuntimeException())
+
+    val exception = shouldThrow<RuntimeException> {
+      subjectAccessRequestWorkerService.doReport(sampleSAR)
+    }
+
+    exception.message.shouldBe("Failed to retrieve data from upstream services.")
   }
 }
