@@ -32,23 +32,15 @@ class GetSubjectAccessRequestDataServiceTest(
       Mockito.reset(mockGenericHmppsApiGateway)
 
       whenever(mockGenericHmppsApiGateway.getSarData(serviceUrl = "https://fake-prisoner-search.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)).thenReturn(
-        """
-          {
-            "content": {
-              "fake-prisoner-search-property": {}
-            }
-          }
-        """.trimIndent(),
+        mapOf(
+          "content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()),
+        ),
       )
 
       whenever(mockGenericHmppsApiGateway.getSarData(serviceUrl = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)).thenReturn(
-        """
-          {
-            "content": {
-              "fake-indexer-property": {}
-            }
-          }
-        """.trimIndent(),
+        mapOf(
+          "content" to mapOf<String, Any>("fake-indexer-property" to emptyMap<String, Any>()),
+        ),
       )
     }
 

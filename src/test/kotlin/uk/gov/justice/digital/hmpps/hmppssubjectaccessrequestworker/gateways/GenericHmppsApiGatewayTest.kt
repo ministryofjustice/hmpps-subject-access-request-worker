@@ -52,15 +52,12 @@ class GenericHmppsApiGatewayTest(
           "http://localhost:4000",
           "validPrn",
         )
+        println(response)
 
         response.shouldBe(
-          """
-          {
-            "content": {
-              "additionalProp1": {}
-            }
-          }
-          """.trimIndent(),
+          mapOf(
+            "content" to mapOf("additionalProp1" to emptyMap<Any, Any>()),
+          ),
         )
       }
 

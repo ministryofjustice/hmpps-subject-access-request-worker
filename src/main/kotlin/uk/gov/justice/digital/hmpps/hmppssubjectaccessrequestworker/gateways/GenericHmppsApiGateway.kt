@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 @Component
 class GenericHmppsApiGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
-  fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): String {
+  fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): Map<*, *>? {
     val clientToken = hmppsAuthGateway.getClientToken()
 
     val webClient: WebClient = WebClient.builder().baseUrl(serviceUrl).build()
@@ -25,7 +25,7 @@ class GenericHmppsApiGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) 
         }
         .header("Authorization", "Bearer $clientToken")
         .retrieve()
-        .bodyToMono(String::class.java)
+        .bodyToMono(Map::class.java)
         .block()
       return response
     } catch (exception: RuntimeException) {
