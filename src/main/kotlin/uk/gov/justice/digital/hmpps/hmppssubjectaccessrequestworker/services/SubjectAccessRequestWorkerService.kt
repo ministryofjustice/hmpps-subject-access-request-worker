@@ -16,6 +16,7 @@ const val POLL_DELAY: Long = 10000
 @Service
 class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
+  @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Value("\${services.sar-api.base-url}")
   private val sarUrl: String,
@@ -52,8 +53,13 @@ class SubjectAccessRequestWorkerService(
     return response.first()
   }
 
-  fun doReport(sar: SubjectAccessRequest) {
-    log.info("Would do report")
+  fun doReport(chosenSAR: SubjectAccessRequest) {
+    try {
+      getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+      log.info("Would do report")
+    } catch (exception: RuntimeException) {
+      throw RuntimeException("Failed to retrieve data from upstream services.")
+    }
   }
 
   fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String): String {
