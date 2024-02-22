@@ -68,5 +68,8 @@ dps-gradle-spring-boot-suppressions.xml
 .editorconfig
 sonar-project.properties
 
-#Helm
+# Helm
 **/Chart.lock
+
+# Created by code
+app/src/test/resources/pdf/**
