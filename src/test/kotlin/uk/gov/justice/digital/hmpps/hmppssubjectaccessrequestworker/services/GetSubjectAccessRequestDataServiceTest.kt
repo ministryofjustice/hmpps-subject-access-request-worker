@@ -88,7 +88,7 @@ class GetSubjectAccessRequestDataServiceTest(
         response.shouldBe(testFilePath)
         Assertions.assertThat(File(testFilePath).exists())
 
-        val file = File(testFilePath);
+        val file = File(testFilePath)
         val document = PDDocument.load(file)
         val stripper = PDFTextStripper()
         val text = stripper.getText(document)
