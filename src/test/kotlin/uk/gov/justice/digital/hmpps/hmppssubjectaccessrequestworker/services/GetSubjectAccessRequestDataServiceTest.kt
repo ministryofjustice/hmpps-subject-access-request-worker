@@ -83,7 +83,8 @@ class GetSubjectAccessRequestDataServiceTest(
 
       it("contains content") {
         val testFilePath = "src/test/resources/pdf/dummy.pdf"
-        val response = getSubjectAccessRequestDataService.savePDF(testFilePath, "Dummy content")
+        val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
+        val response = getSubjectAccessRequestDataService.savePDF(testFilePath, testResponseObject)
         response.shouldBe(testFilePath)
         Assertions.assertThat(File(testFilePath).exists())
 
@@ -92,7 +93,7 @@ class GetSubjectAccessRequestDataServiceTest(
         val stripper = PDFTextStripper()
         val text = stripper.getText(document)
 
-        Assertions.assertThat(text).isEqualTo("Dummy content\n")
+        Assertions.assertThat(text).isEqualTo("Dummy : content\n")
         File(testFilePath).delete()
         Assertions.assertThat(File(testFilePath).exists()).isEqualTo(false)
       }

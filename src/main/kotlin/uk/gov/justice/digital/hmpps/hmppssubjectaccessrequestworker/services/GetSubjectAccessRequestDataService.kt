@@ -30,22 +30,21 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     return responseObject
   }
 
-  fun savePDF(filePath: String, content: String): String {
+  fun savePDF(filePath: String, content: Map<String, Any>): String {
     val document = PDDocument()
 
     val page = PDPage()
     document.addPage(page)
-    // File(filePath).writeText(content)
     val contentStream = PDPageContentStream(document, page)
     contentStream.setFont(PDType1Font.TIMES_ROMAN, 12f)
     contentStream.beginText()
-    contentStream.showText(content)
+    content.forEach { entry ->
+      contentStream.showText("${entry.key} : ${entry.value}")
+    }
     contentStream.endText()
     contentStream.close()
-
     document.save(filePath)
     document.close()
-    // File(filePath).writeText(
     return filePath
   }
 }
