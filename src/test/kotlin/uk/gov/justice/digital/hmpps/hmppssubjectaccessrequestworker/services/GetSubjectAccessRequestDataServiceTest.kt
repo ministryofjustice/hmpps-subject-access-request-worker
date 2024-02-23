@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.text.PDFTextStripper
 import org.assertj.core.api.Assertions
 import org.mockito.Mockito
 import org.mockito.kotlin.verify
@@ -70,11 +72,29 @@ class GetSubjectAccessRequestDataServiceTest(
     }
 
     describe("getSubjectAccessRequestData savePDF") {
-      it("returns file path for generated PDF") {
+//      it("generates a PDF and returns its location") {
+//        val testFilePath = "src/test/resources/pdf/dummy.pdf"
+//        val response = getSubjectAccessRequestDataService.savePDF(testFilePath, "Dummy content")
+//        response.shouldBe(testFilePath)
+//        Assertions.assertThat(File(testFilePath).exists())
+//        File(testFilePath).delete()
+//        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(false)
+//      }
+
+      it("contains content") {
         val testFilePath = "src/test/resources/pdf/dummy.pdf"
-        val response = getSubjectAccessRequestDataService.savePDF(testFilePath)
+        val response = getSubjectAccessRequestDataService.savePDF(testFilePath, "Dummy content")
         response.shouldBe(testFilePath)
         Assertions.assertThat(File(testFilePath).exists())
+
+        val file = File(testFilePath);
+        val document = PDDocument.load(file)
+        val stripper = PDFTextStripper()
+        val text = stripper.getText(document)
+
+        Assertions.assertThat(text).isEqualTo("Dummy content\n")
+        File(testFilePath).delete()
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(false)
       }
     }
   },
