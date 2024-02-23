@@ -72,14 +72,15 @@ class GetSubjectAccessRequestDataServiceTest(
     }
 
     describe("getSubjectAccessRequestData savePDF") {
-//      it("generates a PDF and returns its location") {
-//        val testFilePath = "src/test/resources/pdf/dummy.pdf"
-//        val response = getSubjectAccessRequestDataService.savePDF(testFilePath, "Dummy content")
-//        response.shouldBe(testFilePath)
-//        Assertions.assertThat(File(testFilePath).exists())
-//        File(testFilePath).delete()
-//        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(false)
-//      }
+      it("generates a PDF and returns its location") {
+        val testFilePath = "src/test/resources/pdf/dummy.pdf"
+        val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
+        val response = getSubjectAccessRequestDataService.savePDF(testFilePath, testResponseObject)
+        response.shouldBe(testFilePath)
+        Assertions.assertThat(File(testFilePath).exists())
+        File(testFilePath).delete()
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(false)
+      }
 
       it("contains content") {
         val testFilePath = "src/test/resources/pdf/dummy.pdf"
