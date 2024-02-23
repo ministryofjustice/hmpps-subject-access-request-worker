@@ -7,6 +7,8 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
+import java.nio.file.Files
+import java.nio.file.Path
 import java.time.LocalDate
 
 @Service
@@ -30,7 +32,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     return responseObject
   }
 
-  fun savePDF(filePath: String, content: Map<String, Any>): String {
+  fun savePDF(content: Map<String, Any>) {
     val document = PDDocument()
 
     val page = PDPage()
@@ -43,8 +45,10 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     contentStream.endText()
     contentStream.close()
-    document.save(filePath)
+
+    Files.createDirectories(Path.of("./tmp/pdf"))
+
+    document.save("./tmp/pdf/dummy.pdf")
     document.close()
-    return filePath
   }
 }
