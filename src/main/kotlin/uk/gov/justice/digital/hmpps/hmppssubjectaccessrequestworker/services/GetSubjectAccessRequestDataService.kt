@@ -1,10 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
+import com.itextpdf.text.*
 import com.itextpdf.text.pdf.PdfWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -43,23 +39,5 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
       document.add(Chunk("${entry.key} : ${entry.value}", font))
     }
     document.close()
-
-//    val document = PDDocument()
-//
-//    val page = PDPage()
-//    document.addPage(page)
-//    val contentStream = PDPageContentStream(document, page)
-//    contentStream.setFont(PDType1Font.TIMES_ROMAN, 12f)
-//    contentStream.beginText()
-//    content.forEach { entry ->
-//      contentStream.showText("${entry.key} : ${entry.value}")
-//    }
-//    contentStream.endText()
-//    contentStream.close()
-//
-//    Files.createDirectories(Path.of("./tmp/pdf"))
-//
-//    document.save("./tmp/pdf/dummy.pdf")
-//    document.close()
   }
 }
