@@ -55,8 +55,9 @@ class SubjectAccessRequestWorkerService(
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
     try {
-      getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
       log.info("Would do report")
+      val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+      getSubjectAccessRequestDataService.savePDF(responseObject)
     } catch (exception: RuntimeException) {
       throw RuntimeException("Failed to retrieve data from upstream services.")
     }

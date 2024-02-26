@@ -39,7 +39,7 @@ class GenericHmppsApiGatewayTest(
     describe("getSarData") {
 
       it("authenticates using HMPPS Auth with credentials") {
-        val response = genericHmppsApiGateway.getSarData(
+        genericHmppsApiGateway.getSarData(
           "http://localhost:4000",
           "validPrn",
         )

@@ -70,3 +70,7 @@ sonar-project.properties
 
 #Helm
 **/Chart.lock
+
+# Created by code
+app/src/test/resources/pdf/**
+/tmp
