@@ -72,7 +72,7 @@ class GetSubjectAccessRequestDataServiceTest(
     }
 
     describe("getSubjectAccessRequestData savePDF") {
-      it("generates a PDF and returns its location") {
+      it("generates a PDF") {
         val testFilePath = "./tmp/pdf/dummy.pdf"
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
         getSubjectAccessRequestDataService.savePDF(testResponseObject)
