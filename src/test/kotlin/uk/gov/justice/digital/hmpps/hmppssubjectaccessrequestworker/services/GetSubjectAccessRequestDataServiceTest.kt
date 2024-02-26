@@ -18,7 +18,6 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
 @ActiveProfiles("test")
 @ContextConfiguration(
   initializers = [ConfigDataApplicationContextInitializer::class],
@@ -90,7 +89,6 @@ class GetSubjectAccessRequestDataServiceTest(
         val text = PdfTextExtractor.getTextFromPage(reader, 1)
         Assertions.assertThat(text).isEqualTo("Dummy : content")
         Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
-
       }
     }
   },

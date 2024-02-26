@@ -1,6 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.*
+import com.itextpdf.text.BaseColor
+import com.itextpdf.text.Chunk
+import com.itextpdf.text.Document
+import com.itextpdf.text.Font
+import com.itextpdf.text.FontFactory
 import com.itextpdf.text.pdf.PdfWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -9,7 +13,6 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
-
 
 @Service
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
