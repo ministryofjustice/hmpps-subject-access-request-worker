@@ -1,8 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import com.itextpdf.text.pdf.PdfReader
+import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import org.assertj.core.api.Assertions
 import org.mockito.Mockito
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -11,8 +14,10 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
+import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
 
 @ActiveProfiles("test")
 @ContextConfiguration(
@@ -46,13 +51,13 @@ class GetSubjectAccessRequestDataServiceTest(
 
     describe("getSubjectAccessRequestData") {
       it("calls getSarData with given arguments, including service URL") {
-        val response = getSubjectAccessRequestDataService.execute(services = "fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk", nomisId = "A1234AA", dateTo = dateToFormatted)
+        getSubjectAccessRequestDataService.execute(services = "fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk", nomisId = "A1234AA", dateTo = dateToFormatted)
 
         verify(mockGenericHmppsApiGateway, Mockito.times(1)).getSarData(serviceUrl = "https://fake-prisoner-search.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)
       }
 
       it("calls the gateway separately for each service given") {
-        val response = getSubjectAccessRequestDataService.execute(services = "fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", nomisId = "A1234AA", dateTo = dateToFormatted)
+        getSubjectAccessRequestDataService.execute(services = "fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", nomisId = "A1234AA", dateTo = dateToFormatted)
 
         verify(mockGenericHmppsApiGateway, Mockito.times(1)).getSarData(serviceUrl = "https://fake-prisoner-search.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)
         verify(mockGenericHmppsApiGateway, Mockito.times(1)).getSarData(serviceUrl = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)
@@ -64,6 +69,28 @@ class GetSubjectAccessRequestDataServiceTest(
         response.keys.shouldBe(setOf("fake-hmpps-prisoner-search", "fake-hmpps-prisoner-search-indexer"))
         response["fake-hmpps-prisoner-search"].toString().shouldContain("fake-prisoner-search-property")
         response["fake-hmpps-prisoner-search-indexer"].toString().shouldContain("fake-indexer-property")
+      }
+    }
+
+    describe("getSubjectAccessRequestData savePDF") {
+      it("generates a PDF") {
+        val testFilePath = "./tmp/pdf/dummy.pdf"
+        val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
+        getSubjectAccessRequestDataService.savePDF(testResponseObject)
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
+        File(testFilePath).delete()
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(false)
+      }
+
+      it("contains content") {
+        val testFilePath = "./tmp/pdf/dummy.pdf"
+        val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
+        getSubjectAccessRequestDataService.savePDF(testResponseObject)
+        val reader = PdfReader("./tmp/pdf/dummy.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).isEqualTo("Dummy : content")
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
+
       }
     }
   },
