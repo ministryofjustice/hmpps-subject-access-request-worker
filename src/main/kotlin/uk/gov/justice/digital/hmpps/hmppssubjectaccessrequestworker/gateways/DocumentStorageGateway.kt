@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import java.util.UUID
+import java.util.*
 
 @Component
 class DocumentStorageGateway(
@@ -14,11 +14,14 @@ class DocumentStorageGateway(
 ) {
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsDocumentApiUrl).build()
 
-  fun storeDocument(documentId: Int, documentBody: String): String {
-    val uuid = UUID.randomUUID()
+  fun storeDocument(documentId: Int, documentBody: String, uuid: String? = UUID.randomUUID().toString()): String {
     val token = hmppsAuthGateway.getClientToken()
-    webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT" + { documentId.toString() }).header("Authorization", "Bearer $token").retrieve().bodyToMono(String::class.java).block()
-    return documentId.toString() + uuid.toString()
+    webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT" + { uuid })
+      .header("Authorization", "Bearer $token")
+      .header("Service-Name", "DPS-Subject-Access-Requests")
+      .bodyValue(documentBody)
+      .retrieve().bodyToMono(String::class.java).block()
+    return documentId.toString() + uuid
   }
 
   fun retrieveDocument(documentId: UUID): JSONObject? {

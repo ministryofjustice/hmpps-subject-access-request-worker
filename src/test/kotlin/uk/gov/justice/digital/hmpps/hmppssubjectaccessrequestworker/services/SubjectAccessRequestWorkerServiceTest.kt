@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Subje
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
@@ -28,7 +29,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val requestTime = LocalDateTime.now()
   private val documentGateway: DocumentStorageGateway = Mockito.mock(DocumentStorageGateway::class.java)
   private val sampleSAR = SubjectAccessRequest(
-    id = null,
+    id = 1,
     status = Status.Pending,
     dateFrom = dateFromFormatted,
     dateTo = dateToFormatted,
@@ -129,6 +130,27 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     subjectAccessRequestWorkerService.doReport(sampleSAR)
-    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).savePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).savePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())), "dummy.pdf")
+  }
+
+  @Test
+  fun `doReport calls storeSubjectAccessRequestDocument`() = runTest {
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(sampleSAR.services, sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
+      .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.savePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())), "dummy.pdf")).thenReturn(0)
+    Mockito.`when`(documentGateway.storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }")).thenReturn("Random string")
+    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doReport(sampleSAR)
+    verify(documentGateway, Mockito.times(1)).storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", null)
+  }
+
+  @Test
+  fun `storeSubjectAccessRequestDocument returns string of IDs`() = runTest {
+    val mockUUID = UUID.randomUUID().toString()
+    Mockito.`when`(documentGateway.storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", mockUUID)).thenReturn("1$mockUUID")
+    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
+      .storeSubjectAccessRequestDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", mockUUID)
+
+    val expected = "1$mockUUID"
+    Assertions.assertThat(result).isEqualTo(expected)
   }
 }
