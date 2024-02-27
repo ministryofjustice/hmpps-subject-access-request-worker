@@ -142,6 +142,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doReport(sampleSAR)
     verify(documentGateway, Mockito.times(1)).storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", null)
   }
+
   @Test
   fun `storeSubjectAccessRequestDocument returns string of IDs`() = runTest {
     val mockUUID = UUID.randomUUID().toString()
