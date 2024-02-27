@@ -57,14 +57,16 @@ class SubjectAccessRequestWorkerService(
     try {
       log.info("Would do report")
       val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
-      getSubjectAccessRequestDataService.savePDF(responseObject)
+      getSubjectAccessRequestDataService.savePDF(responseObject, "dummy.pdf")
+      val docBody = "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }"
+      chosenSAR.id?.let { this.storeSubjectAccessRequestDocument(it, docBody) }
     } catch (exception: RuntimeException) {
       throw RuntimeException("Failed to retrieve data from upstream services.")
     }
   }
 
-  fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String): String {
-    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody)
+  fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String, uuid: String? = null): String {
+    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody, uuid)
     return idsForReference
   }
 }
