@@ -1,10 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
+import com.itextpdf.text.*
 import com.itextpdf.text.pdf.PdfWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -34,8 +30,8 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   }
   fun savePDF(content: Map<String, Any>, fileName: String): Int {
     val document = Document()
-    Files.createDirectories(Path.of("./tmp/pdf"))
-    PdfWriter.getInstance(document, FileOutputStream("./tmp/pdf/$fileName"))
+    Files.createDirectories(Path.of("/tmp/pdf"))
+    PdfWriter.getInstance(document, FileOutputStream("/tmp/pdf/$fileName"))
 
     document.open()
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
