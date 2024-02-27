@@ -32,10 +32,10 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     return responseObject
   }
-  fun savePDF(content: Map<String, Any>) {
+  fun savePDF(content: Map<String, Any>, fileName: String): Int {
     val document = Document()
     Files.createDirectories(Path.of("./tmp/pdf"))
-    PdfWriter.getInstance(document, FileOutputStream("./tmp/pdf/dummy.pdf"))
+    PdfWriter.getInstance(document, FileOutputStream("./tmp/pdf/$fileName"))
 
     document.open()
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
@@ -43,5 +43,6 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
       document.add(Chunk("${entry.key} : ${entry.value}", font))
     }
     document.close()
+    return 0
   }
 }
