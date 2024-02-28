@@ -19,12 +19,17 @@ class DocumentStorageGateway(
   fun storeDocument(documentId: Int, documentBody: String, uuid: String? = UUID.randomUUID().toString()): String? {
     log.info("Storing document..")
     val token = hmppsAuthGateway.getClientToken()
-    val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT" + { uuid })
-      .header("Authorization", "Bearer $token")
-      .header("Service-Name", "DPS-Subject-Access-Requests")
-      .bodyValue(documentBody)
-      .retrieve().bodyToMono(String::class.java).block()
-    return response
+    try {
+      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT" + { uuid })
+        .header("Authorization", "Bearer $token")
+        .header("Service-Name", "DPS-Subject-Access-Requests")
+        .bodyValue(documentBody)
+        .retrieve().bodyToMono(String::class.java).block()
+      return response
+    } catch (exception: Exception) {
+      log.info("ERROR: $exception")
+      throw Exception(exception)
+    }
     // return documentId.toString() + uuid
   }
 
