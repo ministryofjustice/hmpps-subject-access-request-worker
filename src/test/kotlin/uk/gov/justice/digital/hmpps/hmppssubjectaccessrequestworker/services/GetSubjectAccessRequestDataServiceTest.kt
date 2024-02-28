@@ -100,6 +100,17 @@ class GetSubjectAccessRequestDataServiceTest(
         Assertions.assertThat(text).isEqualTo("content : {fake-prisoner-search-property={}}")
         Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
       }
+
+      it("handles no data being extracted") {
+        val testFilePath = "/tmp/pdf/dummy.pdf"
+        val testResponseObject = mutableMapOf<String, Any>()
+        Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
+        getSubjectAccessRequestDataService.savePDF(testResponseObject, "dummy.pdf")
+        val reader = PdfReader("/tmp/pdf/dummy.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).isEqualTo("NO DATA FOUND")
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
+      }
     }
   },
 )
