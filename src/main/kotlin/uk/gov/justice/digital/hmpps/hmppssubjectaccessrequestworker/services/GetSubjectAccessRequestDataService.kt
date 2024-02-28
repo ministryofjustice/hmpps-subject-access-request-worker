@@ -45,6 +45,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
     log.info("Set font")
     content.forEach { entry ->
+      log.info(entry.key + entry.value)
       document.add(Chunk("${entry.key} : ${entry.value}", font))
     }
     log.info("Finished writing report")
