@@ -44,7 +44,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     log.info("Started writing to PDF")
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
     log.info("Set font")
-    if ( content == emptyMap<Any, Any>() ) {
+    if (content == emptyMap<Any, Any>()) {
       document.add(Chunk("NO DATA FOUND", font))
     }
     content.forEach { entry ->
