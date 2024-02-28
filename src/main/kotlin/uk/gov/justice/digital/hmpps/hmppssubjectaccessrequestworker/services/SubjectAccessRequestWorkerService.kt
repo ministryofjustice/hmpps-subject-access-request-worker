@@ -57,7 +57,7 @@ class SubjectAccessRequestWorkerService(
     try {
       log.info("Creating report..")
       val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
-      log.info("Extracted report data")
+      log.info("Extracted report data$responseObject")
       getSubjectAccessRequestDataService.savePDF(responseObject, "dummy.pdf")
       log.info("Created PDF")
       val docBody = "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }"

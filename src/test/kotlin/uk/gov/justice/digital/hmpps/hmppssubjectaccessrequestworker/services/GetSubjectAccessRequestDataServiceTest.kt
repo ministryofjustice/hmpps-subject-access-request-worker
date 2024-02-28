@@ -90,6 +90,16 @@ class GetSubjectAccessRequestDataServiceTest(
         Assertions.assertThat(text).isEqualTo("Dummy : content")
         Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
       }
+
+      it("contains content with mock map") {
+        val testFilePath = "/tmp/pdf/dummy.pdf"
+        val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
+        getSubjectAccessRequestDataService.savePDF(testResponseObject, "dummy.pdf")
+        val reader = PdfReader("/tmp/pdf/dummy.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).isEqualTo("content : {fake-prisoner-search-property={}}")
+        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
+      }
     }
   },
 )

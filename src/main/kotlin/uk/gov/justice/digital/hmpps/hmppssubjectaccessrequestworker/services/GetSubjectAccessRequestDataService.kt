@@ -1,10 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
+import com.itextpdf.text.*
 import com.itextpdf.text.pdf.PdfWriter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,6 +41,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
     log.info("Set font")
     content.forEach { entry ->
+      log.info(entry.key + entry.value)
       document.add(Chunk("${entry.key} : ${entry.value}", font))
     }
     log.info("Finished writing report")
