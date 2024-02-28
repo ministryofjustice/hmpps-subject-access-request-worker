@@ -20,7 +20,7 @@ class DocumentStorageGateway(
     log.info("Storing document..")
     val token = hmppsAuthGateway.getClientToken()
     try {
-      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT" + { uuid })
+      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuid")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(documentBody)
