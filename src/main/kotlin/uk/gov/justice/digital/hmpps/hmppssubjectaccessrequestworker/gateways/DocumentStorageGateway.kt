@@ -37,7 +37,9 @@ class DocumentStorageGateway(
 
     val multipartBodyBuilder = MultipartBodyBuilder()
     multipartBodyBuilder.part("file", FileSystemResource(uploadFile))
-    multipartBodyBuilder.part("metadata", "")
+    multipartBodyBuilder.part("metadata", 1)
+    log.info(multipartBodyBuilder.build().toSingleValueMap().keys.toString())
+    log.info(multipartBodyBuilder.build().toSingleValueMap().values.toString())
     try {
       val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
         .header("Authorization", "Bearer $token")
