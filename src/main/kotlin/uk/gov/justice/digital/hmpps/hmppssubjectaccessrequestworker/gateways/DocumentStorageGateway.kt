@@ -48,7 +48,8 @@ class DocumentStorageGateway(
         .bodyValue(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
         .retrieve().onStatus(HttpStatusCode::is4xxClientError) { response ->
           log.info(response.bodyToMono(String::class.java).toString())
-          throw Exception(response.bodyToMono(String::class.java).toString()) }
+          throw Exception(response.bodyToMono(String::class.java).toString())
+        }
         .bodyToMono(String::class.java).block()
       return response
     } catch (exception: Exception) {
