@@ -60,7 +60,7 @@ class SubjectAccessRequestWorkerService(
       log.info("Extracted report data$responseObject")
       getSubjectAccessRequestDataService.savePDF(responseObject, "dummy.pdf")
       log.info("Created PDF")
-      val docBody = "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }"
+      val docBody = "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf\\\" }"
       chosenSAR.id?.let {
         val response = this.storeSubjectAccessRequestDocument(it, docBody)
         log.info("Stored PDF$response")
