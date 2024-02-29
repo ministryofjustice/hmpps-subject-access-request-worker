@@ -4,9 +4,14 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.FileSystemResource
+import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import java.io.File
 import java.util.*
+
 
 @Component
 class DocumentStorageGateway(
@@ -16,7 +21,7 @@ class DocumentStorageGateway(
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsDocumentApiUrl).build()
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  fun storeDocument(documentId: Int, documentBody: String, uuid: String?): String? {
+  fun storeDocument(documentId: Int, filePath: String, uuid: String?): String? {
     val uuidForPath: String
     if (uuid == null) {
       uuidForPath = UUID.randomUUID().toString()
@@ -25,14 +30,20 @@ class DocumentStorageGateway(
     }
     log.info("Storing document..")
     val token = hmppsAuthGateway.getClientToken()
-    log.info("Body: $documentBody")
-    log.info("UUID: $uuid")
+    log.info("File path: $filePath")
+    log.info("UUID: $uuidForPath")
     log.info("Token: $token")
+
+    val uploadFile = File(filePath)
+
+    val multipartBodyBuilder = MultipartBodyBuilder()
+    multipartBodyBuilder.part("file", FileSystemResource(uploadFile))
+    multipartBodyBuilder.part("metadata", "")
     try {
       val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
-        .bodyValue(documentBody)
+        .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
         .retrieve().bodyToMono(String::class.java).block()
       return response
     } catch (exception: Exception) {
