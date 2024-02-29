@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
@@ -45,7 +46,10 @@ class DocumentStorageGateway(
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
-        .retrieve().bodyToMono(String::class.java).block()
+        .retrieve().onStatus(HttpStatusCode::is4xxClientError) { response ->
+          log.info(response.bodyToMono(String::class.java).toString())
+          throw Exception(response.bodyToMono(String::class.java).toString()) }
+        .bodyToMono(String::class.java).block()
       return response
     } catch (exception: Exception) {
       log.info("ERROR: $exception")
