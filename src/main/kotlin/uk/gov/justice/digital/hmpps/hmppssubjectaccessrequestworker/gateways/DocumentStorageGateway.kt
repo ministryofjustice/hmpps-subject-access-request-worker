@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 
-
 @Component
 class DocumentStorageGateway(
   @Autowired val hmppsAuthGateway: HmppsAuthGateway,
