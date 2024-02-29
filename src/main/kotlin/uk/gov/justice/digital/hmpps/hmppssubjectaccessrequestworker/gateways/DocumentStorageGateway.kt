@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.util.*
 
-
 @Component
 class DocumentStorageGateway(
   @Autowired val hmppsAuthGateway: HmppsAuthGateway,
