@@ -16,14 +16,20 @@ class DocumentStorageGateway(
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsDocumentApiUrl).build()
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  fun storeDocument(documentId: Int, documentBody: String, uuid: String? = UUID.randomUUID().toString()): String? {
+  fun storeDocument(documentId: Int, documentBody: String, uuid: String?): String? {
+    val uuidForPath: String
+    if (uuid == null) {
+      uuidForPath = UUID.randomUUID().toString()
+    } else {
+      uuidForPath = uuid
+    }
     log.info("Storing document..")
     val token = hmppsAuthGateway.getClientToken()
     log.info("Body: $documentBody")
     log.info("UUID: $uuid")
     log.info("Token: $token")
     try {
-      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuid")
+      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(documentBody)

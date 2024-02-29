@@ -138,7 +138,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(sampleSAR.services, sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGetSubjectAccessRequestDataService.savePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())), "dummy.pdf")).thenReturn(0)
-    Mockito.`when`(documentGateway.storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }")).thenReturn("Random string")
+    Mockito.`when`(documentGateway.storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", null)).thenReturn("Random string")
     SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doReport(sampleSAR)
     verify(documentGateway, Mockito.times(1)).storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", null)
   }
