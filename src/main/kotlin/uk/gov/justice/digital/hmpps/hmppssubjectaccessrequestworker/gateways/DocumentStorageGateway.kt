@@ -42,7 +42,7 @@ class DocumentStorageGateway(
       val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
-        .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
+        .bodyValue(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
         .retrieve().bodyToMono(String::class.java).block()
       return response
     } catch (exception: Exception) {
