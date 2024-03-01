@@ -33,16 +33,22 @@ class DocumentStorageGateway(
     log.info("Token: $token")
 
     val multipartBodyBuilder = MultipartBodyBuilder()
-    log.info("BUILDER: " + multipartBodyBuilder.apply {
-      part("file", ClassPathResource(filePath))
-      part("metadata", 1) }.build().toString())
+    log.info(
+      "BUILDER: " + multipartBodyBuilder.apply {
+        part("file", ClassPathResource(filePath))
+        part("metadata", 1)
+      }.build().toString(),
+    )
     try {
       val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
-        .bodyValue(multipartBodyBuilder.apply {
-          part("file", ClassPathResource(filePath))
-          part("metadata", 1) }.build())
+        .bodyValue(
+          multipartBodyBuilder.apply {
+            part("file", ClassPathResource(filePath))
+            part("metadata", 1)
+          }.build(),
+        )
         .retrieve() // Don't treat 401 responses as errors:
         .onStatus(
           { status -> status === HttpStatus.BAD_REQUEST },
