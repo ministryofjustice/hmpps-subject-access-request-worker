@@ -37,9 +37,9 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   fun savePDF(content: Map<String, Any>, fileName: String): Int {
     log.info("Saving report..")
     val document = Document()
-    Files.createDirectories(Path.of("tmp/pdf"))
+    Files.createDirectories(Path.of("/tmp/pdf"))
     log.info("Created path")
-    PdfWriter.getInstance(document, FileOutputStream("tmp/pdf/$fileName"))
+    PdfWriter.getInstance(document, FileOutputStream("/tmp/pdf/$fileName"))
     document.open()
     log.info("Started writing to PDF")
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
