@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
 import java.util.*
 
 @Component
@@ -52,7 +53,7 @@ class DocumentStorageGateway(
         .retrieve() // Don't treat 401 responses as errors:
         .onStatus(
           { status -> status === HttpStatus.BAD_REQUEST },
-          { clientResponse -> throw Exception(clientResponse.bodyToMono(String::class.java).toString()) },
+          { clientResponse -> throw Exception(clientResponse.bodyToMono(HmppsSubjectAccessRequestWorkerExceptionHandler::class.java).toString()) },
         )
         .bodyToMono(String::class.java)
         .block()
