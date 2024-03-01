@@ -8,8 +8,8 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
 import java.util.*
 
 @Component
@@ -33,30 +33,32 @@ class DocumentStorageGateway(
     log.info("UUID: $uuidForPath")
     log.info("Token: $token")
 
-    // val uploadFile = File(filePath)
     val multipartBodyBuilder = MultipartBodyBuilder()
-    multipartBodyBuilder.part("file", ClassPathResource(filePath))
-    multipartBodyBuilder.part("metadata", 1)
-    log.info(multipartBodyBuilder.build().toSingleValueMap().keys.toString())
-    log.info(multipartBodyBuilder.build().toSingleValueMap().values.toString())
+    log.info(
+      "BUILDER: " + multipartBodyBuilder.apply {
+        part("file", ClassPathResource(filePath))
+        part("metadata", 1)
+      }.build().toString(),
+    )
     try {
       val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
-        .bodyValue(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
+        .bodyValue(
+          multipartBodyBuilder.apply {
+            part("file", ClassPathResource(filePath))
+            part("metadata", 1)
+          }.build(),
+        )
         .retrieve() // Don't treat 401 responses as errors:
         .onStatus(
           { status -> status === HttpStatus.BAD_REQUEST },
-          { clientResponse -> throw Exception(clientResponse.bodyToMono(String::class.java).toString()) },
+          { clientResponse -> throw Exception(clientResponse.bodyToMono(HmppsSubjectAccessRequestWorkerExceptionHandler::class.java).toString()) },
         )
-        .toEntity(String::class.java)
+        .bodyToMono(String::class.java)
         .block()
-//        .retrieve().onStatus(HttpStatusCode::is4xxClientError) { response ->
-//          log.info(response.body .bodyToMono().toString()) // .bodyToMono(String::class.java).toString())
-//          throw Exception(response.bodyToMono(String::class.java).toString())
-//        }
-//        .bodyToMono(String::class.java).block()
-      return response!!.toString()
+
+      return response
     } catch (exception: Exception) {
       log.info("ERROR: $exception")
       throw Exception(exception)
