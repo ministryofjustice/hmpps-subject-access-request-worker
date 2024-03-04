@@ -62,11 +62,8 @@ class SubjectAccessRequestWorkerService(
       log.info("Extracted report data$responseObject")
       val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject)
       log.info("Created PDF")
-      val filePath = "/tmp/pdf/dummy.pdf"
-      chosenSAR.id.let {
-        val response = this.storeSubjectAccessRequestDocument(it, pdfStream)
-        log.info("Stored PDF$response")
-      }
+      val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
+      log.info("Stored PDF$response")
     } catch (exception: RuntimeException) {
       throw exception
     }
