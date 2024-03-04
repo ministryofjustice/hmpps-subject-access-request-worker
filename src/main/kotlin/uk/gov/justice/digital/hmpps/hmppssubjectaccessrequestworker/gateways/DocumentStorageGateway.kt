@@ -4,7 +4,6 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
@@ -41,7 +40,7 @@ class DocumentStorageGateway(
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(
           multipartBodyBuilder.apply {
-            part("file", ClassPathResource(filePath))
+            part("file", FileSystemResource("file:$filePath"))
             part("metadata", 1)
           }.build(),
         )
