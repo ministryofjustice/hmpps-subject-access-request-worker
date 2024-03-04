@@ -67,7 +67,7 @@ class SubjectAccessRequestWorkerService(
         log.info("Stored PDF$response")
       }
     } catch (exception: RuntimeException) {
-      throw RuntimeException("Failed to retrieve data from upstream services.")
+      throw exception
     }
   }
 
