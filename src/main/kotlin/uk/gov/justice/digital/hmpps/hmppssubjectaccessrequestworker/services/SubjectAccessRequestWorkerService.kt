@@ -44,7 +44,7 @@ class SubjectAccessRequestWorkerService(
         sarGateway.complete(webClient, chosenSAR)
       } catch (exception: Exception) {
         log.error(exception.message)
-        log.error(exception.stackTrace.toString())
+        exception.printStackTrace()
       }
     }
   }
