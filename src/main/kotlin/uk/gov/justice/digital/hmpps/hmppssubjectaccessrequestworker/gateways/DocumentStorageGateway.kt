@@ -31,7 +31,7 @@ class DocumentStorageGateway(
     val multipartBodyBuilder = MultipartBodyBuilder()
     log.info(
       "BUILDER: " + multipartBodyBuilder.apply {
-        part("file", FileSystemResource(filePath))
+        part("file", FileSystemResource("file:$filePath"))
         part("metadata", 1)
       }.build().toString(),
     )
