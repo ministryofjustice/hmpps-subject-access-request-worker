@@ -4,14 +4,13 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
-import java.util.*
+import java.util.UUID
 
 @Component
 class DocumentStorageGateway(
@@ -41,7 +40,7 @@ class DocumentStorageGateway(
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(
           multipartBodyBuilder.apply {
-            part("file", ClassPathResource(filePath))
+            part("file", FileSystemResource("file:$filePath"))
             part("metadata", 1)
           }.build(),
         )
@@ -56,7 +55,7 @@ class DocumentStorageGateway(
       return response
     } catch (exception: Exception) {
       log.info("ERROR: $exception")
-      throw Exception(exception)
+      throw exception
     }
   }
 
