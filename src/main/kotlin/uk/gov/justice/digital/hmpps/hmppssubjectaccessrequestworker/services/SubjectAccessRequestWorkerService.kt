@@ -39,8 +39,13 @@ class SubjectAccessRequestWorkerService(
     val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
       log.info("Report found!")
-      doReport(chosenSAR)
-      sarGateway.complete(webClient, chosenSAR)
+      try {
+        doReport(chosenSAR)
+        sarGateway.complete(webClient, chosenSAR)
+      } catch (exception: Exception) {
+        log.error(exception.message)
+        log.error(exception.stackTrace.toString())
+      }
     }
   }
 
@@ -70,7 +75,7 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
-    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody)
-    return idsForReference
+    val response = documentStorageGateway.storeDocument(sarId, docBody)
+    return response
   }
 }
