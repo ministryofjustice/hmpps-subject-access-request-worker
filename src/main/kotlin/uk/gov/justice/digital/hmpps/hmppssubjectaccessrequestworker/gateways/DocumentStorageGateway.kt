@@ -4,13 +4,13 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
-import java.util.UUID
+import java.util.*
 
 @Component
 class DocumentStorageGateway(
@@ -30,7 +30,7 @@ class DocumentStorageGateway(
     val multipartBodyBuilder = MultipartBodyBuilder()
     log.info(
       "BUILDER: " + multipartBodyBuilder.apply {
-        part("file", FileSystemResource("file:$filePath"))
+        part("file", ClassPathResource("dummy.pdf"))
         part("metadata", 1)
       }.build().toString(),
     )
@@ -40,7 +40,7 @@ class DocumentStorageGateway(
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(
           multipartBodyBuilder.apply {
-            part("file", FileSystemResource("file:$filePath"))
+            part("file", ClassPathResource("dummy.pdf"))
             part("metadata", 1)
           }.build(),
         )
