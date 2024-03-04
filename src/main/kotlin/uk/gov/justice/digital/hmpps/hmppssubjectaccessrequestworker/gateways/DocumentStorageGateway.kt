@@ -10,7 +10,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
-import java.util.*
+import java.util.UUID
 
 @Component
 class DocumentStorageGateway(
@@ -55,7 +55,7 @@ class DocumentStorageGateway(
       return response
     } catch (exception: Exception) {
       log.info("ERROR: $exception")
-      throw Exception(exception)
+      throw exception
     }
   }
 
