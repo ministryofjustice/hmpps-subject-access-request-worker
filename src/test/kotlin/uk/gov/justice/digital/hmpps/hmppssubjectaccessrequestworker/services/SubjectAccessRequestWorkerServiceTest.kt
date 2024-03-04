@@ -29,7 +29,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val requestTime = LocalDateTime.now()
   private val documentGateway: DocumentStorageGateway = Mockito.mock(DocumentStorageGateway::class.java)
   private val sampleSAR = SubjectAccessRequest(
-    id = 1,
+    id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
     status = Status.Pending,
     dateFrom = dateFromFormatted,
     dateTo = dateToFormatted,
@@ -138,19 +138,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(sampleSAR.services, sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGetSubjectAccessRequestDataService.savePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())), "dummy.pdf")).thenReturn(0)
-    Mockito.`when`(documentGateway.storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", null)).thenReturn("Random string")
+    Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }")).thenReturn("Random string")
     SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doReport(sampleSAR)
-    verify(documentGateway, Mockito.times(1)).storeDocument(1, "/tmp/pdf/dummy.pdf", null)
-  }
-
-  @Test
-  fun `storeSubjectAccessRequestDocument returns string of IDs`() = runTest {
-    val mockUUID = UUID.randomUUID().toString()
-    Mockito.`when`(documentGateway.storeDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", mockUUID)).thenReturn("1$mockUUID")
-    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
-      .storeSubjectAccessRequestDocument(1, "{ \\\"file\\\": \\\"/tmp/pdf/dummy.pdf }", mockUUID)
-
-    val expected = "1$mockUUID"
-    Assertions.assertThat(result).isEqualTo(expected)
+    verify(documentGateway, Mockito.times(1)).storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), "/tmp/pdf/dummy.pdf")
   }
 }

@@ -21,17 +21,11 @@ class DocumentStorageGateway(
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsDocumentApiUrl).build()
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  fun storeDocument(documentId: Int, filePath: String, uuid: String?): String? {
-    val uuidForPath: String
-    if (uuid == null) {
-      uuidForPath = UUID.randomUUID().toString()
-    } else {
-      uuidForPath = uuid
-    }
+  fun storeDocument(documentId: UUID, filePath: String): String? {
     log.info("Storing document..")
     val token = hmppsAuthGateway.getClientToken()
     log.info("File path: $filePath")
-    log.info("UUID: $uuidForPath")
+    log.info("UUID: $documentId")
     log.info("Token: $token")
 
     val multipartBodyBuilder = MultipartBodyBuilder()
@@ -42,7 +36,7 @@ class DocumentStorageGateway(
       }.build().toString(),
     )
     try {
-      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$uuidForPath")
+      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$documentId")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(
@@ -64,7 +58,6 @@ class DocumentStorageGateway(
       log.info("ERROR: $exception")
       throw Exception(exception)
     }
-    // return documentId.toString() + uuid
   }
 
   fun retrieveDocument(documentId: UUID): JSONObject? {

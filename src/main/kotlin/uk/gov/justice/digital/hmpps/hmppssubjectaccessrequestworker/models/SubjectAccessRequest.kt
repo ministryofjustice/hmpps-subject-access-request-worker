@@ -3,11 +3,10 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 enum class Status {
   Pending,
@@ -17,8 +16,7 @@ enum class Status {
 @Entity
 data class SubjectAccessRequest(
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: Int? = null,
+  val id: UUID = UUID.randomUUID(),
   @Enumerated(EnumType.STRING)
   val status: Status = Status.Pending,
   val dateFrom: LocalDate? = null,
