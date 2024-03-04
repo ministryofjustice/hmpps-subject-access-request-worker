@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
-import java.io.FileOutputStream
-import java.nio.file.Files
-import java.nio.file.Path
+import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
 @Service
@@ -34,12 +32,13 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     return responseObject
   }
-  fun savePDF(content: Map<String, Any>, fileName: String): Int {
+  fun generatePDF(content: Map<String, Any>): ByteArrayOutputStream {
     log.info("Saving report..")
     val document = Document()
-    Files.createDirectories(Path.of("/tmp/pdf"))
-    log.info("Created path")
-    PdfWriter.getInstance(document, FileOutputStream("/tmp/pdf/$fileName"))
+    // Files.createDirectories(Path.of("/tmp/pdf"))
+    // log.info("Created path")
+    val pdfStream = ByteArrayOutputStream()
+    PdfWriter.getInstance(document, pdfStream)
     document.open()
     log.info("Started writing to PDF")
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
@@ -54,6 +53,6 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
-    return 0
+    return pdfStream
   }
 }

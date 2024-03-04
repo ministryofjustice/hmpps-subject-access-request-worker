@@ -4,12 +4,13 @@ import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 @Component
@@ -20,17 +21,16 @@ class DocumentStorageGateway(
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsDocumentApiUrl).build()
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  fun storeDocument(documentId: UUID, filePath: String): String? {
+  fun storeDocument(documentId: UUID, docBody: ByteArrayOutputStream): String? {
     log.info("Storing document..")
     val token = hmppsAuthGateway.getClientToken()
-    log.info("File path: $filePath")
     log.info("UUID: $documentId")
     log.info("Token: $token")
 
     val multipartBodyBuilder = MultipartBodyBuilder()
     log.info(
       "BUILDER: " + multipartBodyBuilder.apply {
-        part("file", ClassPathResource("dummy.pdf"))
+        part("file", ByteArrayResource(docBody.toByteArray()))
         part("metadata", 1)
       }.build().toString(),
     )
@@ -40,7 +40,7 @@ class DocumentStorageGateway(
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(
           multipartBodyBuilder.apply {
-            part("file", ClassPathResource("dummy.pdf"))
+            part("file", ByteArrayResource(docBody.toByteArray()))
             part("metadata", 1)
           }.build(),
         )
