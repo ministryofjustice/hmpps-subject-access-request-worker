@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
+import java.util.*
 
 const val POLL_DELAY: Long = 10000
 
@@ -61,7 +62,7 @@ class SubjectAccessRequestWorkerService(
       getSubjectAccessRequestDataService.savePDF(responseObject, "dummy.pdf")
       log.info("Created PDF")
       val filePath = "/tmp/pdf/dummy.pdf"
-      chosenSAR.id?.let {
+      chosenSAR.id.let {
         val response = this.storeSubjectAccessRequestDocument(it, filePath)
         log.info("Stored PDF$response")
       }
@@ -70,8 +71,8 @@ class SubjectAccessRequestWorkerService(
     }
   }
 
-  fun storeSubjectAccessRequestDocument(sarId: Int, docBody: String, uuid: String? = null): String? {
-    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody, uuid)
+  fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: String): String? {
+    val idsForReference = documentStorageGateway.storeDocument(sarId, docBody)
     return idsForReference
   }
 }
