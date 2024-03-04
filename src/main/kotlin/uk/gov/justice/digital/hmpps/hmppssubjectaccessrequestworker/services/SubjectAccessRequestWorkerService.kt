@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 const val POLL_DELAY: Long = 10000
@@ -59,19 +60,16 @@ class SubjectAccessRequestWorkerService(
       log.info("Creating report..")
       val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
       log.info("Extracted report data$responseObject")
-      getSubjectAccessRequestDataService.savePDF(responseObject, "dummy.pdf")
+      val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject)
       log.info("Created PDF")
-      val filePath = "/tmp/pdf/dummy.pdf"
-      chosenSAR.id.let {
-        val response = this.storeSubjectAccessRequestDocument(it, filePath)
-        log.info("Stored PDF$response")
-      }
+      val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
+      log.info("Stored PDF$response")
     } catch (exception: RuntimeException) {
       throw exception
     }
   }
 
-  fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: String): String? {
+  fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
     val idsForReference = documentStorageGateway.storeDocument(sarId, docBody)
     return idsForReference
   }
