@@ -28,19 +28,25 @@ class DocumentStorageGateway(
     log.info("Token: $token")
 
     val multipartBodyBuilder = MultipartBodyBuilder()
+    val contentsAsResource: ByteArrayResource = object : ByteArrayResource(docBody.toByteArray()) {
+      override fun getFilename(): String {
+        return "report.pdf"
+      }
+    }
     log.info(
       "BUILDER: " + multipartBodyBuilder.apply {
         part("file", ByteArrayResource(docBody.toByteArray()))
         part("metadata", 1)
       }.build().toString(),
     )
+    log.info("contentsAsResource: $contentsAsResource")
     try {
       val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$documentId")
         .header("Authorization", "Bearer $token")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .bodyValue(
           multipartBodyBuilder.apply {
-            part("file", ByteArrayResource(docBody.toByteArray()))
+            part("file", contentsAsResource)
             part("metadata", 1)
           }.build(),
         )
