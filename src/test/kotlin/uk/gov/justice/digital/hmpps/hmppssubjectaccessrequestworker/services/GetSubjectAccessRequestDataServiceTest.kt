@@ -93,16 +93,16 @@ class GetSubjectAccessRequestDataServiceTest(
         verify(mockDocument, Mockito.times(1)).close()
       }
 
-//      it("handles no data being extracted") {
-//        val testFilePath = "/tmp/pdf/dummy.pdf"
-//        val testResponseObject = mutableMapOf<String, Any>()
-//        Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
-//        getSubjectAccessRequestDataService.generatePDF(testResponseObject)
-//        val reader = PdfReader("/tmp/pdf/dummy.pdf")
-//        val text = PdfTextExtractor.getTextFromPage(reader, 1)
-//        Assertions.assertThat(text).isEqualTo("NO DATA FOUND")
-//        Assertions.assertThat(File(testFilePath).exists()).isEqualTo(true)
-//      }
+      it("handles no data being extracted") {
+        val testResponseObject = mutableMapOf<String, Any>()
+        val mockDocument = Mockito.mock(Document::class.java)
+        val mockPdfService = Mockito.mock(PdfService::class.java)
+        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
+        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
+        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
+        Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
+      }
     }
   },
 )
