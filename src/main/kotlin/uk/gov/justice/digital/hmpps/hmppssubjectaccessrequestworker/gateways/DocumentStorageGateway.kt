@@ -60,7 +60,6 @@ class DocumentStorageGateway(
 
       return response
     } catch (exception: Exception) {
-      log.info("ERROR: $exception")
       throw exception
     }
   }
