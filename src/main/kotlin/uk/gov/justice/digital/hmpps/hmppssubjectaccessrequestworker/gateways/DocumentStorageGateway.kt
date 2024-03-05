@@ -22,46 +22,31 @@ class DocumentStorageGateway(
   private val log = LoggerFactory.getLogger(this::class.java)
 
   fun storeDocument(documentId: UUID, docBody: ByteArrayOutputStream): String? {
-    log.info("Storing document..")
+    log.info("Storing document with UUID $documentId")
     val token = hmppsAuthGateway.getClientToken()
-    log.info("UUID: $documentId")
-    log.info("Token: $token")
-
     val multipartBodyBuilder = MultipartBodyBuilder()
     val contentsAsResource: ByteArrayResource = object : ByteArrayResource(docBody.toByteArray()) {
       override fun getFilename(): String {
         return "report.pdf"
       }
     }
-    log.info(
-      "BUILDER: " + multipartBodyBuilder.apply {
-        part("file", ByteArrayResource(docBody.toByteArray()))
-        part("metadata", 1)
-      }.build().toString(),
-    )
-    log.info("contentsAsResource: $contentsAsResource")
-    try {
-      val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$documentId")
-        .header("Authorization", "Bearer $token")
-        .header("Service-Name", "DPS-Subject-Access-Requests")
-        .bodyValue(
-          multipartBodyBuilder.apply {
-            part("file", contentsAsResource)
-            part("metadata", 1)
-          }.build(),
-        )
-        .retrieve() // Don't treat 401 responses as errors:
-        .onStatus(
-          { status -> status === HttpStatus.BAD_REQUEST },
-          { clientResponse -> throw Exception(clientResponse.bodyToMono(HmppsSubjectAccessRequestWorkerExceptionHandler::class.java).toString()) },
-        )
-        .bodyToMono(String::class.java)
-        .block()
-
-      return response
-    } catch (exception: Exception) {
-      throw exception
-    }
+    val response = webClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$documentId")
+      .header("Authorization", "Bearer $token")
+      .header("Service-Name", "DPS-Subject-Access-Requests")
+      .bodyValue(
+        multipartBodyBuilder.apply {
+          part("file", contentsAsResource)
+          part("metadata", 1)
+        }.build(),
+      )
+      .retrieve() // Don't treat 401 responses as errors:
+      .onStatus(
+        { status -> status === HttpStatus.BAD_REQUEST },
+        { clientResponse -> throw Exception(clientResponse.bodyToMono(HmppsSubjectAccessRequestWorkerExceptionHandler::class.java).toString()) },
+      )
+      .bodyToMono(String::class.java)
+      .block()
+    return response
   }
 
   fun retrieveDocument(documentId: UUID): JSONObject? {
