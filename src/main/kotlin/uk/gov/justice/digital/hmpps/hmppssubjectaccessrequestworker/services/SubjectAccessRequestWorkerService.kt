@@ -61,17 +61,13 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
-    try {
-      log.info("Creating report..")
-      val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
-      log.info("Extracted report data$responseObject")
-      val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject)
-      log.info("Created PDF")
-      val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
-      log.info("Stored PDF$response")
-    } catch (exception: RuntimeException) {
-      throw exception
-    }
+    log.info("Creating report..")
+    val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+    log.info("Extracted report data$responseObject")
+    val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject)
+    log.info("Created PDF")
+    val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
+    log.info("Stored PDF$response")
   }
 
   fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
