@@ -1,10 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import com.itextpdf.text.Document
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatusCode
 import org.springframework.web.reactive.function.client.WebClient
@@ -44,6 +47,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   private val mockSarGateway = Mockito.mock(SubjectAccessRequestGateway::class.java)
   private val mockGetSubjectAccessRequestDataService = Mockito.mock(GetSubjectAccessRequestDataService::class.java)
+  private val mockDocument = Mockito.mock(Document::class.java)
+  private val mockPdfService = Mockito.mock(PdfService::class.java)
+  private val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
   val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080")
 
@@ -92,7 +98,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.complete(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(any(), any(), any(), any()))
       .thenReturn(pdfStreamMock)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
@@ -120,7 +126,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(any(), any(), any(), any()))
       .thenReturn(pdfStreamMock)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
@@ -133,27 +139,25 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   fun `doReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
       .thenThrow(RuntimeException())
-
-    shouldThrow<RuntimeException> {
+    val exception = shouldThrow<RuntimeException> {
       subjectAccessRequestWorkerService.doReport(sampleSAR)
     }
-
-    // exception.message.shouldBe("Failed to retrieve data from upstream services.")
+    exception.message.shouldBe(null)
   }
 
   @Test
-  fun `doReport calls data service savePDF`() {
+  fun `doReport calls data service generatePDF`() {
     val pdfStreamMock = Mockito.mock(ByteArrayOutputStream::class.java)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(any(), any(), any(), any()))
       .thenReturn(pdfStreamMock)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
     subjectAccessRequestWorkerService.doReport(sampleSAR)
-    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).generatePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).generatePDF(any(), any(), any(), any())
   }
 
   @Test
@@ -161,7 +165,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(sampleSAR.services, sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     val mockByteArrayOutputStream = Mockito.mock(ByteArrayOutputStream::class.java)
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))).thenReturn(mockByteArrayOutputStream)
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.generatePDF(any(), any(), any(), any())).thenReturn(mockByteArrayOutputStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockByteArrayOutputStream)).thenReturn("Random string")
     SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, "http://localhost:8080").doReport(sampleSAR)
     verify(documentGateway, Mockito.times(1)).storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockByteArrayOutputStream)

@@ -5,7 +5,6 @@ import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
 import com.itextpdf.text.Font
 import com.itextpdf.text.FontFactory
-import com.itextpdf.text.pdf.PdfWriter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -32,13 +31,14 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     return responseObject
   }
-  fun generatePDF(content: Map<String, Any>): ByteArrayOutputStream {
+  fun generatePDF(
+    content: Map<String, Any>,
+    document: Document = Document(),
+    pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
+    pdfService: PdfService = PdfService(),
+  ): ByteArrayOutputStream {
     log.info("Saving report..")
-    val document = Document()
-    // Files.createDirectories(Path.of("/tmp/pdf"))
-    // log.info("Created path")
-    val pdfStream = ByteArrayOutputStream()
-    PdfWriter.getInstance(document, pdfStream)
+    pdfService.getPdfWriter(document, pdfStream)
     document.open()
     log.info("Started writing to PDF")
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
