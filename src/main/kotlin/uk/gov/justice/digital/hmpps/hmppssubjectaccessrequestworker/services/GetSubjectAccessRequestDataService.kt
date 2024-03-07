@@ -60,11 +60,17 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
     content.forEach { entry ->
       log.info(entry.key + entry.value)
-      para.add(Chunk(" ${entry.key}\n" +
+      para.add(Chunk("${entry.key}\n" +
         "\n", boldFont))
-      para.add(Chunk("${entry.value}\n" +
-        "\n" +
-        "\n", font))
+      if (entry.value is Map<*, *>) {
+        (entry.value as Map<*, *>).forEach{ value ->
+          para.add(Chunk("  ${value.key} : ${value.value}\n\n\n", font))
+        }
+      } else {
+        para.add(Chunk("  ${entry.value}\n" +
+          "\n" +
+          "\n", font))
+      }
     }
     document.add(para)
   }
