@@ -44,6 +44,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     pdfService.getPdfWriter(document, pdfStream)
+    document.setMargins(50F, 50F, 100F, 50F)
     document.open()
     log.info("Started writing to PDF")
     this.addData(document, content)

@@ -103,6 +103,7 @@ class GetSubjectAccessRequestDataServiceTest(
             "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"))
         val mockDocument = Document()
         PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
+        mockDocument.setMargins(50F, 50F, 100F, 50F)
         mockDocument.open()
         getSubjectAccessRequestDataService.addData(mockDocument, testResponseObject)
         mockDocument.close()
