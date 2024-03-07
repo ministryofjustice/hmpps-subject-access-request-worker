@@ -96,16 +96,17 @@ class GetSubjectAccessRequestDataServiceTest(
       }
     }
     describe("getSubjectAccessRequestData addData") {
-
+      // {"content":
+      // [
+      // {"offenderNo":"A1234AA","level":"low","sourceSystem":"keyworker-to-complexity-api-test","sourceUser":"JSMITH_GEN","notes":"string","createdTimeStamp":"2021-03-30T11:45:10.266Z","active":true},
+      // {"offenderNo":"A1234AA","level":"low","sourceSystem":"keyworker-to-complexity-api-test","sourceUser":"JSMITH_GEN","notes":"string","createdTimeStamp":"2021-03-30T19:54:46.056Z","active":true}
+      // ]
       it("writes data to a PDF") {
-        // {"content":
-        // [
-        // {"offenderNo":"A1234AA","level":"low","sourceSystem":"keyworker-to-complexity-api-test","sourceUser":"JSMITH_GEN","notes":"string","createdTimeStamp":"2021-03-30T11:45:10.266Z","active":true},
-        // {"offenderNo":"A1234AA","level":"low","sourceSystem":"keyworker-to-complexity-api-test","sourceUser":"JSMITH_GEN","notes":"string","createdTimeStamp":"2021-03-30T19:54:46.056Z","active":true}
-        // ]
-          val testResponseObject: Map<String, Any> =
-          mapOf("fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
-            "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"))
+        val testResponseObject: Map<String, Any> =
+          mapOf(
+            "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+            "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+          )
         val mockDocument = Document()
         PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
         mockDocument.setMargins(50F, 50F, 100F, 50F)
