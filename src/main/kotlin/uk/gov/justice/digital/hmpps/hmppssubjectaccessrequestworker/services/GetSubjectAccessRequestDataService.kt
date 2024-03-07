@@ -46,20 +46,24 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     pdfService.getPdfWriter(document, pdfStream)
     document.open()
     log.info("Started writing to PDF")
-    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    log.info("Set font")
-    this.addData(document, content, font)
+    this.addData(document, content)
     log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
     return pdfStream
   }
 
-  fun addData(document: Document, content: Map<String, Any>, font: Font) {
+  fun addData(document: Document, content: Map<String, Any>) {
     val para = Paragraph()
+    val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
     content.forEach { entry ->
       log.info(entry.key + entry.value)
-      para.add(Chunk("\n ${entry.key} : ${entry.value}", font))
+      para.add(Chunk(" ${entry.key}\n" +
+        "\n", boldFont))
+      para.add(Chunk("${entry.value}\n" +
+        "\n" +
+        "\n", font))
     }
     document.add(para)
   }

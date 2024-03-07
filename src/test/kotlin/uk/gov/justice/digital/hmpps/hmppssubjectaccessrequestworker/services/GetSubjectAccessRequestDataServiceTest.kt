@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.text.Document
+import com.itextpdf.text.pdf.PdfWriter
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -15,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
 import java.io.ByteArrayOutputStream
+import java.io.FileOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -74,13 +76,13 @@ class GetSubjectAccessRequestDataServiceTest(
     describe("getSubjectAccessRequestData generatePDF") {
       it("returns a ByteArrayOutputStream") {
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
-        val mockDocument = Mockito.mock(Document::class.java)
         val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
       it("calls iText open, add and close") {
-        val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
+        val testResponseObject: Map<String, Any> =
+          mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
@@ -91,6 +93,19 @@ class GetSubjectAccessRequestDataServiceTest(
         verify(mockPdfService, Mockito.times(1)).getPdfWriter(mockDocument, mockStream)
         verify(mockDocument, Mockito.times(1)).add(any())
         verify(mockDocument, Mockito.times(1)).close()
+      }
+    }
+    describe("getSubjectAccessRequestData addData") {
+
+      it("writes data to a PDF") {
+        val testResponseObject: Map<String, Any> =
+          mapOf("fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+            "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"))
+        val mockDocument = Document()
+        PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
+        mockDocument.open()
+        getSubjectAccessRequestDataService.addData(mockDocument, testResponseObject)
+        mockDocument.close()
       }
     }
   },
