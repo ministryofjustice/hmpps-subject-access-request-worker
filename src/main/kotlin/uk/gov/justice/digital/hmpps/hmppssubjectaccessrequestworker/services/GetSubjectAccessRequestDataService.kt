@@ -56,10 +56,6 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   }
 
   fun addData(document: Document, content: Map<String, Any>, font: Font) {
-
-    if (content == emptyMap<Any, Any>()) {
-      document.add(Chunk("NO DATA FOUND", font))
-    }
     val para = Paragraph()
     content.forEach { entry ->
       log.info(entry.key + entry.value)
