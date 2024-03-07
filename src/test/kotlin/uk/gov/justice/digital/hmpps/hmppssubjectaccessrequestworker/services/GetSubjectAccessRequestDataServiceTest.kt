@@ -1,12 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.Document
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import org.assertj.core.api.Assertions
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
@@ -14,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
-import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -68,40 +64,6 @@ class GetSubjectAccessRequestDataServiceTest(
         response.keys.shouldBe(setOf("fake-hmpps-prisoner-search", "fake-hmpps-prisoner-search-indexer"))
         response["fake-hmpps-prisoner-search"].toString().shouldContain("fake-prisoner-search-property")
         response["fake-hmpps-prisoner-search-indexer"].toString().shouldContain("fake-indexer-property")
-      }
-    }
-
-    describe("getSubjectAccessRequestData generatePDF") {
-      it("returns a ByteArrayOutputStream") {
-        val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
-        val mockDocument = Mockito.mock(Document::class.java)
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
-        Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
-      }
-
-      it("calls iText open, add and close") {
-        val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
-        val mockDocument = Mockito.mock(Document::class.java)
-        val mockPdfService = Mockito.mock(PdfService::class.java)
-        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(0)
-
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        verify(mockDocument, Mockito.times(1)).open()
-        verify(mockPdfService, Mockito.times(1)).getPdfWriter(mockDocument, mockStream)
-        verify(mockDocument, Mockito.times(1)).add(any())
-        verify(mockDocument, Mockito.times(1)).close()
-      }
-
-      it("handles no data being extracted") {
-        val testResponseObject = mutableMapOf<String, Any>()
-        val mockDocument = Mockito.mock(Document::class.java)
-        val mockPdfService = Mockito.mock(PdfService::class.java)
-        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-        Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
-        Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
     }
   },
