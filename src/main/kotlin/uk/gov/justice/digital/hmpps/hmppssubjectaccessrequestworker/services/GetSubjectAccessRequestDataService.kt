@@ -28,7 +28,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
 
     serviceMap.forEach { (service, serviceUrl) ->
       val response: Map<*, *>? = genericHmppsApiGateway.getSarData(serviceUrl, nomisId, ndeliusId, dateFrom, dateTo)
-      if (response!!.containsKey("content")) {
+      if (response != null && response.containsKey("content")) {
         responseObject[service] = response["content"] as Any
       } else {
         responseObject[service] = "No Content"
