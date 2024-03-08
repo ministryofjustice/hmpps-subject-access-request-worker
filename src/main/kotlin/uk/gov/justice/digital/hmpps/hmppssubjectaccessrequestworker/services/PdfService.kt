@@ -15,20 +15,23 @@ class PdfService {
     return PdfWriter.getInstance(document, stream)
   }
 
-  fun getPdfReader(stream: ByteArrayOutputStream): PdfReader{
+  fun getPdfReaderStream(stream: ByteArrayOutputStream): PdfReader{
     return PdfReader(stream.toByteArray())
+  }
+
+  fun getPdfReaderFile(file: String): PdfReader{
+    return PdfReader(file)
   }
 
   fun closePdfWriter(writer: PdfWriter) {
     writer.close()
   }
-  fun addRearPage(document: Document, stream: ByteArrayOutputStream, font: Font) {
+  fun addRearPage(document: Document, font: Font, numPages: Int) {
     document.newPage()
-    val reader = getPdfReader(stream)
-    val numPages = reader.numberOfPages
     val endPageText = Paragraph()
+    document.add(Paragraph(300f, "\u00a0"))
     endPageText.alignment = Element.ALIGN_CENTER
-    endPageText.add(Chunk("End of Subject Access Request Report", font))
+    endPageText.add(Chunk("End of Subject Access Request Report\n\n", font))
     endPageText.add(Chunk("Total pages: $numPages", font))
     document.add(endPageText)
   }

@@ -78,6 +78,9 @@ class GetSubjectAccessRequestDataServiceTest(
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        val mockWriter = Mockito.mock(PdfWriter::class.java)
+        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockWriter)
+        Mockito.`when`(mockWriter.pageNumber).thenReturn(1)
         val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
@@ -102,6 +105,9 @@ class GetSubjectAccessRequestDataServiceTest(
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        val mockWriter = Mockito.mock(PdfWriter::class.java)
+        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockWriter)
+        Mockito.`when`(mockWriter.pageNumber).thenReturn(1)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
         val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
@@ -112,8 +118,11 @@ class GetSubjectAccessRequestDataServiceTest(
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        val mockWriter = Mockito.mock(PdfWriter::class.java)
+        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockWriter)
+        Mockito.`when`(mockWriter.pageNumber).thenReturn(1)
         getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        verify(mockPdfService, Mockito.times(1)).addRearPage(any(), any(), any())
+        verify(mockPdfService, Mockito.times(1)).addRearPage(document = any(), font = any(), numPages = any())
       }
     }
   },

@@ -51,7 +51,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
       log.info(entry.key + entry.value)
       document.add(Chunk("${entry.key} : ${entry.value}", dataFont))
     }
-    pdfService.addRearPage(document, pdfStream, endPageFont)
+    pdfService.addRearPage(document = document, font = endPageFont, numPages = writer.pageNumber)
     log.info("Finished writing report")
     document.close()
     pdfService.closePdfWriter(writer)
