@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.text.Document
+import com.itextpdf.text.pdf.PdfWriter
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -75,7 +76,9 @@ class GetSubjectAccessRequestDataServiceTest(
       it("returns a ByteArrayOutputStream") {
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
         val mockDocument = Mockito.mock(Document::class.java)
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
+        val mockPdfService = Mockito.mock(PdfService::class.java)
+        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
@@ -83,8 +86,9 @@ class GetSubjectAccessRequestDataServiceTest(
         val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
+        val mockPdfWriter = Mockito.mock(PdfWriter::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(0)
+        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockPdfWriter)
 
         getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
         verify(mockDocument, Mockito.times(1)).open()
@@ -99,9 +103,17 @@ class GetSubjectAccessRequestDataServiceTest(
         val mockPdfService = Mockito.mock(PdfService::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
+        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
+      }
+
+      it("adds rear page") {
+        val testResponseObject = mutableMapOf<String, Any>()
+        val mockDocument = Mockito.mock(Document::class.java)
+        val mockPdfService = Mockito.mock(PdfService::class.java)
+        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
+        verify(mockPdfService, Mockito.times(1)).addRearPage(any(), any(), any())
       }
     }
   },

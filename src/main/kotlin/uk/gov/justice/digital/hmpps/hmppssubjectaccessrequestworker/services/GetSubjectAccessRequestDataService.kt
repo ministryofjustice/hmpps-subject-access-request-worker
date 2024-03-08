@@ -38,20 +38,23 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     pdfService: PdfService = PdfService(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
-    pdfService.getPdfWriter(document, pdfStream)
+    val writer = pdfService.getPdfWriter(document, pdfStream)
     document.open()
     log.info("Started writing to PDF")
-    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    val dataFont: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    val endPageFont: Font = FontFactory.getFont(FontFactory.COURIER, 20f, BaseColor.BLACK)
     log.info("Set font")
     if (content == emptyMap<Any, Any>()) {
-      document.add(Chunk("NO DATA FOUND", font))
+      document.add(Chunk("NO DATA FOUND", dataFont))
     }
     content.forEach { entry ->
       log.info(entry.key + entry.value)
-      document.add(Chunk("${entry.key} : ${entry.value}", font))
+      document.add(Chunk("${entry.key} : ${entry.value}", dataFont))
     }
+    pdfService.addRearPage(document, pdfStream, endPageFont)
     log.info("Finished writing report")
     document.close()
+    pdfService.closePdfWriter(writer)
     log.info("PDF complete")
     return pdfStream
   }
