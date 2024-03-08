@@ -5,7 +5,6 @@ import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
 import com.itextpdf.text.Font
 import com.itextpdf.text.FontFactory
-import com.itextpdf.text.Paragraph
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -48,46 +47,20 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     val writer = pdfService.getPdfWriter(document, pdfStream)
     val event = pdfService.getCustomHeader(nID, sarID)
     pdfService.setEvent(writer, event)
-    document.setMargins(50F, 50F, 100F, 50F)
     document.open()
     log.info("Started writing to PDF")
-    this.addData(document, content)
+    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    log.info("Set font")
+    if (content == emptyMap<Any, Any>()) {
+      document.add(Chunk("NO DATA FOUND", font))
+    }
+    content.forEach { entry ->
+      log.info(entry.key + entry.value)
+      document.add(Chunk("${entry.key} : ${entry.value}", font))
+    }
     log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
     return pdfStream
-  }
-
-  fun addData(document: Document, content: Map<String, Any>) {
-    val para = Paragraph()
-    val font = FontFactory.getFont(FontFactory.COURIER, 12f, BaseColor.BLACK)
-    val boldFont = Font(Font.FontFamily.COURIER, 14f, Font.BOLD)
-    content.forEach { entry ->
-      log.info(entry.key + entry.value)
-      para.add(
-        Chunk(
-          "${entry.key}\n" + "\n",
-          boldFont,
-        ),
-      )
-      if (entry.value is Map<*, *>) {
-        (entry.value as Map<*, *>).forEach { value ->
-          para.add(
-            Chunk(
-              "  ${value.key} : ${value.value}\n\n\n",
-              font,
-            ),
-          )
-        }
-      } else {
-        para.add(
-          Chunk(
-            "  ${entry.value}\n" + "\n" + "\n",
-            font,
-          ),
-        )
-      }
-    }
-    document.add(para)
   }
 }
