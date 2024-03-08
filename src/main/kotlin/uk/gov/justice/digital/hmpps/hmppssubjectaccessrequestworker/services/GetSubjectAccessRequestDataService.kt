@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Gen
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
+
 @Service
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
   private val log = LoggerFactory.getLogger(this::class.java)
@@ -38,12 +39,16 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   }
   fun generatePDF(
     content: Map<String, Any>,
+    nID: String,
+    sarID: String,
     document: Document = Document(),
     pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
-    pdfService: PdfService = PdfService(),
+    pdfService: PdfService = PdfService()
   ): ByteArrayOutputStream {
     log.info("Saving report..")
-    pdfService.getPdfWriter(document, pdfStream)
+    val writer = pdfService.getPdfWriter(document, pdfStream)
+    val event = pdfService.getCustomHeader(nID, sarID)
+    pdfService.setEvent(writer, event)
     document.setMargins(50F, 50F, 100F, 50F)
     document.open()
     log.info("Started writing to PDF")
@@ -56,8 +61,8 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
 
   fun addData(document: Document, content: Map<String, Any>) {
     val para = Paragraph()
-    val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
+    val font = FontFactory.getFont(FontFactory.COURIER, 12f, BaseColor.BLACK)
+    val boldFont = Font(Font.FontFamily.COURIER, 14f, Font.BOLD)
     content.forEach { entry ->
       log.info(entry.key + entry.value)
       para.add(
