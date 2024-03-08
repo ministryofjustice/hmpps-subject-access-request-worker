@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Gen
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
-
 @Service
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
   private val log = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +42,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     sarID: String,
     document: Document = Document(),
     pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
-    pdfService: PdfService = PdfService()
+    pdfService: PdfService = PdfService(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     val writer = pdfService.getPdfWriter(document, pdfStream)

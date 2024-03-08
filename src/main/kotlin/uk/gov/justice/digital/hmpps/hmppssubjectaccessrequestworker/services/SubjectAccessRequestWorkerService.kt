@@ -67,7 +67,7 @@ class SubjectAccessRequestWorkerService(
     var nID = ""
     if (chosenSAR.nomisId != null) {
       nID = "NOMIS ID: ${chosenSAR.nomisId}"
-    } else if (chosenSAR.ndeliusCaseReferenceId != null ){
+    } else if (chosenSAR.ndeliusCaseReferenceId != null) {
       nID = "NDELIUS ID: ${chosenSAR.ndeliusCaseReferenceId}"
     }
     val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject, nID, chosenSAR.sarCaseReferenceNumber)

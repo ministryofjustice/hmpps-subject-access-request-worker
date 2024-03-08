@@ -15,17 +15,21 @@ class CustomHeader(private val nID: String, private val sarID: String) : PdfPage
     val cb = writer.directContent
     val nIdHeader = Phrase(nID, font)
     ColumnText.showTextAligned(
-      cb, Element.ALIGN_LEFT,
+      cb,
+      Element.ALIGN_LEFT,
       nIdHeader,
       document.leftMargin(),
-      document.top() + 40, 0f,
+      document.top() + 40,
+      0f,
     )
     val sarIdHeader = Phrase("CASE REFERENCE: $sarID", font)
     ColumnText.showTextAligned(
-      cb, Element.ALIGN_RIGHT,
+      cb,
+      Element.ALIGN_RIGHT,
       sarIdHeader,
       document.right(),
-      document.top() + 40, 0f,
+      document.top() + 40,
+      0f,
     )
   }
 }

@@ -95,7 +95,7 @@ class GetSubjectAccessRequestDataServiceTest(
         Mockito.`when`(mockPdfService.getCustomHeader("NDELIUS ID: EGnDeliusID", "EGsarID")).thenReturn(mockHeader)
         Mockito.`when`(mockPdfService.setEvent(mockPdfWriter, mockHeader)).thenReturn(0)
 
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject,"NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream, mockPdfService)
+        getSubjectAccessRequestDataService.generatePDF(testResponseObject, "NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream, mockPdfService)
         verify(mockPdfService, Mockito.times(1)).getPdfWriter(mockDocument, mockStream)
         verify(mockDocument, Mockito.times(1)).open()
         verify(mockDocument, Mockito.times(1)).add(any())
