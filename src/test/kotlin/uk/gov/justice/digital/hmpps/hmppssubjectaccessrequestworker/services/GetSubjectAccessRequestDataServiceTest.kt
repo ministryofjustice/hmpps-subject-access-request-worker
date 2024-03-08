@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.text.Document
+import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
+import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -113,6 +115,10 @@ class GetSubjectAccessRequestDataServiceTest(
         mockDocument.open()
         getSubjectAccessRequestDataService.addData(mockDocument, testResponseObject)
         mockDocument.close()
+        val reader = PdfReader("dummy.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).contains("fake-service-name-1")
+        Assertions.assertThat(text).contains("fake-service-name-2")
       }
     }
   },
