@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.time.LocalDate

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
+package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models
 
 import com.itextpdf.text.Document
 import com.itextpdf.text.Element
