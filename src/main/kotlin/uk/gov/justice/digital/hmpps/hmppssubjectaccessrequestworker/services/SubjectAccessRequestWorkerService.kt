@@ -64,7 +64,13 @@ class SubjectAccessRequestWorkerService(
     log.info("Creating report..")
     val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Extracted report data$responseObject")
-    val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject)
+    var nID = ""
+    if (chosenSAR.nomisId != null) {
+      nID = "NOMIS ID: ${chosenSAR.nomisId}"
+    } else if (chosenSAR.ndeliusCaseReferenceId != null) {
+      nID = "NDELIUS ID: ${chosenSAR.ndeliusCaseReferenceId}"
+    }
+    val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject, nID, chosenSAR.sarCaseReferenceNumber)
     log.info("Created PDF")
     val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
     log.info("Stored PDF$response")

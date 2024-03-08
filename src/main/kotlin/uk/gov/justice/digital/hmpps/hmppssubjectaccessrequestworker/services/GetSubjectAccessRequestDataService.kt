@@ -33,12 +33,16 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   }
   fun generatePDF(
     content: Map<String, Any>,
+    nID: String,
+    sarID: String,
     document: Document = Document(),
     pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
     pdfService: PdfService = PdfService(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     val writer = pdfService.getPdfWriter(document, pdfStream)
+    val event = pdfService.getCustomHeader(nID, sarID)
+    pdfService.setEvent(writer, event)
     document.open()
     log.info("Started writing to PDF")
     val dataFont: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)

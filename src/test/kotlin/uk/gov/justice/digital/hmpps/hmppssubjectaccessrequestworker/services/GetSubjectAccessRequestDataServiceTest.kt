@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -81,36 +82,44 @@ class GetSubjectAccessRequestDataServiceTest(
         val mockWriter = Mockito.mock(PdfWriter::class.java)
         Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockWriter)
         Mockito.`when`(mockWriter.pageNumber).thenReturn(1)
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
+        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, "NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream, mockPdfService)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
       it("calls iText open, add and close") {
-        val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
+        val testResponseObject: Map<String, Any> =
+          mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
         val mockPdfWriter = Mockito.mock(PdfWriter::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        val mockHeader = Mockito.mock(CustomHeader::class.java)
         Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockPdfWriter)
+        Mockito.`when`(mockPdfService.getCustomHeader("NDELIUS ID: EGnDeliusID", "EGsarID")).thenReturn(mockHeader)
+        Mockito.`when`(mockPdfService.setEvent(mockPdfWriter, mockHeader)).thenReturn(0)
 
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        verify(mockDocument, Mockito.times(1)).open()
+        getSubjectAccessRequestDataService.generatePDF(testResponseObject, "NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream, mockPdfService)
         verify(mockPdfService, Mockito.times(1)).getPdfWriter(mockDocument, mockStream)
+        verify(mockDocument, Mockito.times(1)).open()
         verify(mockDocument, Mockito.times(1)).add(any())
         verify(mockDocument, Mockito.times(1)).close()
       }
-
-      it("handles no data being extracted") {
-        val testResponseObject = mutableMapOf<String, Any>()
+      it("adds header to a PDF") {
+        val testResponseObject: Map<String, Any> =
+          mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockDocument = Mockito.mock(Document::class.java)
         val mockPdfService = Mockito.mock(PdfService::class.java)
+        val mockPdfWriter = Mockito.mock(PdfWriter::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
         val mockWriter = Mockito.mock(PdfWriter::class.java)
+        val mockHeader = Mockito.mock(CustomHeader::class.java)
+        Mockito.`when`(mockPdfService.getCustomHeader("NDELIUS ID: EGnDeliusID", "EGsarID")).thenReturn(mockHeader)
+        Mockito.`when`(mockPdfService.setEvent(mockPdfWriter, mockHeader)).thenReturn(0)
         Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockWriter)
         Mockito.`when`(mockWriter.pageNumber).thenReturn(1)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
+        getSubjectAccessRequestDataService.generatePDF(testResponseObject, "NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream, mockPdfService)
+        verify(mockPdfService, Mockito.times(1)).getCustomHeader("NDELIUS ID: EGnDeliusID", "EGsarID")
       }
 
       it("adds rear page") {
@@ -121,7 +130,7 @@ class GetSubjectAccessRequestDataServiceTest(
         val mockWriter = Mockito.mock(PdfWriter::class.java)
         Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(mockWriter)
         Mockito.`when`(mockWriter.pageNumber).thenReturn(1)
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
+        getSubjectAccessRequestDataService.generatePDF(testResponseObject, "NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream, mockPdfService)
         verify(mockPdfService, Mockito.times(1)).addRearPage(document = any(), font = any(), numPages = any())
       }
     }
