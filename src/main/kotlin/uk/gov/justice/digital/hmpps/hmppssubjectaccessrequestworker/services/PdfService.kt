@@ -5,27 +5,18 @@ import com.itextpdf.text.Document
 import com.itextpdf.text.Element
 import com.itextpdf.text.Font
 import com.itextpdf.text.Paragraph
-import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import java.io.ByteArrayOutputStream
-
 
 class PdfService {
   fun getPdfWriter(document: Document, stream: ByteArrayOutputStream): PdfWriter {
     return PdfWriter.getInstance(document, stream)
   }
 
-  fun getPdfReaderStream(stream: ByteArrayOutputStream): PdfReader{
-    return PdfReader(stream.toByteArray())
-  }
-
-  fun getPdfReaderFile(file: String): PdfReader{
-    return PdfReader(file)
-  }
-
   fun closePdfWriter(writer: PdfWriter) {
     writer.close()
   }
+
   fun addRearPage(document: Document, font: Font, numPages: Int) {
     document.newPage()
     val endPageText = Paragraph()
