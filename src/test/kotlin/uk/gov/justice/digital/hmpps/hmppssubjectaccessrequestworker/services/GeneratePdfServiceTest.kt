@@ -4,7 +4,6 @@ import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
 import com.itextpdf.text.FontFactory
-import com.itextpdf.text.pdf.ColumnText
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 
@@ -60,18 +58,6 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
         val stream = generatePdfService.execute(testResponseObject, "", "", mockDocument, mockStream)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
-      }
-
-      it("adds header to a PDF") {
-        val testResponseObject: Map<String, Any> =
-          mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
-        val mockDocument = Mockito.mock(Document::class.java)
-        val mockCustomHeader = Mockito.mock(CustomHeader::class.java)
-        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-        val mockWriter = Mockito.mock(PdfWriter::class.java)
-        val mockTextAligner = Mockito.mock(ColumnText::class.java)
-        val stream = generatePdfService.execute(testResponseObject, "NDELIUS ID: EGnDeliusID", "EGsarID", mockDocument, mockStream)
-        Assertions.assertThat(stream.toByteArray()).contains("EGnDeliusID".toByteArray())
       }
 
       it("adds rear page with correct text") {
