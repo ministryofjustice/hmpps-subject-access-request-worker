@@ -47,3 +47,6 @@ It then performs a search and replace and directory renames so the project is re
 
 To allow easy identification of an application, the product Id of the overall product should be set in `values.yaml`. 
 The Service Catalogue contains a list of these IDs and is currently in development here https://developer-portal.hmpps.service.justice.gov.uk/products
+
+## Devloper notes
+PDF generation is done using iText. The most useful/in-depth documentation can be found here: https://itextpdf.com/sites/default/files/attachments/PR%20-%20iText%20in%20Action%20-%20Second%20edition%20e-book_0.pdf
