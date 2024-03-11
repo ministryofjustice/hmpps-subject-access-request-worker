@@ -7,9 +7,7 @@ import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import org.assertj.core.api.Assertions
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
@@ -75,28 +73,6 @@ class GetSubjectAccessRequestDataServiceTest(
       }
     }
 
-    describe("getSubjectAccessRequestData generatePDF") {
-      it("returns a ByteArrayOutputStream") {
-        val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
-        val stream = getSubjectAccessRequestDataService.generatePDF(testResponseObject)
-        Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
-      }
-
-      it("calls iText open, add and close") {
-        val testResponseObject: Map<String, Any> =
-          mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
-        val mockDocument = Mockito.mock(Document::class.java)
-        val mockPdfService = Mockito.mock(PdfService::class.java)
-        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-        Mockito.`when`(mockPdfService.getPdfWriter(mockDocument, mockStream)).thenReturn(0)
-
-        getSubjectAccessRequestDataService.generatePDF(testResponseObject, mockDocument, mockStream, mockPdfService)
-        verify(mockDocument, Mockito.times(1)).open()
-        verify(mockPdfService, Mockito.times(1)).getPdfWriter(mockDocument, mockStream)
-        verify(mockDocument, Mockito.times(1)).add(any())
-        verify(mockDocument, Mockito.times(1)).close()
-      }
-    }
     describe("getSubjectAccessRequestData addData") {
       // {"content":
       // [

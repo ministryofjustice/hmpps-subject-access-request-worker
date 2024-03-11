@@ -20,6 +20,7 @@ class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   @Autowired val documentStorageGateway: DocumentStorageGateway,
+  @Autowired val generatePdfService: GeneratePdfService,
   @Value("\${services.sar-api.base-url}")
   private val sarUrl: String,
 ) {
@@ -64,7 +65,13 @@ class SubjectAccessRequestWorkerService(
     log.info("Creating report..")
     val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Extracted report data$responseObject")
-    val pdfStream = getSubjectAccessRequestDataService.generatePDF(responseObject)
+    var nID = ""
+    if (chosenSAR.nomisId != null) {
+      nID = "NOMIS ID: ${chosenSAR.nomisId}"
+    } else if (chosenSAR.ndeliusCaseReferenceId != null) {
+      nID = "NDELIUS ID: ${chosenSAR.ndeliusCaseReferenceId}"
+    }
+    val pdfStream = generatePdfService.execute(responseObject, nID, chosenSAR.sarCaseReferenceNumber)
     log.info("Created PDF")
     val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
     log.info("Stored PDF$response")

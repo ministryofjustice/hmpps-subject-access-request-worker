@@ -1,16 +1,18 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+<<<<<<< HEAD
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
 import com.itextpdf.text.Font
 import com.itextpdf.text.FontFactory
 import com.itextpdf.text.Paragraph
+=======
+>>>>>>> origin
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
-import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
 @Service
@@ -36,6 +38,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     return responseObject
   }
+<<<<<<< HEAD
   fun generatePDF(
     content: Map<String, Any>,
     document: Document = Document(),
@@ -86,4 +89,6 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     document.add(para)
   }
+=======
+>>>>>>> origin
 }
