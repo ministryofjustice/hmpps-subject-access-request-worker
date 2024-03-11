@@ -1,14 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-<<<<<<< HEAD
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
-import com.itextpdf.text.Paragraph
-=======
->>>>>>> origin
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -38,57 +29,4 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     }
     return responseObject
   }
-<<<<<<< HEAD
-  fun generatePDF(
-    content: Map<String, Any>,
-    document: Document = Document(),
-    pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
-    pdfService: PdfService = PdfService(),
-  ): ByteArrayOutputStream {
-    log.info("Saving report..")
-    pdfService.getPdfWriter(document, pdfStream)
-    document.setMargins(50F, 50F, 100F, 50F)
-    document.open()
-    log.info("Started writing to PDF")
-    this.addData(document, content)
-    log.info("Finished writing report")
-    document.close()
-    log.info("PDF complete")
-    return pdfStream
-  }
-
-  fun addData(document: Document, content: Map<String, Any>) {
-    val para = Paragraph()
-    val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
-    content.forEach { entry ->
-      log.info(entry.key + entry.value)
-      para.add(
-        Chunk(
-          "${entry.key}\n" + "\n",
-          boldFont,
-        ),
-      )
-      if (entry.value is Map<*, *>) {
-        (entry.value as Map<*, *>).forEach { value ->
-          para.add(
-            Chunk(
-              "  ${value.key} : ${value.value}\n\n\n",
-              font,
-            ),
-          )
-        }
-      } else {
-        para.add(
-          Chunk(
-            "  ${entry.value}\n" + "\n" + "\n",
-            font,
-          ),
-        )
-      }
-    }
-    document.add(para)
-  }
-=======
->>>>>>> origin
 }

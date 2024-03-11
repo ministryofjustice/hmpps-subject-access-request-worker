@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.Document
-import com.itextpdf.text.pdf.PdfReader
-import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -15,8 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
-import java.io.ByteArrayOutputStream
-import java.io.FileOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -70,31 +64,6 @@ class GetSubjectAccessRequestDataServiceTest(
         response.keys.shouldBe(setOf("fake-hmpps-prisoner-search", "fake-hmpps-prisoner-search-indexer"))
         response["fake-hmpps-prisoner-search"].toString().shouldContain("fake-prisoner-search-property")
         response["fake-hmpps-prisoner-search-indexer"].toString().shouldContain("fake-indexer-property")
-      }
-    }
-
-    describe("getSubjectAccessRequestData addData") {
-      // {"content":
-      // [
-      // {"offenderNo":"A1234AA","level":"low","sourceSystem":"keyworker-to-complexity-api-test","sourceUser":"JSMITH_GEN","notes":"string","createdTimeStamp":"2021-03-30T11:45:10.266Z","active":true},
-      // {"offenderNo":"A1234AA","level":"low","sourceSystem":"keyworker-to-complexity-api-test","sourceUser":"JSMITH_GEN","notes":"string","createdTimeStamp":"2021-03-30T19:54:46.056Z","active":true}
-      // ]
-      it("writes data to a PDF") {
-        val testResponseObject: Map<String, Any> =
-          mapOf(
-            "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
-            "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
-          )
-        val mockDocument = Document()
-        PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
-        mockDocument.setMargins(50F, 50F, 100F, 50F)
-        mockDocument.open()
-        getSubjectAccessRequestDataService.addData(mockDocument, testResponseObject)
-        mockDocument.close()
-        val reader = PdfReader("dummy.pdf")
-        val text = PdfTextExtractor.getTextFromPage(reader, 1)
-        Assertions.assertThat(text).contains("fake-service-name-1")
-        Assertions.assertThat(text).contains("fake-service-name-2")
       }
     }
   },
