@@ -3,8 +3,10 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
+import com.itextpdf.text.Element
 import com.itextpdf.text.Font
 import com.itextpdf.text.FontFactory
+import com.itextpdf.text.Paragraph
 import com.itextpdf.text.pdf.PdfPageEventHelper
 import com.itextpdf.text.pdf.PdfWriter
 import org.hibernate.query.sqm.tree.SqmNode.log
@@ -37,6 +39,7 @@ class GeneratePdfService {
       document.add(Chunk("${entry.key} : ${entry.value}", font))
     }
     log.info("Finished writing report")
+    addRearPage(document, writer.pageNumber)
     document.close()
     log.info("PDF complete")
     return pdfStream
@@ -53,5 +56,16 @@ class GeneratePdfService {
   fun setEvent(writer: PdfWriter, event: PdfPageEventHelper): Int {
     writer.pageEvent = event
     return 0
+  }
+
+  fun addRearPage(document: Document, numPages: Int) {
+    document.newPage()
+    val endPageText = Paragraph()
+    document.add(Paragraph(300f, "\u00a0"))
+    endPageText.alignment = Element.ALIGN_CENTER
+    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    endPageText.add(Chunk("End of Subject Access Request Report\n\n", font))
+    endPageText.add(Chunk("Total pages: $numPages", font))
+    document.add(endPageText)
   }
 }
