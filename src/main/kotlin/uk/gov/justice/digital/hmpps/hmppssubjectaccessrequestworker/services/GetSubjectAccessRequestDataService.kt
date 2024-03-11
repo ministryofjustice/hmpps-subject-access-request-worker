@@ -1,15 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
-import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
 @Service
@@ -19,8 +13,10 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     val responseObject = mutableMapOf<String, Any>()
     val serviceMap = mutableMapOf<String, String>()
 
-    val serviceNames = services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
-    val serviceUrls = services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+    val serviceNames =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
+    val serviceUrls =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
     for (serviceName in serviceNames) {
       serviceMap.put(serviceName, serviceUrls[serviceNames.indexOf(serviceName)])
     }
@@ -30,36 +26,5 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
       response?.get("content")?.let { responseObject[service] = it }
     }
     return responseObject
-  }
-  fun generatePDF(
-    content: Map<String, Any>,
-    nID: String,
-    sarID: String,
-    document: Document = Document(),
-    pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
-    pdfService: PdfService = PdfService(),
-  ): ByteArrayOutputStream {
-    log.info("Saving report..")
-    val writer = pdfService.getPdfWriter(document, pdfStream)
-    val event = pdfService.getCustomHeader(nID, sarID)
-    pdfService.setEvent(writer, event)
-    document.open()
-    log.info("Started writing to PDF")
-    val dataFont: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    val endPageFont: Font = FontFactory.getFont(FontFactory.COURIER, 20f, BaseColor.BLACK)
-    log.info("Set font")
-    if (content == emptyMap<Any, Any>()) {
-      document.add(Chunk("NO DATA FOUND", dataFont))
-    }
-    content.forEach { entry ->
-      log.info(entry.key + entry.value)
-      document.add(Chunk("${entry.key} : ${entry.value}", dataFont))
-    }
-    pdfService.addRearPage(document = document, font = endPageFont, numPages = writer.pageNumber)
-    log.info("Finished writing report")
-    document.close()
-    pdfService.closePdfWriter(writer)
-    log.info("PDF complete")
-    return pdfStream
   }
 }
