@@ -3,10 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
-<<<<<<< HEAD
 import com.itextpdf.text.FontFactory
-=======
->>>>>>> origin
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.pdf.parser.PdfTextExtractor

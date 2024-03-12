@@ -58,7 +58,6 @@ class GeneratePdfService {
     return 0
   }
 
-
   fun addRearPage(document: Document, numPages: Int) {
     document.newPage()
     val endPageText = Paragraph()
