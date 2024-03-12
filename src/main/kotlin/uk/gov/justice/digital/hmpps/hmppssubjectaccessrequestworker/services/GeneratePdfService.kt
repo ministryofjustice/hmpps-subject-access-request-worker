@@ -27,6 +27,7 @@ class GeneratePdfService {
     val writer = getPdfWriter(document, pdfStream)
     val event = getCustomHeader(nID, sarID)
     setEvent(writer, event)
+    document.setMargins(50F, 50F, 100F, 50F)
     document.open()
     log.info("Started writing to PDF")
     addData(document, content)
