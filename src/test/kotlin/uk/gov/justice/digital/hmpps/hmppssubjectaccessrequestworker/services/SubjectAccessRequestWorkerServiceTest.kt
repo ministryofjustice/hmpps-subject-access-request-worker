@@ -96,9 +96,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(websarGatewayMock.complete(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to  "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any()))
+    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any(), any(), any(), any(), any()))
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
@@ -122,22 +122,22 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   @Test
   fun `doReport calls getSubjectAccessRequestDataService with chosenSar details`() {
     val pdfStreamMock = Mockito.mock(ByteArrayOutputStream::class.java)
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to  "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to  "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any()))
+    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any(), any(), any(), any(), any()))
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
     subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted)
+    verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to  "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted)
   }
 
   @Test
   fun `doReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to  "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted))
       .thenThrow(RuntimeException())
     val exception = shouldThrow<RuntimeException> {
       subjectAccessRequestWorkerService.doReport(sampleSAR)
@@ -148,23 +148,21 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   @Test
   fun `doReport calls generatePdfService`() {
     val pdfStreamMock = Mockito.mock(ByteArrayOutputStream::class.java)
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute("fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", null, "1", dateFromFormatted, dateToFormatted))
-      .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any()))
+    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any(), any(), any(), any(), any()))
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
     subjectAccessRequestWorkerService.doReport(sampleSAR)
-    verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), any(), any(), any(), any())
+    verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), any(), any(), any(), any(), any(), any(), any(), any())
   }
 
   @Test
   fun `doReport calls storeSubjectAccessRequestDocument`() = runTest {
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(sampleSAR.services, sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to  "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any()))
+    Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any(), any(), any()))
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("Random string")
     SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080").doReport(sampleSAR)

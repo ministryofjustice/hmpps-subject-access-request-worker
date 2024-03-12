@@ -8,24 +8,34 @@ import com.itextpdf.text.Font
 import com.itextpdf.text.FontFactory
 import com.itextpdf.text.Paragraph
 import com.itextpdf.text.pdf.PdfPageEventHelper
+import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
 import java.io.ByteArrayOutputStream
+import java.io.FileOutputStream
+import java.nio.file.Files
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Service
 class GeneratePdfService {
   fun execute(
     content: Map<String, Any>,
-    nID: String,
-    sarID: String,
+    nomisId: String?,
+    ndeliusCaseReferenceId: String?,
+    sarCaseReferenceNumber: String,
+    dateFrom: LocalDate? = null,
+    dateTo: LocalDate? = null,
+    serviceMap: MutableMap<String, String>,
     document: Document = Document(),
     pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     val writer = getPdfWriter(document, pdfStream)
-    val event = getCustomHeader(nID, sarID)
+    val event = getCustomHeader(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber)
     setEvent(writer, event)
     document.open()
     log.info("Started writing to PDF")
@@ -100,5 +110,51 @@ class GeneratePdfService {
       }
     }
     document.add(para)
+  }
+
+  fun addCoverSheet(nomisId: String, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateTo: LocalDate?, dateFrom: LocalDate?, serviceMap: MutableMap<String, String>) {
+    // change ID names
+    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+
+    val coverPage = Document()
+    Files.createDirectories(java.nio.file.Path.of("./tmp/pdf"))
+    PdfWriter.getInstance(coverPage, FileOutputStream("./tmp/pdf/coverPage.pdf"))
+
+
+    coverPage.open()
+    coverPage.add(Paragraph("Cover Page", font))
+    coverPage.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), font))
+    coverPage.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber", font))
+    coverPage.add(Paragraph(getReportDateRangeLine(dateTo, dateFrom), font))
+    coverPage.add(Paragraph("Report generation date: ${LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(
+      FormatStyle.LONG))}", font))
+    coverPage.add(Paragraph(getServiceListLine(serviceMap), font))
+
+    coverPage.close()
+
+  }
+
+  fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
+    var subjectIdLine = ""
+    if (nomisId != null) {
+      subjectIdLine = "NOMIS ID: ${nomisId}"
+    } else if (ndeliusCaseReferenceId != null) {
+      subjectIdLine = "nDelius ID: ${ndeliusCaseReferenceId}"
+    }
+    return subjectIdLine
+  }
+
+  fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
+    val formattedDateTo = dateTo!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+    var formattedDateFrom = ""
+    if (dateFrom != null) {
+      formattedDateFrom = dateFrom.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+    } else formattedDateFrom = "Start of record"
+    return "Report date range: $formattedDateFrom - $formattedDateTo"
+  }
+
+  fun getServiceListLine(serviceMap: MutableMap<String, String>): String {
+    val serviceList = serviceMap.keys.toList().joinToString(", ")
+    return "Services: $serviceList"
   }
 }

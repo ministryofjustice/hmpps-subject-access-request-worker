@@ -62,17 +62,16 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
+    val chosenSarServiceMap = getServicesMap(chosenSAR)
+
     log.info("Creating report..")
-    val responseObject = getSubjectAccessRequestDataService.execute(chosenSAR.services, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+
+    val responseObject = getSubjectAccessRequestDataService.execute(chosenSarServiceMap, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Extracted report data$responseObject")
-    var nID = ""
-    if (chosenSAR.nomisId != null) {
-      nID = "NOMIS ID: ${chosenSAR.nomisId}"
-    } else if (chosenSAR.ndeliusCaseReferenceId != null) {
-      nID = "NDELIUS ID: ${chosenSAR.ndeliusCaseReferenceId}"
-    }
-    val pdfStream = generatePdfService.execute(responseObject, nID, chosenSAR.sarCaseReferenceNumber)
+
+    val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo, chosenSarServiceMap)
     log.info("Created PDF")
+
     val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
     log.info("Stored PDF$response")
   }
@@ -80,5 +79,20 @@ class SubjectAccessRequestWorkerService(
   fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
     val response = documentStorageGateway.storeDocument(sarId, docBody)
     return response
+  }
+
+  fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
+    val services = subjectAccessRequest.services
+    var serviceMap = mutableMapOf<String, String>()
+
+    val serviceNames =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
+    val serviceUrls =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+
+    for (serviceName in serviceNames) {
+      serviceMap.put(serviceName, serviceUrls[serviceNames.indexOf(serviceName)])
+    }
+    return serviceMap
   }
 }
