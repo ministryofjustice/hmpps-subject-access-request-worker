@@ -37,17 +37,10 @@ class GeneratePdfService {
     val writer = getPdfWriter(document, pdfStream)
     val event = getCustomHeader(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber)
     setEvent(writer, event)
+    document.setMargins(50F, 50F, 100F, 50F)
     document.open()
     log.info("Started writing to PDF")
-    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    log.info("Set font")
-    if (content == emptyMap<Any, Any>()) {
-      document.add(Chunk("NO DATA FOUND", font))
-    }
-    content.forEach { entry ->
-      log.info(entry.key + entry.value)
-      document.add(Chunk("${entry.key} : ${entry.value}", font))
-    }
+    addData(document, content)
     log.info("Finished writing report")
     addRearPage(document, writer.pageNumber)
     document.close()
