@@ -3,7 +3,10 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
+<<<<<<< HEAD
 import com.itextpdf.text.FontFactory
+=======
+>>>>>>> origin
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
@@ -74,6 +77,24 @@ class GeneratePdfServiceTest(
         val text = PdfTextExtractor.getTextFromPage(reader, 2)
         Assertions.assertThat(text).contains("End of Subject Access Request Report")
         Assertions.assertThat(text).contains("Total pages: 1")
+      }
+
+      it("writes data to a PDF") {
+        val testResponseObject: Map<String, Any> =
+          mapOf(
+            "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+            "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+          )
+        val mockDocument = Document()
+        PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
+        mockDocument.setMargins(50F, 50F, 100F, 50F)
+        mockDocument.open()
+        generatePdfService.addData(mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfReader("dummy.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).contains("fake-service-name-1")
+        Assertions.assertThat(text).contains("fake-service-name-2")
       }
     }
   },

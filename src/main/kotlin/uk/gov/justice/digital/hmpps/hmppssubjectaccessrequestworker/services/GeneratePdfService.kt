@@ -58,6 +58,7 @@ class GeneratePdfService {
     return 0
   }
 
+
   fun addRearPage(document: Document, numPages: Int) {
     document.newPage()
     val endPageText = Paragraph()
@@ -67,5 +68,38 @@ class GeneratePdfService {
     endPageText.add(Chunk("End of Subject Access Request Report\n\n", font))
     endPageText.add(Chunk("Total pages: $numPages", font))
     document.add(endPageText)
+  }
+
+  fun addData(document: Document, content: Map<String, Any>) {
+    val para = Paragraph()
+    val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
+    content.forEach { entry ->
+      log.info(entry.key + entry.value)
+      para.add(
+        Chunk(
+          "${entry.key}\n" + "\n",
+          boldFont,
+        ),
+      )
+      if (entry.value is Map<*, *>) {
+        (entry.value as Map<*, *>).forEach { value ->
+          para.add(
+            Chunk(
+              "  ${value.key} : ${value.value}\n\n\n",
+              font,
+            ),
+          )
+        }
+      } else {
+        para.add(
+          Chunk(
+            "  ${entry.value}\n" + "\n" + "\n",
+            font,
+          ),
+        )
+      }
+    }
+    document.add(para)
   }
 }
