@@ -13,8 +13,10 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     val responseObject = mutableMapOf<String, Any>()
     val serviceMap = mutableMapOf<String, String>()
 
-    val serviceNames = services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
-    val serviceUrls = services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+    val serviceNames =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
+    val serviceUrls =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
     for (serviceName in serviceNames) {
       serviceMap.put(serviceName, serviceUrls[serviceNames.indexOf(serviceName)])
     }

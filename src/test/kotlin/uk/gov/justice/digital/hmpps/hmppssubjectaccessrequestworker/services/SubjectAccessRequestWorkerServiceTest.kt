@@ -164,7 +164,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   fun `doReport calls storeSubjectAccessRequestDocument`() = runTest {
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(sampleSAR.services, sampleSAR.nomisId, sampleSAR.ndeliusCaseReferenceId, sampleSAR.dateFrom, sampleSAR.dateTo))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-    val mockByteArrayOutputStream = Mockito.mock(ByteArrayOutputStream::class.java)
     Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any()))
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("Random string")
