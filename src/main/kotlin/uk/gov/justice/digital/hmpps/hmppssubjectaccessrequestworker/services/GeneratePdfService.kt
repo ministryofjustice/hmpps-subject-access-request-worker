@@ -29,15 +29,7 @@ class GeneratePdfService {
     setEvent(writer, event)
     document.open()
     log.info("Started writing to PDF")
-    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    log.info("Set font")
-    if (content == emptyMap<Any, Any>()) {
-      document.add(Chunk("NO DATA FOUND", font))
-    }
-    content.forEach { entry ->
-      log.info(entry.key + entry.value)
-      document.add(Chunk("${entry.key} : ${entry.value}", font))
-    }
+    addData(document, content)
     log.info("Finished writing report")
     addRearPage(document, writer.pageNumber)
     document.close()
