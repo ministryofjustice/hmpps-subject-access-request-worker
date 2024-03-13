@@ -29,8 +29,8 @@ class GeneratePdfService {
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
     serviceMap: MutableMap<String, String>,
-    document: Document = Document(),
-    pdfStream: ByteArrayOutputStream = ByteArrayOutputStream(),
+    document: Document = createDocument(),
+    pdfStream: ByteArrayOutputStream = createPdfStream()
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     val writer = getPdfWriter(document, pdfStream)
@@ -49,6 +49,14 @@ class GeneratePdfService {
 
   fun getPdfWriter(document: Document, stream: ByteArrayOutputStream): PdfWriter {
     return PdfWriter.getInstance(document, stream)
+  }
+
+  fun createDocument(): Document {
+    return Document()
+  }
+
+  fun createPdfStream(): ByteArrayOutputStream {
+    return ByteArrayOutputStream()
   }
 
   fun getCustomHeader(nID: String, sarID: String): CustomHeader {
