@@ -35,7 +35,7 @@ class GeneratePdfServiceTest(
         val mockDocument = Mockito.mock(Document::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val stream = generatePdfService.execute(testResponseObject, "EGnomisID","EGnDeliusID", "EGsarID", LocalDate.of(1999,12,30), LocalDate.of(2010,12,30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
+        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
@@ -45,7 +45,7 @@ class GeneratePdfServiceTest(
         val mockDocument = Mockito.mock(Document::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
-        generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999,12,30), LocalDate.of(2010,12,30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
+        generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
 
         verify(mockDocument, Mockito.times(1)).open()
         verify(mockDocument, Mockito.times(3)).add(any())
@@ -57,7 +57,7 @@ class GeneratePdfServiceTest(
         val mockDocument = Mockito.mock(Document::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
-        val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999,12,30), LocalDate.of(2010,12,30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
+        val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 

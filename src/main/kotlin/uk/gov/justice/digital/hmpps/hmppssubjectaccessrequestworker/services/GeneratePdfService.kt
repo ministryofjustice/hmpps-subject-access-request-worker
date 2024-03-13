@@ -8,7 +8,6 @@ import com.itextpdf.text.Font
 import com.itextpdf.text.FontFactory
 import com.itextpdf.text.Paragraph
 import com.itextpdf.text.pdf.PdfPageEventHelper
-import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
@@ -113,36 +112,41 @@ class GeneratePdfService {
     Files.createDirectories(java.nio.file.Path.of("./tmp/pdf"))
     PdfWriter.getInstance(coverPage, FileOutputStream("./tmp/pdf/coverPage.pdf"))
 
-
     coverPage.open()
     coverPage.add(Paragraph("Cover Page", font))
     coverPage.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), font))
     coverPage.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber", font))
     coverPage.add(Paragraph(getReportDateRangeLine(dateTo, dateFrom), font))
-    coverPage.add(Paragraph("Report generation date: ${LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(
-      FormatStyle.LONG))}", font))
+    coverPage.add(
+      Paragraph(
+        "Report generation date: ${LocalDate.now().format(
+          DateTimeFormatter.ofLocalizedDate(
+            FormatStyle.LONG,
+          ),
+        )}",
+        font,
+      ),
+    )
     coverPage.add(Paragraph(getServiceListLine(serviceMap), font))
-
     coverPage.close()
-
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
     var subjectIdLine = ""
     if (nomisId != null) {
-      subjectIdLine = "NOMIS ID: ${nomisId}"
+      subjectIdLine = "NOMIS ID: $nomisId"
     } else if (ndeliusCaseReferenceId != null) {
-      subjectIdLine = "nDelius ID: ${ndeliusCaseReferenceId}"
+      subjectIdLine = "nDelius ID: $ndeliusCaseReferenceId"
     }
     return subjectIdLine
   }
 
   fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
     val formattedDateTo = dateTo!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
-    var formattedDateFrom = ""
+    val formattedDateFrom: String
     if (dateFrom != null) {
       formattedDateFrom = dateFrom.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
-    } else formattedDateFrom = "Start of record"
+    } else { formattedDateFrom = "Start of record" }
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
