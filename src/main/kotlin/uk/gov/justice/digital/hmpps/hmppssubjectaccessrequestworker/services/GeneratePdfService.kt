@@ -30,7 +30,7 @@ class GeneratePdfService {
     dateTo: LocalDate? = null,
     serviceMap: MutableMap<String, String>,
     document: Document = createDocument(),
-    pdfStream: ByteArrayOutputStream = createPdfStream()
+    pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     val writer = getPdfWriter(document, pdfStream)

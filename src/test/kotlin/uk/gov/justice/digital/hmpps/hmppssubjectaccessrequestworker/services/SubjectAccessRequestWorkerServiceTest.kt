@@ -107,12 +107,23 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockDocument, mockStream))
       .thenReturn(mockWriter)
-    Mockito.`when`(mockGeneratePdfService.execute(content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
-      nomisId = null, ndeliusCaseReferenceId = "1", dateTo = dateToFormatted, dateFrom = dateFromFormatted, sarCaseReferenceNumber = "1234abc", serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+    Mockito.`when`(
+      mockGeneratePdfService.execute(
+        content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
+        nomisId = null,
+        ndeliusCaseReferenceId = "1",
+        dateTo = dateToFormatted,
+        dateFrom = dateFromFormatted,
+        sarCaseReferenceNumber = "1234abc",
+        serviceMap = mutableMapOf(
+          "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+          "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
+        ),
+      ),
+    )
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
-
 
     SubjectAccessRequestWorkerService(webSarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080").doPoll()
     verify(webSarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR)
@@ -142,8 +153,17 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockDocument, mockStream))
       .thenReturn(mockWriter)
-    Mockito.`when`(mockGeneratePdfService.execute(content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
-      nomisId = null, ndeliusCaseReferenceId = "1", dateTo = dateToFormatted, dateFrom = dateFromFormatted, sarCaseReferenceNumber = "1234abc", serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+    Mockito.`when`(
+      mockGeneratePdfService.execute(
+        content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
+        nomisId = null,
+        ndeliusCaseReferenceId = "1",
+        dateTo = dateToFormatted,
+        dateFrom = dateFromFormatted,
+        sarCaseReferenceNumber = "1234abc",
+        serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+      ),
+    )
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
@@ -173,14 +193,24 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockDocument, mockStream))
       .thenReturn(mockWriter)
-    Mockito.`when`(mockGeneratePdfService.execute(content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
-      nomisId = null, ndeliusCaseReferenceId = "1", dateTo = dateToFormatted, dateFrom = dateFromFormatted, sarCaseReferenceNumber = "1234abc", serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+    Mockito.`when`(
+      mockGeneratePdfService.execute(
+        content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
+        nomisId = null,
+        ndeliusCaseReferenceId = "1",
+        dateTo = dateToFormatted,
+        dateFrom = dateFromFormatted,
+        sarCaseReferenceNumber = "1234abc",
+        serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+      ),
+    )
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
     subjectAccessRequestWorkerService.doReport(sampleSAR)
     verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any())
   }
+
   @Test
   fun `doReport calls GeneratePdfService execute`() {
     val mockWriter = Mockito.mock(PdfWriter::class.java)
@@ -192,8 +222,17 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockDocument, mockStream))
       .thenReturn(mockWriter)
-    Mockito.`when`(mockGeneratePdfService.execute(content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
-      nomisId = null, ndeliusCaseReferenceId = "1", dateTo = dateToFormatted, dateFrom = dateFromFormatted, sarCaseReferenceNumber = "1234abc", serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+    Mockito.`when`(
+      mockGeneratePdfService.execute(
+        content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
+        nomisId = null,
+        ndeliusCaseReferenceId = "1",
+        dateTo = dateToFormatted,
+        dateFrom = dateFromFormatted,
+        sarCaseReferenceNumber = "1234abc",
+        serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+      ),
+    )
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
@@ -212,8 +251,20 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockDocument, mockStream))
       .thenReturn(mockWriter)
-    Mockito.`when`(mockGeneratePdfService.execute(content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
-      nomisId = null, ndeliusCaseReferenceId = "1", dateTo = dateToFormatted, dateFrom = dateFromFormatted, sarCaseReferenceNumber = "1234abc", serviceMap = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+    Mockito.`when`(
+      mockGeneratePdfService.execute(
+        content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
+        nomisId = null,
+        ndeliusCaseReferenceId = "1",
+        dateTo = dateToFormatted,
+        dateFrom = dateFromFormatted,
+        sarCaseReferenceNumber = "1234abc",
+        serviceMap = mutableMapOf(
+          "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+          "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
+        ),
+      ),
+    )
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
