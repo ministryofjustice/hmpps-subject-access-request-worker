@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.delay
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
@@ -23,6 +25,7 @@ class SubjectAccessRequestWorkerService(
   @Autowired val generatePdfService: GeneratePdfService,
   @Value("\${services.sar-api.base-url}")
   private val sarUrl: String,
+  private val telemetryClient: TelemetryClient,
 ) {
 
   private val log = LoggerFactory.getLogger(this::class.java)
@@ -43,6 +46,10 @@ class SubjectAccessRequestWorkerService(
       try {
         doReport(chosenSAR)
         sarGateway.complete(webClient, chosenSAR)
+        telemetryClient.trackEvent("NewReportGenerated",
+          mapOf(
+            "sarId" to chosenSAR.sarCaseReferenceNumber,
+          ))
       } catch (exception: Exception) {
         log.error(exception.message)
         exception.printStackTrace()
