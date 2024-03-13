@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Chunk
 import com.itextpdf.text.Document
@@ -66,6 +68,8 @@ class GeneratePdfService {
     val para = Paragraph()
     val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
     val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
+
+    val mapper = ObjectMapper(YAMLFactory())
     content.forEach { entry ->
       log.info(entry.key + entry.value)
       para.add(

@@ -14,6 +14,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
   implementation("com.itextpdf:itextpdf:5.5.13.3")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
   testImplementation("org.wiremock:wiremock-standalone:3.3.1")
   testImplementation("io.kotest:kotest-assertions-json-jvm:5.8.0")
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.0")
