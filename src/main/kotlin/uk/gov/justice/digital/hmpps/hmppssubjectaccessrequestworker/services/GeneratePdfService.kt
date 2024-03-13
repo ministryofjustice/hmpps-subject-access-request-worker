@@ -68,8 +68,6 @@ class GeneratePdfService {
     val para = Paragraph()
     val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
     val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
-
-    val mapper = ObjectMapper(YAMLFactory())
     content.forEach { entry ->
       log.info(entry.key + entry.value)
       para.add(
@@ -97,5 +95,10 @@ class GeneratePdfService {
       }
     }
     document.add(para)
+  }
+
+  fun writeYAML(stream: ByteArrayOutputStream, content: Map<String, Any>) {
+    val mapper = ObjectMapper(YAMLFactory())
+    mapper.writer().writeValues(stream).write(content)
   }
 }
