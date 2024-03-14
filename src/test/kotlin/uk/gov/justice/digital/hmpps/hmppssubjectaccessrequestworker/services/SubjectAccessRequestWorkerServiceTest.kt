@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.text.Document
+import com.microsoft.applicationinsights.TelemetryClient
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -50,8 +51,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val mockGeneratePdfService = Mockito.mock(GeneratePdfService::class.java)
   private val mockDocument = Mockito.mock(Document::class.java)
   private val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+  private val telemetryClient = Mockito.mock(TelemetryClient::class.java)
 
-  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080")
+  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient)
 
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
@@ -70,7 +72,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     Mockito.`when`(mockSarGateway.getUnclaimed(mockClient)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080")
+    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient)
       .pollForNewSubjectAccessRequests(mockClient)
 
     val expected: SubjectAccessRequest = sampleSAR
@@ -83,7 +85,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     val websarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
     Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient)).thenReturn(arrayOf(sampleSAR))
-    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080").doPoll()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doPoll()
     verify(websarGatewayMock, Mockito.times(1)).getUnclaimed(mockClient)
   }
 
@@ -102,7 +104,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), pdfStreamMock))
       .thenReturn("")
-    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080").doPoll()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doPoll()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR)
     verify(websarGatewayMock, Mockito.times(1)).complete(mockClient, sampleSAR)
   }
@@ -114,7 +116,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(websarGatewayMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(400))
-    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080").doPoll()
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doPoll()
     verify(websarGatewayMock, Mockito.times(1)).claim(mockClient, sampleSAR)
     verify(websarGatewayMock, Mockito.times(0)).complete(mockClient, sampleSAR)
   }
@@ -167,7 +169,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockGeneratePdfService.execute(any(), any(), any(), any(), any()))
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("Random string")
-    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080").doReport(sampleSAR)
+    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doReport(sampleSAR)
     verify(documentGateway, Mockito.times(1)).storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)
   }
 }

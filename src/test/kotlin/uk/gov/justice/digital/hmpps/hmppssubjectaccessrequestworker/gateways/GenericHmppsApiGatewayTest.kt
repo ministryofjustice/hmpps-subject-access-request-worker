@@ -8,11 +8,14 @@ import org.mockito.internal.verification.VerificationModeFactory
 import org.mockito.kotlin.verify
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.ApplicationInsightsConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers.ComplexityOfNeedMockServer
 
 @ActiveProfiles("test")
+@Import(ApplicationInsightsConfiguration::class)
 @ContextConfiguration(
   initializers = [ConfigDataApplicationContextInitializer::class],
   classes = [(GenericHmppsApiGateway::class)],

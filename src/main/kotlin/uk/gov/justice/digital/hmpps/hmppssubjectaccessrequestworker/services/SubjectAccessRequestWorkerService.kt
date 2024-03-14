@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.delay
+import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -44,12 +45,18 @@ class SubjectAccessRequestWorkerService(
     if (patchResponseCode == HttpStatusCode.valueOf(200)) {
       log.info("Report found!")
       try {
+        val stopWatch = StopWatch.createStarted()
         doReport(chosenSAR)
         sarGateway.complete(webClient, chosenSAR)
-        telemetryClient.trackEvent("NewReportGenerated",
+        stopWatch.stop()
+        telemetryClient.trackEvent(
+          "NewReportGenerated",
           mapOf(
             "sarId" to chosenSAR.sarCaseReferenceNumber,
-          ))
+            "UUID" to chosenSAR.id.toString(),
+            "time" to stopWatch.time.toString(),
+          ),
+        )
       } catch (exception: Exception) {
         log.error(exception.message)
         exception.printStackTrace()
