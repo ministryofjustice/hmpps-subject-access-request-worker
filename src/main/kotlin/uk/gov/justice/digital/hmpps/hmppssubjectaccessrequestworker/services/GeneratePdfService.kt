@@ -13,8 +13,6 @@ import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
 import java.io.ByteArrayOutputStream
-import java.io.FileOutputStream
-import java.nio.file.Files
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

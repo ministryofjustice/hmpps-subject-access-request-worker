@@ -48,7 +48,7 @@ class GeneratePdfServiceTest(
         generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
 
         verify(mockDocument, Mockito.times(1)).open()
-        verify(mockDocument, Mockito.times(3)).add(any())
+        verify(mockDocument, Mockito.times(5)).add(any())
         verify(mockDocument, Mockito.times(1)).close()
       }
 
