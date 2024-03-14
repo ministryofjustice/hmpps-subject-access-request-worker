@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.text.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import com.itextpdf.text.pdf.PdfWriter
+import com.microsoft.applicationinsights.TelemetryClient
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.test.runTest
@@ -166,8 +166,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ),
     )
       .thenReturn(mockStream)
-    Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
-      .thenReturn("")
     subjectAccessRequestWorkerService.doReport(sampleSAR)
 
     verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(services = mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"), null, "1", dateFromFormatted, dateToFormatted)
@@ -250,8 +248,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockDocument)
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
       .thenReturn(mockStream)
-    Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("Random string")
-    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doReport(sampleSAR)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockDocument, mockStream))
       .thenReturn(mockWriter)
     Mockito.`when`(
