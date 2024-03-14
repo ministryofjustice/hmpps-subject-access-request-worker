@@ -39,6 +39,7 @@ class GeneratePdfService {
     document.setMargins(50F, 50F, 100F, 50F)
     document.open()
     log.info("Started writing to PDF")
+    addCoverpage(document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
     addData(document, content)
     log.info("Finished writing report")
     addRearPage(document, writer.pageNumber)
@@ -112,31 +113,31 @@ class GeneratePdfService {
     document.add(para)
   }
 
-  fun addCoverSheet(nomisId: String, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateTo: LocalDate?, dateFrom: LocalDate?, serviceMap: MutableMap<String, String>) {
-    // change ID names
+  fun addCoverpage(document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
+    document.newPage()
+
+    val coverpageText = Paragraph()
+    document.add(Paragraph(300f, "\u00a0"))
+    coverpageText.alignment = Element.ALIGN_CENTER
     val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
 
-    val coverPage = Document()
-    Files.createDirectories(java.nio.file.Path.of("./tmp/pdf"))
-    PdfWriter.getInstance(coverPage, FileOutputStream("./tmp/pdf/coverPage.pdf"))
-
-    coverPage.open()
-    coverPage.add(Paragraph("Cover Page", font))
-    coverPage.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), font))
-    coverPage.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber", font))
-    coverPage.add(Paragraph(getReportDateRangeLine(dateTo, dateFrom), font))
-    coverPage.add(
-      Paragraph(
+    coverpageText.add(Chunk("SUBJECT ACCESS REQUEST REPORT\n\n", font))
+    coverpageText.add(Chunk("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n", font))
+    coverpageText.add(Chunk("SAR Case Reference Number: $sarCaseReferenceNumber\n", font))
+    coverpageText.add(Chunk("${getReportDateRangeLine(dateTo, dateFrom)}\n", font))
+    coverpageText.add(
+      Chunk(
         "Report generation date: ${LocalDate.now().format(
           DateTimeFormatter.ofLocalizedDate(
             FormatStyle.LONG,
           ),
-        )}",
+        )}\n",
         font,
       ),
     )
-    coverPage.add(Paragraph(getServiceListLine(serviceMap), font))
-    coverPage.close()
+    coverpageText.add(Paragraph(getServiceListLine(serviceMap), font))
+
+    document.add(coverpageText)
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
