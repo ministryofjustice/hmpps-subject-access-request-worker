@@ -79,6 +79,7 @@ class GeneratePdfService {
   }
 
   fun addData(document: Document, content: Map<String, Any>) {
+    document.newPage()
     val para = Paragraph()
     val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
     val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
