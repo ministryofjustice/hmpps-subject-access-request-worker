@@ -122,7 +122,7 @@ class GeneratePdfService {
     coverpageText.add(Chunk("SUBJECT ACCESS REQUEST REPORT\n\n", font))
     coverpageText.add(Chunk("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n", font))
     coverpageText.add(Chunk("SAR Case Reference Number: $sarCaseReferenceNumber\n", font))
-    coverpageText.add(Chunk("${getReportDateRangeLine(dateTo, dateFrom)}\n", font))
+    coverpageText.add(Chunk("${getReportDateRangeLine(dateFrom, dateTo)}\n", font))
     coverpageText.add(
       Chunk(
         "Report generation date: ${LocalDate.now().format(
