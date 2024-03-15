@@ -48,7 +48,7 @@ class GeneratePdfServiceTest(
         generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
 
         verify(mockDocument, Mockito.times(1)).open()
-        verify(mockDocument, Mockito.times(3)).add(any())
+        verify(mockDocument, Mockito.times(5)).add(any())
         verify(mockDocument, Mockito.times(1)).close()
       }
 
@@ -93,6 +93,22 @@ class GeneratePdfServiceTest(
         val text = PdfTextExtractor.getTextFromPage(reader, 1)
         Assertions.assertThat(text).contains("fake-service-name-1")
         Assertions.assertThat(text).contains("fake-service-name-2")
+      }
+
+      it("adds cover page to a PDF") {
+        val mockDocument = Document()
+        val writer = PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
+        mockDocument.open()
+        val font = FontFactory.getFont(FontFactory.COURIER, 20f, BaseColor.BLACK)
+        mockDocument.add(Chunk("Text so that the page isn't empty", font))
+        writer.isPageEmpty = false
+        Assertions.assertThat(writer.pageNumber).isEqualTo(1)
+        generatePdfService.addCoverpage(mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+        mockDocument.close()
+        val reader = PdfReader("dummy.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 2)
+        Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+        Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
       }
     }
   },
