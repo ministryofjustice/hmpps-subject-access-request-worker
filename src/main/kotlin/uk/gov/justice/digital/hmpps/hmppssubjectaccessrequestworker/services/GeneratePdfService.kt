@@ -133,7 +133,7 @@ class GeneratePdfService {
         font,
       ),
     )
-    coverpageText.add(Paragraph(getServiceListLine(serviceMap), font))
+    coverpageText.add(Chunk(getServiceListLine(serviceMap), font))
 
     document.add(coverpageText)
   }
