@@ -32,14 +32,16 @@ class GenericHmppsApiGateway(
       .bodyToMono(Map::class.java)
       .block()
     stopWatch.stop()
-    telemetryClient.trackEvent(
-      "ServiceResponse",
-      mapOf(
-        "url" to serviceUrl,
-        "responseTime" to stopWatch.time.toString(),
-        "responseSize" to response.size.toString(),
-      ),
-    )
+    if (response != null) {
+      telemetryClient.trackEvent(
+        "ServiceResponse",
+        mapOf(
+          "url" to serviceUrl,
+          "responseTime" to stopWatch.time.toString(),
+          "responseSize" to response.size.toString(),
+        ),
+      )
+    }
     return response
   }
 }
