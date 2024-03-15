@@ -32,8 +32,8 @@ class GeneratePdfServiceTest(
     describe("generatePdfService") {
       it("returns a ByteArrayOutputStream") {
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
-        val mockDocument = Mockito.mock(Document::class.java)
-        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        Mockito.mock(Document::class.java)
+        Mockito.mock(ByteArrayOutputStream::class.java)
 
         val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"))
 
@@ -54,8 +54,8 @@ class GeneratePdfServiceTest(
 
       it("handles no data being extracted") {
         val testResponseObject = mutableMapOf<String, Any>()
-        val mockDocument = Mockito.mock(Document::class.java)
-        val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
+        Mockito.mock(Document::class.java)
+        Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
         val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"))
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
