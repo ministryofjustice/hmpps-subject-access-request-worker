@@ -25,7 +25,7 @@ token=$( echo $auth_response | grep "\"access_token\":*" | awk -F\: '{print $2}'
 token_without_quotes=$(eval echo $token)
 
 # Get auth token without ROLE_SAR_DATA_ACCESS
-auth_response_2=$(curl -s --no-progress-meter -s -X POST "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials" \ -H 'Content-Type: application/json' -H "Authorization: Basic $(echo -n $client_without_sar_role:$secret_for_client_without_sar_role | base64)")
+auth_response_2=$(curl -s --no-progress-meter -X POST "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials" \ -H 'Content-Type: application/json' -H "Authorization: Basic $(echo -n $client_without_sar_role:$secret_for_client_without_sar_role | base64)")
 no_role_token=$(echo $auth_response_2 | grep "\"access_token\":*" | awk -F\: '{print $2}' | awk -F\, '{print $1}')
 no_role_token_without_quotes=$(eval echo $no_role_token)
 
@@ -37,12 +37,12 @@ declare -a endpoints=(
 # https://hdc-api-dev.hmpps.service.justice.gov.uk
 # https://keyworker-api-dev.prison.service.justice.gov.uk
 # https://restricted-patients-api-dev.hmpps.service.justice.gov.uk
-https://manage-adjudications-api-dev.hmpps.service.justice.gov.uk
+# https://manage-adjudications-api-dev.hmpps.service.justice.gov.uk
 # https://education-employment-api-dev.hmpps.service.justice.gov.uk
 # https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
 # https://dev.offender-case-notes.service.justice.gov.uk
 # https://hmpps-book-secure-move-api-staging.apps.cloud-platform.service.justice.gov.uk
-# https://learningandworkprogress-api-dev.hmpps.service.justice.gov.uk
+https://learningandworkprogress-api-dev.hmpps.service.justice.gov.uk
 # https://dev.moic.service.justice.gov.uk
 # https://hmpps-uof-data-api-dev.hmpps.service.justice.gov.uk
 )
@@ -82,7 +82,7 @@ do
 
    # Response with valid token and no ID (should be 209)
    echo "/subject-access-request with token and no ID (should be 209)" 
-   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request --header "Authorization: Bearer $token_without_quotes")
+   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?crn=$valid_ndelius_id --header "Authorization: Bearer $token_without_quotes")
    echo "Response code: $status_code"
    if [ $status_code != 209 ]; then
      echo -e "\n** FLAG **\n" 
@@ -99,7 +99,7 @@ do
    fi
 
    # Response with valid token and ID (should be 200)
-   cmd=$endpoint/subject-access-request?prn=$valid_nomis_id\&crn=$valid_ndelius_id
+   cmd=$endpoint/subject-access-request?prn=$valid_nomis_id
    response=$(curl --no-progress-meter $cmd --header "Authorization: Bearer $token_without_quotes")
    echo "/subject-access-request with token and ID (should be 200)" 
    status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $cmd --header "Authorization: Bearer $token_without_quotes")
