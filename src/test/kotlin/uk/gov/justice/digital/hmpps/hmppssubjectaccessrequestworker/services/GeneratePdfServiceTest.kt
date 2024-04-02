@@ -110,6 +110,76 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
         Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
       }
+
+      it("converts data to YAML format") {
+        val testInput = mapOf(
+          "testDateText" to "Test",
+          "testDataNumber" to 99,
+          "testDataArray" to arrayOf(1, 2, 3, 4, 5),
+          "testDataMap" to mapOf("a" to "1", "b" to "2"),
+          "testDataNested" to mapOf(
+            "a" to "test",
+            "b" to 2,
+            "c" to arrayOf("alpha", "beta", "gamma", "delta"),
+            "d" to mapOf("x" to 1, "z" to 2),
+          ),
+          "testDataDeepNested" to mapOf(
+            "a" to mapOf(
+              "b" to mapOf(
+                "c" to mapOf(
+                  "d" to mapOf(
+                    "e" to mapOf(
+                      "f" to mapOf(
+                        "g" to mapOf(
+                          "h" to mapOf(
+                            "i" to mapOf(
+                              "j" to "k",
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+        val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
+        val mockDocument = Document()
+        PdfWriter.getInstance(mockDocument, FileOutputStream("pdf_test_yaml.pdf"))
+        mockDocument.setMargins(50F, 50F, 100F, 50F)
+        mockDocument.open()
+        generatePdfService.addData(mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfReader("pdf_test_yaml.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).contains("fake-service-name")
+        Assertions.assertThat(text).contains("testDateText: \"Test\"")
+        Assertions.assertThat(text).contains("testDataNumber: 99")
+        Assertions.assertThat(text).contains("testDataArray:\n- 1\n- 2\n- 3\n- 4\n- 5")
+        Assertions.assertThat(text).contains("testDataMap:\n  a: \"1\"\n  b: \"2\"")
+        Assertions.assertThat(text).contains(
+          "testDataNested:\n" +
+            "  a: \"test\"\n" +
+            "  b: 2\n" +
+            "  c:\n  - \"alpha\"\n  - \"beta\"\n  - \"gamma\"\n  - \"delta\"\n" +
+            "  d:\n    x: 1\n    z: 2",
+        )
+        Assertions.assertThat(text).contains(
+          "testDataDeepNested:\n" +
+            "  a:\n" +
+            "    b:\n" +
+            "      c:\n" +
+            "        d:\n" +
+            "          e:\n" +
+            "            f:\n" +
+            "              g:\n" +
+            "                h:\n" +
+            "                  i:\n" +
+            "                    j: \"k\"",
+        )
+      }
     }
   },
 )
