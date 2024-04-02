@@ -2,7 +2,13 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import com.itextpdf.text.*
+import com.itextpdf.text.BaseColor
+import com.itextpdf.text.Chunk
+import com.itextpdf.text.Document
+import com.itextpdf.text.Element
+import com.itextpdf.text.Font
+import com.itextpdf.text.FontFactory
+import com.itextpdf.text.Paragraph
 import com.itextpdf.text.pdf.PdfPageEventHelper
 import com.itextpdf.text.pdf.PdfWriter
 import org.hibernate.query.sqm.tree.SqmNode.log
@@ -13,7 +19,6 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-
 
 @Service
 class GeneratePdfService {
@@ -89,7 +94,7 @@ class GeneratePdfService {
       val yamlFactory = YAMLFactory.builder()
         .loaderOptions(loaderOptions)
         .build()
-      val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value);
+      val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value)
       para.add(Chunk(contentText, font))
     }
     document.add(para)
