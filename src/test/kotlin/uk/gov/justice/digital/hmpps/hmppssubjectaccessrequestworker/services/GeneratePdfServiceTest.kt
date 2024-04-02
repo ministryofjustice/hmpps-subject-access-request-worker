@@ -110,6 +110,27 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
         Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
       }
+
+      it("converts data to YAML format") {
+        val testInput = mapOf(
+          "testDate1" to "Test",
+          "testData2" to "Test Value 2",
+          "testData3" to 99,
+        )
+        val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
+        val mockDocument = Document()
+        PdfWriter.getInstance(mockDocument, FileOutputStream("pdf_test_yaml.pdf"))
+        mockDocument.setMargins(50F, 50F, 100F, 50F)
+        mockDocument.open()
+        generatePdfService.addData(mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfReader("pdf_test_yaml.pdf")
+        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        Assertions.assertThat(text).contains("fake-service-name")
+        Assertions.assertThat(text).contains("testDate1: \"Test\"")
+        Assertions.assertThat(text).contains("testData2: \"Test Value 2\"")
+        Assertions.assertThat(text).contains("testData3: 99")
+      }
     }
   },
 )

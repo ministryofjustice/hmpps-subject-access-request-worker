@@ -1,21 +1,19 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Element
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
-import com.itextpdf.text.Paragraph
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import com.itextpdf.text.*
 import com.itextpdf.text.pdf.PdfPageEventHelper
 import com.itextpdf.text.pdf.PdfWriter
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
+import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+
 
 @Service
 class GeneratePdfService {
@@ -81,33 +79,18 @@ class GeneratePdfService {
   fun addData(document: Document, content: Map<String, Any>) {
     document.newPage()
     val para = Paragraph()
-    val font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
+    val font = FontFactory.getFont(FontFactory.COURIER, 8f, BaseColor.BLACK)
     val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
     content.forEach { entry ->
       log.info(entry.key + entry.value)
-      para.add(
-        Chunk(
-          "${entry.key}\n" + "\n",
-          boldFont,
-        ),
-      )
-      if (entry.value is Map<*, *>) {
-        (entry.value as Map<*, *>).forEach { value ->
-          para.add(
-            Chunk(
-              "  ${value.key} : ${value.value}\n\n\n",
-              font,
-            ),
-          )
-        }
-      } else {
-        para.add(
-          Chunk(
-            "  ${entry.value}\n" + "\n" + "\n",
-            font,
-          ),
-        )
-      }
+      para.add(Chunk("${entry.key}\n" + "\n", boldFont))
+      val loaderOptions = LoaderOptions()
+      loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
+      val yamlFactory = YAMLFactory.builder()
+        .loaderOptions(loaderOptions)
+        .build()
+      val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value);
+      para.add(Chunk(contentText, font))
     }
     document.add(para)
   }
