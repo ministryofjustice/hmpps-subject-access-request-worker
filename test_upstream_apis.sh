@@ -55,12 +55,25 @@ do
 
    # Docs (should be 200) - this will allow the service to be picked up by the service catalogue
    echo "/v3/api-docs (should be 200)"
+   paths=$(curl --no-progress-meter $endpoint/v3/api-docs | jq '.paths | keys')
    status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/v3/api-docs)
    echo "Response code: $status_code"
    if [ $status_code != 200 ]; then 
      echo -e "\n** FLAG **\n" 
      error_count=$((error_count+1))
    fi
+   for path in "${paths[@]}"
+   do 
+    exists=false
+    if [ path == "/subject-access-request" ]; then 
+      exists=true
+    fi
+    if [ exists == false ]; then
+      echo -e "\n** FLAG **\n" 
+      echo -e "No /subject-access-request in docs\n"
+      error_count=$((error_count+1))
+    fi
+   done
 
    # Health response (should be 200)
    echo "/health (should be 200)"
@@ -122,7 +135,8 @@ do
 
    content=$(echo $response | grep "\"content\":*")
    if [[ $content == "" ]]; then
-     echo -e "** NO CONTENT BLOCK **\n"
+     echo -e "\n** FLAG **\n" 
+     echo -e "No content block\n"
    fi
 
    echo "ERRORS: $error_count"
