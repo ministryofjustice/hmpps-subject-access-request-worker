@@ -53,6 +53,15 @@ do
    error_count=0
    echo "Testing endpoint: $endpoint"
 
+   # Docs (should be 200) - this will allow the service to be picked up by the service catalogue
+   echo "/v3/api-docs (should be 200)"
+   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/v3/api-docs)
+   echo "Response code: $status_code"
+   if [ $status_code != 200 ]; then 
+     echo -e "\n** FLAG **\n" 
+     error_count=$((error_count+1))
+   fi
+
    # Health response (should be 200)
    echo "/health (should be 200)"
    status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/health)
