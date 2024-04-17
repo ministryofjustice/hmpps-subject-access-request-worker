@@ -39,12 +39,12 @@ class SubjectAccessRequestWorkerService(
   }
 
   suspend fun doPoll() {
-    val webClient = sarGateway.getClient(sarUrl)
-    val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
-    val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
-    if (patchResponseCode == HttpStatusCode.valueOf(200)) {
-      log.info("Report found!")
-      try {
+    try {
+      val webClient = sarGateway.getClient(sarUrl)
+      val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
+      val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
+      if (patchResponseCode == HttpStatusCode.valueOf(200)) {
+        log.info("Report found!")
         val stopWatch = StopWatch.createStarted()
         doReport(chosenSAR)
         sarGateway.complete(webClient, chosenSAR)
@@ -57,10 +57,10 @@ class SubjectAccessRequestWorkerService(
             "time" to stopWatch.time.toString(),
           ),
         )
-      } catch (exception: Exception) {
-        log.error(exception.message)
-        exception.printStackTrace()
       }
+    } catch (exception: Exception) {
+      log.error(exception.message)
+      exception.printStackTrace()
     }
   }
 
