@@ -20,12 +20,19 @@ class GenericHmppsApiGateway(
     val response = webClient
       .get()
       .uri { builder ->
-        builder.path("/subject-access-request")
-          .queryParam("prn", prn)
-          .queryParam("crn", crn)
-          .queryParam("fromDate", dateFrom)
-          .queryParam("toDate", dateTo)
-          .build()
+        if (prn == null) {
+          builder.path("/subject-access-request")
+            .queryParam("crn", crn)
+            .queryParam("fromDate", dateFrom)
+            .queryParam("toDate", dateTo)
+            .build()
+        } else {
+          builder.path("/subject-access-request")
+            .queryParam("prn", prn)
+            .queryParam("fromDate", dateFrom)
+            .queryParam("toDate", dateTo)
+            .build()
+        }
       }
       .header("Authorization", "Bearer $clientToken")
       .retrieve()

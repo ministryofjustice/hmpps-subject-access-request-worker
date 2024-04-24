@@ -40,7 +40,6 @@ class GenericHmppsApiGatewayTest(
     }
 
     describe("getSarData") {
-
       it("authenticates using HMPPS Auth with credentials") {
         genericHmppsApiGateway.getSarData(
           "http://localhost:4000",
@@ -65,7 +64,6 @@ class GenericHmppsApiGatewayTest(
       }
 
       it("returns an error if unable to get a response") {
-
         val exception = shouldThrow<RuntimeException> {
           genericHmppsApiGateway.getSarData(
             "http://localhost:4000",
@@ -73,7 +71,7 @@ class GenericHmppsApiGatewayTest(
           )
         }
 
-        exception.message.shouldBe("404 Not Found from GET http://localhost:4000/subject-access-request?prn=personNotFoundInSystem&crn&fromDate&toDate")
+        exception.message.shouldBe("404 Not Found from GET http://localhost:4000/subject-access-request?prn=personNotFoundInSystem&fromDate&toDate")
       }
     }
   },
