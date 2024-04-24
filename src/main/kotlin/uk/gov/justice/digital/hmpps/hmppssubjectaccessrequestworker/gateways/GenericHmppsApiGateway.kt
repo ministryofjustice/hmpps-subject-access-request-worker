@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import java.time.LocalDate
+import java.util.Optional
 
 @Component
 class GenericHmppsApiGateway(
@@ -20,19 +21,12 @@ class GenericHmppsApiGateway(
     val response = webClient
       .get()
       .uri { builder ->
-        if (prn == null) {
-          builder.path("/subject-access-request")
-            .queryParam("crn", crn)
-            .queryParam("fromDate", dateFrom)
-            .queryParam("toDate", dateTo)
-            .build()
-        } else {
-          builder.path("/subject-access-request")
-            .queryParam("prn", prn)
-            .queryParam("fromDate", dateFrom)
-            .queryParam("toDate", dateTo)
-            .build()
-        }
+        builder.path("/subject-access-request")
+          .queryParamIfPresent("prn", Optional.ofNullable(prn))
+          .queryParamIfPresent("crn", Optional.ofNullable(crn))
+          .queryParam("fromDate", dateFrom)
+          .queryParam("toDate", dateTo)
+          .build()
       }
       .header("Authorization", "Bearer $clientToken")
       .retrieve()
