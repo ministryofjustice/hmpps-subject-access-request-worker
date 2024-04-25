@@ -10,7 +10,7 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 4000
   }
 
-  private val sarEndpoint = "/subject-access-request?prn=validPrn&crn&fromDate&toDate"
+  private val sarEndpoint = "/subject-access-request?prn=validPrn&fromDate&toDate"
 
   fun stubGetSubjectAccessRequestData() {
     stubFor(
