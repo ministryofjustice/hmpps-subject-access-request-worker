@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Subje
 class SubjectAccessRequestGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway, @Autowired val webClientBuilder: WebClient.Builder) {
 
   fun getClient(url: String): WebClient {
-    return webClientBuilder.build()
+    return webClientBuilder.baseUrl(url).build()
   }
   fun getClientTokenFromHmppsAuth(): String {
     return hmppsAuthGateway.getClientToken()
