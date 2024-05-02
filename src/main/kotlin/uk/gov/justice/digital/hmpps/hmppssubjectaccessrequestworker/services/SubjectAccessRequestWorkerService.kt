@@ -81,7 +81,7 @@ class SubjectAccessRequestWorkerService(
     log.info("Creating report..")
 
     val responseObject = getSubjectAccessRequestDataService.execute(chosenSarServiceMap, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
-    log.info("Extracted report data$responseObject")
+    log.info("Extracted report")
 
     val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo, chosenSarServiceMap)
     log.info("Created PDF")
