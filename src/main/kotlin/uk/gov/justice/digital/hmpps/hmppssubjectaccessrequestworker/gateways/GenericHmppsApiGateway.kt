@@ -16,7 +16,11 @@ class GenericHmppsApiGateway(
 ) {
   fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): Map<*, *>? {
     val clientToken = hmppsAuthGateway.getClientToken()
-    val webClient: WebClient = WebClient.builder().baseUrl(serviceUrl).build()
+    val webClient: WebClient = WebClient
+      .builder()
+      .codecs { configurer -> configurer.defaultCodecs().maxInMemorySize(100 * 1024 * 1024) }
+      .baseUrl(serviceUrl)
+      .build()
     val stopWatch = StopWatch.createStarted()
     val response = webClient
       .get()
