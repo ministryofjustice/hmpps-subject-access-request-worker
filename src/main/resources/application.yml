@@ -6,7 +6,7 @@ spring:
   application:
     name: hmpps-subject-access-request-worker
   codec:
-    max-in-memory-size: 10MB
+    max-in-memory-size: 100MB
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

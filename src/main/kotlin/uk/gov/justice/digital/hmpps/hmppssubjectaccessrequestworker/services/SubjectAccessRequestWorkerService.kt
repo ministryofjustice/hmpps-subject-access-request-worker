@@ -44,7 +44,7 @@ class SubjectAccessRequestWorkerService(
       val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
       val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
       if (patchResponseCode == HttpStatusCode.valueOf(200)) {
-        log.info("Report found!")
+        log.info("Report claimed with ID " + chosenSAR.id + " (Case Reference " + chosenSAR.sarCaseReferenceNumber + ")")
         val stopWatch = StopWatch.createStarted()
         doReport(chosenSAR)
         sarGateway.complete(webClient, chosenSAR)
