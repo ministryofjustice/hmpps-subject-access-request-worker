@@ -87,7 +87,7 @@ class GeneratePdfService {
     val font = FontFactory.getFont(FontFactory.COURIER, 8f, BaseColor.BLACK)
     val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
     content.forEach { entry ->
-      log.info("Retrieving data from " + entry.key)
+      log.info("Compiling data from " + entry.key)
       para.add(Chunk("${entry.key}\n" + "\n", boldFont))
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
@@ -96,8 +96,11 @@ class GeneratePdfService {
         .build()
       val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value)
       para.add(Chunk(contentText, font))
+      log.info("Compiling data from " + entry.key)
     }
+    log.info("Adding data to PDF")
     document.add(para)
+    log.info("Added data to PDF")
   }
 
   fun addCoverpage(document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
