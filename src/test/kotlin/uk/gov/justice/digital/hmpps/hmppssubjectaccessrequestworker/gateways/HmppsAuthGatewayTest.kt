@@ -63,4 +63,4 @@ class HmppsAuthGatewayTest(hmppsAuthGateway: HmppsAuthGateway) :
 
       exception.message.shouldBe("Invalid credentials used.")
     }
-  },)
+  })

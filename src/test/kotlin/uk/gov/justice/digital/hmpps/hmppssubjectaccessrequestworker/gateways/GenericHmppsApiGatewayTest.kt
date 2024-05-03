@@ -71,7 +71,7 @@ class GenericHmppsApiGatewayTest(
           )
         }
 
-        exception.message.shouldBe("404 Not Found from GET http://localhost:4000/subject-access-request?prn=personNotFoundInSystem&fromDate&toDate")
+        exception.message.shouldBe("404 Not Found from GET http://localhost:4000/subject-access-request")
       }
     }
   },
