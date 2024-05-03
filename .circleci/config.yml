@@ -132,10 +132,11 @@ workflows:
       equal: [ api, << pipeline.trigger_source >> ]
     jobs:
       - hmpps/gradle_owasp_dependency_check:
+          cache_key: "v2_0"
+          jdk_tag: "21.0"
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
           context:
             - hmpps-common-vars
-          jdk_tag: "20.0"
       - hmpps/trivy_latest_scan:
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
           context:
