@@ -126,6 +126,26 @@ workflows:
           context:
             - veracode-credentials
             - hmpps-common-vars
+
+  security-manual:
+    when:
+      equal: [ api, << pipeline.trigger_source >> ]
+    jobs:
+      - hmpps/gradle_owasp_dependency_check:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+          jdk_tag: "20.0"
+      - hmpps/trivy_latest_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+      - hmpps/veracode_pipeline_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+
   security-weekly:
     triggers:
       - schedule:
