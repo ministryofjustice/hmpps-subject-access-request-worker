@@ -145,7 +145,9 @@ class GeneratePdfService {
     val formattedDateFrom: String
     if (dateFrom != null) {
       formattedDateFrom = dateFrom.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
-    } else { formattedDateFrom = "Start of record" }
+    } else {
+      formattedDateFrom = "Start of record"
+    }
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
