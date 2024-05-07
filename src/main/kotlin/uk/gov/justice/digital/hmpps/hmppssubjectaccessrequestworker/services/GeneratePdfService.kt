@@ -1,15 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-//import com.itextpdf.text.BaseColor
-//import com.itextpdf.text.Chunk
-//import com.itextpdf.text.Document
-//import com.itextpdf.text.Element
-//import com.itextpdf.text.Font
-//import com.itextpdf.text.FontFactory
-//import com.itextpdf.text.Paragraph
-//import com.itextpdf.text.pdf.PdfPageEventHelper
-//import com.itextpdf.text.pdf.PdfWriter
-
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.io.font.constants.StandardFonts
@@ -30,8 +20,6 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlin.reflect.jvm.internal.impl.builtins.StandardNames.FqNames.string
-
 
 @Service
 class GeneratePdfService {
@@ -165,7 +153,6 @@ class GeneratePdfService {
     return "Services: $serviceList"
   }
 }
-
 
 class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {
   override fun getNextRenderer(): IRenderer {
