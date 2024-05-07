@@ -8,8 +8,10 @@ import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
+import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
@@ -59,7 +61,7 @@ class GeneratePdfService {
   }
 
   fun addRearPage(pdfDocument: PdfDocument, document: Document, numPages: Int) {
-    pdfDocument.addNewPage()
+    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.COURIER)
     val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph("\u00a0").setFontSize(300f))
@@ -69,9 +71,9 @@ class GeneratePdfService {
   }
 
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
-    pdfDocument.addNewPage()
-    val para = Paragraph()
+    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val para = Paragraph().setFont(font).setFontSize(8f)
     val boldFont = PdfFontFactory.createFont(StandardFonts.COURIER_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
@@ -82,11 +84,9 @@ class GeneratePdfService {
         .loaderOptions(loaderOptions)
         .build()
       val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value)
-
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
-
-      para.add(text).setFont(font).setFontSize(8f)
+      para.add(text)
       log.info("Compiling data from " + entry.key)
     }
     log.info("Adding data to PDF")
@@ -98,7 +98,7 @@ class GeneratePdfService {
     pdfDocument.addNewPage()
     val font = PdfFontFactory.createFont(StandardFonts.COURIER)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    coverpageText.add(Text("\u00a0").setFontSize(300f))
+    coverpageText.add(Text("\u00a0").setFontSize(300f).setTextAlignment(TextAlignment.CENTER))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
     coverpageText.add(Text("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
     coverpageText.add(Text("SAR Case Reference Number: $sarCaseReferenceNumber\n"))
