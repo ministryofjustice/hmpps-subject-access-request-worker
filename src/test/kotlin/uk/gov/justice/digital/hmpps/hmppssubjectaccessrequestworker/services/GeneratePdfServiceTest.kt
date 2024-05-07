@@ -1,17 +1,16 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.FontFactory
-import com.itextpdf.text.pdf.PdfReader
-import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.pdf.parser.PdfTextExtractor
+import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
 import io.kotest.core.spec.style.DescribeSpec
 import org.assertj.core.api.Assertions
 import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.test.context.ActiveProfiles
@@ -34,22 +33,15 @@ class GeneratePdfServiceTest(
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
-
         val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"))
-
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
-      it("calls iText open, add and close") {
+      it("returns the same stream") {
         val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
-        val mockDocument = Mockito.mock(Document::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-
-        generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockDocument, mockStream)
-
-        verify(mockDocument, Mockito.times(1)).open()
-        verify(mockDocument, Mockito.times(5)).add(any())
-        verify(mockDocument, Mockito.times(1)).close()
+        val result = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockStream)
+        Assertions.assertThat(result).isEqualTo(mockStream)
       }
 
       it("handles no data being extracted") {
@@ -62,17 +54,17 @@ class GeneratePdfServiceTest(
       }
 
       it("adds rear page with correct text") {
-        val mockDocument = Document()
-        val writer = PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
-        mockDocument.open()
-        val font = FontFactory.getFont(FontFactory.COURIER, 20f, BaseColor.BLACK)
-        mockDocument.add(Chunk("Text so that the page isn't empty", font))
-        writer.isPageEmpty = false
-        Assertions.assertThat(writer.pageNumber).isEqualTo(1)
-        generatePdfService.addRearPage(mockDocument, writer.pageNumber)
+        val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+        mockDocument.add(Paragraph("Text so that the page isn't empty").setFont(font).setFontSize(20f))
+        Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(1)
+        generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
         mockDocument.close()
-        val reader = PdfReader("dummy.pdf")
-        val text = PdfTextExtractor.getTextFromPage(reader, 2)
+        val reader = PdfDocument(PdfReader("dummy.pdf"))
+        val page = reader.getPage(1)
+        val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("End of Subject Access Request Report")
         Assertions.assertThat(text).contains("Total pages: 1")
       }
@@ -83,30 +75,31 @@ class GeneratePdfServiceTest(
             "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
             "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
           )
-        val mockDocument = Document()
-        PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
+        val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
         mockDocument.setMargins(50F, 50F, 100F, 50F)
-        mockDocument.open()
-        generatePdfService.addData(mockDocument, testResponseObject)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
-        val reader = PdfReader("dummy.pdf")
-        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        val reader = PdfDocument(PdfReader("dummy.pdf"))
+        val page = reader.getPage(1)
+        val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("fake-service-name-1")
         Assertions.assertThat(text).contains("fake-service-name-2")
       }
 
       it("adds cover page to a PDF") {
-        val mockDocument = Document()
-        val writer = PdfWriter.getInstance(mockDocument, FileOutputStream("dummy.pdf"))
-        mockDocument.open()
-        val font = FontFactory.getFont(FontFactory.COURIER, 20f, BaseColor.BLACK)
-        mockDocument.add(Chunk("Text so that the page isn't empty", font))
-        writer.isPageEmpty = false
-        Assertions.assertThat(writer.pageNumber).isEqualTo(1)
-        generatePdfService.addCoverpage(mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+        val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+        mockDocument.add(Paragraph("Text so that the page isn't empty").setFont(font).setFontSize(20f))
+        Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(1)
+        generatePdfService.addCoverpage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
         mockDocument.close()
-        val reader = PdfReader("dummy.pdf")
-        val text = PdfTextExtractor.getTextFromPage(reader, 2)
+        val reader = PdfDocument(PdfReader("dummy.pdf"))
+        val page = reader.getPage(1)
+        val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
         Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
       }
@@ -146,38 +139,39 @@ class GeneratePdfServiceTest(
           ),
         )
         val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
-        val mockDocument = Document()
-        PdfWriter.getInstance(mockDocument, FileOutputStream("pdf_test_yaml.pdf"))
+        val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
         mockDocument.setMargins(50F, 50F, 100F, 50F)
-        mockDocument.open()
-        generatePdfService.addData(mockDocument, testResponseObject)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
-        val reader = PdfReader("pdf_test_yaml.pdf")
-        val text = PdfTextExtractor.getTextFromPage(reader, 1)
+        val reader = PdfDocument(PdfReader("dummy.pdf"))
+        val page = reader.getPage(1)
+        val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("fake-service-name")
         Assertions.assertThat(text).contains("testDateText: \"Test\"")
         Assertions.assertThat(text).contains("testDataNumber: 99")
-        Assertions.assertThat(text).contains("testDataArray:\n- 1\n- 2\n- 3\n- 4\n- 5")
-        Assertions.assertThat(text).contains("testDataMap:\n  a: \"1\"\n  b: \"2\"")
+        Assertions.assertThat(text).contains("testDataArray: \n- 1 \n- 2 \n- 3 \n- 4 \n- 5 ")
+        Assertions.assertThat(text).contains("testDataMap: \n  a: \"1\" \n  b: \"2\" ")
         Assertions.assertThat(text).contains(
-          "testDataNested:\n" +
-            "  a: \"test\"\n" +
-            "  b: 2\n" +
-            "  c:\n  - \"alpha\"\n  - \"beta\"\n  - \"gamma\"\n  - \"delta\"\n" +
-            "  d:\n    x: 1\n    z: 2",
+          "testDataNested: \n" +
+            "  a: \"test\" \n" +
+            "  b: 2 \n" +
+            "  c: \n  - \"alpha\" \n  - \"beta\" \n  - \"gamma\" \n  - \"delta\" \n" +
+            "  d: \n    x: 1 \n    z: 2 ",
         )
         Assertions.assertThat(text).contains(
-          "testDataDeepNested:\n" +
-            "  a:\n" +
-            "    b:\n" +
-            "      c:\n" +
-            "        d:\n" +
-            "          e:\n" +
-            "            f:\n" +
-            "              g:\n" +
-            "                h:\n" +
-            "                  i:\n" +
-            "                    j: \"k\"",
+          "testDataDeepNested: \n" +
+            "  a: \n" +
+            "    b: \n" +
+            "      c: \n" +
+            "        d: \n" +
+            "          e: \n" +
+            "            f: \n" +
+            "              g: \n" +
+            "                h: \n" +
+            "                  i: \n" +
+            "                    j: \"k\" ",
         )
       }
     }

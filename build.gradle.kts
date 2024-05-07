@@ -13,7 +13,7 @@ dependencies {
   implementation("org.json:json:20231013")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
-  implementation("com.itextpdf:itextpdf:5.5.13.3")
+  implementation("com.itextpdf:itext7-core:7.2.6")
   implementation("org.apache.commons:commons-lang3:3.12.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
   testImplementation("org.wiremock:wiremock-standalone:3.3.1")
