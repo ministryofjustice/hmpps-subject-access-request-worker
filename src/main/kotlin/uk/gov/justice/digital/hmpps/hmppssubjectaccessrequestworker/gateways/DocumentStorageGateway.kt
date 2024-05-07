@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 
-import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -46,12 +45,6 @@ class DocumentStorageGateway(
       )
       .bodyToMono(String::class.java)
       .block()
-    return response
-  }
-
-  fun retrieveDocument(documentId: UUID): JSONObject? {
-    val token = hmppsAuthGateway.getClientToken()
-    val response = webClient.get().uri("/documents/" + { documentId.toString() }).header("Authorization", "Bearer $token").retrieve().bodyToMono(JSONObject::class.java).block()
     return response
   }
 }
