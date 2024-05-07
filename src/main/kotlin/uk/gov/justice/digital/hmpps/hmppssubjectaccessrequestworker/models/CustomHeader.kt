@@ -1,35 +1,42 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models
 
-import com.itextpdf.text.Document
-import com.itextpdf.text.Element
-import com.itextpdf.text.Font
-import com.itextpdf.text.Phrase
-import com.itextpdf.text.pdf.ColumnText
-import com.itextpdf.text.pdf.PdfPageEventHelper
-import com.itextpdf.text.pdf.PdfWriter
+//import com.itextpdf.text.Document
+//import com.itextpdf.text.Element
+//import com.itextpdf.text.Font
+//import com.itextpdf.text.Phrase
+//import com.itextpdf.text.pdf.ColumnText
+//import com.itextpdf.text.pdf.PdfPageEventHelper
+//import com.itextpdf.text.pdf.PdfWriter
 
-class CustomHeader(private val nID: String, private val sarID: String) : PdfPageEventHelper() {
-  private var font = Font(Font.FontFamily.COURIER, 10f)
+import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.kernel.events.IEventHandler
+import com.itextpdf.kernel.events.PdfDocumentEvent
+import com.itextpdf.kernel.font.PdfFont
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Text
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.VerticalAlignment;
 
-  override fun onEndPage(writer: PdfWriter, document: Document) {
-    val cb = writer.directContent
-    val nIdHeader = Phrase(nID, font)
-    ColumnText.showTextAligned(
-      cb,
-      Element.ALIGN_LEFT,
-      nIdHeader,
-      document.leftMargin(),
-      document.top() + 40,
-      0f,
+class CustomHeader(private val nID: String, private val sarID: String) {
+  private var font : PdfFont = PdfFontFactory.createFont(StandardFonts.COURIER) //COURIER, 10f)
+  fun onEndPage(writer: PdfWriter, document: Document) {
+    // val cb = writer.directContent
+    // val nIdHeader = Paragraph(nID)
+    document.showTextAligned(
+      nID,
+      36f,
+      806f,
+      TextAlignment.LEFT
     )
-    val sarIdHeader = Phrase("CASE REFERENCE: $sarID", font)
-    ColumnText.showTextAligned(
-      cb,
-      Element.ALIGN_RIGHT,
-      sarIdHeader,
-      document.right(),
-      document.top() + 40,
-      0f,
+    // val sarIdHeader = Phrase("CASE REFERENCE: $sarID", font)
+    document.showTextAligned(
+      "CASE REFERENCE: $sarID",
+      36.toFloat(),
+      806.toFloat(),
+      TextAlignment.RIGHT
     )
   }
 }

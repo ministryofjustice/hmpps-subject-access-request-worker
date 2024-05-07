@@ -1,16 +1,27 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+//import com.itextpdf.text.BaseColor
+//import com.itextpdf.text.Chunk
+//import com.itextpdf.text.Document
+//import com.itextpdf.text.Element
+//import com.itextpdf.text.Font
+//import com.itextpdf.text.FontFactory
+//import com.itextpdf.text.Paragraph
+//import com.itextpdf.text.pdf.PdfPageEventHelper
+//import com.itextpdf.text.pdf.PdfWriter
+
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import com.itextpdf.text.BaseColor
-import com.itextpdf.text.Chunk
-import com.itextpdf.text.Document
-import com.itextpdf.text.Element
-import com.itextpdf.text.Font
-import com.itextpdf.text.FontFactory
-import com.itextpdf.text.Paragraph
-import com.itextpdf.text.pdf.PdfPageEventHelper
-import com.itextpdf.text.pdf.PdfWriter
+import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Text
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.renderer.IRenderer
+import com.itextpdf.layout.renderer.TextRenderer
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
@@ -19,6 +30,8 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.reflect.jvm.internal.impl.builtins.StandardNames.FqNames.string
+
 
 @Service
 class GeneratePdfService {
@@ -30,31 +43,29 @@ class GeneratePdfService {
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
     serviceMap: MutableMap<String, String>,
-    document: Document = createDocument(),
     pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
-    val writer = getPdfWriter(document, pdfStream)
+    val writer = getPdfWriter(pdfStream)
+    val pdfDocument = PdfDocument(writer)
+    val document = Document(pdfDocument)
     val event = getCustomHeader(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber)
-    setEvent(writer, event)
+    // pdfDocument.addEventHandler()
+    // setEvent(writer, event)
     document.setMargins(50F, 50F, 100F, 50F)
-    document.open()
+    // document.open()
     log.info("Started writing to PDF")
-    addCoverpage(document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
-    addData(document, content)
+    addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
+    addData(pdfDocument, document, content)
     log.info("Finished writing report")
-    addRearPage(document, writer.pageNumber)
+    addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
     document.close()
     log.info("PDF complete")
     return pdfStream
   }
 
-  fun getPdfWriter(document: Document, stream: ByteArrayOutputStream): PdfWriter {
-    return PdfWriter.getInstance(document, stream)
-  }
-
-  fun createDocument(): Document {
-    return Document()
+  fun getPdfWriter(stream: ByteArrayOutputStream): PdfWriter {
+    return PdfWriter(stream)
   }
 
   fun createPdfStream(): ByteArrayOutputStream {
@@ -65,37 +76,40 @@ class GeneratePdfService {
     return CustomHeader(nID, sarID)
   }
 
-  fun setEvent(writer: PdfWriter, event: PdfPageEventHelper): Int {
-    writer.pageEvent = event
-    return 0
-  }
+//  fun setEvent(writer: PdfWriter, event: PdfDocumentEvent): Int {
+//    writer.pageEvent = event
+//    return 0
+//  }
 
-  fun addRearPage(document: Document, numPages: Int) {
-    document.newPage()
-    val endPageText = Paragraph()
-    document.add(Paragraph(300f, "\u00a0"))
-    endPageText.alignment = Element.ALIGN_CENTER
-    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-    endPageText.add(Chunk("End of Subject Access Request Report\n\n", font))
-    endPageText.add(Chunk("Total pages: $numPages", font))
+  fun addRearPage(pdfDocument: PdfDocument, document: Document, numPages: Int) {
+    pdfDocument.addNewPage()
+    val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
+    document.add(Paragraph("\u00a0").setFontSize(300f))
+    endPageText.add(Text("End of Subject Access Request Report\n\n"))
+    endPageText.add(Text("Total pages: $numPages"))
     document.add(endPageText)
   }
 
-  fun addData(document: Document, content: Map<String, Any>) {
-    document.newPage()
+  fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
+    pdfDocument.addNewPage()
     val para = Paragraph()
-    val font = FontFactory.getFont(FontFactory.COURIER, 8f, BaseColor.BLACK)
-    val boldFont = Font(Font.FontFamily.COURIER, 18f, Font.BOLD)
+    val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val boldFont = PdfFontFactory.createFont(StandardFonts.COURIER_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
-      para.add(Chunk("${entry.key}\n" + "\n", boldFont))
+      para.add(Text("${entry.key}\n" + "\n").setFont(boldFont).setFontSize(18f))
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
         .loaderOptions(loaderOptions)
         .build()
       val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value)
-      para.add(Chunk(contentText, font))
+
+      val text = Text(contentText)
+      text.setNextRenderer(CodeRenderer(text))
+
+      para.add(text).setFont(font).setFontSize(8f)
       log.info("Compiling data from " + entry.key)
     }
     log.info("Adding data to PDF")
@@ -103,30 +117,25 @@ class GeneratePdfService {
     log.info("Added data to PDF")
   }
 
-  fun addCoverpage(document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
-    document.newPage()
-
-    val coverpageText = Paragraph()
-    document.add(Paragraph(300f, "\u00a0"))
-    coverpageText.alignment = Element.ALIGN_CENTER
-    val font: Font = FontFactory.getFont(FontFactory.COURIER, 16f, BaseColor.BLACK)
-
-    coverpageText.add(Chunk("SUBJECT ACCESS REQUEST REPORT\n\n", font))
-    coverpageText.add(Chunk("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n", font))
-    coverpageText.add(Chunk("SAR Case Reference Number: $sarCaseReferenceNumber\n", font))
-    coverpageText.add(Chunk("${getReportDateRangeLine(dateFrom, dateTo)}\n", font))
+  fun addCoverpage(pdfDocument: PdfDocument, document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
+    pdfDocument.addNewPage()
+    val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
+    coverpageText.add(Text("\u00a0").setFontSize(300f))
+    coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
+    coverpageText.add(Text("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
+    coverpageText.add(Text("SAR Case Reference Number: $sarCaseReferenceNumber\n"))
+    coverpageText.add(Text("${getReportDateRangeLine(dateFrom, dateTo)}\n"))
     coverpageText.add(
-      Chunk(
+      Text(
         "Report generation date: ${LocalDate.now().format(
           DateTimeFormatter.ofLocalizedDate(
             FormatStyle.LONG,
           ),
         )}\n",
-        font,
       ),
     )
-    coverpageText.add(Chunk(getServiceListLine(serviceMap), font))
-
+    coverpageText.add(Paragraph(getServiceListLine(serviceMap)))
     document.add(coverpageText)
   }
 
@@ -155,4 +164,13 @@ class GeneratePdfService {
     val serviceList = serviceMap.keys.toList().joinToString(", ")
     return "Services: $serviceList"
   }
+}
+
+
+class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {
+  override fun getNextRenderer(): IRenderer {
+    return CodeRenderer(getModelElement() as Text)
+  }
+
+  override fun trimFirst() {}
 }
