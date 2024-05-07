@@ -48,10 +48,4 @@ class DocumentStorageGateway(
       .block()
     return response
   }
-
-  fun retrieveDocument(documentId: UUID): JSONObject? {
-    val token = hmppsAuthGateway.getClientToken()
-    val response = webClient.get().uri("/documents/" + { documentId.toString() }).header("Authorization", "Bearer $token").retrieve().bodyToMono(JSONObject::class.java).block()
-    return response
-  }
 }
