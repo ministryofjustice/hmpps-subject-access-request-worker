@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -15,7 +16,7 @@ import com.itextpdf.layout.renderer.TextRenderer
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeader
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -37,11 +38,8 @@ class GeneratePdfService {
     val writer = getPdfWriter(pdfStream)
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
-    val event = getCustomHeader(getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber)
-    // pdfDocument.addEventHandler()
-    // setEvent(writer, event)
+    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
     document.setMargins(50F, 50F, 100F, 50F)
-    // document.open()
     log.info("Started writing to PDF")
     addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
     addData(pdfDocument, document, content)
@@ -59,15 +57,6 @@ class GeneratePdfService {
   fun createPdfStream(): ByteArrayOutputStream {
     return ByteArrayOutputStream()
   }
-
-  fun getCustomHeader(nID: String, sarID: String): CustomHeader {
-    return CustomHeader(nID, sarID)
-  }
-
-//  fun setEvent(writer: PdfWriter, event: PdfDocumentEvent): Int {
-//    writer.pageEvent = event
-//    return 0
-//  }
 
   fun addRearPage(pdfDocument: PdfDocument, document: Document, numPages: Int) {
     pdfDocument.addNewPage()

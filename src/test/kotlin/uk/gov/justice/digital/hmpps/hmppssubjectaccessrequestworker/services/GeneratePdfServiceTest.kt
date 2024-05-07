@@ -33,24 +33,14 @@ class GeneratePdfServiceTest(
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
-
         val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"))
-
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
-      it("returns stream") {
+      it("returns the same stream") {
         val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
-//        val mockPdfDocument = Mockito.mock(PdfDocument::class.java)
-//        val mockDocument = Document(mockPdfDocument)
-        val mockDocument = Mockito.mock(Document::class.java)
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-
         val result = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockStream)
-
-        // verify(mockDocument, Mockito.times(1)).open()
-        // verify(mockDocument, Mockito.times(5)).add(any())
-        // verify(mockDocument, Mockito.times(1)).close()
         Assertions.assertThat(result).isEqualTo(mockStream)
       }
 
@@ -104,7 +94,6 @@ class GeneratePdfServiceTest(
         val mockDocument = Document(mockPdfDocument)
         val font = PdfFontFactory.createFont(StandardFonts.COURIER)
         mockDocument.add(Paragraph("Text so that the page isn't empty").setFont(font).setFontSize(20f))
-        // writer.isPageEmpty = false
         Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(1)
         generatePdfService.addCoverpage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
         mockDocument.close()
