@@ -6,7 +6,6 @@ import com.itextpdf.kernel.events.IEventHandler
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.properties.TextAlignment
@@ -21,14 +20,18 @@ class CustomHeaderEventHandler(val document: Document, private val nID: String, 
     canvas
       .setFont(font)
       .setFontSize(5f)
-      .showTextAligned(nID,
+      .showTextAligned(
+        nID,
         36f,
         806f,
-        TextAlignment.LEFT)
-      .showTextAligned("CASE REFERENCE: $sarID",
+        TextAlignment.LEFT,
+      )
+      .showTextAligned(
+        "CASE REFERENCE: $sarID",
         36f,
         806f,
-        TextAlignment.RIGHT,)
+        TextAlignment.RIGHT,
+      )
       .close()
   }
 }
