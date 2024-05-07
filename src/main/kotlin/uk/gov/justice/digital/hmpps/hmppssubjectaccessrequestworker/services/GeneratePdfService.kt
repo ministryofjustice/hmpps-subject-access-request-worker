@@ -13,6 +13,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.VerticalAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
 import org.hibernate.query.sqm.tree.SqmNode.log
@@ -95,10 +96,9 @@ class GeneratePdfService {
   }
 
   fun addCoverpage(pdfDocument: PdfDocument, document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
-    pdfDocument.addNewPage()
     val font = PdfFontFactory.createFont(StandardFonts.COURIER)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    coverpageText.add(Text("\u00a0").setFontSize(300f).setTextAlignment(TextAlignment.CENTER))
+    coverpageText.add(Text("\u00a0\n").setFontSize(300f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
     coverpageText.add(Text("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
     coverpageText.add(Text("SAR Case Reference Number: $sarCaseReferenceNumber\n"))
