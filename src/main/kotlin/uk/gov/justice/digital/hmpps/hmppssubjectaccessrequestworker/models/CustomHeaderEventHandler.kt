@@ -14,7 +14,6 @@ import com.itextpdf.layout.properties.TextAlignment
 class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val nID: String, private val sarID: String) : IEventHandler {
 
   override fun handleEvent(currentEvent: Event) {
-
     val docEvent = currentEvent as PdfDocumentEvent
     if (pdfDoc.getPageNumber(docEvent.page) <= 1) {
       return

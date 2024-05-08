@@ -113,8 +113,6 @@ class GeneratePdfService {
       ).setTextAlignment(TextAlignment.CENTER),
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
-
-
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
