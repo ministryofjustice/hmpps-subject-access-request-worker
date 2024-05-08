@@ -99,21 +99,22 @@ class GeneratePdfService {
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(200f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-    coverpageText.add(Paragraph("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
-    coverpageText.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber"))
-    coverpageText.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)))
-    coverpageText.add(
+    document.add(coverpageText)
+    document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
+    document.add(
       Paragraph(
         "Report generation date: ${LocalDate.now().format(
           DateTimeFormatter.ofLocalizedDate(
             FormatStyle.LONG,
           ),
         )}",
-      ),
+      ).setTextAlignment(TextAlignment.CENTER),
     )
-    coverpageText.add(Paragraph("${getServiceListLine(serviceMap)}\n"))
+    document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
 
-    document.add(coverpageText)
+
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
