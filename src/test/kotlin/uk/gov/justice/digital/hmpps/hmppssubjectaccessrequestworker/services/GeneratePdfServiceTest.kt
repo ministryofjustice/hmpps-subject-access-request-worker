@@ -68,7 +68,7 @@ class GeneratePdfServiceTest(
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("End of Subject Access Request Report")
-        Assertions.assertThat(text).contains("Total pages: 1")
+        Assertions.assertThat(text).contains("Total pages: 2")
       }
 
       it("writes data to a PDF") {
