@@ -42,11 +42,11 @@ class GeneratePdfService {
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
     addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
+    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(pdfDocument, document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
-    log.info("Finished writing report")
     addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
-    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
+    log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
     return pdfStream

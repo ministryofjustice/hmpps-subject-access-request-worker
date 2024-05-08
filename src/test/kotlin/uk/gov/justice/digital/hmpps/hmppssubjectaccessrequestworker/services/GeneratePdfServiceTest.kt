@@ -215,10 +215,10 @@ class GeneratePdfServiceTest(
       val mockPdfDocument = PdfDocument(writer)
       val mockDocument = Document(mockPdfDocument)
       generatePdfService.addCoverpage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+      mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
       generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
       generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
-      mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockDocument, "testHeader", "123456"))
-      Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(3)
+      Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(53
       mockDocument.close()
       val reader = PdfDocument(PdfReader("dummy.pdf"))
       val page = reader.getPage(1)
