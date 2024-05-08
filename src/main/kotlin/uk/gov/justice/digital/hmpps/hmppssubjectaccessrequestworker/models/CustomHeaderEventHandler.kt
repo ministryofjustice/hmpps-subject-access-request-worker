@@ -6,14 +6,18 @@ import com.itextpdf.kernel.events.IEventHandler
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.properties.TextAlignment
 
-class CustomHeaderEventHandler(val document: Document, private val nID: String, private val sarID: String) : IEventHandler {
+class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val nID: String, private val sarID: String) : IEventHandler {
 
   override fun handleEvent(currentEvent: Event) {
     val docEvent = currentEvent as PdfDocumentEvent
+    if (pdfDoc.getPageNumber(docEvent.page) <= 1) {
+      return
+    }
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = docEvent.page.pageSize
     val leftCoord = pageSize.left + document.leftMargin
