@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.time.LocalDate
@@ -63,7 +65,7 @@ class GeneratePdfServiceTest(
         generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
         mockDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
-        val page = reader.getPage(1)
+        val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("End of Subject Access Request Report")
         Assertions.assertThat(text).contains("Total pages: 1")
@@ -82,7 +84,7 @@ class GeneratePdfServiceTest(
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
-        val page = reader.getPage(1)
+        val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("fake-service-name-1")
         Assertions.assertThat(text).contains("fake-service-name-2")
@@ -142,11 +144,10 @@ class GeneratePdfServiceTest(
         val writer = PdfWriter(FileOutputStream("dummy.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
-        mockDocument.setMargins(50F, 50F, 100F, 50F)
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
-        val page = reader.getPage(1)
+        val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("fake-service-name")
         Assertions.assertThat(text).contains("testDateText: \"Test\"")
@@ -174,6 +175,56 @@ class GeneratePdfServiceTest(
             "                    j: \"k\" ",
         )
       }
+    }
+    it("creates a full PDF report") {
+      val testInput = mapOf(
+        "testDateText" to "Test",
+        "testDataNumber" to 99,
+        "testDataArray" to arrayOf(1, 2, 3, 4, 5),
+        "testDataMap" to mapOf("a" to "1", "b" to "2"),
+        "testDataNested" to mapOf(
+          "a" to "test",
+          "b" to 2,
+          "c" to arrayOf("alpha", "beta", "gamma", "delta"),
+          "d" to mapOf("x" to 1, "z" to 2),
+        ),
+        "testDataDeepNested" to mapOf(
+          "a" to mapOf(
+            "b" to mapOf(
+              "c" to mapOf(
+                "d" to mapOf(
+                  "e" to mapOf(
+                    "f" to mapOf(
+                      "g" to mapOf(
+                        "h" to mapOf(
+                          "i" to mapOf(
+                            "j" to "k",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      )
+      val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
+      val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+      val mockPdfDocument = PdfDocument(writer)
+      val mockDocument = Document(mockPdfDocument)
+      mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockDocument, "testHeader", "123456"))
+      generatePdfService.addCoverpage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+      generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+      generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
+      Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(3)
+      mockDocument.close()
+      val reader = PdfDocument(PdfReader("dummy.pdf"))
+      val page = reader.getPage(1)
+      val text = PdfTextExtractor.getTextFromPage(page)
+      Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+      Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
     }
   },
 )
