@@ -42,11 +42,11 @@ class GeneratePdfService {
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
     addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
+    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(pdfDocument, document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
-    log.info("Finished writing report")
     addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
-    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
+    log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
     return pdfStream
@@ -99,21 +99,20 @@ class GeneratePdfService {
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(200f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-    coverpageText.add(Paragraph("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
-    coverpageText.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber"))
-    coverpageText.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)))
-    coverpageText.add(
+    document.add(coverpageText)
+    document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
+    document.add(
       Paragraph(
         "Report generation date: ${LocalDate.now().format(
           DateTimeFormatter.ofLocalizedDate(
             FormatStyle.LONG,
           ),
         )}",
-      ),
+      ).setTextAlignment(TextAlignment.CENTER),
     )
-    coverpageText.add(Paragraph("${getServiceListLine(serviceMap)}\n"))
-
-    document.add(coverpageText)
+    document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
