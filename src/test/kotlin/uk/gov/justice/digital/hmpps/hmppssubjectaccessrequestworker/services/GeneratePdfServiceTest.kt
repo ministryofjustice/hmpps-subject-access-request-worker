@@ -218,7 +218,7 @@ class GeneratePdfServiceTest(
       mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
       generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
       generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
-      Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(53
+      Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(3)
       mockDocument.close()
       val reader = PdfDocument(PdfReader("dummy.pdf"))
       val page = reader.getPage(1)
