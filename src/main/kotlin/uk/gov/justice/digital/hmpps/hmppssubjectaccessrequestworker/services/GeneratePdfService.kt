@@ -19,6 +19,7 @@ import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -77,7 +78,7 @@ class GeneratePdfService {
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
-      para.add(Text("${entry.key}\n" + "\n").setFont(boldFont).setFontSize(18f))
+      para.add(Text("${HeadingHelper.format(entry.key)}\n" + "\n").setFont(boldFont).setFontSize(18f))
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
