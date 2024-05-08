@@ -14,7 +14,7 @@ class CustomHeaderEventHandler(val document: Document, private val nID: String, 
 
   override fun handleEvent(currentEvent: Event) {
     val docEvent = currentEvent as PdfDocumentEvent
-    val font: PdfFont = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = docEvent.page.pageSize
     val leftCoord = pageSize.left + document.leftMargin
     val rightCoord = pageSize.right - document.rightMargin
