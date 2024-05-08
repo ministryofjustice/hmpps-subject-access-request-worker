@@ -40,13 +40,13 @@ class GeneratePdfService {
     val writer = getPdfWriter(pdfStream)
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
-    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
-    document.setMargins(50F, 50F, 100F, 50F)
     log.info("Started writing to PDF")
     addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
+    document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
     log.info("Finished writing report")
     addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
+    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
     document.close()
     log.info("PDF complete")
     return pdfStream
@@ -62,7 +62,7 @@ class GeneratePdfService {
 
   fun addRearPage(pdfDocument: PdfDocument, document: Document, numPages: Int) {
     document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-    val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph("\u00a0").setFontSize(300f))
     endPageText.add(Text("End of Subject Access Request Report\n\n"))
@@ -72,9 +72,9 @@ class GeneratePdfService {
 
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
     document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-    val font = PdfFontFactory.createFont(StandardFonts.COURIER)
-    val para = Paragraph().setFont(font).setFontSize(8f)
-    val boldFont = PdfFontFactory.createFont(StandardFonts.COURIER_BOLD)
+    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
+    val para = Paragraph().setFont(font).setFontSize(12f)
+    val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
       para.add(Text("${entry.key}\n" + "\n").setFont(boldFont).setFontSize(18f))
@@ -95,23 +95,24 @@ class GeneratePdfService {
   }
 
   fun addCoverpage(pdfDocument: PdfDocument, document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
-    val font = PdfFontFactory.createFont(StandardFonts.COURIER)
+    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    coverpageText.add(Text("\u00a0\n").setFontSize(300f))
+    coverpageText.add(Text("\u00a0\n").setFontSize(200f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-    coverpageText.add(Text("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
-    coverpageText.add(Text("SAR Case Reference Number: $sarCaseReferenceNumber\n"))
-    coverpageText.add(Text("${getReportDateRangeLine(dateFrom, dateTo)}\n"))
+    coverpageText.add(Paragraph("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
+    coverpageText.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber"))
+    coverpageText.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)))
     coverpageText.add(
-      Text(
+      Paragraph(
         "Report generation date: ${LocalDate.now().format(
           DateTimeFormatter.ofLocalizedDate(
             FormatStyle.LONG,
           ),
-        )}\n",
+        )}",
       ),
     )
-    coverpageText.add(Paragraph(getServiceListLine(serviceMap)))
+    coverpageText.add(Paragraph("${getServiceListLine(serviceMap)}\n"))
+
     document.add(coverpageText)
   }
 
