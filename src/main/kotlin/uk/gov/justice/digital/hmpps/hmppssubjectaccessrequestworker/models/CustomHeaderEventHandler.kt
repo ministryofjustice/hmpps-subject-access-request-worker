@@ -16,20 +16,23 @@ class CustomHeaderEventHandler(val document: Document, private val nID: String, 
     val docEvent = currentEvent as PdfDocumentEvent
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.COURIER)
     val pageSize = docEvent.page.pageSize
+    val leftCoord = pageSize.left + document.leftMargin
+    val rightCoord = pageSize.right - document.rightMargin
+    val headerY: Float = pageSize.top - document.topMargin + 10
     val canvas = Canvas(docEvent.page, pageSize)
     canvas
       .setFont(font)
-      .setFontSize(5f)
+      .setFontSize(10f)
       .showTextAligned(
         nID,
-        36f,
-        806f,
+        leftCoord,
+        headerY,
         TextAlignment.LEFT,
       )
       .showTextAligned(
         "CASE REFERENCE: $sarID",
-        36f,
-        806f,
+        rightCoord,
+        headerY,
         TextAlignment.RIGHT,
       )
       .close()
