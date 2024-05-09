@@ -7,10 +7,10 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service
-class SubjectAccessRequestGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway, @Autowired val webClientBuilder: WebClient.Builder) {
+class SubjectAccessRequestGateway(@Autowired val hmppsAuthGateway: HmppsAuthGateway) {
 
   fun getClient(url: String): WebClient {
-    return webClientBuilder.baseUrl(url).build()
+    return WebClient.create(url)
   }
   fun getClientTokenFromHmppsAuth(): String {
     return hmppsAuthGateway.getClientToken()
