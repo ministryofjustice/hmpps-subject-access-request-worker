@@ -26,6 +26,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+const val DATA_HEADER_FONT_SIZE = 16f
+const val DATA_FONT_SIZE = 12f
+const val DATA_LINE_SPACING = 16f
+
 @Service
 class GeneratePdfService {
   fun execute(
@@ -75,11 +79,15 @@ class GeneratePdfService {
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
     document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val para = Paragraph().setFont(font).setFontSize(12f)
+    val para = Paragraph().setFixedLeading(DATA_LINE_SPACING)
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
-      para.add(Text("${HeadingHelper.format(entry.key)}\n").setFont(boldFont).setFontSize(18f))
+      para.add(
+        Text("${HeadingHelper.format(entry.key)}\n")
+          .setFont(boldFont)
+          .setFontSize(DATA_HEADER_FONT_SIZE),
+      )
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
@@ -89,6 +97,8 @@ class GeneratePdfService {
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
       para.add(text)
+        .setFont(font)
+        .setFontSize(DATA_FONT_SIZE)
       para.add("\n")
       log.info("Compiling data from " + entry.key)
     }
