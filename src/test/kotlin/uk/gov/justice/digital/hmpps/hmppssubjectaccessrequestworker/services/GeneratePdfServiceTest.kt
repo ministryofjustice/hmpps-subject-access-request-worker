@@ -68,7 +68,7 @@ class GeneratePdfServiceTest(
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("End of Subject Access Request Report")
-        Assertions.assertThat(text).contains("Total pages: 1")
+        Assertions.assertThat(text).contains("Total pages: 2")
       }
 
       it("writes data to a PDF") {
@@ -86,8 +86,8 @@ class GeneratePdfServiceTest(
         val reader = PdfDocument(PdfReader("dummy.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
-        Assertions.assertThat(text).contains("fake-service-name-1")
-        Assertions.assertThat(text).contains("fake-service-name-2")
+        Assertions.assertThat(text).contains("Fake service name 1")
+        Assertions.assertThat(text).contains("Fake service name 2")
       }
 
       it("adds cover page to a PDF") {
@@ -149,7 +149,7 @@ class GeneratePdfServiceTest(
         val reader = PdfDocument(PdfReader("dummy.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
-        Assertions.assertThat(text).contains("fake-service-name")
+        Assertions.assertThat(text).contains("Fake service name")
         Assertions.assertThat(text).contains("testDateText: \"Test\"")
         Assertions.assertThat(text).contains("testDataNumber: 99")
         Assertions.assertThat(text).contains("testDataArray: \n  - 1 \n  - 2 \n  - 3 \n  - 4 \n  - 5 ")

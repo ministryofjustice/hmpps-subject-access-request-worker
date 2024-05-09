@@ -20,6 +20,7 @@ import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -67,7 +68,7 @@ class GeneratePdfService {
     val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph("\u00a0").setFontSize(300f))
     endPageText.add(Text("End of Subject Access Request Report\n\n"))
-    endPageText.add(Text("Total pages: $numPages"))
+    endPageText.add(Text("Total pages: ${numPages + 1}"))
     document.add(endPageText)
   }
 
@@ -78,7 +79,7 @@ class GeneratePdfService {
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
-      para.add(Text("${entry.key}\n").setFont(boldFont).setFontSize(18f))
+      para.add(Text("${HeadingHelper.format(entry.key)}\n" + "\n").setFont(boldFont).setFontSize(18f))
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
