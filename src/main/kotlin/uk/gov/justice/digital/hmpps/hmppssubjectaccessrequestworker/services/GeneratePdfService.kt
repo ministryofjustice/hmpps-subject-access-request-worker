@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent
@@ -19,6 +20,7 @@ import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -46,11 +48,11 @@ class GeneratePdfService {
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
     addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
+    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(pdfDocument, document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
-    log.info("Finished writing report")
     addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
-    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
+    log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
     return pdfStream
@@ -70,7 +72,7 @@ class GeneratePdfService {
     val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph("\u00a0").setFontSize(300f))
     endPageText.add(Text("End of Subject Access Request Report\n\n"))
-    endPageText.add(Text("Total pages: $numPages"))
+    endPageText.add(Text("Total pages: ${numPages + 1}"))
     document.add(endPageText)
   }
 
@@ -81,16 +83,17 @@ class GeneratePdfService {
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
-      para.add(Text("${entry.key}\n" + "\n").setFont(boldFont).setFontSize(DATA_HEADER_FONT_SIZE))
+      para.add(Text("${HeadingHelper.format(entry.key)}\n").setFont(boldFont).setFontSize(DATA_HEADER_FONT_SIZE))
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
         .loaderOptions(loaderOptions)
         .build()
-      val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value)
+      val contentText = YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(entry.value)
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
       para.add(text)
+      para.add("\n")
       log.info("Compiling data from " + entry.key)
     }
     log.info("Adding data to PDF")
@@ -103,21 +106,20 @@ class GeneratePdfService {
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(200f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-    coverpageText.add(Paragraph("${getSubjectIdLine(nomisId, ndeliusCaseReferenceId)}\n"))
-    coverpageText.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber"))
-    coverpageText.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)))
-    coverpageText.add(
+    document.add(coverpageText)
+    document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
+    document.add(
       Paragraph(
         "Report generation date: ${LocalDate.now().format(
           DateTimeFormatter.ofLocalizedDate(
             FormatStyle.LONG,
           ),
         )}",
-      ),
+      ).setTextAlignment(TextAlignment.CENTER),
     )
-    coverpageText.add(Paragraph("${getServiceListLine(serviceMap)}\n"))
-
-    document.add(coverpageText)
+    document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
