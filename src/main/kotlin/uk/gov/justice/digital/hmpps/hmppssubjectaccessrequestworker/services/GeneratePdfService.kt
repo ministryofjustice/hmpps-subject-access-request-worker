@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent
@@ -84,10 +85,11 @@ class GeneratePdfService {
       val yamlFactory = YAMLFactory.builder()
         .loaderOptions(loaderOptions)
         .build()
-      val contentText = YAMLMapper(yamlFactory).writeValueAsString(entry.value)
+      val contentText = YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(entry.value)
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
       para.add(text)
+      para.add("\n")
       log.info("Compiling data from " + entry.key)
     }
     log.info("Adding data to PDF")
