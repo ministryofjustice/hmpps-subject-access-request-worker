@@ -152,13 +152,13 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Fake service name")
         Assertions.assertThat(text).contains("testDateText: \"Test\"")
         Assertions.assertThat(text).contains("testDataNumber: 99")
-        Assertions.assertThat(text).contains("testDataArray: \n- 1 \n- 2 \n- 3 \n- 4 \n- 5 ")
+        Assertions.assertThat(text).contains("testDataArray: \n  - 1 \n  - 2 \n  - 3 \n  - 4 \n  - 5 ")
         Assertions.assertThat(text).contains("testDataMap: \n  a: \"1\" \n  b: \"2\" ")
         Assertions.assertThat(text).contains(
           "testDataNested: \n" +
             "  a: \"test\" \n" +
             "  b: 2 \n" +
-            "  c: \n  - \"alpha\" \n  - \"beta\" \n  - \"gamma\" \n  - \"delta\" \n" +
+            "  c: \n    - \"alpha\" \n    - \"beta\" \n    - \"gamma\" \n    - \"delta\" \n" +
             "  d: \n    x: 1 \n    z: 2 ",
         )
         Assertions.assertThat(text).contains(
