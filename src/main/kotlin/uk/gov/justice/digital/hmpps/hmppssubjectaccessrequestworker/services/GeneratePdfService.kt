@@ -25,8 +25,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 const val DATA_HEADER_FONT_SIZE = 16f
-const val DATA_FONT_SIZE = 8f
-const val DATA_LINE_SPACING = 1.375f
+const val DATA_FONT_SIZE = 12f
+const val DATA_LINE_SPACING = 14f
 
 @Service
 class GeneratePdfService {
@@ -77,7 +77,7 @@ class GeneratePdfService {
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
     document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val para = Paragraph().setFont(font).setFontSize(DATA_FONT_SIZE).setFixedLeading(DATA_FONT_SIZE * DATA_LINE_SPACING)
+    val para = Paragraph().setFont(font).setFontSize(DATA_FONT_SIZE).setFixedLeading(DATA_LINE_SPACING)
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
