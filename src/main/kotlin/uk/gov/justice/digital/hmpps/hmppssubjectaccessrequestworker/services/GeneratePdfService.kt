@@ -79,7 +79,7 @@ class GeneratePdfService {
     val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
-      para.add(Text("${HeadingHelper.format(entry.key)}\n" + "\n").setFont(boldFont).setFontSize(18f))
+      para.add(Text("${HeadingHelper.format(entry.key)}\n").setFont(boldFont).setFontSize(18f))
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
