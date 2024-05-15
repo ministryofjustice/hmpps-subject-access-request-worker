@@ -10,3 +10,11 @@ class HeadingHelper {
     }
   }
 }
+
+class ProcessDataHelper {
+  companion object {
+    fun camelToSentence(input: String): String {
+      return input //TODO: Tests and complete this function
+    }
+  }
+}

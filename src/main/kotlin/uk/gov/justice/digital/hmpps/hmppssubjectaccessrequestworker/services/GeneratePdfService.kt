@@ -153,6 +153,25 @@ class GeneratePdfService {
     val serviceList = serviceMap.keys.toList().joinToString(", ")
     return "Services: $serviceList"
   }
+
+  fun preProcessData(input: Any): Any {
+    // If it's a map, process the key
+    // TODO: Handle arrays, recursion
+    if (input is Map<*, *>) {
+      val returnMap = mutableMapOf<String, Any>()
+      val inputKeys = input.keys
+      inputKeys.forEach { key ->
+        returnMap[processKey(key.toString())] = input[key] as Any
+      }
+    }
+    return input
+  }
+
+  fun processKey(key: String): String {
+    // Convert to sentence case
+    // TODO: Call utils to convert to sentence case
+    return key
+  }
 }
 
 class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {
