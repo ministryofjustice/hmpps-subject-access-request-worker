@@ -7,7 +7,7 @@ class ProcessDataHelper {
     fun camelToSentence(input: String): String {
       val capitalLetters = "[A-Z]".toRegex()
       return input.replace(capitalLetters, " $0").lowercase()
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        .replaceFirstChar { it.uppercaseChar() }
     }
   }
 }

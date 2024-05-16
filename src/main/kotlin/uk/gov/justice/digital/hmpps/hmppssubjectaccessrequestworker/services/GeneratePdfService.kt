@@ -89,12 +89,15 @@ class GeneratePdfService {
           .setFont(boldFont)
           .setFontSize(DATA_HEADER_FONT_SIZE),
       )
+
+      val processedData = preProcessData(entry.value)
+
       val loaderOptions = LoaderOptions()
       loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
       val yamlFactory = YAMLFactory.builder()
         .loaderOptions(loaderOptions)
         .build()
-      val contentText = YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(entry.value)
+      val contentText = YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(processedData)
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
       para.add(text)
@@ -155,16 +158,22 @@ class GeneratePdfService {
     return "Services: $serviceList"
   }
 
-  fun preProcessData(input: Any): Any {
+  fun preProcessData(input: Any?): Any? {
     // TODO: Handle arrays, recursion
     if (input is Map<*, *>) {
       // If it's a map, process the key
       val returnMap = mutableMapOf<String, Any>()
       val inputKeys = input.keys
       inputKeys.forEach { key ->
-        returnMap[processKey(key.toString())] = input[key] as Any
+        returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any
       }
       return returnMap
+    }
+
+    if (input is Array<*>) {
+      var returnArray = arrayListOf<Any?>()
+      input.forEach { value -> returnArray.add(preProcessData(value)) }
+      return returnArray
     }
     return input
   }
