@@ -1,11 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
-import java.util.Locale
+import java.util.*
 
-class HeadingHelper {
+class ProcessDataHelper {
   companion object {
-    fun format(heading: String): String {
-      return heading.replace("-", " ")
+    fun camelToSentence(input: String): String {
+      val capitalLetters = "[A-Z]".toRegex()
+      return input.replace(capitalLetters, " $0").lowercase()
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
   }

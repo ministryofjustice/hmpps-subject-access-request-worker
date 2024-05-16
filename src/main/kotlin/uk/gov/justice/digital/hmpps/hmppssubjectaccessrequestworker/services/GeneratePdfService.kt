@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -155,22 +156,21 @@ class GeneratePdfService {
   }
 
   fun preProcessData(input: Any): Any {
-    // If it's a map, process the key
     // TODO: Handle arrays, recursion
     if (input is Map<*, *>) {
+      // If it's a map, process the key
       val returnMap = mutableMapOf<String, Any>()
       val inputKeys = input.keys
       inputKeys.forEach { key ->
         returnMap[processKey(key.toString())] = input[key] as Any
       }
+      return returnMap
     }
     return input
   }
 
   fun processKey(key: String): String {
-    // Convert to sentence case
-    // TODO: Call utils to convert to sentence case
-    return key
+    return ProcessDataHelper.camelToSentence(key)
   }
 }
 
