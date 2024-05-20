@@ -159,7 +159,6 @@ class GeneratePdfService {
   }
 
   fun preProcessData(input: Any?): Any? {
-    // TODO: Handle arrays, recursion
     if (input is Map<*, *>) {
       // If it's a map, process the key
       val returnMap = mutableMapOf<String, Any>()
