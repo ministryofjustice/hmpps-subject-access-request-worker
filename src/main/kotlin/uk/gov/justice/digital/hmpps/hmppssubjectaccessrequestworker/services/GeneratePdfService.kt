@@ -161,15 +161,15 @@ class GeneratePdfService {
   fun preProcessData(input: Any?): Any? {
     if (input is Map<*, *>) {
       // If it's a map, process the key
-      val returnMap = mutableMapOf<String, Any>()
+      val returnMap = mutableMapOf<String, Any?>()
       val inputKeys = input.keys
       inputKeys.forEach { key ->
-        returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any
+        returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any?
       }
       return returnMap
     }
 
-    if (input is Array<*>) {
+    if (input is ArrayList<*>) {
       var returnArray = arrayListOf<Any?>()
       input.forEach { value -> returnArray.add(preProcessData(value)) }
       return returnArray

@@ -110,12 +110,12 @@ class GeneratePdfServiceTest(
         val testInput = mapOf(
           "testDateText" to "Test",
           "testDataNumber" to 99,
-          "testDataArray" to arrayOf(1, 2, 3, 4, 5),
+          "testDataArray" to arrayListOf(1, 2, 3, 4, 5),
           "testDataMap" to mapOf("a" to "1", "b" to "2"),
           "testDataNested" to mapOf(
             "a" to "test",
             "b" to 2,
-            "c" to arrayOf("alpha", "beta", "gamma", "delta"),
+            "c" to arrayListOf("alpha", "beta", "gamma", "delta"),
             "d" to mapOf("x" to 1, "z" to 2),
           ),
           "testDataDeepNested" to mapOf(
@@ -181,12 +181,12 @@ class GeneratePdfServiceTest(
         val testInput = mapOf(
           "testDateText" to "Test",
           "testDataNumber" to 99,
-          "testDataArray" to arrayOf(1, 2, 3, 4, 5),
+          "testDataArray" to arrayListOf(1, 2, 3, 4, 5),
           "testDataMap" to mapOf("a" to "1", "b" to "2"),
           "testDataNested" to mapOf(
             "a" to "test",
             "b" to 2,
-            "c" to arrayOf("alpha", "beta", "gamma", "delta"),
+            "c" to arrayListOf("alpha", "beta", "gamma", "delta"),
             "d" to mapOf("x" to 1, "z" to 2),
           ),
           "testDataDeepNested" to mapOf(
@@ -251,14 +251,14 @@ class GeneratePdfServiceTest(
       }
 
       it("preprocesses correctly for array of objects") {
-        val testInput = arrayOf(mapOf("testKeyOne" to "testValueOne"), mapOf("testKeyTwo" to "testValueTwo"))
+        val testInput = arrayListOf(mapOf("testKeyOne" to "testValueOne"), mapOf("testKeyTwo" to "testValueTwo"))
         val testOutput = arrayListOf(mapOf("Test key one" to "testValueOne"), mapOf("Test key two" to "testValueTwo"))
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("preprocesses correctly for a map of arrays of maps of arrays") {
-        val testInput = mapOf("parentTestKey" to arrayOf(mapOf("nestedTestKey" to arrayOf("testString"))))
+        val testInput = mapOf("parentTestKey" to arrayListOf(mapOf("nestedTestKey" to arrayListOf("testString"))))
         val testOutput = mapOf("Parent test key" to arrayListOf(mapOf("Nested test key" to arrayListOf("testString"))))
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
