@@ -149,56 +149,58 @@ class GeneratePdfServiceTest(
         val reader = PdfDocument(PdfReader("dummy.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
+
         Assertions.assertThat(text).contains("Fake service name")
-        Assertions.assertThat(text).contains("testDateText: \"Test\"")
-        Assertions.assertThat(text).contains("testDataNumber: 99")
-        Assertions.assertThat(text).contains("testDataArray: \n  - 1 \n  - 2 \n  - 3 \n  - 4 \n  - 5 ")
-        Assertions.assertThat(text).contains("testDataMap: \n  a: \"1\" \n  b: \"2\" ")
+        Assertions.assertThat(text).contains("Test date text: \"Test\"")
+        Assertions.assertThat(text).contains("Test data number: 99")
+        Assertions.assertThat(text).contains("Test data array: \n  - 1 \n  - 2 \n  - 3 \n  - 4 \n  - 5 ")
+        Assertions.assertThat(text).contains("Test data map: \n  A: \"1\" \n  B: \"2\" ")
         Assertions.assertThat(text).contains(
-          "testDataNested: \n" +
-            "  a: \"test\" \n" +
-            "  b: 2 \n" +
-            "  c: \n    - \"alpha\" \n    - \"beta\" \n    - \"gamma\" \n    - \"delta\" \n" +
-            "  d: \n    x: 1 \n    z: 2 ",
+          "Test data nested: \n" +
+            "  A: \"test\" \n" +
+            "  B: 2 \n" +
+            "  C: \n    - \"alpha\" \n    - \"beta\" \n    - \"gamma\" \n    - \"delta\" \n" +
+            "  D: \n    X: 1 \n    Z: 2 ",
         )
         Assertions.assertThat(text).contains(
-          "testDataDeepNested: \n" +
-            "  a: \n" +
-            "    b: \n" +
-            "      c: \n" +
-            "        d: \n" +
-            "          e: \n" +
-            "            f: \n" +
-            "              g: \n" +
-            "                h: \n" +
-            "                  i: \n" +
-            "                    j: \"k\" ",
+          "Test data deep nested: \n" +
+            "  A: \n" +
+            "    B: \n" +
+            "      C: \n" +
+            "        D: \n" +
+            "          E: \n" +
+            "            F: \n" +
+            "              G: \n" +
+            "                H: \n" +
+            "                  I: \n" +
+            "                    J: \"k\" ",
         )
       }
-    }
-    it("creates a full PDF report") {
-      val testInput = mapOf(
-        "testDateText" to "Test",
-        "testDataNumber" to 99,
-        "testDataArray" to arrayOf(1, 2, 3, 4, 5),
-        "testDataMap" to mapOf("a" to "1", "b" to "2"),
-        "testDataNested" to mapOf(
-          "a" to "test",
-          "b" to 2,
-          "c" to arrayOf("alpha", "beta", "gamma", "delta"),
-          "d" to mapOf("x" to 1, "z" to 2),
-        ),
-        "testDataDeepNested" to mapOf(
-          "a" to mapOf(
-            "b" to mapOf(
-              "c" to mapOf(
-                "d" to mapOf(
-                  "e" to mapOf(
-                    "f" to mapOf(
-                      "g" to mapOf(
-                        "h" to mapOf(
-                          "i" to mapOf(
-                            "j" to "k",
+
+      it("creates a full PDF report") {
+        val testInput = mapOf(
+          "testDateText" to "Test",
+          "testDataNumber" to 99,
+          "testDataArray" to arrayOf(1, 2, 3, 4, 5),
+          "testDataMap" to mapOf("a" to "1", "b" to "2"),
+          "testDataNested" to mapOf(
+            "a" to "test",
+            "b" to 2,
+            "c" to arrayOf("alpha", "beta", "gamma", "delta"),
+            "d" to mapOf("x" to 1, "z" to 2),
+          ),
+          "testDataDeepNested" to mapOf(
+            "a" to mapOf(
+              "b" to mapOf(
+                "c" to mapOf(
+                  "d" to mapOf(
+                    "e" to mapOf(
+                      "f" to mapOf(
+                        "g" to mapOf(
+                          "h" to mapOf(
+                            "i" to mapOf(
+                              "j" to "k",
+                            ),
                           ),
                         ),
                       ),
@@ -208,23 +210,59 @@ class GeneratePdfServiceTest(
               ),
             ),
           ),
-        ),
-      )
-      val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
-      val writer = PdfWriter(FileOutputStream("dummy.pdf"))
-      val mockPdfDocument = PdfDocument(writer)
-      val mockDocument = Document(mockPdfDocument)
-      generatePdfService.addCoverpage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
-      mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
-      generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
-      generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
-      Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(3)
-      mockDocument.close()
-      val reader = PdfDocument(PdfReader("dummy.pdf"))
-      val page = reader.getPage(1)
-      val text = PdfTextExtractor.getTextFromPage(page)
-      Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
-      Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+        )
+        val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
+        val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addCoverpage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+        mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
+        Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(3)
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy.pdf"))
+        val page = reader.getPage(1)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+        Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+      }
+    }
+
+    describe("preProcessData") {
+      it("processValue if input is a string/number/null") {
+        Assertions.assertThat(generatePdfService.preProcessData("testInput")).isEqualTo("testInput")
+        Assertions.assertThat(generatePdfService.preProcessData(5)).isEqualTo(5)
+        Assertions.assertThat(generatePdfService.preProcessData(null)).isEqualTo(null) // - How does bodyToMono handle null?
+      }
+
+      it("preprocesses correctly for simple string object") {
+        val testInput = mapOf("testKey" to "testValue")
+        val testOutput = mapOf("Test key" to "testValue")
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("preprocesses correctly for a map of maps") {
+        val testInput = mapOf("parentTestKey" to mapOf("nestedTestKey" to "nestedTestValue"))
+        val testOutput = mapOf("Parent test key" to mapOf("Nested test key" to "nestedTestValue"))
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("preprocesses correctly for array of objects") {
+        val testInput = arrayOf(mapOf("testKeyOne" to "testValueOne"), mapOf("testKeyTwo" to "testValueTwo"))
+        val testOutput = arrayListOf(mapOf("Test key one" to "testValueOne"), mapOf("Test key two" to "testValueTwo"))
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("preprocesses correctly for a map of arrays of maps of arrays") {
+        val testInput = mapOf("parentTestKey" to arrayOf(mapOf("nestedTestKey" to arrayOf("testString"))))
+        val testOutput = mapOf("Parent test key" to arrayListOf(mapOf("Nested test key" to arrayListOf("testString"))))
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
     }
   },
 )
