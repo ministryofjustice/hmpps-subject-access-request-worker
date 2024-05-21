@@ -292,15 +292,15 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
-      it("replaces empty arrays") {
-        val testInput = emptyArray<Any>()
+      it("replaces empty array lists") {
+        val testInput = emptyList<Any>()
         val testOutput = "No information has been recorded"
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces null values and arrays in a map of arrays of maps of arrays") {
-        val testInput = mapOf("parentTestKey" to "[]")
+        val testInput = mapOf("parentTestKey" to emptyList<Any>())
         val testOutput = mapOf("Parent test key" to "No information has been recorded")
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)

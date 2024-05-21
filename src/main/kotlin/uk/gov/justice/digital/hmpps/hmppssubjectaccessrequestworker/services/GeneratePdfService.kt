@@ -159,6 +159,9 @@ class GeneratePdfService {
   }
 
   fun preProcessData(input: Any?): Any? {
+    if (input is List<*> && input.isEmpty()) {
+      return "No information has been recorded"
+    }
     if (input is Map<*, *>) {
       // If it's a map, process the key
       val returnMap = mutableMapOf<String, Any?>()
@@ -175,13 +178,7 @@ class GeneratePdfService {
 
     if (input is ArrayList<*>) {
       var returnArray = arrayListOf<Any?>()
-      input.forEach { value ->
-        if (value is Array<*> && value.isEmpty()) {
-          returnArray.add("No information has been recorded") }
-        else {
-          returnArray.add(preProcessData(value))
-        }
-      }
+      input.forEach { value -> returnArray.add(preProcessData(value)) }
       return returnArray
     }
     return input
