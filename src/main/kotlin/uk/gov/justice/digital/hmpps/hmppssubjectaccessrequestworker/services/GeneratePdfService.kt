@@ -164,14 +164,24 @@ class GeneratePdfService {
       val returnMap = mutableMapOf<String, Any?>()
       val inputKeys = input.keys
       inputKeys.forEach { key ->
-        returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any?
+        if (input[key] == null || input[key] == "null") {
+          returnMap[processKey(key.toString())] = "No information has been recorded"
+        } else {
+          returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any?
+        }
       }
       return returnMap
     }
 
     if (input is ArrayList<*>) {
       var returnArray = arrayListOf<Any?>()
-      input.forEach { value -> returnArray.add(preProcessData(value)) }
+      input.forEach { value ->
+        if (value is Array<*> && value.isEmpty()) {
+          returnArray.add("No information has been recorded") }
+        else {
+          returnArray.add(preProcessData(value))
+        }
+      }
       return returnArray
     }
     return input

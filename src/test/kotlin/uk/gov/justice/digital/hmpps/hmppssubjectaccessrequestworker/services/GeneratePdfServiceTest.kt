@@ -263,6 +263,48 @@ class GeneratePdfServiceTest(
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
+
+      it("replaces null values in a simple string object") {
+        val testInput = mapOf("testKey" to null)
+        val testOutput = mapOf("Test key" to "No information has been recorded")
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("replaces null values in a simple string object") {
+        val testInput = mapOf("testKey" to "null")
+        val testOutput = mapOf("Test key" to "No information has been recorded")
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("replaces null values in a map of maps") {
+        val testInput = mapOf("parentTestKey" to mapOf("nestedTestKey" to "null"))
+        val testOutput = mapOf("Parent test key" to mapOf("Nested test key" to "No information has been recorded"))
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("replaces null values in arrays of maps") {
+        val testInput = arrayListOf(mapOf("testKeyOne" to "testValueOne"), mapOf("testKeyTwo" to "null"))
+        val testOutput = arrayListOf(mapOf("Test key one" to "testValueOne"), mapOf("Test key two" to "No information has been recorded"))
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("replaces empty arrays") {
+        val testInput = emptyArray<Any>()
+        val testOutput = "No information has been recorded"
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
+
+      it("replaces null values and arrays in a map of arrays of maps of arrays") {
+        val testInput = mapOf("parentTestKey" to "[]")
+        val testOutput = mapOf("Parent test key" to "No information has been recorded")
+
+        Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
+      }
     }
   },
 )
