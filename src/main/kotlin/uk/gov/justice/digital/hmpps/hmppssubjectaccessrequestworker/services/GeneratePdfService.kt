@@ -56,7 +56,7 @@ class GeneratePdfService {
       sarCaseReferenceNumber,
       dateFrom,
       dateTo,
-      serviceMap
+      serviceMap,
     )
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
@@ -64,8 +64,8 @@ class GeneratePdfService {
         pdfDocument,
         document,
         getSubjectIdLine(nomisId, ndeliusCaseReferenceId),
-        sarCaseReferenceNumber
-      )
+        sarCaseReferenceNumber,
+      ),
     )
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
@@ -116,7 +116,7 @@ class GeneratePdfService {
         .build()
       val contentText =
         YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(
-          processedData
+          processedData,
         )
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
@@ -139,7 +139,7 @@ class GeneratePdfService {
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
-    serviceMap: MutableMap<String, String>
+    serviceMap: MutableMap<String, String>,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
@@ -190,7 +190,6 @@ class GeneratePdfService {
   }
 
   fun preProcessData(input: Any?): Any? {
-
     if (input is Map<*, *>) {
       // If it's a map, process the key
       val returnMap = mutableMapOf<String, Any?>()
