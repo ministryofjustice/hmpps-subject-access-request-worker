@@ -233,7 +233,7 @@ class GeneratePdfServiceTest(
       it("processValue if input is a string/number/null") {
         Assertions.assertThat(generatePdfService.preProcessData("testInput")).isEqualTo("testInput")
         Assertions.assertThat(generatePdfService.preProcessData(5)).isEqualTo(5)
-        Assertions.assertThat(generatePdfService.preProcessData(null)).isEqualTo(null) // - How does bodyToMono handle null?
+        Assertions.assertThat(generatePdfService.preProcessData(null)).isEqualTo("No information has been recorded") // - How does bodyToMono handle null?
       }
 
       it("preprocesses correctly for simple string object") {
@@ -293,14 +293,14 @@ class GeneratePdfServiceTest(
       }
 
       it("replaces empty array lists") {
-        val testInput = emptyList<Any>()
+        val testInput = arrayListOf<Any?>()
         val testOutput = "No information has been recorded"
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces null values and arrays in a map of arrays of maps of arrays") {
-        val testInput = mapOf("parentTestKey" to emptyList<Any>())
+        val testInput = mapOf("parentTestKey" to arrayListOf<Any?>())
         val testOutput = mapOf("Parent test key" to "No information has been recorded")
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)

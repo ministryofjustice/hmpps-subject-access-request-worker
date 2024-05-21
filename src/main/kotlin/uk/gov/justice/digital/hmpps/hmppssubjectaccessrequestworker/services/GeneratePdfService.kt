@@ -48,8 +48,25 @@ class GeneratePdfService {
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
-    addCoverpage(pdfDocument, document, nomisId, ndeliusCaseReferenceId, sarCaseReferenceNumber, dateFrom, dateTo, serviceMap)
-    pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(pdfDocument, document, getSubjectIdLine(nomisId, ndeliusCaseReferenceId), sarCaseReferenceNumber))
+    addCoverpage(
+      pdfDocument,
+      document,
+      nomisId,
+      ndeliusCaseReferenceId,
+      sarCaseReferenceNumber,
+      dateFrom,
+      dateTo,
+      serviceMap
+    )
+    pdfDocument.addEventHandler(
+      PdfDocumentEvent.END_PAGE,
+      CustomHeaderEventHandler(
+        pdfDocument,
+        document,
+        getSubjectIdLine(nomisId, ndeliusCaseReferenceId),
+        sarCaseReferenceNumber
+      )
+    )
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
     addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
@@ -97,7 +114,10 @@ class GeneratePdfService {
       val yamlFactory = YAMLFactory.builder()
         .loaderOptions(loaderOptions)
         .build()
-      val contentText = YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(processedData)
+      val contentText =
+        YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(
+          processedData
+        )
       val text = Text(contentText)
       text.setNextRenderer(CodeRenderer(text))
       para.add(text)
@@ -111,7 +131,16 @@ class GeneratePdfService {
     log.info("Added data to PDF")
   }
 
-  fun addCoverpage(pdfDocument: PdfDocument, document: Document, nomisId: String?, ndeliusCaseReferenceId: String?, sarCaseReferenceNumber: String, dateFrom: LocalDate?, dateTo: LocalDate?, serviceMap: MutableMap<String, String>) {
+  fun addCoverpage(
+    pdfDocument: PdfDocument,
+    document: Document,
+    nomisId: String?,
+    ndeliusCaseReferenceId: String?,
+    sarCaseReferenceNumber: String,
+    dateFrom: LocalDate?,
+    dateTo: LocalDate?,
+    serviceMap: MutableMap<String, String>
+  ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(200f))
@@ -122,11 +151,13 @@ class GeneratePdfService {
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
     document.add(
       Paragraph(
-        "Report generation date: ${LocalDate.now().format(
-          DateTimeFormatter.ofLocalizedDate(
-            FormatStyle.LONG,
-          ),
-        )}",
+        "Report generation date: ${
+          LocalDate.now().format(
+            DateTimeFormatter.ofLocalizedDate(
+              FormatStyle.LONG,
+            ),
+          )
+        }",
       ).setTextAlignment(TextAlignment.CENTER),
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
@@ -159,33 +190,35 @@ class GeneratePdfService {
   }
 
   fun preProcessData(input: Any?): Any? {
-    if (input is List<*> && input.isEmpty()) {
-      return "No information has been recorded"
-    }
+
     if (input is Map<*, *>) {
       // If it's a map, process the key
       val returnMap = mutableMapOf<String, Any?>()
       val inputKeys = input.keys
       inputKeys.forEach { key ->
-        if (input[key] == null || input[key] == "null") {
-          returnMap[processKey(key.toString())] = "No information has been recorded"
-        } else {
-          returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any?
-        }
+        returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any?
       }
       return returnMap
     }
 
-    if (input is ArrayList<*>) {
-      var returnArray = arrayListOf<Any?>()
+    if (input is ArrayList<*> && input.isNotEmpty()) {
+      val returnArray = arrayListOf<Any?>()
       input.forEach { value -> returnArray.add(preProcessData(value)) }
       return returnArray
     }
-    return input
+
+    return processValue(input)
   }
 
   fun processKey(key: String): String {
     return ProcessDataHelper.camelToSentence(key)
+  }
+
+  fun processValue(input: Any?): Any? {
+    if (input is ArrayList<*> && input.isEmpty() || input == null || input == "null") {
+      return "No information has been recorded"
+    }
+    return input
   }
 }
 
