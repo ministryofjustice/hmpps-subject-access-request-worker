@@ -23,6 +23,7 @@ dependencies {
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.0")
   testImplementation("io.kotest:kotest-assertions-core-jvm:5.8.0")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+  testImplementation("io.mockk:mockk:1.13.9")
 }
 
 kotlin {
