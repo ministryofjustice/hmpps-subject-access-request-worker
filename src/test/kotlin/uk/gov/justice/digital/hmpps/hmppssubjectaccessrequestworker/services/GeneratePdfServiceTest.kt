@@ -305,6 +305,16 @@ class GeneratePdfServiceTest(
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
+
+      it("processValue replaces dates in various formats") {
+        val testCases = arrayListOf(
+          mapOf("input" to "2024-05-01T17:43:59", "expected" to "01 May 2024, 5:43:59 pm")
+        )
+
+        testCases.forEach {
+          test -> Assertions.assertThat(generatePdfService.processValue(test["input"])).isEqualTo(test["expected"])
+        }
+      }
     }
   },
 )

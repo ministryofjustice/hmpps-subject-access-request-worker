@@ -17,15 +17,21 @@ import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
 import org.hibernate.query.sqm.tree.SqmNode.log
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
 import java.io.ByteArrayOutputStream
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
+import kotlin.collections.ArrayList
 
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
@@ -214,9 +220,33 @@ class GeneratePdfService {
   }
 
   fun processValue(input: Any?): Any? {
+    // Handle null values
     if (input is ArrayList<*> && input.isEmpty() || input == null || input == "null") {
       return "No information has been recorded"
     }
+    // Handle datetimes
+    if (input is String) {
+      // TODO: Make this into a util class
+      // TODO: Add more date formats
+      val dateFormats = arrayListOf(
+        mapOf(
+          "matcher" to "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\$",
+          "parseFormat" to "yyyy-MM-dd'T'HH:mm:ss",
+          "outputFormat" to "dd MMMM yyyy, h:mm:ss a"
+        )
+      )
+      dateFormats.forEach {
+        format ->
+          if (format["matcher"]?.toRegex()?.matches(input) == true) {
+            // TODO: Look at updating this to use java.time framework (ZonedDateTime)
+            val parseFormat = SimpleDateFormat(format["parseFormat"] as String)
+            val outputFormat = SimpleDateFormat(format["outputFormat"] as String)
+            val parsedDate = parseFormat.parse(input)
+            return outputFormat.format(parsedDate)
+          }
+      }
+    }
+
     return input
   }
 }
