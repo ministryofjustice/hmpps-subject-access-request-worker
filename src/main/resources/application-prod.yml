@@ -9,3 +9,6 @@ services:
 
   document-storage:
     base-url: https://document-api.hmpps.service.justice.gov.uk
+
+  env:
+    SENTRY_ENV: prod

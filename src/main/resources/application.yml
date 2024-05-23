@@ -54,3 +54,6 @@ services:
 
   document-storage:
     base-url: http://localhost:4040
+
+sentry:
+  traces-sample-rate: "0.05"
