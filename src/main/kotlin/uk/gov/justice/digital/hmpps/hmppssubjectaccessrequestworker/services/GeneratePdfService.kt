@@ -20,12 +20,14 @@ import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.DateConversionHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.collections.ArrayList
 
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
@@ -33,6 +35,10 @@ const val DATA_LINE_SPACING = 16f
 
 @Service
 class GeneratePdfService {
+  companion object {
+    var dateConversionHelper = DateConversionHelper()
+  }
+
   fun execute(
     content: Map<String, Any>,
     nomisId: String?,
@@ -195,7 +201,7 @@ class GeneratePdfService {
       val returnMap = mutableMapOf<String, Any?>()
       val inputKeys = input.keys
       inputKeys.forEach { key ->
-        returnMap[processKey(key.toString())] = preProcessData(input[key]) as Any?
+        returnMap[processKey(key.toString())] = preProcessData(input[key])
       }
       return returnMap
     }
@@ -214,9 +220,17 @@ class GeneratePdfService {
   }
 
   fun processValue(input: Any?): Any? {
+    // Handle null values
     if (input is ArrayList<*> && input.isEmpty() || input == null || input == "null") {
       return "No information has been recorded"
     }
+    // Handle dates/times
+    if (input is String) {
+      var processedValue = input
+      processedValue = dateConversionHelper.convertDates(processedValue)
+      return processedValue
+    }
+
     return input
   }
 }
