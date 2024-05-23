@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
-import java.text.SimpleDateFormat
+import java.text.ParsePosition
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DateConversionHelper {
   companion object {
@@ -41,10 +44,10 @@ class DateConversionHelper {
   fun convertDates(input: String): String {
     dateConversions.forEach { dateConversion ->
       if (dateConversion.matcher.matches(input)) {
-        val parseFormat = SimpleDateFormat(dateConversion.parseFormat)
-        val outputFormat = SimpleDateFormat(dateConversion.outputFormat)
-        val parsedDate = parseFormat.parse(input)
-        return outputFormat.format(parsedDate)
+        val parseFormatter = DateTimeFormatter.ofPattern(dateConversion.parseFormat).withLocale(Locale.UK)
+        val outputFormatter = DateTimeFormatter.ofPattern(dateConversion.outputFormat).withLocale(Locale.UK)
+        val parsedDate = parseFormatter.parse(input, ParsePosition(0))
+        return outputFormatter.format(parsedDate)
       }
     }
     return input
