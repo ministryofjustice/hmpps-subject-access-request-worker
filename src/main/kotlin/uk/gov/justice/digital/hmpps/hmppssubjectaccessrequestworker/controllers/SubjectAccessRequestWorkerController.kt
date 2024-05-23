@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.controllers
 
-import io.sentry.Sentry
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -20,10 +19,6 @@ class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestSe
   )
   suspend fun startPolling() {
     log.info("Starting polling...")
-    try {
-      subjectAccessRequestService.startPolling()
-    } catch (e: Exception) {
-      Sentry.captureException(e)
-    }
+    subjectAccessRequestService.startPolling()
   }
 }

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.microsoft.applicationinsights.TelemetryClient
+import io.sentry.Sentry
 import kotlinx.coroutines.delay
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
@@ -61,6 +62,7 @@ class SubjectAccessRequestWorkerService(
     } catch (exception: Exception) {
       log.error(exception.message)
       exception.printStackTrace()
+      Sentry.captureException(exception)
     }
   }
 
