@@ -5,6 +5,8 @@ import com.itextpdf.layout.Document
 import com.microsoft.applicationinsights.TelemetryClient
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.mockk.mockkStatic
+import io.sentry.Sentry
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -87,7 +89,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     val websarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
     Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient)).thenReturn(arrayOf(sampleSAR))
+
     SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doPoll()
+
     verify(websarGatewayMock, Mockito.times(1)).getUnclaimed(mockClient)
   }
 
@@ -269,5 +273,25 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn("")
     SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doReport(sampleSAR)
     verify(documentGateway, Mockito.times(1)).storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)
+  }
+
+  @Test
+  fun `doPoll exceptions are captured by sentry`() = runTest {
+    mockkStatic(Sentry::class)
+    val mockClient = Mockito.mock(WebClient::class.java)
+    val websarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
+    Mockito.`when`(websarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
+    Mockito.`when`(websarGatewayMock.getUnclaimed(mockClient))
+      .thenReturn(arrayOf(sampleSAR))
+    Mockito.`when`(websarGatewayMock.claim(any(), any()))
+      .thenThrow(RuntimeException())
+
+    SubjectAccessRequestWorkerService(websarGatewayMock, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, "http://localhost:8080", telemetryClient).doPoll()
+
+    io.mockk.verify(exactly = 1) {
+      Sentry.captureException(
+        any(),
+      )
+    }
   }
 }
