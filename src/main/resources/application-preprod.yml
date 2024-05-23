@@ -9,3 +9,6 @@ services:
 
   document-storage:
     base-url: https://document-api-preprod.hmpps.service.justice.gov.uk
+
+  env:
+    SENTRY_ENV: pre-prod
