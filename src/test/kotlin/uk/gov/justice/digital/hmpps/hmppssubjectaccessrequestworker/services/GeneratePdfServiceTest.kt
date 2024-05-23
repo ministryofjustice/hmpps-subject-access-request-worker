@@ -308,11 +308,74 @@ class GeneratePdfServiceTest(
 
       it("processValue replaces dates in various formats") {
         val testCases = arrayListOf(
-          mapOf("input" to "2024-05-01T17:43:59", "expected" to "01 May 2024, 5:43:59 pm")
+          mapOf(
+            "input" to "2024-05-01",
+            "expected" to "01 May 2024",
+          ),
+          mapOf(
+            "input" to "01/05/2024",
+            "expected" to "01 May 2024",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59+01:00",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59Z",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59Z+01:00",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123+01:00",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123Z",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123Z+01:00",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123456",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123456+01:00",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123456Z",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "2024-05-01T17:43:59.123456Z+01:00",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
+          mapOf(
+            "input" to "01/05/2024 17:43",
+            "expected" to "01 May 2024, 5:43 pm",
+          ),
+          mapOf(
+            "input" to "01/05/2024 17:43:59",
+            "expected" to "01 May 2024, 5:43:59 pm",
+          ),
         )
 
-        testCases.forEach {
-          test -> Assertions.assertThat(generatePdfService.processValue(test["input"])).isEqualTo(test["expected"])
+        testCases.forEach { test ->
+          Assertions.assertThat(generatePdfService.processValue(test["input"])).isEqualTo(test["expected"])
         }
       }
     }
