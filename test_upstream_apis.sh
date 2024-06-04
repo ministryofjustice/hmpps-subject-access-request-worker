@@ -32,7 +32,7 @@ no_role_token_without_quotes=$(eval echo $no_role_token)
 
 # Declare endpoints
 declare -a endpoints=(
-https://complexity-of-need-staging.hmpps.service.justice.gov.uk 
+# https://complexity-of-need-staging.hmpps.service.justice.gov.uk 
 # https://incident-reporting-api-dev.hmpps.service.justice.gov.uk 
 # https://activities-api-dev.prison.service.justice.gov.uk 
 # https://hdc-api-dev.hmpps.service.justice.gov.uk
@@ -46,6 +46,10 @@ https://complexity-of-need-staging.hmpps.service.justice.gov.uk
 # https://learningandworkprogress-api-dev.hmpps.service.justice.gov.uk
 # https://dev.moic.service.justice.gov.uk
 # https://hmpps-uof-data-api-dev.hmpps.service.justice.gov.uk
+# https://court-case-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
+# https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk
+# https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
+https://accredited-programmes-api-dev.hmpps.service.justice.gov.uk
 )
 
 for endpoint in "${endpoints[@]}"
