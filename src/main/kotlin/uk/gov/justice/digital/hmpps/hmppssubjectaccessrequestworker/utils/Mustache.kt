@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker
+package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
 class Mustache {
 // var mf: MustacheFactory = DefaultMustacheFactory()
