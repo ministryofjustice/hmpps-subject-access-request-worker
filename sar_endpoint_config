@@ -1,0 +1,11 @@
+client_with_sar_role=hmpps-subject-access-request-worker-1
+secret_for_client_with_sar_role="(NjUmPdA9IgH5SBPpA!1I(LhyZ*dC;oKrQ4vTFr(L<;10MKwq1j!cSPa2<>o"
+
+client_without_sar_role=hmpps-subject-access-request-api-1
+secret_for_client_without_sar_role="dx+&Q=a.x%b<bBN!zI&4i>q<T8Sc3TNtX.\$R4K7q0=g;.3m5*FVGe4RZFF.b"
+
+expected_id_type=prn # prn/crn depending on which identifier the system expects
+unexpected_id_type=crn # prn/crn - whichever the system DOESN'T expect
+
+valid_id=G8785UV
+dummy_id=A1111AA
