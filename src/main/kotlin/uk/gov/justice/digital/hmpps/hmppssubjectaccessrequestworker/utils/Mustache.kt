@@ -4,9 +4,10 @@ import com.github.mustachejava.Mustache
 import com.github.mustachejava.MustacheFactory
 
 class Mustache {
-  var mf: MustacheFactory = DefaultMustacheFactory()
-  var m: Mustache? = mf.compile("template.mustache")
-  fun compile(subject: String): Int {
+
+  fun compile(file: String): Int {
+    val mf: MustacheFactory = DefaultMustacheFactory()
+    val m: Mustache? = mf.compile(file)
     println(m)
     return 0
   }
