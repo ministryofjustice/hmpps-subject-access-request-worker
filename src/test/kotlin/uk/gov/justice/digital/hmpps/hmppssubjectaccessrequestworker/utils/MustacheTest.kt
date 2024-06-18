@@ -13,4 +13,10 @@ class MustacheTest : IntegrationTestBase() {
     Assertions.assertThat(response).isEqualTo(0)
     assertThrows<Exception> { Mustache().compile("notemplate.mustache") }
   }
+
+  @Test
+  fun `Template executes`() {
+    val response = Mustache().execute()
+    Assertions.assertThat(response).isEqualTo(0)
+  }
 }
