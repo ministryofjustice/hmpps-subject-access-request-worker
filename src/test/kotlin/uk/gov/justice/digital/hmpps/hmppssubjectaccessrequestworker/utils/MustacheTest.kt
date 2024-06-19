@@ -31,4 +31,12 @@ class MustacheTest : IntegrationTestBase() {
     val response = Mustache().execute(keyworker)
     Assertions.assertThat(response).isEqualTo(0)
   }
+
+  @Test
+  fun `convertToPdf returns filename`() {
+    val htmlTestFileName = "test.html"
+    val pdfTestFileName = "test.pdf"
+    val response = Mustache().convertToPdf(htmlTestFileName, pdfTestFileName)
+    Assertions.assertThat(response).isEqualTo(pdfTestFileName)
+  }
 }

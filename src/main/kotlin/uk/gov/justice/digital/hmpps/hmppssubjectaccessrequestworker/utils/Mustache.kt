@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 import com.github.mustachejava.DefaultMustacheFactory
 import com.github.mustachejava.Mustache
 import com.github.mustachejava.MustacheFactory
+import com.itextpdf.html2pdf.HtmlConverter
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.PrintWriter
 
 class Mustache {
@@ -16,8 +19,17 @@ class Mustache {
   fun execute(dataObject: Any): Int {
     val mf = DefaultMustacheFactory()
     val mustache = mf.compile(mf.getReader("template.mustache"), "hello")
-    mustache.execute(PrintWriter("test.mustache"), dataObject).flush()
+    mustache.execute(PrintWriter("test.html"), dataObject).flush()
     return 0
+  }
+
+  fun convertToPdf(htmlFileName: String, pdfFileName: String): String {
+    // val writer = PdfWriter(pdfFileName)
+    HtmlConverter.convertToPdf(
+      FileInputStream(htmlFileName),
+      FileOutputStream(pdfFileName),
+    )
+    return pdfFileName
   }
 }
 

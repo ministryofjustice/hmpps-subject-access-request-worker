@@ -14,6 +14,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
   implementation("com.itextpdf:itext7-core:7.2.6")
+  implementation("com.itextpdf:html2pdf:5.0.4")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("com.github.spullara.mustache.java:compiler:0.9.5")
   implementation("org.apache.commons:commons-lang3:3.12.0")
