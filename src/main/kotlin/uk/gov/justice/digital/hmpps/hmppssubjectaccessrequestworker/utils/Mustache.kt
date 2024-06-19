@@ -13,9 +13,7 @@ class Mustache {
     return 0
   }
 
-
   fun execute(dataObject: Any): Int {
-
     val mf = DefaultMustacheFactory()
     val mustache = mf.compile(mf.getReader("template.mustache"), "hello")
     mustache.execute(PrintWriter("test.mustache"), dataObject).flush()
