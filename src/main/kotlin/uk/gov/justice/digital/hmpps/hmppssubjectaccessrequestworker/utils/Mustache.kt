@@ -13,14 +13,28 @@ class Mustache {
     return 0
   }
 
-  fun execute(): Int {
-    val item = Item("Item 1", "02/02/02", "This is the first item.")
+  fun execute(dataObject: Any): Int {
     val mf = DefaultMustacheFactory()
     val mustache = mf.compile(mf.getReader("template.mustache"), "hello")
-    mustache.execute(PrintWriter("test.mustache"), item).flush()
+    mustache.execute(PrintWriter("test.mustache"), dataObject).flush()
     return 0
   }
-
 }
 
 data class Item(val title: String, val createdOn: String, val text: String)
+data class Keyworker(
+  val offenderKeyworkerId: String?,
+  val offenderNo: String?,
+  val staffId: String?,
+  val assignedDateTime: String?,
+  val active: String?,
+  val allocationReason: String?,
+  val allocationType: String?,
+  val userId: String?,
+  val prisonId: String?,
+  val expiryDateTime: String?,
+  val deallocationReason: String?,
+  val creationDateTime: String?,
+  val createUserId: String?,
+  val modifyDateTime: String?,
+  val modifyUserId: String?,)
