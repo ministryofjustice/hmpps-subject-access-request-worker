@@ -3,9 +3,15 @@ import com.github.mustachejava.DefaultMustacheFactory
 import com.github.mustachejava.Mustache
 import com.github.mustachejava.MustacheFactory
 import com.itextpdf.html2pdf.HtmlConverter
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.Paragraph
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.PrintWriter
+
 
 class Mustache {
 
@@ -24,11 +30,18 @@ class Mustache {
   }
 
   fun convertToPdf(htmlFileName: String, pdfFileName: String): String {
-    // val writer = PdfWriter(pdfFileName)
-    HtmlConverter.convertToPdf(
-      FileInputStream(htmlFileName),
-      FileOutputStream(pdfFileName),
-    )
+    val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+    val pdfDocument = PdfDocument(writer)
+    val document = Document(pdfDocument)
+    document.add(Paragraph("This is an example title").setFontSize(16f).setBold())
+    document.add(Paragraph(""))
+    document.add(Paragraph("This is an example text").setFontSize(10f))
+    document.add(Paragraph(""))
+    val elements = HtmlConverter.convertToElements(FileInputStream(htmlFileName))
+    for (element in elements) {
+      document.add(element as IBlockElement)
+    }
+    document.close()
     return pdfFileName
   }
 }
