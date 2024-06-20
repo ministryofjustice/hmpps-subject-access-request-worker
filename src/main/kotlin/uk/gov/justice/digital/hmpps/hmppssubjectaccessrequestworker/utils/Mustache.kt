@@ -12,7 +12,6 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.PrintWriter
 
-
 class Mustache {
 
   fun compile(file: String): Int {
