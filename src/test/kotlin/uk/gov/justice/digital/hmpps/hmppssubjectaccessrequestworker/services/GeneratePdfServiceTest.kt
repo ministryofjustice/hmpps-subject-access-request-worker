@@ -233,7 +233,7 @@ class GeneratePdfServiceTest(
       it("processValue if input is a string/number/null") {
         Assertions.assertThat(generatePdfService.preProcessData("testInput")).isEqualTo("testInput")
         Assertions.assertThat(generatePdfService.preProcessData(5)).isEqualTo(5)
-        Assertions.assertThat(generatePdfService.preProcessData(null)).isEqualTo("No information has been recorded") // - How does bodyToMono handle null?
+        Assertions.assertThat(generatePdfService.preProcessData(null)).isEqualTo("No data held") // - How does bodyToMono handle null?
       }
 
       it("preprocesses correctly for simple string object") {
@@ -266,42 +266,42 @@ class GeneratePdfServiceTest(
 
       it("replaces null values in a simple string object") {
         val testInput = mapOf("testKey" to null)
-        val testOutput = mapOf("Test key" to "No information has been recorded")
+        val testOutput = mapOf("Test key" to "No data held")
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces null values in a simple string object") {
         val testInput = mapOf("testKey" to "null")
-        val testOutput = mapOf("Test key" to "No information has been recorded")
+        val testOutput = mapOf("Test key" to "No data held")
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces null values in a map of maps") {
         val testInput = mapOf("parentTestKey" to mapOf("nestedTestKey" to "null"))
-        val testOutput = mapOf("Parent test key" to mapOf("Nested test key" to "No information has been recorded"))
+        val testOutput = mapOf("Parent test key" to mapOf("Nested test key" to "No data held"))
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces null values in arrays of maps") {
         val testInput = arrayListOf(mapOf("testKeyOne" to "testValueOne"), mapOf("testKeyTwo" to "null"))
-        val testOutput = arrayListOf(mapOf("Test key one" to "testValueOne"), mapOf("Test key two" to "No information has been recorded"))
+        val testOutput = arrayListOf(mapOf("Test key one" to "testValueOne"), mapOf("Test key two" to "No data held"))
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces empty array lists") {
         val testInput = arrayListOf<Any?>()
-        val testOutput = "No information has been recorded"
+        val testOutput = "No data held"
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
 
       it("replaces null values and arrays in a map of arrays of maps of arrays") {
         val testInput = mapOf("parentTestKey" to arrayListOf<Any?>())
-        val testOutput = mapOf("Parent test key" to "No information has been recorded")
+        val testOutput = mapOf("Parent test key" to "No data held")
 
         Assertions.assertThat(generatePdfService.preProcessData(testInput)).isEqualTo(testOutput)
       }
