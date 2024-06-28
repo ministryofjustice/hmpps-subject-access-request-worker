@@ -148,7 +148,7 @@ class GeneratePdfService {
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    coverpageText.add(Text("\u00a0\n").setFontSize(200f))
+    coverpageText.add(Text("\u00a0\n").setFontSize(180f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
     document.add(coverpageText)
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
@@ -166,6 +166,7 @@ class GeneratePdfService {
       ).setTextAlignment(TextAlignment.CENTER),
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
