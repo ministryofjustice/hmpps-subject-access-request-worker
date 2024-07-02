@@ -8,6 +8,7 @@ import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Paragraph
@@ -53,16 +54,6 @@ class GeneratePdfService {
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
-    addInternalCoverpage(
-      pdfDocument,
-      document,
-      nomisId,
-      ndeliusCaseReferenceId,
-      sarCaseReferenceNumber,
-      dateFrom,
-      dateTo,
-      serviceMap,
-    )
     addInternalContentsPage(pdfDocument, document, serviceMap)
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
@@ -76,6 +67,28 @@ class GeneratePdfService {
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
     addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
+
+
+    val coverPage = PdfDocument(writer)
+    val coverPageDocument = Document(coverPage)
+    addInternalCoverpage(
+      coverPageDocument,
+      nomisId,
+      ndeliusCaseReferenceId,
+      sarCaseReferenceNumber,
+      dateFrom,
+      dateTo,
+      serviceMap,
+      pdfDocument.numberOfPages,
+    )
+    val fullDocument = PdfDocument(writer)
+    val merger = PdfMerger(fullDocument)
+    merger.merge(coverPage, 1, 1);
+    merger.merge(pdfDocument, 1, pdfDocument.getNumberOfPages());
+    coverPage.close();
+    pdfDocument.close();
+    fullDocument.close();
+
     log.info("Finished writing report")
     document.close()
     log.info("PDF complete")
@@ -138,7 +151,6 @@ class GeneratePdfService {
   }
 
   fun addInternalCoverpage(
-    pdfDocument: PdfDocument,
     document: Document,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
@@ -146,6 +158,7 @@ class GeneratePdfService {
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
     serviceMap: MutableMap<String, String>,
+    numPages: Int
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
@@ -167,29 +180,8 @@ class GeneratePdfService {
       ).setTextAlignment(TextAlignment.CENTER),
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("\nTOTAL PAGES $numPages").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-    document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-  }
-
-  fun addInternalContentsPage(
-    pdfDocument: PdfDocument,
-    document: Document,
-    serviceMap: MutableMap<String, String>,
-  ) {
-    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-    contentsPageText.add(Text("\n\n\n"))
-    contentsPageText.add(Text("CONTENTS\n"))
-    document.add(contentsPageText)
-
-    val serviceList = Paragraph()
-    serviceMap.keys.toList().forEach {
-      serviceList.add("\u2022 $it\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
-    }
-    document.add(serviceList)
-
-    document.add(Paragraph("\n\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
 
