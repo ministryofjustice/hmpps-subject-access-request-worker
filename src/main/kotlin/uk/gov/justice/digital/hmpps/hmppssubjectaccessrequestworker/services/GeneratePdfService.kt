@@ -53,7 +53,17 @@ class GeneratePdfService {
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
-    addInternalCoverpage(
+    addInternalCoverPage(
+      pdfDocument,
+      document,
+      nomisId,
+      ndeliusCaseReferenceId,
+      sarCaseReferenceNumber,
+      dateFrom,
+      dateTo,
+      serviceMap,
+    )
+    addExternalCoverPage(
       pdfDocument,
       document,
       nomisId,
@@ -137,7 +147,7 @@ class GeneratePdfService {
     log.info("Added data to PDF")
   }
 
-  fun addInternalCoverpage(
+  fun addInternalCoverPage(
     pdfDocument: PdfDocument,
     document: Document,
     nomisId: String?,
@@ -171,26 +181,23 @@ class GeneratePdfService {
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
 
-  fun addInternalContentsPage(
+  fun addExternalCoverPage(
     pdfDocument: PdfDocument,
     document: Document,
+    nomisId: String?,
+    ndeliusCaseReferenceId: String?,
+    sarCaseReferenceNumber: String,
+    dateFrom: LocalDate?,
+    dateTo: LocalDate?,
     serviceMap: MutableMap<String, String>,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-    contentsPageText.add(Text("\n\n\n"))
-    contentsPageText.add(Text("CONTENTS\n"))
-    document.add(contentsPageText)
-
-    val serviceList = Paragraph()
-    serviceMap.keys.toList().forEach {
-      serviceList.add("\u2022 $it\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
-    }
-    document.add(serviceList)
-
-    document.add(Paragraph("\n\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-    document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
+    val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
+    coverpageText.add(Text("\u00a0\n").setFontSize(180f))
+    coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
+    document.add(coverpageText)
+    document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
   }
 
   fun addInternalContentsPage(
