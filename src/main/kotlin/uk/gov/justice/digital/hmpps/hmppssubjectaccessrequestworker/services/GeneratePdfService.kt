@@ -101,11 +101,11 @@ class GeneratePdfService {
   }
 
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
-    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val para = Paragraph().setFixedLeading(DATA_LINE_SPACING)
-    val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
     content.forEach { entry ->
+      document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+      val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
+      val para = Paragraph().setFixedLeading(DATA_LINE_SPACING)
+      val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
       log.info("Compiling data from " + entry.key)
       para.add(
         Text("${HeadingHelper.format(entry.key)}\n")
@@ -129,11 +129,9 @@ class GeneratePdfService {
       para.add(text)
         .setFont(font)
         .setFontSize(DATA_FONT_SIZE)
-      para.add("\n")
       log.info("Compiling data from " + entry.key)
+      document.add(para)
     }
-    log.info("Adding data to PDF")
-    document.add(para)
     log.info("Added data to PDF")
   }
 
@@ -168,28 +166,6 @@ class GeneratePdfService {
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-    document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-  }
-
-  fun addInternalContentsPage(
-    pdfDocument: PdfDocument,
-    document: Document,
-    serviceMap: MutableMap<String, String>,
-  ) {
-    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-    contentsPageText.add(Text("\n\n\n"))
-    contentsPageText.add(Text("CONTENTS\n"))
-    document.add(contentsPageText)
-
-    val serviceList = Paragraph()
-    serviceMap.keys.toList().forEach {
-      serviceList.add("\u2022 $it\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
-    }
-    document.add(serviceList)
-
-    document.add(Paragraph("\n\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
 

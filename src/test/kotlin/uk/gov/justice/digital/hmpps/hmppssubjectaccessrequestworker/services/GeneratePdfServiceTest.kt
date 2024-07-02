@@ -87,7 +87,9 @@ class GeneratePdfServiceTest(
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("Fake service name 1")
-        Assertions.assertThat(text).contains("Fake service name 2")
+        val page2 = reader.getPage(3)
+        val text2 = PdfTextExtractor.getTextFromPage(page2)
+        Assertions.assertThat(text2).contains("Fake service name 2")
       }
 
       describe("cover pages") {
