@@ -7,6 +7,7 @@ import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
@@ -51,7 +52,7 @@ class GeneratePdfService {
   ): ByteArrayOutputStream {
     log.info("Saving report..")
     val writer = getPdfWriter(pdfStream)
-    val pdfDocument = PdfDocument(writer)
+    val pdfDocument = PdfDocument(PdfWriter("main.pdf"))
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
     addInternalContentsPage(pdfDocument, document, serviceMap)
@@ -66,10 +67,14 @@ class GeneratePdfService {
     )
     document.setMargins(50F, 50F, 100F, 50F)
     addData(pdfDocument, document, content)
-    addRearPage(pdfDocument, document, pdfDocument.numberOfPages)
+    val numPages = pdfDocument.numberOfPages
+    addRearPage(pdfDocument, document, numPages)
 
+    log.info("Finished writing report")
+    document.close()
+    //log.info("PDF complete")
 
-    val coverPage = PdfDocument(writer)
+    val coverPage = PdfDocument(PdfWriter("cover.pdf"))
     val coverPageDocument = Document(coverPage)
     addInternalCoverpage(
       coverPageDocument,
@@ -79,19 +84,20 @@ class GeneratePdfService {
       dateFrom,
       dateTo,
       serviceMap,
-      pdfDocument.numberOfPages,
+      numPages,
     )
+    coverPageDocument.close()
+
     val fullDocument = PdfDocument(writer)
     val merger = PdfMerger(fullDocument)
-    merger.merge(coverPage, 1, 1);
-    merger.merge(pdfDocument, 1, pdfDocument.getNumberOfPages());
-    coverPage.close();
-    pdfDocument.close();
-    fullDocument.close();
+    val cover = PdfDocument(PdfReader("cover.pdf"))
+    val mainContent = PdfDocument(PdfReader("main.pdf"))
+    merger.merge(cover, 1, 1);
+    merger.merge(mainContent, 1, mainContent.numberOfPages);
+    cover.close()
+    mainContent.close()
+    fullDocument.close()
 
-    log.info("Finished writing report")
-    document.close()
-    log.info("PDF complete")
     return pdfStream
   }
 
@@ -180,7 +186,7 @@ class GeneratePdfService {
       ).setTextAlignment(TextAlignment.CENTER),
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
-    document.add(Paragraph("\nTOTAL PAGES $numPages").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
+    document.add(Paragraph("\nTOTAL PAGES ${numPages + 1}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
