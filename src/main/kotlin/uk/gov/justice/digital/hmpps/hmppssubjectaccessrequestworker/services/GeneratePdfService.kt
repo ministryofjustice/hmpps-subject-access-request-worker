@@ -101,8 +101,6 @@ class GeneratePdfService {
   }
 
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
-
-
     content.forEach { entry ->
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
