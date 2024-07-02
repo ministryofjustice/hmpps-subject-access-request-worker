@@ -92,7 +92,8 @@ class GeneratePdfService {
 
     val fullDocument = PdfDocument(writer)
     val merger = PdfMerger(fullDocument)
-    Paths.get("cover.pdf", "main.pdf").setPosixFilePermissions(PosixFilePermissions.fromString("rwxr-xr-x"))
+    Paths.get("cover.pdf").setPosixFilePermissions(PosixFilePermissions.fromString("rwxr-xr-x"))
+    Paths.get("main.pdf").setPosixFilePermissions(PosixFilePermissions.fromString("rwxr-xr-x"))
     val cover = PdfDocument(PdfReader("cover.pdf"))
     val mainContent = PdfDocument(PdfReader("main.pdf"))
     merger.merge(cover, 1, 1)
