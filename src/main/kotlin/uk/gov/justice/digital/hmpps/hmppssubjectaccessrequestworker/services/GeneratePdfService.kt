@@ -26,9 +26,12 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.DateCo
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
 import java.io.ByteArrayOutputStream
+import java.nio.file.Paths
+import java.nio.file.attribute.PosixFilePermissions
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.io.path.setPosixFilePermissions
 
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
@@ -99,12 +102,15 @@ class GeneratePdfService {
 
     val fullDocument = PdfDocument(writer)
     val merger = PdfMerger(fullDocument)
+    Paths.get("cover.pdf").setPosixFilePermissions(PosixFilePermissions.fromString("rwxr-xr-x"))
+    Paths.get("main.pdf").setPosixFilePermissions(PosixFilePermissions.fromString("rwxr-xr-x"))
     val cover = PdfDocument(PdfReader("cover.pdf"))
     val mainContent = PdfDocument(PdfReader("main.pdf"))
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
     cover.close()
     mainContent.close()
+
     fullDocument.close()
     log.info("PDF complete")
 
