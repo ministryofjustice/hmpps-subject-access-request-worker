@@ -134,6 +134,7 @@ class GeneratePdfService {
     }
     log.info("Adding data to PDF")
     document.add(para)
+    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     log.info("Added data to PDF")
   }
 
