@@ -87,7 +87,9 @@ class GeneratePdfServiceTest(
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("Fake service name 1")
-        Assertions.assertThat(text).contains("Fake service name 2")
+        val page2 = reader.getPage(3)
+        val text2 = PdfTextExtractor.getTextFromPage(page2)
+        Assertions.assertThat(text2).contains("Fake service name 2")
       }
 
       describe("cover pages") {
@@ -98,7 +100,7 @@ class GeneratePdfServiceTest(
           val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
           mockDocument.add(Paragraph("Text so that the page isn't empty").setFont(font).setFontSize(20f))
           Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(1)
-          generatePdfService.addInternalCoverPage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+          generatePdfService.addInternalCoverPage(mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"), 4)
           mockDocument.close()
           val reader = PdfDocument(PdfReader("dummy.pdf"))
           val page = reader.getPage(1)
@@ -231,7 +233,7 @@ class GeneratePdfServiceTest(
         val writer = PdfWriter(FileOutputStream("dummy.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
-        generatePdfService.addInternalCoverPage(mockPdfDocument, mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+        generatePdfService.addInternalCoverPage(mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"), 4)
         generatePdfService.addInternalContentsPage(mockPdfDocument, mockDocument, mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"))
         mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
