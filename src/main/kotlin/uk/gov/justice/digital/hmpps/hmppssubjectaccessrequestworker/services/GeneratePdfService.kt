@@ -72,7 +72,6 @@ class GeneratePdfService {
 
     log.info("Finished writing report")
     document.close()
-    //log.info("PDF complete")
 
     val coverPage = PdfDocument(PdfWriter("cover.pdf"))
     val coverPageDocument = Document(coverPage)
@@ -92,11 +91,12 @@ class GeneratePdfService {
     val merger = PdfMerger(fullDocument)
     val cover = PdfDocument(PdfReader("cover.pdf"))
     val mainContent = PdfDocument(PdfReader("main.pdf"))
-    merger.merge(cover, 1, 1);
-    merger.merge(mainContent, 1, mainContent.numberOfPages);
+    merger.merge(cover, 1, 1)
+    merger.merge(mainContent, 1, mainContent.numberOfPages)
     cover.close()
     mainContent.close()
     fullDocument.close()
+    log.info("PDF complete")
 
     return pdfStream
   }
@@ -164,7 +164,7 @@ class GeneratePdfService {
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
     serviceMap: MutableMap<String, String>,
-    numPages: Int
+    numPages: Int,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
