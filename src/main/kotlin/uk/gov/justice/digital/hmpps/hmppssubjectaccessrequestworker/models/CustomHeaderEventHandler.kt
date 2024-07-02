@@ -15,7 +15,7 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
 
   override fun handleEvent(currentEvent: Event) {
     val docEvent = currentEvent as PdfDocumentEvent
-    if (pdfDoc.getPageNumber(docEvent.page) <= 1) {
+    if (pdfDoc.getPageNumber(docEvent.page) <= 2) {
       return
     }
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
