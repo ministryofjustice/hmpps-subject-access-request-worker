@@ -28,7 +28,7 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
     val pageSize = docEvent.page.pageSize
     val leftCoord = pageSize.left + document.leftMargin
     val rightCoord = pageSize.right - document.rightMargin
-    val midCoord = (leftCoord + rightCoord)/2
+    val midCoord = (leftCoord + rightCoord) / 2
     val headerY: Float = pageSize.top - document.topMargin + 10
     val footerY: Float = pageSize.bottom + 20
     val canvas = Canvas(docEvent.page, pageSize)
