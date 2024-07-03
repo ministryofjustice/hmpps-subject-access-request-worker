@@ -2,7 +2,7 @@
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-subject-access-request-worker)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-subject-access-request-worker "Link to report")
 [![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-subject-access-request-worker/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-subject-access-request-worker)
 [![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-subject-access-request-worker/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-subject-access-request-worker)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://subject-access-request-worker-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html?configUrl=/v3/api-docs)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-subject-access-request-worker-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
 
 This is a Spring Boot application, written in Kotlin, used to do the heavy lifting of extracting data from upstream services
 and generating a PDF report.
