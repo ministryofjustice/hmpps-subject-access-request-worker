@@ -57,6 +57,7 @@ class GeneratePdfService {
     val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
+    addInternalContentsPage(pdfDocument, document, serviceMap)
     addExternalCoverPage(
       pdfDocument,
       document,
@@ -67,7 +68,6 @@ class GeneratePdfService {
       dateTo,
       serviceMap,
     )
-    addInternalContentsPage(pdfDocument, document, serviceMap)
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
       CustomHeaderEventHandler(
