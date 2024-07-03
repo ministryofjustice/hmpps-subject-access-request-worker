@@ -31,7 +31,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
 const val DATA_LINE_SPACING = 16f
