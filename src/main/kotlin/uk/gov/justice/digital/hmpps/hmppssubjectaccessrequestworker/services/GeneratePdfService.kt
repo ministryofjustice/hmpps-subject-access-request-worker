@@ -57,6 +57,7 @@ class GeneratePdfService {
     val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
+    addInternalContentsPage(pdfDocument, document, serviceMap)
     addExternalCoverPage(
       pdfDocument,
       document,
@@ -67,7 +68,6 @@ class GeneratePdfService {
       dateTo,
       serviceMap,
     )
-    addInternalContentsPage(pdfDocument, document, serviceMap)
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
       CustomHeaderEventHandler(
@@ -212,6 +212,7 @@ class GeneratePdfService {
     dateTo: LocalDate?,
     serviceMap: MutableMap<String, String>,
   ) {
+    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(180f))
@@ -228,7 +229,6 @@ class GeneratePdfService {
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
-    document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     contentsPageText.add(Text("\n\n\n"))
     contentsPageText.add(Text("CONTENTS\n"))
     document.add(contentsPageText)
