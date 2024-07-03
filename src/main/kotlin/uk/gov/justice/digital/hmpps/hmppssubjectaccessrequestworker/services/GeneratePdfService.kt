@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Custo
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.DateConversionHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -51,8 +52,9 @@ class GeneratePdfService {
     pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
-    val writer = getPdfWriter(pdfStream)
-    val pdfDocument = PdfDocument(PdfWriter("main.pdf"))
+    val fullDocumentWriter = getPdfWriter(pdfStream)
+    val mainPdfStream = createPdfStream()
+    val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
     addExternalCoverPage(
@@ -83,7 +85,8 @@ class GeneratePdfService {
     log.info("Finished writing report")
     document.close()
 
-    val coverPage = PdfDocument(PdfWriter("cover.pdf"))
+    val coverPdfStream = createPdfStream()
+    val coverPage = PdfDocument(PdfWriter(coverPdfStream))
     val coverPageDocument = Document(coverPage)
     addInternalCoverPage(
       coverPageDocument,
@@ -97,10 +100,10 @@ class GeneratePdfService {
     )
     coverPageDocument.close()
 
-    val fullDocument = PdfDocument(writer)
+    val fullDocument = PdfDocument(fullDocumentWriter)
     val merger = PdfMerger(fullDocument)
-    val cover = PdfDocument(PdfReader("cover.pdf"))
-    val mainContent = PdfDocument(PdfReader("main.pdf"))
+    val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
+    val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
     cover.close()
