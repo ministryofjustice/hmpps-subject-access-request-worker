@@ -2,51 +2,84 @@
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-subject-access-request-worker)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-subject-access-request-worker "Link to report")
 [![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-subject-access-request-worker/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-subject-access-request-worker)
 [![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-subject-access-request-worker/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-subject-access-request-worker)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-subject-access-request-worker-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://subject-access-request-worker-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html?configUrl=/v3/api-docs)
 
-This is a skeleton project from which to create new kotlin projects from.
+This is a Spring Boot application, written in Kotlin, used to do the heavy lifting of extracting data from upstream services
+and generating a PDF report.
+Interacts with the [Subject Access Request api](https://github.com/ministryofjustice/hmpps-subject-access-request-api).
 
-# Instructions
+The project Confluence pages can be found [here](https://dsdmoj.atlassian.net/wiki/spaces/SARS/pages/4771479564/Overview).
 
-If this is a HMPPS project then the project will be created as part of bootstrapping - 
-see https://github.com/ministryofjustice/hmpps-project-bootstrap.
+## Building
 
-## Creating a CloudPlatform namespace
+To build the project (without tests):
+```
+./gradlew clean build -x test
+```
 
-When deploying to a new namespace, you may wish to use this template kotlin project namespace as the basis for your new namespace:
+## Testing
 
-<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-subject-access-request-worker>
+Run:
+```
+./gradlew test 
+```
+## Run
+To run the hmpps-subject-access-request-worker, first start the required local services using docker-compose:
+```
+docker-compose up -d
+```
 
-Copy this folder, update all the existing namespace references, and submit a PR to the CloudPlatform team. Further instructions from the CloudPlatform team can be found here: <https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide>
+Then open the application-local.yaml file and add the 'username' and 'password' fields to the hmpps-auth section, using
+the SYSTEM_CLIENT_ID for the username and the SYSTEM_CLIENT_SECRET for the password. These values can be gotten from the Kubernetes secrets for dev namespace.
+Then create a Spring Boot run configuration with active profile of 'local'. Run the service in your chosen IDE.
 
-## Renaming from Hmpps Subject Access Request Worker - github Actions
+## Common gradle tasks
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
+To list project dependencies, run:
 
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`.  This workflow will
-execute the `rename-project.bash` and create Pull Request for you to review.  Review the PR and merge.
+```
+./gradlew dependencies
+``` 
 
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
+To check for dependency updates, run:
+```
+./gradlew dependencyUpdates --warning-mode all
+```
 
-## Manually renaming from Hmpps Subject Access Request Worker
+To run an OWASP dependency check, run:
+```
+./gradlew clean dependencyCheckAnalyze --info
+```
 
-Run the `rename-project.bash` and create a PR.
+To upgrade the gradle wrapper version, run:
+```
+./gradlew wrapper --gradle-version=<VERSION>
+```
 
-The `rename-project.bash` script takes a single argument - the name of the project and calculates from it:
-* The main class name (project name converted to pascal case) 
-* The project description (class name with spaces between the words)
-* The main package name (project name with hyphens removed)
+To automatically update project dependencies, run:
+```
+./gradlew useLatestVersions
+```
 
-It then performs a search and replace and directory renames so the project is ready to be used.
 
-## Filling in the `productId`
+To run Ktlint check:
+```
+./gradlew ktlintCheck
+```
+## Service Alerting
 
-To allow easy identification of an application, the product Id of the overall product should be set in `values.yaml`. 
-The Service Catalogue contains a list of these IDs and is currently in development here https://developer-portal.hmpps.service.justice.gov.uk/products
+### Sentry
+The service uses [Sentry.IO](https://ministryofjustice.sentry.io/) to raise alerts in Slack and email for job failures. There is a project and team set up in Sentry specifically for this service called `#subject-access-request`. You can log in (and register if need be) with your MoJ github account [here](https://ministryofjustice.sentry.io/).
 
-## Developer notes
-PDF generation is done using iText. The most useful/in-depth documentation can be found here: https://itextpdf.com/sites/default/files/attachments/PR%20-%20iText%20in%20Action%20-%20Second%20edition%20e-book_0.pdf
+Rules for alerts can be configured [here](https://ministryofjustice.sentry.io/alerts/rules/).
+
+For Sentry integration to work it requires the environment variable `SENTRY_DSN` which is configured in Kubernetes.
+There is a project for each environment, and the DSN values for each is stored in a Kubernetes secret.
+This values for this can be found for dev [here](https://ministryofjustice.sentry.io/settings/projects/dev-worker-subject-access-request/keys/), for preprod [here](https://ministryofjustice.sentry.io/settings/projects/preprod-worker-subject-access-request/keys/),
+and for prod [here](https://ministryofjustice.sentry.io/settings/projects/prod-worker-subject-access-request/keys/).
+
+
+### Application Insights Events
+The application sends telemetry information to Azure Application Insights which allows log queries and end-to-end request tracing across services.
+
+https://portal.azure.com/#view/AppInsightsExtension
