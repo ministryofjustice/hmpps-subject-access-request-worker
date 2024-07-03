@@ -30,7 +30,7 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
     val rightCoord = pageSize.right - document.rightMargin
     val midCoord = (leftCoord + rightCoord)/2
     val headerY: Float = pageSize.top - document.topMargin + 10
-    val footerY: Float = pageSize.bottom + document.bottomMargin + 10
+    val footerY: Float = pageSize.bottom + 20
     val canvas = Canvas(docEvent.page, pageSize)
     canvas
       .setFont(font)
