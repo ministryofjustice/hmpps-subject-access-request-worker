@@ -116,7 +116,7 @@ class GeneratePdfServiceTest(
           generatePdfService.addInternalContentsPage(mockPdfDocument, mockDocument, mutableMapOf("mockService" to "mockServiceUrl"))
           mockDocument.close()
           val reader = PdfDocument(PdfReader("dummy.pdf"))
-          val page = reader.getPage(2)
+          val page = reader.getPage(1mit )
           val text = PdfTextExtractor.getTextFromPage(page)
           Assertions.assertThat(text).contains("CONTENTS")
           Assertions.assertThat(text).contains("OFFICIAL-SENSITIVE")
