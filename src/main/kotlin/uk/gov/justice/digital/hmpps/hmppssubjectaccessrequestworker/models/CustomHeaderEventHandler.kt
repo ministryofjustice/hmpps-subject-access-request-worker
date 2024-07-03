@@ -15,29 +15,43 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
 
   override fun handleEvent(currentEvent: Event) {
     val docEvent = currentEvent as PdfDocumentEvent
+    val leftHeaderText: String
+    val rightHeaderText: String
     if (pdfDoc.getPageNumber(docEvent.page) <= 2) {
-      return
+      leftHeaderText = ""
+      rightHeaderText = ""
+    } else {
+      leftHeaderText = nID
+      rightHeaderText = "CASE REFERENCE: $sarID"
     }
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = docEvent.page.pageSize
     val leftCoord = pageSize.left + document.leftMargin
     val rightCoord = pageSize.right - document.rightMargin
+    val midCoord = (leftCoord + rightCoord) / 2
     val headerY: Float = pageSize.top - document.topMargin + 10
+    val footerY: Float = pageSize.bottom + 20
     val canvas = Canvas(docEvent.page, pageSize)
     canvas
       .setFont(font)
       .setFontSize(10f)
       .showTextAligned(
-        nID,
+        leftHeaderText,
         leftCoord,
         headerY,
         TextAlignment.LEFT,
       )
       .showTextAligned(
-        "CASE REFERENCE: $sarID",
+        rightHeaderText,
         rightCoord,
         headerY,
         TextAlignment.RIGHT,
+      )
+      .showTextAligned(
+        "Official Sensitive",
+        midCoord,
+        footerY,
+        TextAlignment.CENTER,
       )
       .close()
   }
