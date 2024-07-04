@@ -1,9 +1,12 @@
 services:
   hmpps-auth:
-    base-url: http://localhost:9090
-    username: hmpps-integration-api-client # until we get a client seeded
+    base-url: https://sign-in-dev.hmpps.service.justice.gov.uk
+    username: clientid # until we get a client seeded
     password: clientsecret
 
   sar-api:
     base-url: http://localhost:8080
+
+  document-storage:
+    base-url: https://document-api-dev.hmpps.service.justice.gov.uk
 
