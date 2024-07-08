@@ -49,6 +49,9 @@ management:
         time-to-live: 2000ms
 
 services:
+  prison-api:
+    base-url: https://prison-api
+
   sar-api:
     base-url: http://hmpps-subject-access-request
 
