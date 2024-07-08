@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import org.mockito.Mockito
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
@@ -15,10 +16,10 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers.
 @Import(ApplicationInsightsConfiguration::class)
 @ContextConfiguration(
   initializers = [ConfigDataApplicationContextInitializer::class],
-  classes = [(GenericHmppsApiGateway::class)],
+  classes = [(PrisonApiGateway::class)],
 )
 class PrisonApiGatewayTest(
-  prisonApiGateway: PrisonApiGateway,
+  @Autowired val prisonApiGateway: PrisonApiGateway,
   @MockBean val mockHmppsAuthGateway: HmppsAuthGateway,
 ) : DescribeSpec(
   {
