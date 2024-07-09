@@ -1,14 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
-import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent
-import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
+import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.properties.AreaBreakType
 import io.kotest.core.spec.style.DescribeSpec
 import org.assertj.core.api.Assertions
 import org.mockito.Mockito
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.time.LocalDate
@@ -59,16 +61,21 @@ class GeneratePdfServiceTest(
         val writer = PdfWriter(FileOutputStream("dummy.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
-        val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-        mockDocument.add(Paragraph("Text so that the page isn't empty").setFont(font).setFontSize(20f))
-        Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(1)
-        generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
+
+        mockDocument.add(Paragraph("This page represents the upstream data pages"))
+        val numberOfPagesWithoutRearAndCoverPage = mockPdfDocument.numberOfPages
+        mockDocument.add(AreaBreak(AreaBreakType.NEXT_PAGE)).add(Paragraph("This page represents the internal cover page"))
+        generatePdfService.addRearPage(mockPdfDocument, mockDocument, numberOfPagesWithoutRearAndCoverPage)
+        val numberOfPagesWithRearAndCoverPage = mockPdfDocument.numberOfPages
         mockDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
-        val page = reader.getPage(2)
+        val page = reader.getPage(3)
         val text = PdfTextExtractor.getTextFromPage(page)
+
+        Assertions.assertThat(numberOfPagesWithoutRearAndCoverPage).isEqualTo(1)
+        Assertions.assertThat(numberOfPagesWithRearAndCoverPage).isEqualTo(3)
         Assertions.assertThat(text).contains("End of Subject Access Request Report")
-        Assertions.assertThat(text).contains("Total pages: 2")
+        Assertions.assertThat(text).contains("Total pages: 3")
       }
 
       it("writes data to a PDF") {
@@ -93,20 +100,49 @@ class GeneratePdfServiceTest(
       }
 
       describe("cover pages") {
-        it("adds internal coverpage to a PDF") {
-          val writer = PdfWriter(FileOutputStream("dummy.pdf"))
-          val mockPdfDocument = PdfDocument(writer)
+        it("adds internal cover page to a PDF") {
+          val fullDocumentWriter = PdfWriter(FileOutputStream("dummy.pdf"))
+          val mainPdfStream = ByteArrayOutputStream()
+          val mockPdfDocument = PdfDocument(PdfWriter(mainPdfStream))
           val mockDocument = Document(mockPdfDocument)
-          val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-          mockDocument.add(Paragraph("Text so that the page isn't empty").setFont(font).setFontSize(20f))
-          Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(1)
-          generatePdfService.addInternalCoverPage(mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"), 4)
+          mockDocument.add(Paragraph("Text so that the page isn't empty"))
+          val numberOfPagesWithoutCoverpage = mockPdfDocument.numberOfPages
           mockDocument.close()
+
+          // Add cover page
+          val coverPdfStream = ByteArrayOutputStream()
+          val coverPage = PdfDocument(PdfWriter(coverPdfStream))
+          val coverPageDocument = Document(coverPage)
+          generatePdfService.addInternalCoverPage(
+            document = coverPageDocument,
+            nomisId = "mockNomisNumber",
+            ndeliusCaseReferenceId = null,
+            sarCaseReferenceNumber = "mockCaseReference",
+            dateFrom = LocalDate.now(),
+            dateTo = LocalDate.now(),
+            serviceMap = mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"),
+            numberOfPagesWithoutCoverpage,
+          )
+          coverPageDocument.close()
+          val fullDocument = PdfDocument(fullDocumentWriter)
+          val merger = PdfMerger(fullDocument)
+          val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
+          val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
+          merger.merge(cover, 1, 1)
+          merger.merge(mainContent, 1, mainContent.numberOfPages)
+          cover.close()
+          mainContent.close()
+
+          // Test
+          Assertions.assertThat(numberOfPagesWithoutCoverpage).isEqualTo(1)
+          Assertions.assertThat(fullDocument.numberOfPages).isEqualTo(2)
+          fullDocument.close()
           val reader = PdfDocument(PdfReader("dummy.pdf"))
           val page = reader.getPage(1)
           val text = PdfTextExtractor.getTextFromPage(page)
           Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
           Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+          Assertions.assertThat(text).contains("Total Pages: 3")
         }
 
         it("adds internal contents page to a PDF") {
@@ -229,17 +265,50 @@ class GeneratePdfServiceTest(
             ),
           ),
         )
-        val testResponseObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
-        val writer = PdfWriter(FileOutputStream("dummy.pdf"))
-        val mockPdfDocument = PdfDocument(writer)
+        val testContentObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
+
+        // PDF set up
+        val fullDocumentWriter = PdfWriter(FileOutputStream("dummy.pdf"))
+        val mainPdfStream = ByteArrayOutputStream()
+        val mockPdfDocument = PdfDocument(PdfWriter(mainPdfStream))
         val mockDocument = Document(mockPdfDocument)
-        generatePdfService.addInternalCoverPage(mockDocument, "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"), 4)
-        generatePdfService.addInternalContentsPage(mockPdfDocument, mockDocument, mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"))
+
+        // Add content and rear pages
+        generatePdfService.addInternalContentsPage(pdfDocument = mockPdfDocument, document = mockDocument, serviceMap = mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"))
+        generatePdfService.addExternalCoverPage(pdfDocument = mockPdfDocument, document = mockDocument, nomisId = "mockNomisNumber", ndeliusCaseReferenceId = null, sarCaseReferenceNumber = "mockCaseReference", dateFrom = LocalDate.now(), dateTo = LocalDate.now(), serviceMap = mutableMapOf("mockService" to "mockServiceUrl"))
         mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
-        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
-        generatePdfService.addRearPage(mockPdfDocument, mockDocument, mockPdfDocument.numberOfPages)
-        Assertions.assertThat(mockPdfDocument.numberOfPages).isEqualTo(4)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testContentObject)
+        val numPages = mockPdfDocument.numberOfPages
+        generatePdfService.addRearPage(mockPdfDocument, mockDocument, numPages)
         mockDocument.close()
+
+        // Add cover page
+        val coverPdfStream = ByteArrayOutputStream()
+        val coverPage = PdfDocument(PdfWriter(coverPdfStream))
+        val coverPageDocument = Document(coverPage)
+        generatePdfService.addInternalCoverPage(
+          document = coverPageDocument,
+          nomisId = "mockNomisNumber",
+          ndeliusCaseReferenceId = null,
+          sarCaseReferenceNumber = "mockCaseReference",
+          dateFrom = LocalDate.now(),
+          dateTo = LocalDate.now(),
+          serviceMap = mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"),
+          numPages,
+        )
+        coverPageDocument.close()
+        val fullDocument = PdfDocument(fullDocumentWriter)
+        val merger = PdfMerger(fullDocument)
+        val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
+        val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
+        merger.merge(cover, 1, 1)
+        merger.merge(mainContent, 1, mainContent.numberOfPages)
+        cover.close()
+        mainContent.close()
+
+        // Test
+        Assertions.assertThat(fullDocument.numberOfPages).isEqualTo(5)
+        fullDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
         val page = reader.getPage(1)
         val text = PdfTextExtractor.getTextFromPage(page)
