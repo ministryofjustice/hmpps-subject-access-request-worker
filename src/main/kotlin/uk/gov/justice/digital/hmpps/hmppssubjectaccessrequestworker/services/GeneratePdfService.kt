@@ -128,7 +128,8 @@ class GeneratePdfService {
     val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph("\u00a0").setFontSize(300f))
     endPageText.add(Text("End of Subject Access Request Report\n\n"))
-    endPageText.add(Text("Total pages: ${numPages + 2}"))
+    endPageText.add(Text("Total pages: ${numPages + 2}\n\n"))
+    endPageText.add(Text("INTERNAL ONLY"))
     document.add(endPageText)
   }
 
