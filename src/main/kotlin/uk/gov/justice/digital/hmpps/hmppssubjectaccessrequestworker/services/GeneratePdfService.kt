@@ -128,7 +128,7 @@ class GeneratePdfService {
     val endPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph("\u00a0").setFontSize(300f))
     endPageText.add(Text("End of Subject Access Request Report\n\n"))
-    endPageText.add(Text("Total pages: ${numPages + 1}\n\n"))
+    endPageText.add(Text("Total pages: ${numPages + 2}\n\n"))
     endPageText.add(Text("INTERNAL ONLY"))
     document.add(endPageText)
   }
@@ -198,7 +198,7 @@ class GeneratePdfService {
       ).setTextAlignment(TextAlignment.CENTER),
     )
     document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
-    document.add(Paragraph("\nTOTAL PAGES ${numPages + 1}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
+    document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
