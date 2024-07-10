@@ -155,7 +155,6 @@ class GeneratePdfServiceTest(
           val page = reader.getPage(1)
           val text = PdfTextExtractor.getTextFromPage(page)
           Assertions.assertThat(text).contains("CONTENTS")
-          Assertions.assertThat(text).contains("OFFICIAL-SENSITIVE")
           Assertions.assertThat(text).contains("INTERNAL ONLY")
         }
       }

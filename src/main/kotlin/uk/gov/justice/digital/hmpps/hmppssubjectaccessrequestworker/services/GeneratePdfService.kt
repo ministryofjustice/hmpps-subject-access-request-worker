@@ -241,7 +241,6 @@ class GeneratePdfService {
     document.add(serviceList)
 
     document.add(Paragraph("\n\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-    document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
   }
 
   fun getSubjectIdLine(nomisId: String?, ndeliusCaseReferenceId: String?): String {
