@@ -300,6 +300,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   inner class CreateOrderedServiceUrlList {
     val orderedUrlList = listOf("test1.com", "test2.com")
     val sarUrlList = mutableListOf("test2.com", "test1.com")
+
     @Test
     fun `createOrderedServiceUrlList returns a list`() = runTest {
       val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
@@ -324,6 +325,17 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
 
       Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlList)
+    }
+  }
+
+  @Nested
+  inner class GetOrderedServicesMap {
+    @Test
+    fun `getOrderedServicesMap returns a map of service URLs in the right order`() = runTest {
+      val expectedOrderedSarUrlMap = mutableMapOf("0" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "1" to "https://fake-prisoner-search.prison.service.justice.gov.uk")
+      val orderedSarUrlList = subjectAccessRequestWorkerService.getOrderedServicesMap(sampleSAR)
+
+      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlMap)
     }
   }
 }

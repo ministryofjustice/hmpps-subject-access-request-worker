@@ -112,7 +112,21 @@ class SubjectAccessRequestWorkerService(
     return serviceMap
   }
 
-  fun createOrderedServiceUrlList(configuredOrderedUrlList: List<String>, unorderedSelectedUrlList: MutableList<String>): List<String> {
+  fun getOrderedServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
+    val services = subjectAccessRequest.services
+    val serviceMap = LinkedHashMap<String, String>()
+
+    val serviceUrls =
+      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+
+    val orderedList = createOrderedServiceUrlList(listOf("https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "https://fake-prisoner-search.prison.service.justice.gov.uk"), serviceUrls.toMutableList())
+    for (url in orderedList) {
+      serviceMap[orderedList.indexOf(url).toString()] = url
+    }
+    return serviceMap
+  }
+
+  fun createOrderedServiceUrlList(configuredOrderedUrlList: List<String>, unorderedSelectedUrlList: MutableList<String>): MutableList<String> {
     val orderedSelectedUrlList = mutableListOf<String>()
 
     configuredOrderedUrlList.forEach {
