@@ -1,7 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
+import org.springframework.stereotype.Component
 import java.io.File
-
+@Component
 class ConfigOrderHelper {
 
   fun createOrderedServiceUrlList(configuredOrderedUrlList: List<String>, unorderedSelectedUrlList: MutableList<String>): MutableList<String> {
@@ -20,8 +21,10 @@ class ConfigOrderHelper {
   }
 
   fun extractServicesConfig(configFilename: String): List<String> {
+    println("EXTRACTING ${configFilename}")
     val configReader = File(configFilename)
     val configUrlList = configReader.readLines()
+    println(configUrlList)
     return configUrlList
   }
 }

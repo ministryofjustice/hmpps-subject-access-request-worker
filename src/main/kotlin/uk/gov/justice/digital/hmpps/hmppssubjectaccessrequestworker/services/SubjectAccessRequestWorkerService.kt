@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Sub
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
 const val POLL_DELAY: Long = 10000
@@ -26,6 +27,7 @@ class SubjectAccessRequestWorkerService(
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Autowired val generatePdfService: GeneratePdfService,
+  @Autowired val configOrderHelper: ConfigOrderHelper,
   @Value("\${services.sar-api.base-url}")
   private val sarUrl: String,
   private val telemetryClient: TelemetryClient,
@@ -119,8 +121,14 @@ class SubjectAccessRequestWorkerService(
 
     val selectedServiceUrls =
       selectedServices.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+    println("URLs ${selectedServiceUrls}")
 
-    val orderedSelectedServiceList = ConfigOrderHelper().createOrderedServiceUrlList(listOf("https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "https://fake-prisoner-search.prison.service.justice.gov.uk"), selectedServiceUrls.toMutableList())
+    val orderedUrls = configOrderHelper.extractServicesConfig("urlConfig.txt")
+    println("File exists? ${File("urlConfig.txt").exists()}")
+    println("File contents: ${File("urlConfig.txt").readLines()}")
+    println("Ordered URLs ${orderedUrls}")
+
+    val orderedSelectedServiceList = configOrderHelper.createOrderedServiceUrlList(orderedUrls, selectedServiceUrls.toMutableList())
     for (url in orderedSelectedServiceList) {
       orderedServiceMap[orderedSelectedServiceList.indexOf(url).toString()] = url
     }
