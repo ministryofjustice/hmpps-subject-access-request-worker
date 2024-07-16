@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -336,6 +337,31 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       val orderedSarUrlList = subjectAccessRequestWorkerService.getOrderedServicesMap(sampleSAR)
 
       Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlMap)
+    }
+  }
+
+  @Nested
+  inner class ExtractServicesConfig {
+    @Test
+    fun `extractServicesConfig returns list of ordered URLs`() = runTest {
+      val expectedUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
+      val orderedSarUrlList = subjectAccessRequestWorkerService.extractServicesConfig("test.txt")
+
+      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedUrlList)
+    }
+
+    @Test
+    fun `extractServicesConfig reads URLs from a file`() = runTest {
+      val tmpFile = File("test1.txt")
+      tmpFile.appendText("test1.com\n")
+      tmpFile.appendText("test2.com\n")
+      tmpFile.appendText("newly-added-service.com\n")
+      val expectedUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
+
+      val orderedSarUrlList = subjectAccessRequestWorkerService.extractServicesConfig("test1.txt")
+
+      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedUrlList)
+      tmpFile.delete()
     }
   }
 }

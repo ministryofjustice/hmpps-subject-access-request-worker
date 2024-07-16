@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Doc
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
 const val POLL_DELAY: Long = 10000
@@ -139,5 +140,11 @@ class SubjectAccessRequestWorkerService(
     orderedSelectedUrlList.addAll(unorderedSelectedUrlList)
 
     return orderedSelectedUrlList
+  }
+
+  fun extractServicesConfig(configFilename: String): List<String> {
+    val configReader = File(configFilename)
+    val configUrlList = configReader.readLines()
+    return configUrlList
   }
 }
