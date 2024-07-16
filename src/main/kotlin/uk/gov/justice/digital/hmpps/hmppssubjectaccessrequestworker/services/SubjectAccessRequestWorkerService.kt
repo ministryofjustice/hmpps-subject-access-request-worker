@@ -112,15 +112,18 @@ class SubjectAccessRequestWorkerService(
     return serviceMap
   }
 
-  fun createOrderedServiceUrlList(orderedUrlList: List<String>, sarUrlList: List<String>): List<String> {
-    val orderedSarUrlList = mutableListOf<String>()
+  fun createOrderedServiceUrlList(configuredOrderedUrlList: List<String>, unorderedSelectedUrlList: MutableList<String>): List<String> {
+    val orderedSelectedUrlList = mutableListOf<String>()
 
-    orderedUrlList.forEach {
-      if (sarUrlList.contains(it)) {
-        orderedSarUrlList.add(it)
+    configuredOrderedUrlList.forEach {
+      if (unorderedSelectedUrlList.contains(it)) {
+        orderedSelectedUrlList.add(it)
+        unorderedSelectedUrlList.removeAt(unorderedSelectedUrlList.indexOf(it))
       }
     }
 
-    return orderedSarUrlList
+    orderedSelectedUrlList.addAll(unorderedSelectedUrlList)
+
+    return orderedSelectedUrlList
   }
 }

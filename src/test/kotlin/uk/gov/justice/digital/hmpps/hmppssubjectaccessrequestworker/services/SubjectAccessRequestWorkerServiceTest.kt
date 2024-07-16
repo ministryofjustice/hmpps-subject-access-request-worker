@@ -298,11 +298,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Nested
   inner class CreateOrderedServiceUrlList {
+    val orderedUrlList = listOf("test1.com", "test2.com")
+    val sarUrlList = mutableListOf("test2.com", "test1.com")
     @Test
     fun `createOrderedServiceUrlList returns a list`() = runTest {
-      val orderedUrlList = listOf("test1.com", "test2.com")
-      val sarUrlList = listOf("test2.com", "test1.com")
-
       val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
 
       Assertions.assertThat(orderedSarUrlList).isInstanceOf(List::class.java)
@@ -310,8 +309,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     @Test
     fun `createOrderedServiceUrlList puts the SAR URL list into the order of the ordered URL list`() = runTest {
-      val orderedUrlList = listOf("test1.com", "test2.com")
-      val sarUrlList = listOf("test2.com", "test1.com")
       val expectedOrderedSarUrlList = listOf("test1.com", "test2.com")
 
       val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
@@ -321,8 +318,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     @Test
     fun `createOrderedServiceUrlList adds SAR URLs that do not appear in the ordered URL list onto the end of the orderedSarUrlList`() = runTest {
-      val orderedUrlList = listOf("test1.com", "test2.com")
-      val sarUrlList = listOf("test2.com", "test1.com", "newly-added-service.com")
+      val sarUrlList = mutableListOf("test2.com", "test1.com", "newly-added-service.com")
       val expectedOrderedSarUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
 
       val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
