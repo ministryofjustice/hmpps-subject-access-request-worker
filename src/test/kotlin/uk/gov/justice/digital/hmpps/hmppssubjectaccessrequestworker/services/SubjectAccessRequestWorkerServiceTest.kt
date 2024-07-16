@@ -9,7 +9,6 @@ import io.mockk.mockkStatic
 import io.sentry.Sentry
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
@@ -24,7 +23,6 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -294,74 +292,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       Sentry.captureException(
         any(),
       )
-    }
-  }
-
-  @Nested
-  inner class CreateOrderedServiceUrlList {
-    val orderedUrlList = listOf("test1.com", "test2.com")
-    val sarUrlList = mutableListOf("test2.com", "test1.com")
-
-    @Test
-    fun `createOrderedServiceUrlList returns a list`() = runTest {
-      val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
-
-      Assertions.assertThat(orderedSarUrlList).isInstanceOf(List::class.java)
-    }
-
-    @Test
-    fun `createOrderedServiceUrlList puts the SAR URL list into the order of the ordered URL list`() = runTest {
-      val expectedOrderedSarUrlList = listOf("test1.com", "test2.com")
-
-      val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
-
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlList)
-    }
-
-    @Test
-    fun `createOrderedServiceUrlList adds SAR URLs that do not appear in the ordered URL list onto the end of the orderedSarUrlList`() = runTest {
-      val sarUrlList = mutableListOf("test2.com", "test1.com", "newly-added-service.com")
-      val expectedOrderedSarUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
-
-      val orderedSarUrlList = subjectAccessRequestWorkerService.createOrderedServiceUrlList(orderedUrlList, sarUrlList)
-
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlList)
-    }
-  }
-
-  @Nested
-  inner class GetOrderedServicesMap {
-    @Test
-    fun `getOrderedServicesMap returns a map of service URLs in the right order`() = runTest {
-      val expectedOrderedSarUrlMap = mutableMapOf("0" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "1" to "https://fake-prisoner-search.prison.service.justice.gov.uk")
-      val orderedSarUrlList = subjectAccessRequestWorkerService.getOrderedServicesMap(sampleSAR)
-
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlMap)
-    }
-  }
-
-  @Nested
-  inner class ExtractServicesConfig {
-    @Test
-    fun `extractServicesConfig returns list of ordered URLs`() = runTest {
-      val expectedUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
-      val orderedSarUrlList = subjectAccessRequestWorkerService.extractServicesConfig("test.txt")
-
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedUrlList)
-    }
-
-    @Test
-    fun `extractServicesConfig reads URLs from a file`() = runTest {
-      val tmpFile = File("test1.txt")
-      tmpFile.appendText("test1.com\n")
-      tmpFile.appendText("test2.com\n")
-      tmpFile.appendText("newly-added-service.com\n")
-      val expectedUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
-
-      val orderedSarUrlList = subjectAccessRequestWorkerService.extractServicesConfig("test1.txt")
-
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedUrlList)
-      tmpFile.delete()
     }
   }
 }

@@ -14,8 +14,8 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.track
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.*
 
 const val POLL_DELAY: Long = 10000
@@ -120,31 +120,10 @@ class SubjectAccessRequestWorkerService(
     val selectedServiceUrls =
       selectedServices.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
 
-    val orderedSelectedServiceList = createOrderedServiceUrlList(listOf("https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "https://fake-prisoner-search.prison.service.justice.gov.uk"), selectedServiceUrls.toMutableList())
+    val orderedSelectedServiceList = ConfigOrderHelper().createOrderedServiceUrlList(listOf("https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "https://fake-prisoner-search.prison.service.justice.gov.uk"), selectedServiceUrls.toMutableList())
     for (url in orderedSelectedServiceList) {
       orderedServiceMap[orderedSelectedServiceList.indexOf(url).toString()] = url
     }
     return orderedServiceMap
-  }
-
-  fun createOrderedServiceUrlList(configuredOrderedUrlList: List<String>, unorderedSelectedUrlList: MutableList<String>): MutableList<String> {
-    val orderedSelectedUrlList = mutableListOf<String>()
-
-    configuredOrderedUrlList.forEach {
-      if (unorderedSelectedUrlList.contains(it)) {
-        orderedSelectedUrlList.add(it)
-        unorderedSelectedUrlList.removeAt(unorderedSelectedUrlList.indexOf(it))
-      }
-    }
-
-    orderedSelectedUrlList.addAll(unorderedSelectedUrlList)
-
-    return orderedSelectedUrlList
-  }
-
-  fun extractServicesConfig(configFilename: String): List<String> {
-    val configReader = File(configFilename)
-    val configUrlList = configReader.readLines()
-    return configUrlList
   }
 }
