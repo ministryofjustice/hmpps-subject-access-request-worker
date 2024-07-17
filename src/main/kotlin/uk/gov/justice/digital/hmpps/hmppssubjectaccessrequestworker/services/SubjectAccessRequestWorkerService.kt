@@ -4,6 +4,7 @@ import com.microsoft.applicationinsights.TelemetryClient
 import io.sentry.Sentry
 import kotlinx.coroutines.delay
 import org.apache.commons.lang3.time.StopWatch
+import org.hibernate.cfg.Environment
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -29,12 +30,13 @@ class SubjectAccessRequestWorkerService(
   @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Autowired val generatePdfService: GeneratePdfService,
   @Autowired val configOrderHelper: ConfigOrderHelper,
-  @Value("\${services.sar-api.base-url}")
-  private val sarUrl: String,
+  @Value("\${services.sar-api.base-url}") private val sarUrl: String,
   private val telemetryClient: TelemetryClient,
 ) {
-
   private val log = LoggerFactory.getLogger(this::class.java)
+
+  @Value("\${dps-services.annas-service.order-position}")
+  var dpsServices: Any? = "hello"
 
   suspend fun startPolling() {
     while (true) {
@@ -136,12 +138,17 @@ class SubjectAccessRequestWorkerService(
     return orderedServiceMap
   }
 
-  fun getListOfServiceDetails(subjectAccessRequest: SubjectAccessRequest): List<ServiceDetails> {
+  fun getListOfServiceDetails(
+    subjectAccessRequest: SubjectAccessRequest
+  ): List<ServiceDetails> {
     val servicesMap = getServicesMap(subjectAccessRequest)
     val serviceDetailsList = mutableListOf<ServiceDetails>()
+
     servicesMap.forEach { (key, value) ->
       serviceDetailsList.add(ServiceDetails(url = value, name = key))
     }
+
+    println("DPS services = $dpsServices")
 
     return serviceDetailsList
   }

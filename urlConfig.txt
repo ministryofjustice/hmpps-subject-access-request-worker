@@ -1,2 +1,33 @@
 https://fake-prisoner-search-indexer.prison.service.justice.gov.uk
 https://fake-prisoner-search.prison.service.justice.gov.uk
+
+// prev version
+{
+  serviceName: "serviceURL",
+  serviceName2: "serviceURL2"
+}
+
+// output of our function
+[
+  ServiceDetails{
+    name: "serviceName",
+    displayName: "Service Name"
+    order: 1,
+    url: "serviceUrl"
+  },
+  ServiceDetails{
+    name: "serviceName2",
+    displayName: "Service Name 2"
+    order: 2,
+    url: "serviceUrl2"
+  }
+]
+
+// config details
+order:
+    serviceName: 1
+    serviceName2: 2
+
+displayNames:
+    serviceName: "Service Name"
+    serviceName2: "Service Name 2"

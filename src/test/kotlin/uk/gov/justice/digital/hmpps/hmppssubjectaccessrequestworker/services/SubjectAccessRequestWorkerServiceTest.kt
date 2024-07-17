@@ -15,10 +15,15 @@ import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatusCode
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceDetails
@@ -31,6 +36,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+@ActiveProfiles("test")
 class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   private val dateFrom = "02/01/2023"
@@ -326,6 +332,19 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Nested
   inner class GetListOfServiceDetails {
+    private val sampleSAR = SubjectAccessRequest(
+      id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+      status = Status.Pending,
+      dateFrom = dateFromFormatted,
+      dateTo = dateToFormatted,
+      sarCaseReferenceNumber = "1234abc",
+      services = "test-dps-service-2, https://test-dps-service-2.prison.service.justice.gov.uk,test-dps-service-1, https://test-dps-service-1.prison.service.justice.gov.uk",
+      nomisId = null,
+      ndeliusCaseReferenceId = "1",
+      requestedBy = "aName",
+      requestDateTime = requestTime,
+      claimAttempts = 0,
+    )
     @Test
     fun `getListOfServiceDetails returns a list of ServiceDetails objects`() = runTest {
       val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
@@ -337,10 +356,17 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     @Test
     fun `getListOfServiceDetails extracts the correct details for the given SAR`() = runTest {
       val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
-      Assertions.assertThat(orderedServiceDetailsList[0].url).isEqualTo("https://fake-prisoner-search.prison.service.justice.gov.uk")
-      Assertions.assertThat(orderedServiceDetailsList[0].name).isEqualTo("fake-hmpps-prisoner-search")
-      Assertions.assertThat(orderedServiceDetailsList[1].url).isEqualTo("https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")
-      Assertions.assertThat(orderedServiceDetailsList[1].name).isEqualTo("fake-hmpps-prisoner-search-indexer")
+
+      Assertions.assertThat(orderedServiceDetailsList[0].url).isEqualTo("https://test-dps-service-2.prison.service.justice.gov.uk")
+      Assertions.assertThat(orderedServiceDetailsList[0].name).isEqualTo("test-dps-service-2")
+      Assertions.assertThat(orderedServiceDetailsList[0].orderPosition).isEqualTo(2)
+      Assertions.assertThat(orderedServiceDetailsList[0].businessName).isEqualTo("Test DPS Service 2")
+
+
+      Assertions.assertThat(orderedServiceDetailsList[1].url).isEqualTo("https://test-dps-service-1.prison.service.justice.gov.uk")
+      Assertions.assertThat(orderedServiceDetailsList[1].name).isEqualTo("test-dps-service-1")
+      Assertions.assertThat(orderedServiceDetailsList[0].orderPosition).isEqualTo(1)
+      Assertions.assertThat(orderedServiceDetailsList[0].businessName).isEqualTo("Test DPS Service 1")
     }
   }
 }

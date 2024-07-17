@@ -16,3 +16,13 @@ services:
 
   sar-api:
     base-url: http://localhost:8080
+
+dps-services:
+  annas-service:
+    service-catalogue-name: "test-dps-service-1"
+    order-position: 1
+    business-name: "Test DPS Service 1"
+  aprils-service:
+    service-catalogue-name: "test-dps-service-2"
+    order-position: 2
+    business-name: "Test DPS Service 2"
