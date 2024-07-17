@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceDetails
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
@@ -302,7 +303,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   inner class GetOrderedServicesMap {
     @Test
     fun `getOrderedServicesMap returns a map of service URLs in the right order`() = runTest {
-      val expectedOrderedSarUrlMap = mutableMapOf("0" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "1" to "https://fake-prisoner-search.prison.service.justice.gov.uk")
+      val expectedOrderedSarUrlMap = mutableMapOf("fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk")
       Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
         listOf(
         "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
@@ -320,6 +321,26 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       subjectAccessRequestWorkerService.getOrderedServicesMap(sampleSAR)
       verify(configOrderHelper, Mockito.times(1)).extractServicesConfig(any())
       verify(configOrderHelper, Mockito.times(1)).createOrderedServiceUrlList(any(), any())
+    }
+  }
+
+  @Nested
+  inner class GetListOfServiceDetails {
+    @Test
+    fun `getListOfServiceDetails returns a list of ServiceDetails objects`() = runTest {
+      val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
+
+      Assertions.assertThat(orderedServiceDetailsList).isInstanceOf(List::class.java)
+      Assertions.assertThat(orderedServiceDetailsList[0]).isInstanceOf(ServiceDetails::class.java)
+    }
+
+    @Test
+    fun `getListOfServiceDetails extracts the correct details for the given SAR`() = runTest {
+      val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
+      Assertions.assertThat(orderedServiceDetailsList[0].url).isEqualTo("https://fake-prisoner-search.prison.service.justice.gov.uk")
+      Assertions.assertThat(orderedServiceDetailsList[0].name).isEqualTo("fake-hmpps-prisoner-search")
+      Assertions.assertThat(orderedServiceDetailsList[1].url).isEqualTo("https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")
+      Assertions.assertThat(orderedServiceDetailsList[1].name).isEqualTo("fake-hmpps-prisoner-search-indexer")
     }
   }
 }

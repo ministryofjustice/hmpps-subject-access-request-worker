@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceDetails
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
@@ -133,5 +134,15 @@ class SubjectAccessRequestWorkerService(
       orderedServiceMap[orderedSelectedServiceList.indexOf(url).toString()] = url
     }
     return orderedServiceMap
+  }
+
+  fun getListOfServiceDetails(subjectAccessRequest: SubjectAccessRequest): List<ServiceDetails> {
+    val servicesMap = getServicesMap(subjectAccessRequest)
+    val serviceDetailsList = mutableListOf<ServiceDetails>()
+    servicesMap.forEach { (key, value) ->
+      serviceDetailsList.add(ServiceDetails(url = value, name = key))
+    }
+
+    return serviceDetailsList
   }
 }
