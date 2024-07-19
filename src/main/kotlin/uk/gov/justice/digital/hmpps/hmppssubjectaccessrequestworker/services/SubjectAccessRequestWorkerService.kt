@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.track
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
@@ -134,21 +135,30 @@ class SubjectAccessRequestWorkerService(
     return orderedServiceMap
   }
 
-  fun getListOfServiceDetails(
+  fun getServiceDetails(
     subjectAccessRequest: SubjectAccessRequest
-  ): List<DpsService> {
+  ): DpsServices {
     val servicesMap = getServicesMap(subjectAccessRequest)
-    val serviceDetailsList = mutableListOf<DpsService>()
 
-//    servicesMap.forEach { (key, value) ->
-//      serviceDetailsList.add(ServiceDetails(url = value, name = key))
-//    }
+    val dpsServicesObject = DpsServices()
+
+    servicesMap.forEach { (key, value) ->
+      dpsServicesObject.dpsServices.add(DpsService(url = value, name = key))
+    }
 
     val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
-    println("CONFIG:")
-    println(config)
 
+    for (service in dpsServicesObject.dpsServices) {
+      if (config != null) {
+        for (configService in config.dpsServices) {
+          if (configService.name == service.name) {
+            service.businessName = configService.businessName
+            service.orderPosition = configService.orderPosition
+          }
+        }
+      }
+    }
 
-    return serviceDetailsList
+    return dpsServicesObject
   }
 }

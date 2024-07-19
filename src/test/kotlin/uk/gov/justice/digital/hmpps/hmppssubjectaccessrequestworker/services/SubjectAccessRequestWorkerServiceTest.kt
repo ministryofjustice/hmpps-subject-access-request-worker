@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.Doc
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
@@ -327,7 +328,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   }
 
   @Nested
-  inner class GetListOfServiceDetails {
+  inner class GetServiceDetails {
     private val sampleSAR = SubjectAccessRequest(
       id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
       status = Status.Pending,
@@ -342,16 +343,19 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       claimAttempts = 0,
     )
     @Test
-    fun `getListOfServiceDetails returns a list of ServiceDetails objects`() = runTest {
-      val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
+    fun `getServiceDetails returns a list of ServiceDetails objects`() = runTest {
+      val orderedServiceDetailsList = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
 
-      Assertions.assertThat(orderedServiceDetailsList).isInstanceOf(List::class.java)
-      Assertions.assertThat(orderedServiceDetailsList[0]).isInstanceOf(DpsService::class.java)
+      Assertions.assertThat(orderedServiceDetailsList).isInstanceOf(DpsServices::class.java)
+      Assertions.assertThat(orderedServiceDetailsList.dpsServices).isInstanceOf(List::class.java)
+      Assertions.assertThat(orderedServiceDetailsList.dpsServices[0]).isInstanceOf(DpsService::class.java)
     }
 
     @Test
-    fun `getListOfServiceDetails extracts the correct details for the given SAR`() = runTest {
-      val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
+    fun `getServiceDetails extracts the correct details for the given SAR`() = runTest {
+      val testDpsService = DpsService(url = "url2", name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1)
+      val orderedServiceDetails = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
+      Assertions.assertThat(orderedServiceDetails.dpsServices[0].name).isEqualTo(testDpsService.name)
 //      Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
 //        "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
 //        "https://fake-prisoner-search.prison.service.justice.gov.uk"))
