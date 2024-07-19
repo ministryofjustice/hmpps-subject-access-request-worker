@@ -4,7 +4,8 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.File
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 
 class ConfigOrderHelperTest {
   val configOrderHelper = ConfigOrderHelper()
@@ -57,7 +58,7 @@ class ConfigOrderHelperTest {
 //
 //      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedConfigString)
 //      tmpFile.delete()
-    }
+//    }
 
     @Test
     fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() = runTest {
