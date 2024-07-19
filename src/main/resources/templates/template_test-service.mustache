@@ -1,0 +1,34 @@
+<!-- Sample data:
+[
+  {
+    "testKey": "testValue",
+    "moreData": {
+        "nestedKey": "nestedValue"
+    },
+    "arrayData": [
+        "arrayValue1-1",
+        "arrayValue1-2",
+    ]
+  },
+  {
+    "testKey": "testValue2",
+    "moreData": {
+        "nestedKey": "nestedValue2"
+    },
+    "arrayData": [
+        "arrayValue2-1",
+        "arrayValue2-2",
+    ]
+  }
+]
+-->
+
+{{#.}}
+    <h2>Test Data</h2>
+
+    <table>
+        <tr><td>Test Key:</td><td>{{testKey}}</td></tr>
+        <tr><td>Nested Data:</td><td>{{moreData.nestedKey}}</td></tr>
+        <tr><td>Array Data:</td><td><ul>{{#arrayData}}<li>{{.}}</li>{{/arrayData}}</ul></td></tr>
+    </table>
+{{/.}}
