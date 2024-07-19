@@ -44,29 +44,29 @@ class ConfigOrderHelperTest {
   @Nested
   inner class ExtractServicesConfig {
 
-    @Test
-    fun `extractServicesConfig reads config from a file`() = runTest {
-      val tmpFile = File("test1.txt")
-      tmpFile.appendText("test1.com\n")
-      tmpFile.appendText("test2.com\n")
-      tmpFile.appendText("newly-added-service.com\n")
-      val expectedConfigString =
-        "test1.com\ntest2.com\nnewly-added-service.com\n"
-
-      val orderedSarUrlList = configOrderHelper.extractServicesConfig("test1.txt")
-
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedConfigString)
-      tmpFile.delete()
+//    @Test
+//    fun `extractServicesConfig reads config from a file`() = runTest {
+//      val tmpFile = File("test1.txt")
+//      tmpFile.appendText("test1.com\n")
+//      tmpFile.appendText("test2.com\n")
+//      tmpFile.appendText("newly-added-service.com\n")
+//      val expectedConfigString =
+//        "test1.com\ntest2.com\nnewly-added-service.com\n"
+//
+//      val orderedSarUrlList = configOrderHelper.extractServicesConfig("test1.txt")
+//
+//      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedConfigString)
+//      tmpFile.delete()
     }
 
-//    @Test
-//    fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() = runTest {
-//      val testServiceDetails = configOrderHelper.extractServicesConfig("src/test/resources/services-config-test.yaml")
-//
-//      Assertions.assertThat(testServiceDetails).isInstanceOf(DpsServices::class.java)
-//      Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)).isInstanceOf(DpsService::class.java)
-//      Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)?.name).isEqualTo("test-dps-service-1")
-//    }
+    @Test
+    fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() = runTest {
+      val testServiceDetails = configOrderHelper.extractServicesConfig("src/test/resources/services-config-test.yaml")
+
+      Assertions.assertThat(testServiceDetails).isInstanceOf(DpsServices::class.java)
+      Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)).isInstanceOf(DpsService::class.java)
+      Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)?.name).isEqualTo("test-dps-service-1")
+    }
 
   }
 }
