@@ -1,9 +1,7 @@
 dpsServices:
-- url: url1
-  name: test-dps-service-1
+- name: test-dps-service-1
   orderPosition: 1
   businessName: Test DPS Service 1
-- url: url2
-  name: test-dps-service-2
+- name: test-dps-service-2
   orderPosition: 2
   businessName: Test DPS Service 2

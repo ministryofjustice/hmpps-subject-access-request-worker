@@ -303,31 +303,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   }
 
   @Nested
-  inner class GetOrderedServicesMap {
-//    @Test
-//    fun `getOrderedServicesMap returns a map of service URLs in the right order`() = runTest {
-//      val expectedOrderedSarUrlMap = mutableMapOf("fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk")
-//      Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-//        listOf(
-//        "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-//        "https://fake-prisoner-search.prison.service.justice.gov.uk"))
-//      Mockito.`when`(configOrderHelper.createOrderedServiceUrlList(any(), any())).thenReturn(mutableListOf(
-//        "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-//          "https://fake-prisoner-search.prison.service.justice.gov.uk"))
-//      val orderedSarUrlList = subjectAccessRequestWorkerService.getOrderedServicesMap(sampleSAR)
-//
-//      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedOrderedSarUrlMap)
-//    }
-//    @Test
-//    fun `getOrderedServicesMap calls configOrderHelper extractServicesConfig and createOrderedServiceUrlList`() = runTest {
-//
-//      subjectAccessRequestWorkerService.getOrderedServicesMap(sampleSAR)
-//      verify(configOrderHelper, Mockito.times(1)).extractServicesConfig(any())
-//      verify(configOrderHelper, Mockito.times(1)).createOrderedServiceUrlList(any(), any())
-//    }
-  }
-
-  @Nested
   inner class GetServiceDetails {
     private val sampleSAR = SubjectAccessRequest(
       id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -353,23 +328,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     @Test
     fun `getServiceDetails extracts the correct details for the given SAR`() = runTest {
-      val testDpsService = DpsService(url = "url2", name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1)
+      Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
+        DpsServices(mutableListOf( DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null)))
+      )
+
       val orderedServiceDetails = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
-      Assertions.assertThat(orderedServiceDetails.dpsServices[0].name).isEqualTo(testDpsService.name)
-//      Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-//        "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-//        "https://fake-prisoner-search.prison.service.justice.gov.uk"))
-
-//      Assertions.assertThat(orderedServiceDetailsList[0].url).isEqualTo("https://test-dps-service-2.prison.service.justice.gov.uk")
-//      Assertions.assertThat(orderedServiceDetailsList[0].name).isEqualTo("test-dps-service-2")
-//      Assertions.assertThat(orderedServiceDetailsList[0].orderPosition).isEqualTo(2)
-//      Assertions.assertThat(orderedServiceDetailsList[0].businessName).isEqualTo("Test DPS Service 2")
-
-
-//      Assertions.assertThat(orderedServiceDetailsList[1].url).isEqualTo("https://test-dps-service-1.prison.service.justice.gov.uk")
-//      Assertions.assertThat(orderedServiceDetailsList[1].name).isEqualTo("test-dps-service-1")
-//      Assertions.assertThat(orderedServiceDetailsList[0].orderPosition).isEqualTo(1)
-//      Assertions.assertThat(orderedServiceDetailsList[0].businessName).isEqualTo("Test DPS Service 1")
+      Assertions.assertThat(orderedServiceDetails.dpsServices[0].name).isEqualTo("test-dps-service-2")
+      Assertions.assertThat(orderedServiceDetails.dpsServices[0].businessName).isEqualTo("Test DPS Service 2")
+      Assertions.assertThat(orderedServiceDetails.dpsServices[0].url).isEqualTo("https://test-dps-service-2.prison.service.justice.gov.uk")
+      Assertions.assertThat(orderedServiceDetails.dpsServices[0].orderPosition).isEqualTo(1)
+      Assertions.assertThat(orderedServiceDetails.dpsServices.size).isEqualTo(2)
     }
   }
 }

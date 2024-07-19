@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsSe
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.*
 
 const val POLL_DELAY: Long = 10000
@@ -115,26 +114,6 @@ class SubjectAccessRequestWorkerService(
     return serviceMap
   }
 
-  fun getOrderedServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
-    val selectedServices = subjectAccessRequest.services
-    val orderedServiceMap = LinkedHashMap<String, String>()
-
-    val selectedServiceUrls =
-      selectedServices.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
-    println("URLs ${selectedServiceUrls}")
-
-    val orderedUrls = configOrderHelper.extractServicesConfig("urlConfig.txt")
-    println("File exists? ${File("urlConfig.txt").exists()}")
-    println("File contents: ${File("urlConfig.txt").readLines()}")
-    println("Ordered URLs ${orderedUrls}")
-
-//    val orderedSelectedServiceList = configOrderHelper.createOrderedServiceUrlList(orderedUrls, selectedServiceUrls.toMutableList())
-//    for (url in orderedSelectedServiceList) {
-//      orderedServiceMap[orderedSelectedServiceList.indexOf(url).toString()] = url
-//    }
-    return orderedServiceMap
-  }
-
   fun getServiceDetails(
     subjectAccessRequest: SubjectAccessRequest
   ): DpsServices {
@@ -149,9 +128,12 @@ class SubjectAccessRequestWorkerService(
     val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
 
     for (service in dpsServicesObject.dpsServices) {
+      println(service.name)
       if (config != null) {
         for (configService in config.dpsServices) {
+          println(configService.name)
           if (configService.name == service.name) {
+            println("MAPPING")
             service.businessName = configService.businessName
             service.orderPosition = configService.orderPosition
           }

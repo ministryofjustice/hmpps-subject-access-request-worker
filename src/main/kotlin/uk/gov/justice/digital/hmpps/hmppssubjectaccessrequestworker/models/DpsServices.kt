@@ -1,5 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models
 
-class DpsServices {
+class DpsServices (
   val dpsServices: MutableList<DpsService> = mutableListOf()
-}
+  )
