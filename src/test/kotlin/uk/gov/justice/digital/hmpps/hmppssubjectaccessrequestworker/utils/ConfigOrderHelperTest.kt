@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
+import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import java.io.File
 
 class ConfigOrderHelperTest {
@@ -60,26 +63,11 @@ class ConfigOrderHelperTest {
     }
 
     @Test
-    fun `extractServicesConfig reads config from a yaml file`() = runTest {
-//      val tmpFile = File("servicesConfig.yaml")
-//      tmpFile.appendText("test1.com\n")
-//      tmpFile.appendText("test2.com\n")
-//      tmpFile.appendText("newly-added-service.com\n")
-//      val expectedConfigString =
-//        """dps-services:
-//  - annas-service:
-//      service-catalogue-name: "test-dps-service-1"
-//      order-position: 1
-//      business-name: "Test DPS Service 1"
-//  - aprils-service:
-//      service-catalogue-name: "test-dps-service-2"
-//      order-position: 2
-//      business-name: "Test DPS Service 2"""
-      //val expectedServiceDetails = ServiceDetails(orderPosition = 1, name = "test-dps-service-1", businessName = "Test DPS Service 1", url = "")
+    fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() = runTest {
+      val testServiceDetails = configOrderHelper.extractServicesConfig("src/test/resources/services-config-test.yaml")
 
-      val orderedSarUrlList = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
-
-      //Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedServiceDetails)
+      Assertions.assertThat(testServiceDetails).isInstanceOf(DpsServices::class.java)
+      Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)).isInstanceOf(DpsService::class.java)
     }
   }
 }

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import org.springframework.stereotype.Component
 import org.yaml.snakeyaml.LoaderOptions
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceDetails
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import java.io.File
 
 @Component
@@ -25,21 +26,16 @@ class ConfigOrderHelper {
     return orderedSelectedUrlList
   }
 
-  fun extractServicesConfig(configFilename: String): ServiceDetails {
-    println("EXTRACTING ${configFilename}")
-    val configReader = File(configFilename)
-    val configString = configReader.readText()
-    //val configUrlList = configReader.readLines()
-    //println(configUrlList)
+  fun extractServicesConfig(configFilename: String): DpsServices? {
     val loaderOptions = LoaderOptions()
     loaderOptions.codePointLimit = 1024 * 1024 * 1024
     val yamlFactory = YAMLFactory.builder()
       .loaderOptions(loaderOptions)
       .build()
     val mapper = ObjectMapper(yamlFactory)
-    val testService = mapper.readValue(File(configFilename), ServiceDetails::class.java)
-//    val contentText =
-//      YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).reader(configString)
-    return testService
+
+    val dpsServicesObject = mapper.readValue(File(configFilename), DpsServices::class.java)
+
+    return dpsServicesObject
   }
 }

@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceDetails
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
@@ -346,7 +346,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       val orderedServiceDetailsList = subjectAccessRequestWorkerService.getListOfServiceDetails(sampleSAR)
 
       Assertions.assertThat(orderedServiceDetailsList).isInstanceOf(List::class.java)
-      Assertions.assertThat(orderedServiceDetailsList[0]).isInstanceOf(ServiceDetails::class.java)
+      Assertions.assertThat(orderedServiceDetailsList[0]).isInstanceOf(DpsService::class.java)
     }
 
     @Test
