@@ -128,19 +128,15 @@ class SubjectAccessRequestWorkerService(
     val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
 
     for (service in dpsServicesObject.dpsServices) {
-      println(service.name)
       if (config != null) {
         for (configService in config.dpsServices) {
-          println(configService.name)
           if (configService.name == service.name) {
-            println("MAPPING")
             service.businessName = configService.businessName
             service.orderPosition = configService.orderPosition
           }
         }
       }
     }
-
     return dpsServicesObject
   }
 }
