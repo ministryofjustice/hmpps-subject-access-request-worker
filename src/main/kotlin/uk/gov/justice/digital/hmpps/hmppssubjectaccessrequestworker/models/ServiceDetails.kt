@@ -1,9 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models
 
-class ServiceDetails(
-  val url: String,
-  val name: String,
-  val orderPosition: Int? = null,
-  val businessName: String? = null,
-) {
+
+
+class ServiceDetails {
+  private val url: String? = null
+  private val name: String? = null
+  private val orderPosition: Int? = null
+  private val businessName: String? = null
 }

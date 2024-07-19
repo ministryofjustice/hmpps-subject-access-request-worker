@@ -4,7 +4,6 @@ import com.microsoft.applicationinsights.TelemetryClient
 import io.sentry.Sentry
 import kotlinx.coroutines.delay
 import org.apache.commons.lang3.time.StopWatch
-import org.hibernate.cfg.Environment
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -34,9 +33,6 @@ class SubjectAccessRequestWorkerService(
   private val telemetryClient: TelemetryClient,
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
-
-  @Value("\${dps-services.annas-service.order-position}")
-  var dpsServices: Any? = "hello"
 
   suspend fun startPolling() {
     while (true) {
@@ -131,10 +127,10 @@ class SubjectAccessRequestWorkerService(
     println("File contents: ${File("urlConfig.txt").readLines()}")
     println("Ordered URLs ${orderedUrls}")
 
-    val orderedSelectedServiceList = configOrderHelper.createOrderedServiceUrlList(orderedUrls, selectedServiceUrls.toMutableList())
-    for (url in orderedSelectedServiceList) {
-      orderedServiceMap[orderedSelectedServiceList.indexOf(url).toString()] = url
-    }
+//    val orderedSelectedServiceList = configOrderHelper.createOrderedServiceUrlList(orderedUrls, selectedServiceUrls.toMutableList())
+//    for (url in orderedSelectedServiceList) {
+//      orderedServiceMap[orderedSelectedServiceList.indexOf(url).toString()] = url
+//    }
     return orderedServiceMap
   }
 
@@ -144,11 +140,14 @@ class SubjectAccessRequestWorkerService(
     val servicesMap = getServicesMap(subjectAccessRequest)
     val serviceDetailsList = mutableListOf<ServiceDetails>()
 
-    servicesMap.forEach { (key, value) ->
-      serviceDetailsList.add(ServiceDetails(url = value, name = key))
-    }
+//    servicesMap.forEach { (key, value) ->
+//      serviceDetailsList.add(ServiceDetails(url = value, name = key))
+//    }
 
-    println("DPS services = $dpsServices")
+    val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
+    println("CONFIG:")
+    println(config)
+
 
     return serviceDetailsList
   }

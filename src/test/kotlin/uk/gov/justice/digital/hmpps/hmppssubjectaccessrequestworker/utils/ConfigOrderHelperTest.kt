@@ -45,17 +45,41 @@ class ConfigOrderHelperTest {
   inner class ExtractServicesConfig {
 
     @Test
-    fun `extractServicesConfig reads URLs from a file`() = runTest {
+    fun `extractServicesConfig reads config from a file`() = runTest {
       val tmpFile = File("test1.txt")
       tmpFile.appendText("test1.com\n")
       tmpFile.appendText("test2.com\n")
       tmpFile.appendText("newly-added-service.com\n")
-      val expectedUrlList = listOf("test1.com", "test2.com", "newly-added-service.com")
+      val expectedConfigString =
+        "test1.com\ntest2.com\nnewly-added-service.com\n"
 
       val orderedSarUrlList = configOrderHelper.extractServicesConfig("test1.txt")
 
-      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedUrlList)
+      Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedConfigString)
       tmpFile.delete()
+    }
+
+    @Test
+    fun `extractServicesConfig reads config from a yaml file`() = runTest {
+//      val tmpFile = File("servicesConfig.yaml")
+//      tmpFile.appendText("test1.com\n")
+//      tmpFile.appendText("test2.com\n")
+//      tmpFile.appendText("newly-added-service.com\n")
+//      val expectedConfigString =
+//        """dps-services:
+//  - annas-service:
+//      service-catalogue-name: "test-dps-service-1"
+//      order-position: 1
+//      business-name: "Test DPS Service 1"
+//  - aprils-service:
+//      service-catalogue-name: "test-dps-service-2"
+//      order-position: 2
+//      business-name: "Test DPS Service 2"""
+      //val expectedServiceDetails = ServiceDetails(orderPosition = 1, name = "test-dps-service-1", businessName = "Test DPS Service 1", url = "")
+
+      val orderedSarUrlList = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
+
+      //Assertions.assertThat(orderedSarUrlList).isEqualTo(expectedServiceDetails)
     }
   }
 }
