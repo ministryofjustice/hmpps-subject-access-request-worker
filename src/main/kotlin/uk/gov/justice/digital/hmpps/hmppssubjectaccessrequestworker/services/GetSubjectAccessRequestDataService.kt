@@ -23,6 +23,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
         responseObject[serviceName] = "No Content"
       }
     }
+
     return responseObject
   }
 }

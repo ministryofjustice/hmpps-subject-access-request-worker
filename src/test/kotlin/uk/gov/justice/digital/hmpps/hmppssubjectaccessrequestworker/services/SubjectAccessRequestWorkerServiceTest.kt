@@ -221,12 +221,30 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport calls GeneratePdfService execute`() {
-    val mockWriter = Mockito.mock(PdfWriter::class.java)
-    Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-      DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null)))
+
+//    mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")
+
+    val selectedDpsServices = DpsServices(
+      mutableListOf(
+        DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+        DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk")
+      )
     )
+
+    val mockWriter = Mockito.mock(PdfWriter::class.java)
+
+//    Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
+//      DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null)))
+//    )
+
+
+//    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+//      .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+//
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+
+
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
@@ -244,8 +262,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
+
     subjectAccessRequestWorkerService.doReport(sampleSAR)
-    verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any(), any(), any())
+
+    verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), any(), any(), any(), any(), any(), any())
   }
 
   @Test
