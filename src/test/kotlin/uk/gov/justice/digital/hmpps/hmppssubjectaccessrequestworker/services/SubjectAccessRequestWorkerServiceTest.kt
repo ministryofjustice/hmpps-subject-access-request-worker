@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.kernel.pdf.PdfWriter
-import com.itextpdf.layout.Document
 import com.microsoft.applicationinsights.TelemetryClient
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -221,29 +220,21 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport calls GeneratePdfService execute`() {
-
-//    mutableMapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk", "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")
-
-    val selectedDpsServices = DpsServices(
+    val selectedDpsServices = DpsServices(dpsServices =
       mutableListOf(
-        DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
-        DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk")
-      )
+        DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+        DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+        )
     )
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")
+    )).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
 
     val mockWriter = Mockito.mock(PdfWriter::class.java)
 
-//    Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-//      DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null)))
-//    )
-
-
-//    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
-//      .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-//
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-
 
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
       .thenReturn(mockStream)
@@ -265,7 +256,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-    verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), any(), any(), any(), any(), any(), any())
+    verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any(), any(), any())
   }
 
   @Test

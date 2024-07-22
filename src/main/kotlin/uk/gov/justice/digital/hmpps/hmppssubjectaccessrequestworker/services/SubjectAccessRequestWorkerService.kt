@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
@@ -81,14 +80,16 @@ class SubjectAccessRequestWorkerService(
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
     val selectedServices = getServiceDetails(chosenSAR)
-    println(selectedServices.dpsServices[0].name)
-    println(selectedServices.dpsServices[0].url)
-    println(selectedServices.dpsServices[0].businessName)
-    println(selectedServices.dpsServices[0].orderPosition)
-    println(selectedServices.dpsServices[1].name)
-    println(selectedServices.dpsServices[1].url)
-    println(selectedServices.dpsServices[1].businessName)
-    println(selectedServices.dpsServices[1].orderPosition)
+
+//    println(selectedServices.dpsServices[0].name)
+//    println(selectedServices.dpsServices[0].url)
+//    println(selectedServices.dpsServices[0].businessName)
+//    println(selectedServices.dpsServices[0].orderPosition)
+//    println(selectedServices.dpsServices[1].name)
+//    println(selectedServices.dpsServices[1].url)
+//    println(selectedServices.dpsServices[1].businessName)
+//    println(selectedServices.dpsServices[1].orderPosition)
+
 
     log.info("Creating report..")
 
@@ -131,11 +132,7 @@ class SubjectAccessRequestWorkerService(
   ): DpsServices {
     val servicesMap = getServicesMap(subjectAccessRequest)
 
-    val dpsServicesObject = DpsServices()
-
-    servicesMap.forEach { (key, value) ->
-      dpsServicesObject.dpsServices.add(DpsService(url = value, name = key))
-    }
+    val dpsServicesObject = configOrderHelper.getDpsServices(servicesMap)
 
     val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
 

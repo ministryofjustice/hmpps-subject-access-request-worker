@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import org.springframework.stereotype.Component
 import org.yaml.snakeyaml.LoaderOptions
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import java.io.File
 
@@ -20,6 +21,14 @@ class ConfigOrderHelper {
 
     val dpsServicesObject = mapper.readValue(File(configFilename), DpsServices::class.java)
 
+    return dpsServicesObject
+  }
+
+  fun getDpsServices(servicesMap: Map<String, String>): DpsServices {
+    val dpsServicesObject = DpsServices()
+    servicesMap.forEach { (key, value) ->
+      dpsServicesObject.dpsServices.add(DpsService(url = value, name = key))
+    }
     return dpsServicesObject
   }
 }
