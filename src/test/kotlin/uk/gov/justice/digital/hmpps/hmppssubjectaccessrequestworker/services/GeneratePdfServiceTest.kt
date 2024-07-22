@@ -37,14 +37,18 @@ class GeneratePdfServiceTest(
         val testResponseObject: Map<String, Any> = mapOf("Dummy" to "content")
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
-        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"))
+
+        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
       it("returns the same stream") {
         val testResponseObject: Map<String, Any> = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
-        val result = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"), mockStream)
+
+        val result = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mockStream)
+
         Assertions.assertThat(result).isEqualTo(mockStream)
       }
 
@@ -53,7 +57,9 @@ class GeneratePdfServiceTest(
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
-        val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mutableMapOf("service1" to "service1url"))
+
+        val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
@@ -113,6 +119,11 @@ class GeneratePdfServiceTest(
           val coverPdfStream = ByteArrayOutputStream()
           val coverPage = PdfDocument(PdfWriter(coverPdfStream))
           val coverPageDocument = Document(coverPage)
+          val testDataFromServices: Map<String, Any> =
+            mapOf(
+              "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+              "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+            )
           generatePdfService.addInternalCoverPage(
             document = coverPageDocument,
             nomisId = "mockNomisNumber",
@@ -120,7 +131,7 @@ class GeneratePdfServiceTest(
             sarCaseReferenceNumber = "mockCaseReference",
             dateFrom = LocalDate.now(),
             dateTo = LocalDate.now(),
-            serviceMap = mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"),
+            dataFromServices = testDataFromServices,
             numberOfPagesWithoutCoverpage,
           )
           coverPageDocument.close()
@@ -149,11 +160,19 @@ class GeneratePdfServiceTest(
           val writer = PdfWriter(FileOutputStream("dummy.pdf"))
           val mockPdfDocument = PdfDocument(writer)
           val mockDocument = Document(mockPdfDocument)
-          generatePdfService.addInternalContentsPage(mockPdfDocument, mockDocument, mutableMapOf("mockService" to "mockServiceUrl"))
+          val testDataFromServices: Map<String, Any> =
+            mapOf(
+              "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+              "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+            )
+
+          generatePdfService.addInternalContentsPage(mockPdfDocument, mockDocument, testDataFromServices)
+
           mockDocument.close()
           val reader = PdfDocument(PdfReader("dummy.pdf"))
           val page = reader.getPage(1)
           val text = PdfTextExtractor.getTextFromPage(page)
+
           Assertions.assertThat(text).contains("CONTENTS")
           Assertions.assertThat(text).contains("INTERNAL ONLY")
         }
@@ -266,6 +285,7 @@ class GeneratePdfServiceTest(
         )
         val testContentObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
 
+
         // PDF set up
         val fullDocumentWriter = PdfWriter(FileOutputStream("dummy.pdf"))
         val mainPdfStream = ByteArrayOutputStream()
@@ -273,8 +293,13 @@ class GeneratePdfServiceTest(
         val mockDocument = Document(mockPdfDocument)
 
         // Add content and rear pages
-        generatePdfService.addInternalContentsPage(pdfDocument = mockPdfDocument, document = mockDocument, serviceMap = mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"))
-        generatePdfService.addExternalCoverPage(pdfDocument = mockPdfDocument, document = mockDocument, nomisId = "mockNomisNumber", ndeliusCaseReferenceId = null, sarCaseReferenceNumber = "mockCaseReference", dateFrom = LocalDate.now(), dateTo = LocalDate.now(), serviceMap = mutableMapOf("mockService" to "mockServiceUrl"))
+        val testDataFromServices: Map<String, Any> =
+          mapOf(
+            "fake-service-name-1" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+            "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
+          )
+        generatePdfService.addInternalContentsPage(pdfDocument = mockPdfDocument, document = mockDocument, dataFromServices = testDataFromServices)
+        generatePdfService.addExternalCoverPage(pdfDocument = mockPdfDocument, document = mockDocument, nomisId = "mockNomisNumber", ndeliusCaseReferenceId = null, sarCaseReferenceNumber = "mockCaseReference", dateFrom = LocalDate.now(), dateTo = LocalDate.now())
         mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
         generatePdfService.addData(mockPdfDocument, mockDocument, testContentObject)
         val numPages = mockPdfDocument.numberOfPages
@@ -292,7 +317,7 @@ class GeneratePdfServiceTest(
           sarCaseReferenceNumber = "mockCaseReference",
           dateFrom = LocalDate.now(),
           dateTo = LocalDate.now(),
-          serviceMap = mutableMapOf("mockService" to "mockServiceUrl", "mockService2" to "mockServiceUrl2"),
+          dataFromServices = testDataFromServices,
           numPages,
         )
         coverPageDocument.close()
