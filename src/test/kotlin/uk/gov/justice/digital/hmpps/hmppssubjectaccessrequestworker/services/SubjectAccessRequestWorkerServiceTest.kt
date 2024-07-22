@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
 import com.microsoft.applicationinsights.TelemetryClient
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -189,9 +190,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport calls GetSubjectAccessRequestDataService execute`() {
-    Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-      DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null)))
-    )
+//    Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
+//      DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = "something.com")))
+//    )
     val mockWriter = Mockito.mock(PdfWriter::class.java)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))

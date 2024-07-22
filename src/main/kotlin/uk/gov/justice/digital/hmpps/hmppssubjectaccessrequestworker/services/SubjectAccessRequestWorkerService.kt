@@ -81,14 +81,26 @@ class SubjectAccessRequestWorkerService(
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
     val selectedServices = getServiceDetails(chosenSAR)
+//    println(selectedServices.dpsServices[0].name)
+//    println(selectedServices.dpsServices[0].url)
+//    println(selectedServices.dpsServices[0].businessName)
+//    println(selectedServices.dpsServices[0].orderPosition)
+//    println(selectedServices.dpsServices[1].name)
+//    println(selectedServices.dpsServices[1].url)
+//    println(selectedServices.dpsServices[1].businessName)
+//    println(selectedServices.dpsServices[1].orderPosition)
 
     log.info("Creating report..")
 
     val responseObject = getSubjectAccessRequestDataService.execute(selectedServices, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Extracted report")
 
+//    println("Response object: $responseObject")
+
     val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Created PDF")
+
+//    println("PDF Stream: $pdfStream")
 
     val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
     log.info("Stored PDF$response")
