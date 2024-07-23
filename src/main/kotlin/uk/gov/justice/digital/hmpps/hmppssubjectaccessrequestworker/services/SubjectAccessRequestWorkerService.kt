@@ -81,16 +81,6 @@ class SubjectAccessRequestWorkerService(
   fun doReport(chosenSAR: SubjectAccessRequest) {
     val selectedServices = getServiceDetails(chosenSAR)
 
-//    println(selectedServices.dpsServices[0].name)
-//    println(selectedServices.dpsServices[0].url)
-//    println(selectedServices.dpsServices[0].businessName)
-//    println(selectedServices.dpsServices[0].orderPosition)
-//    println(selectedServices.dpsServices[1].name)
-//    println(selectedServices.dpsServices[1].url)
-//    println(selectedServices.dpsServices[1].businessName)
-//    println(selectedServices.dpsServices[1].orderPosition)
-
-
     log.info("Creating report..")
 
     val responseObject = getSubjectAccessRequestDataService.execute(selectedServices, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
@@ -114,7 +104,7 @@ class SubjectAccessRequestWorkerService(
 
   fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
     val services = subjectAccessRequest.services
-    var serviceMap = mutableMapOf<String, String>()
+    val serviceMap = mutableMapOf<String, String>()
 
     val serviceNames =
       services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
@@ -122,7 +112,7 @@ class SubjectAccessRequestWorkerService(
       services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
 
     for (serviceName in serviceNames) {
-      serviceMap.put(serviceName, serviceUrls[serviceNames.indexOf(serviceName)])
+      serviceMap[serviceName] = serviceUrls[serviceNames.indexOf(serviceName)]
     }
     return serviceMap
   }

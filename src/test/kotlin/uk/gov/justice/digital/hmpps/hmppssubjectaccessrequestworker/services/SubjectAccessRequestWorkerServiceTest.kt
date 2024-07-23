@@ -352,17 +352,23 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       requestDateTime = requestTime,
       claimAttempts = 0,
     )
+    private val selectedDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "test-dps-service-2", url = "https://test-dps-service-2.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(name = "test-dps-service-1", url = "https://test-dps-service-1.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+    )
+    )
+    private val configDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "test-dps-service-2", url = null, businessName = "Test DPS Service 2", orderPosition = 2),
+      DpsService(name = "test-dps-service-1", url = null, businessName = "Test DPS Service 1", orderPosition = 1),
+    )
+    )
     @Test
     fun `getServiceDetails returns a list of ServiceDetails objects`() = runTest {
-      val selectedDpsServices = DpsServices(dpsServices =
-      mutableListOf(
-        DpsService(name = "test-dps-service-2", url = "https://test-dps-service-2.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
-        DpsService(name = "test-dps-service-1", url = "https://test-dps-service-1.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
-      )
-      )
       Mockito.`when`(configOrderHelper.getDpsServices(mapOf("test-dps-service-2" to "https://test-dps-service-2.prison.service.justice.gov.uk",
         "test-dps-service-1" to "https://test-dps-service-1.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(configDpsServices)
       val orderedServiceDetailsList = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
 
       Assertions.assertThat(orderedServiceDetailsList).isInstanceOf(DpsServices::class.java)
@@ -372,18 +378,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     @Test
     fun `getServiceDetails extracts the correct details for the given SAR`() = runTest {
-      val selectedDpsServices = DpsServices(dpsServices =
-      mutableListOf(
-        DpsService(name = "test-dps-service-2", url = "https://test-dps-service-2.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
-        DpsService(name = "test-dps-service-1", url = "https://test-dps-service-1.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
-      )
-      )
-      val configDpsServices = DpsServices(dpsServices =
-      mutableListOf(
-        DpsService(name = "test-dps-service-2", url = null, businessName = "Test DPS Service 2", orderPosition = 2),
-        DpsService(name = "test-dps-service-1", url = null, businessName = "Test DPS Service 1", orderPosition = 1),
-      )
-      )
       Mockito.`when`(configOrderHelper.getDpsServices(mapOf("test-dps-service-2" to "https://test-dps-service-2.prison.service.justice.gov.uk",
         "test-dps-service-1" to "https://test-dps-service-1.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
       Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(configDpsServices)
