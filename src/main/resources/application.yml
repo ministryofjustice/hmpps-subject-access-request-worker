@@ -58,13 +58,3 @@ services:
 sentry:
   traces-sample-rate: "0.05"
 
-dps-services:
-  annas-service:
-    service-catalogue-name: "annas-service"
-    order-position: 1
-    business-name: "Anna's DPS Service"
-  aprils-service:
-    service-catalogue-name: "aprils-service"
-    order-position: 2
-    business-name: "April's DPS Service"
-
