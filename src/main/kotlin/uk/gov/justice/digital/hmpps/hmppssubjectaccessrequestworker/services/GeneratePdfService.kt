@@ -42,7 +42,7 @@ class GeneratePdfService {
   }
 
   fun execute(
-    content: Map<String, Any>,
+    content: LinkedHashMap<String, Any>,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
@@ -131,7 +131,7 @@ class GeneratePdfService {
     document.add(endPageText)
   }
 
-  fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
+  fun addData(pdfDocument: PdfDocument, document: Document, content: LinkedHashMap<String, Any>) {
     content.forEach { entry ->
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
@@ -173,7 +173,7 @@ class GeneratePdfService {
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
-    dataFromServices: Map<String, Any>,
+    dataFromServices: LinkedHashMap<String, Any>,
     numPages: Int,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
@@ -223,7 +223,7 @@ class GeneratePdfService {
   fun addInternalContentsPage(
     pdfDocument: PdfDocument,
     document: Document,
-    dataFromServices: Map<String, Any>,
+    dataFromServices: LinkedHashMap<String, Any>,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
@@ -261,7 +261,7 @@ class GeneratePdfService {
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
-  fun getServiceListLine(dataFromServices: Map<String, Any>): String {
+  fun getServiceListLine(dataFromServices: LinkedHashMap<String, Any>): String {
     val serviceNamesList = dataFromServices.keys.toList().joinToString(", ")
     return "Services: $serviceNamesList"
   }
