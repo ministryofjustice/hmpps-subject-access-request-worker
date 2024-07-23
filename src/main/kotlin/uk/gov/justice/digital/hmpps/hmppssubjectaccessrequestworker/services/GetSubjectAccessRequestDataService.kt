@@ -26,4 +26,9 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
 
     return responseObject
   }
+
+  fun order(services: DpsServices): DpsServices {
+    services.dpsServices.sortBy { it.orderPosition }
+    return services
+  }
 }
