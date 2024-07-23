@@ -155,7 +155,7 @@ class GeneratePdfService {
       val processedData = preProcessData(entry.value)
 
       val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = processedData)
-      if (renderedTemplate !== null &&  renderedTemplate !== "") {
+      if (renderedTemplate !== null && renderedTemplate !== "") {
         // Template found - render using the data
         val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
         for (element in htmlElement) {

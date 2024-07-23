@@ -38,9 +38,10 @@ class TemplateRenderService {
     val styleTemplate = getStyleTemplate()
     val compiledStyleTemplate = mf.compile(StringReader(styleTemplate), "styleTemplate")
     val renderedStyleTemplate = StringWriter()
-    compiledStyleTemplate.execute(renderedStyleTemplate, mapOf(
-      "serviceTemplate" to renderedServiceTemplate
-    )).flush()
+    compiledStyleTemplate.execute(
+      renderedStyleTemplate,
+      mapOf("serviceTemplate" to renderedServiceTemplate),
+    ).flush()
     return renderedStyleTemplate.toString()
   }
 

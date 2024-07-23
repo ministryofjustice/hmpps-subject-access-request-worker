@@ -38,22 +38,22 @@ class TemplateRenderServiceTest : DescribeSpec(
           mapOf(
             "testKey" to "testValue",
             "moreData" to mapOf(
-              "nestedKey" to "nestedValue"
+              "nestedKey" to "nestedValue",
             ),
             "arrayData" to arrayListOf(
               "arrayValue1-1",
-              "arrayValue1-2"
-            )
+              "arrayValue1-2",
+            ),
           ),
           mapOf(
             "testKey" to "testValue2",
             "moreData" to mapOf(
-              "nestedKey" to "nestedValue2"
+              "nestedKey" to "nestedValue2",
             ),
             "arrayData" to arrayListOf(
               "arrayValue2-1",
-              "arrayValue2-2"
-            )
+              "arrayValue2-2",
+            ),
           ),
         )
         val renderedStyleTemplate = templateRenderService.renderTemplate("test-service", testServiceData)
