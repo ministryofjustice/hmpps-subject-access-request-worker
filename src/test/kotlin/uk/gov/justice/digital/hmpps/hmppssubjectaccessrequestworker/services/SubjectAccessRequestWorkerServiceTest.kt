@@ -102,7 +102,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `doPoll calls pollForNewSubjectAccessRequests`() = runTest {
+  fun `doPoll polls for unclaimed SAR`() = runTest {
     Mockito.`when`(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
 
@@ -291,7 +291,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `doReport calls storeSubjectAccessRequestDocument`() = runTest {
+  fun `doReport calls storeDocument`() = runTest {
     Mockito.`when`(
       configOrderHelper.getDpsServices(
         mapOf(
@@ -375,7 +375,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     )
 
     @Test
-    fun `getServiceDetails returns a list of ServiceDetails objects`() = runTest {
+    fun `getServiceDetails returns a DpsServices object containing a list of DpsService objects`() = runTest {
       Mockito.`when`(
         configOrderHelper.getDpsServices(
           mapOf(

@@ -120,6 +120,15 @@ class SubjectAccessRequestWorkerService(
 
     val dpsServicesObject = configOrderHelper.getDpsServices(servicesMap)
 
+    println(dpsServicesObject.dpsServices[0].name)
+    println(dpsServicesObject.dpsServices[0].businessName)
+    println(dpsServicesObject.dpsServices[0].orderPosition)
+    println(dpsServicesObject.dpsServices[0].url)
+    println(dpsServicesObject.dpsServices[1].name)
+    println(dpsServicesObject.dpsServices[1].businessName)
+    println(dpsServicesObject.dpsServices[1].orderPosition)
+    println(dpsServicesObject.dpsServices[1].url)
+
     val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
 
     for (service in dpsServicesObject.dpsServices) {
@@ -132,6 +141,14 @@ class SubjectAccessRequestWorkerService(
         }
       }
     }
+    println(dpsServicesObject.dpsServices[0].name)
+    println(dpsServicesObject.dpsServices[0].businessName)
+    println(dpsServicesObject.dpsServices[0].orderPosition)
+    println(dpsServicesObject.dpsServices[0].url)
+    println(dpsServicesObject.dpsServices[1].name)
+    println(dpsServicesObject.dpsServices[1].businessName)
+    println(dpsServicesObject.dpsServices[1].orderPosition)
+    println(dpsServicesObject.dpsServices[1].url)
     return dpsServicesObject
   }
 }
