@@ -87,10 +87,13 @@ class GetSubjectAccessRequestDataServiceTest(
 
     describe("orderServices") {
       it("sorts services by order position") {
-        val dpsServices = DpsServices(mutableListOf(
-          DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
-          DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
-          DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+        val dpsServices = DpsServices(
+          mutableListOf(
+            DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
+            DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
+            DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+          ),
+        )
 
         val result = getSubjectAccessRequestDataService.order(dpsServices)
 
