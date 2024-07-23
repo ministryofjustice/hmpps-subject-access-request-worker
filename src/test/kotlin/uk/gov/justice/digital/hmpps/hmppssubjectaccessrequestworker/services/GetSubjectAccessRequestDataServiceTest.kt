@@ -83,6 +83,20 @@ class GetSubjectAccessRequestDataServiceTest(
         response["fake-hmpps-prisoner-search"].toString().shouldContain("fake-prisoner-search-property")
         response["fake-hmpps-prisoner-search-indexer"].toString().shouldContain("fake-indexer-property")
       }
+
+      it("returns upstream API response data in the correct order") {
+        val dpsServices = DpsServices(
+          mutableListOf(
+            DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
+            DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
+            DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+          ),
+        )
+        val response = getSubjectAccessRequestDataService.execute(services = dpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
+
+        response.firstEntry().key.shouldBe("fake-hmpps-prisoner-search-indexer")
+        response.lastEntry().key.shouldBe("fake-hmpps-prisoner-search-2")
+      }
     }
 
     describe("orderServices") {

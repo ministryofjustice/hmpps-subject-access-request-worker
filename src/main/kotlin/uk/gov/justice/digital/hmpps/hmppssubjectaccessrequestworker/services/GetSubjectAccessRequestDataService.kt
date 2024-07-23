@@ -10,10 +10,11 @@ import java.time.LocalDate
 @Service
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
   private val log = LoggerFactory.getLogger(this::class.java)
-  fun execute(services: DpsServices, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): Map<String, Any> {
-    val responseObject = mutableMapOf<String, Any>()
+  fun execute(services: DpsServices, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): LinkedHashMap<String, Any> {
+    val responseObject = linkedMapOf<String, Any>()
+    val orderedServices = this.order(services)
 
-    services.dpsServices.forEach {
+    orderedServices.dpsServices.forEach {
       val response: Map<*, *>? = genericHmppsApiGateway.getSarData(it.url!!, nomisId, ndeliusId, dateFrom, dateTo)
       val serviceName = if (it.businessName != null) it.businessName!! else it.name!!
 
