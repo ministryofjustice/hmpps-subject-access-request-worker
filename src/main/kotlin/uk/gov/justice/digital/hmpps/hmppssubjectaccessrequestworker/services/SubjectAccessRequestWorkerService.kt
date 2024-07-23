@@ -118,7 +118,7 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun getServiceDetails(
-    subjectAccessRequest: SubjectAccessRequest
+    subjectAccessRequest: SubjectAccessRequest,
   ): DpsServices {
     val servicesMap = getServicesMap(subjectAccessRequest)
 

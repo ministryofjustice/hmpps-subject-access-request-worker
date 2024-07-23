@@ -18,7 +18,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
       val serviceName = if (it.businessName != null) it.businessName!! else it.name!!
 
       if (response != null && response.containsKey("content")) {
-          responseObject[serviceName] = response["content"] as Any
+        responseObject[serviceName] = response["content"] as Any
       } else {
         responseObject[serviceName] = "No Content"
       }

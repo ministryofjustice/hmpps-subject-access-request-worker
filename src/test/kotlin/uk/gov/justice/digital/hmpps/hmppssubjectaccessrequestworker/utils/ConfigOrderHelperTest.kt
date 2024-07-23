@@ -21,6 +21,5 @@ class ConfigOrderHelperTest {
       Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)).isInstanceOf(DpsService::class.java)
       Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)?.name).isEqualTo("test-dps-service-1")
     }
-
   }
 }

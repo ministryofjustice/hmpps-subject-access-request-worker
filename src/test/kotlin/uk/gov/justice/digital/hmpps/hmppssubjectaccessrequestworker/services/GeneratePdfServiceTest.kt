@@ -285,7 +285,6 @@ class GeneratePdfServiceTest(
         )
         val testContentObject: Map<String, Any> = mapOf("fake-service-name" to testInput)
 
-
         // PDF set up
         val fullDocumentWriter = PdfWriter(FileOutputStream("dummy.pdf"))
         val mainPdfStream = ByteArrayOutputStream()

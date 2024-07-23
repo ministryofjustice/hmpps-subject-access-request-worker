@@ -1,8 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
 import org.assertj.core.api.Assertions
 import org.mockito.Mockito
 import org.mockito.kotlin.verify
@@ -14,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
-import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -59,7 +56,7 @@ class GetSubjectAccessRequestDataServiceTest(
 
       it("uses the service name as a content key if the business name is not present") {
         val serviceDetailsObject = DpsServices(mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = "Fake HMPPS Prisoner Search", orderPosition = 1, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
-        val expectedResponseObject = mapOf("Fake HMPPS Prisoner Search" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()), "fake-hmpps-prisoner-search-indexer" to mapOf<String, Any>("fake-indexer-property" to emptyMap<String, Any>()),)
+        val expectedResponseObject = mapOf("Fake HMPPS Prisoner Search" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()), "fake-hmpps-prisoner-search-indexer" to mapOf<String, Any>("fake-indexer-property" to emptyMap<String, Any>()))
 
         val responseObject = getSubjectAccessRequestDataService.execute(services = serviceDetailsObject, nomisId = "A1234AA", dateTo = dateToFormatted)
 
