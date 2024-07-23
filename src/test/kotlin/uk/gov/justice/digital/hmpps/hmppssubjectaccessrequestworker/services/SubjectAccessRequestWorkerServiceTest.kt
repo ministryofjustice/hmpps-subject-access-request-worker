@@ -103,14 +103,22 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `startPolling calls claim and complete on happy path`() = runTest {
+    val selectedDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+    )
+    )
+    val mockWriter = Mockito.mock(PdfWriter::class.java)
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
     val mockClient = Mockito.mock(WebClient::class.java)
     val webSarGatewayMock = Mockito.mock(SubjectAccessRequestGateway::class.java)
     Mockito.`when`(webSarGatewayMock.getClient("http://localhost:8080")).thenReturn(mockClient)
     Mockito.`when`(webSarGatewayMock.getUnclaimed(mockClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(webSarGatewayMock.claim(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(webSarGatewayMock.complete(mockClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
-
-    val mockWriter = Mockito.mock(PdfWriter::class.java)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -149,8 +157,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport calls getSubjectAccessRequestDataService with chosenSar details`() {
+    val selectedDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+    )
+    )
     val mockWriter = Mockito.mock(PdfWriter::class.java)
-
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -175,6 +191,15 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
+    val selectedDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+    )
+    )
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenThrow(RuntimeException())
     Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
@@ -189,10 +214,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport calls GetSubjectAccessRequestDataService execute`() {
-//    Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-//      DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = "something.com")))
-//    )
+    val selectedDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+    )
+    )
     val mockWriter = Mockito.mock(PdfWriter::class.java)
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -226,20 +257,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
         )
     )
-    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")
-    )).thenReturn(selectedDpsServices)
-    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
-
     val mockWriter = Mockito.mock(PdfWriter::class.java)
-
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
-
-    Mockito.`when`(mockGeneratePdfService.createPdfStream())
-      .thenReturn(mockStream)
-    Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
-      .thenReturn(mockWriter)
+    Mockito.`when`(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
+    Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
     Mockito.`when`(
       mockGeneratePdfService.execute(
         content = mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
@@ -249,10 +274,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         dateFrom = dateFromFormatted,
         sarCaseReferenceNumber = "1234abc",
       ),
-    )
-      .thenReturn(mockStream)
-    Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
-      .thenReturn("")
+    ).thenReturn(mockStream)
+    Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("")
 
     subjectAccessRequestWorkerService.doReport(sampleSAR)
 
@@ -261,7 +284,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `doReport calls storeSubjectAccessRequestDocument`() = runTest {
+    val selectedDpsServices = DpsServices(dpsServices =
+    mutableListOf(
+      DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+    )
+    )
     val mockWriter = Mockito.mock(PdfWriter::class.java)
+    Mockito.`when`(configOrderHelper.getDpsServices(mapOf("fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
+      "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
     Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
       .thenReturn(mapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -322,6 +354,15 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     )
     @Test
     fun `getServiceDetails returns a list of ServiceDetails objects`() = runTest {
+      val selectedDpsServices = DpsServices(dpsServices =
+      mutableListOf(
+        DpsService(name = "test-dps-service-2", url = "https://test-dps-service-2.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+        DpsService(name = "test-dps-service-1", url = "https://test-dps-service-1.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      )
+      )
+      Mockito.`when`(configOrderHelper.getDpsServices(mapOf("test-dps-service-2" to "https://test-dps-service-2.prison.service.justice.gov.uk",
+        "test-dps-service-1" to "https://test-dps-service-1.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(selectedDpsServices)
       val orderedServiceDetailsList = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
 
       Assertions.assertThat(orderedServiceDetailsList).isInstanceOf(DpsServices::class.java)
@@ -331,15 +372,28 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     @Test
     fun `getServiceDetails extracts the correct details for the given SAR`() = runTest {
-      Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
-        DpsServices(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null)))
+      val selectedDpsServices = DpsServices(dpsServices =
+      mutableListOf(
+        DpsService(name = "test-dps-service-2", url = "https://test-dps-service-2.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+        DpsService(name = "test-dps-service-1", url = "https://test-dps-service-1.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
       )
+      )
+      val configDpsServices = DpsServices(dpsServices =
+      mutableListOf(
+        DpsService(name = "test-dps-service-2", url = null, businessName = "Test DPS Service 2", orderPosition = 2),
+        DpsService(name = "test-dps-service-1", url = null, businessName = "Test DPS Service 1", orderPosition = 1),
+      )
+      )
+      Mockito.`when`(configOrderHelper.getDpsServices(mapOf("test-dps-service-2" to "https://test-dps-service-2.prison.service.justice.gov.uk",
+        "test-dps-service-1" to "https://test-dps-service-1.prison.service.justice.gov.uk"))).thenReturn(selectedDpsServices)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(configDpsServices)
 
       val orderedServiceDetails = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
+
       Assertions.assertThat(orderedServiceDetails.dpsServices[0].name).isEqualTo("test-dps-service-2")
       Assertions.assertThat(orderedServiceDetails.dpsServices[0].businessName).isEqualTo("Test DPS Service 2")
       Assertions.assertThat(orderedServiceDetails.dpsServices[0].url).isEqualTo("https://test-dps-service-2.prison.service.justice.gov.uk")
-      Assertions.assertThat(orderedServiceDetails.dpsServices[0].orderPosition).isEqualTo(1)
+      Assertions.assertThat(orderedServiceDetails.dpsServices[0].orderPosition).isEqualTo(2)
       Assertions.assertThat(orderedServiceDetails.dpsServices.size).isEqualTo(2)
     }
   }
