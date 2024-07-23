@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFontFactory
@@ -12,6 +13,7 @@ import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
+import com.itextpdf.layout.element.IBlockElement
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
@@ -39,6 +41,7 @@ const val DATA_LINE_SPACING = 16f
 class GeneratePdfService {
   companion object {
     var dateConversionHelper = DateConversionHelper()
+    var templateRenderService = TemplateRenderService()
   }
 
   fun execute(
@@ -135,37 +138,53 @@ class GeneratePdfService {
 
   fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
     content.forEach { entry ->
+      log.info("Compiling data from " + entry.key)
+
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-      val para = Paragraph().setFixedLeading(DATA_LINE_SPACING)
+      val headerParagraph = Paragraph().setFixedLeading(DATA_LINE_SPACING)
       val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
       log.info("Compiling data from " + entry.key)
-      para.add(
+      headerParagraph.add(
         Text("${HeadingHelper.format(entry.key)}\n")
           .setFont(boldFont)
           .setFontSize(DATA_HEADER_FONT_SIZE),
       )
+      document.add(headerParagraph)
 
       val processedData = preProcessData(entry.value)
 
-      val loaderOptions = LoaderOptions()
-      loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
-      val yamlFactory = YAMLFactory.builder()
-        .loaderOptions(loaderOptions)
-        .build()
-      val contentText =
-        YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(
-          processedData,
-        )
-      val text = Text(contentText)
-      text.setNextRenderer(CodeRenderer(text))
-      para.add(text)
-        .setFont(font)
-        .setFontSize(DATA_FONT_SIZE)
-      log.info("Compiling data from " + entry.key)
-      document.add(para)
+      val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = processedData)
+      if (renderedTemplate !== null && renderedTemplate !== "") {
+        // Template found - render using the data
+        val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
+        for (element in htmlElement) {
+          document.add(element as IBlockElement)
+        }
+      } else {
+        // No template rendered, fallback to old YAML layout
+        val fallbackRender = renderAsBasicYaml(serviceData = processedData)
+        val contentParagraph = Paragraph().setFixedLeading(DATA_LINE_SPACING)
+        contentParagraph.add(fallbackRender).setFont(font).setFontSize(DATA_FONT_SIZE)
+        document.add(contentParagraph)
+      }
     }
     log.info("Added data to PDF")
+  }
+
+  fun renderAsBasicYaml(serviceData: Any?): Text {
+    val loaderOptions = LoaderOptions()
+    loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
+    val yamlFactory = YAMLFactory.builder()
+      .loaderOptions(loaderOptions)
+      .build()
+    val contentText =
+      YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(
+        serviceData,
+      )
+    val text = Text(contentText)
+    text.setNextRenderer(CodeRenderer(text))
+    return text
   }
 
   fun addInternalCoverPage(
