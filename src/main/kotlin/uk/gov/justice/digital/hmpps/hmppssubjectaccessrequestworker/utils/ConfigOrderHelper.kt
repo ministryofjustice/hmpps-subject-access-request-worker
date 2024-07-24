@@ -5,13 +5,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import org.springframework.stereotype.Component
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceConfig
 import java.io.File
 
 @Component
 class ConfigOrderHelper {
 
-  fun extractServicesConfig(configFilename: String): DpsServices? {
+  fun extractServicesConfig(configFilename: String): ServiceConfig? {
     val loaderOptions = LoaderOptions()
     loaderOptions.codePointLimit = 1024 * 1024 * 1024
     val yamlFactory = YAMLFactory.builder()
@@ -19,16 +19,16 @@ class ConfigOrderHelper {
       .build()
     val mapper = ObjectMapper(yamlFactory)
 
-    val dpsServicesObject = mapper.readValue(File(configFilename), DpsServices::class.java)
+    val serviceConfigObject = mapper.readValue(File(configFilename), ServiceConfig::class.java)
 
-    return dpsServicesObject
+    return serviceConfigObject
   }
 
-  fun getDpsServices(servicesMap: Map<String, String>): DpsServices {
-    val dpsServicesObject = DpsServices()
+  fun getDpsServices(servicesMap: Map<String, String>): List<DpsService> {
+    val dpsServices = mutableListOf<DpsService>()
     servicesMap.forEach { (key, value) ->
-      dpsServicesObject.dpsServices.add(DpsService(url = value, name = key))
+      dpsServices.add(DpsService(url = value, name = key))
     }
-    return dpsServicesObject
+    return dpsServices
   }
 }

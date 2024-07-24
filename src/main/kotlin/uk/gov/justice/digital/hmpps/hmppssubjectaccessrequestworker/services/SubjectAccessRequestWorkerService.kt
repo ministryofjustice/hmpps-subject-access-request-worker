@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
@@ -115,16 +115,16 @@ class SubjectAccessRequestWorkerService(
 
   fun getServiceDetails(
     subjectAccessRequest: SubjectAccessRequest,
-  ): DpsServices {
+  ): List<DpsService> {
     val servicesMap = getServicesMap(subjectAccessRequest)
 
-    val dpsServicesObject = configOrderHelper.getDpsServices(servicesMap)
+    val selectedServices = configOrderHelper.getDpsServices(servicesMap)
 
-    val config = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
+    val serviceConfigObject = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
 
-    for (service in dpsServicesObject.dpsServices) {
-      if (config != null) {
-        for (configService in config.dpsServices) {
+    for (service in selectedServices) {
+      if (serviceConfigObject != null) {
+        for (configService in serviceConfigObject.dpsServices) {
           if (configService.name == service.name) {
             service.businessName = configService.businessName
             service.orderPosition = configService.orderPosition
@@ -132,6 +132,6 @@ class SubjectAccessRequestWorkerService(
         }
       }
     }
-    return dpsServicesObject
+    return selectedServices
   }
 }

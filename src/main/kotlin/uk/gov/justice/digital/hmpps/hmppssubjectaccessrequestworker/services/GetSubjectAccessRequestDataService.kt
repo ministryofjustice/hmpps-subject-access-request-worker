@@ -4,17 +4,19 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import java.time.LocalDate
 
 @Service
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
   private val log = LoggerFactory.getLogger(this::class.java)
-  fun execute(services: DpsServices, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): LinkedHashMap<String, Any> {
+
+  fun execute(services: List<DpsService>, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): LinkedHashMap<String, Any> {
     val responseObject = linkedMapOf<String, Any>()
+
     val orderedServices = this.order(services)
 
-    orderedServices.dpsServices.forEach {
+    orderedServices.forEach {
       val response: Map<*, *>? = genericHmppsApiGateway.getSarData(it.url!!, nomisId, ndeliusId, dateFrom, dateTo)
       val serviceName = if (it.businessName != null) it.businessName!! else it.name!!
 
@@ -28,8 +30,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
     return responseObject
   }
 
-  fun order(services: DpsServices): DpsServices {
-    services.dpsServices.sortBy { it.orderPosition }
-    return services
+  fun order(services: List<DpsService>): List<DpsService> {
+    return services.sortedBy { it.orderPosition }
   }
 }

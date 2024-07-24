@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsServices
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -49,35 +48,34 @@ class GetSubjectAccessRequestDataServiceTest(
 
     describe("getSubjectAccessRequestData") {
       it("calls getSarData with given arguments, including service URL") {
-        val serviceDetailsObject = DpsServices(mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = "Fake HMPPS Prisoner Search", orderPosition = 1, url = "https://fake-prisoner-search.prison.service.justice.gov.uk")))
-
-        getSubjectAccessRequestDataService.execute(services = serviceDetailsObject, nomisId = "A1234AA", dateTo = dateToFormatted)
+        val selectedDpsServices = mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = "Fake HMPPS Prisoner Search", orderPosition = 1, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"))
+        getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
         verify(mockGenericHmppsApiGateway, Mockito.times(1)).getSarData(serviceUrl = "https://fake-prisoner-search.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)
       }
 
       it("uses the service name as a content key if the business name is not present") {
-        val serviceDetailsObject = DpsServices(mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = "Fake HMPPS Prisoner Search", orderPosition = 1, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+        val selectedDpsServices = mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = "Fake HMPPS Prisoner Search", orderPosition = 1, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))
         val expectedResponseObject = mapOf("Fake HMPPS Prisoner Search" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()), "fake-hmpps-prisoner-search-indexer" to mapOf<String, Any>("fake-indexer-property" to emptyMap<String, Any>()))
 
-        val responseObject = getSubjectAccessRequestDataService.execute(services = serviceDetailsObject, nomisId = "A1234AA", dateTo = dateToFormatted)
+        val responseObject = getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
         Assertions.assertThat(responseObject).isEqualTo(expectedResponseObject)
       }
 
       it("calls the gateway separately for each service given") {
-        val serviceDetailsObject = DpsServices(mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+        val selectedDpsServices = mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))
 
-        getSubjectAccessRequestDataService.execute(services = serviceDetailsObject, nomisId = "A1234AA", dateTo = dateToFormatted)
+        getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
         verify(mockGenericHmppsApiGateway, Mockito.times(1)).getSarData(serviceUrl = "https://fake-prisoner-search.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)
         verify(mockGenericHmppsApiGateway, Mockito.times(1)).getSarData(serviceUrl = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", prn = "A1234AA", dateTo = dateToFormatted)
       }
 
       it("returns upstream API response data with data mapped to API from which it was retrieved") {
-        val serviceDetailsObject = DpsServices(mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk")))
+        val selectedDpsServices = mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))
 
-        val response = getSubjectAccessRequestDataService.execute(services = serviceDetailsObject, nomisId = "A1234AA", dateTo = dateToFormatted)
+        val response = getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
         response.keys.shouldBe(setOf("fake-hmpps-prisoner-search", "fake-hmpps-prisoner-search-indexer"))
         response["fake-hmpps-prisoner-search"].toString().shouldContain("fake-prisoner-search-property")
@@ -85,35 +83,31 @@ class GetSubjectAccessRequestDataServiceTest(
       }
 
       it("returns upstream API response data in the correct order") {
-        val dpsServices = DpsServices(
-          mutableListOf(
-            DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
-            DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
-            DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
-          ),
+        val selectedDpsServices = mutableListOf(
+          DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
+          DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
+          DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
         )
-        val response = getSubjectAccessRequestDataService.execute(services = dpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
+        val response = getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
         response.firstEntry().key.shouldBe("fake-hmpps-prisoner-search-indexer")
         response.lastEntry().key.shouldBe("fake-hmpps-prisoner-search-2")
       }
     }
 
-    describe("orderServices") {
+    describe("order") {
       it("sorts services by order position") {
-        val dpsServices = DpsServices(
-          mutableListOf(
-            DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
-            DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
-            DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
-          ),
+        val selectedDpsServices = mutableListOf(
+          DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
+          DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 3, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
+          DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
         )
 
-        val result = getSubjectAccessRequestDataService.order(dpsServices)
+        val orderedDpsServices = getSubjectAccessRequestDataService.order(selectedDpsServices)
 
-        Assertions.assertThat(result.dpsServices[0].orderPosition).isEqualTo(1)
-        Assertions.assertThat(result.dpsServices[1].orderPosition).isEqualTo(2)
-        Assertions.assertThat(result.dpsServices[2].orderPosition).isEqualTo(3)
+        Assertions.assertThat(orderedDpsServices[0].orderPosition).isEqualTo(1)
+        Assertions.assertThat(orderedDpsServices[1].orderPosition).isEqualTo(2)
+        Assertions.assertThat(orderedDpsServices[2].orderPosition).isEqualTo(3)
       }
     }
   },
