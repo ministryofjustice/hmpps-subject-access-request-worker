@@ -1,7 +1,10 @@
 dpsServices:
-  - name: test-dps-service-1
+  - name: keyworker-api
     orderPosition: 1
-    businessName: Test DPS Service 1
-  - name: test-dps-service-2
+    businessName: Keyworker API
+  - name: offender-case-notes
     orderPosition: 2
-    businessName: Test DPS Service 2
+    businessName: Offender Case Notes
+  - name: court-case-service
+    orderPosition: 3
+    businessName: Court Case Service
