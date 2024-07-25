@@ -8,7 +8,6 @@ import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceConfig
 
-
 @Component
 class ConfigOrderHelper {
 
