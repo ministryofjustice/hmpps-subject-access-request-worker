@@ -13,7 +13,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -25,11 +27,10 @@ class SubjectAccessRequestWorkerService(
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Autowired val generatePdfService: GeneratePdfService,
-  @Value("\${services.sar-api.base-url}")
-  private val sarUrl: String,
+  @Autowired val configOrderHelper: ConfigOrderHelper,
+  @Value("\${services.sar-api.base-url}") private val sarUrl: String,
   private val telemetryClient: TelemetryClient,
 ) {
-
   private val log = LoggerFactory.getLogger(this::class.java)
 
   suspend fun startPolling() {
@@ -78,14 +79,14 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun doReport(chosenSAR: SubjectAccessRequest) {
-    val chosenSarServiceMap = getServicesMap(chosenSAR)
+    val selectedServices = getServiceDetails(chosenSAR)
 
     log.info("Creating report..")
 
-    val responseObject = getSubjectAccessRequestDataService.execute(chosenSarServiceMap, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+    val responseObject = getSubjectAccessRequestDataService.execute(selectedServices, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Extracted report")
 
-    val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo, chosenSarServiceMap)
+    val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Created PDF")
 
     val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
@@ -99,7 +100,7 @@ class SubjectAccessRequestWorkerService(
 
   fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
     val services = subjectAccessRequest.services
-    var serviceMap = mutableMapOf<String, String>()
+    val serviceMap = mutableMapOf<String, String>()
 
     val serviceNames =
       services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
@@ -107,8 +108,30 @@ class SubjectAccessRequestWorkerService(
       services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
 
     for (serviceName in serviceNames) {
-      serviceMap.put(serviceName, serviceUrls[serviceNames.indexOf(serviceName)])
+      serviceMap[serviceName] = serviceUrls[serviceNames.indexOf(serviceName)]
     }
     return serviceMap
+  }
+
+  fun getServiceDetails(
+    subjectAccessRequest: SubjectAccessRequest,
+  ): List<DpsService> {
+    val servicesMap = getServicesMap(subjectAccessRequest)
+
+    val selectedServices = configOrderHelper.getDpsServices(servicesMap)
+
+    val serviceConfigObject = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
+
+    for (service in selectedServices) {
+      if (serviceConfigObject != null) {
+        for (configService in serviceConfigObject.dpsServices) {
+          if (configService.name == service.name) {
+            service.businessName = configService.businessName
+            service.orderPosition = configService.orderPosition
+          }
+        }
+      }
+    }
+    return selectedServices
   }
 }

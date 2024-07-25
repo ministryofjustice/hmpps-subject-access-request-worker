@@ -57,3 +57,4 @@ services:
 
 sentry:
   traces-sample-rate: "0.05"
+

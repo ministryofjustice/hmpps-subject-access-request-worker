@@ -45,13 +45,12 @@ class GeneratePdfService {
   }
 
   fun execute(
-    content: Map<String, Any>,
+    content: LinkedHashMap<String, Any>,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
-    serviceMap: MutableMap<String, String>,
     pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
@@ -60,7 +59,7 @@ class GeneratePdfService {
     val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
     log.info("Started writing to PDF")
-    addInternalContentsPage(pdfDocument, document, serviceMap)
+    addInternalContentsPage(pdfDocument, document, content)
     addExternalCoverPage(
       pdfDocument,
       document,
@@ -69,7 +68,6 @@ class GeneratePdfService {
       sarCaseReferenceNumber,
       dateFrom,
       dateTo,
-      serviceMap,
     )
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
@@ -98,7 +96,7 @@ class GeneratePdfService {
       sarCaseReferenceNumber,
       dateFrom,
       dateTo,
-      serviceMap,
+      content,
       numPages,
     )
     coverPageDocument.close()
@@ -136,7 +134,7 @@ class GeneratePdfService {
     document.add(endPageText)
   }
 
-  fun addData(pdfDocument: PdfDocument, document: Document, content: Map<String, Any>) {
+  fun addData(pdfDocument: PdfDocument, document: Document, content: LinkedHashMap<String, Any>) {
     content.forEach { entry ->
       log.info("Compiling data from " + entry.key)
 
@@ -194,7 +192,7 @@ class GeneratePdfService {
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
-    serviceMap: MutableMap<String, String>,
+    dataFromServices: LinkedHashMap<String, Any>,
     numPages: Int,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
@@ -216,7 +214,7 @@ class GeneratePdfService {
         }",
       ).setTextAlignment(TextAlignment.CENTER),
     )
-    document.add(Paragraph("${getServiceListLine(serviceMap)}\n").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("${getServiceListLine(dataFromServices)}\n").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
@@ -230,7 +228,6 @@ class GeneratePdfService {
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
-    serviceMap: MutableMap<String, String>,
   ) {
     document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
@@ -245,7 +242,7 @@ class GeneratePdfService {
   fun addInternalContentsPage(
     pdfDocument: PdfDocument,
     document: Document,
-    serviceMap: MutableMap<String, String>,
+    dataFromServices: LinkedHashMap<String, Any>,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
@@ -254,7 +251,7 @@ class GeneratePdfService {
     document.add(contentsPageText)
 
     val serviceList = Paragraph()
-    serviceMap.keys.toList().forEach {
+    dataFromServices.keys.toList().forEach {
       serviceList.add("\u2022 $it\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
     }
     document.add(serviceList)
@@ -283,9 +280,9 @@ class GeneratePdfService {
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
-  fun getServiceListLine(serviceMap: MutableMap<String, String>): String {
-    val serviceList = serviceMap.keys.toList().joinToString(", ")
-    return "Services: $serviceList"
+  fun getServiceListLine(dataFromServices: LinkedHashMap<String, Any>): String {
+    val serviceNamesList = dataFromServices.keys.toList().joinToString(", ")
+    return "Services: $serviceNamesList"
   }
 
   fun preProcessData(input: Any?): Any? {

@@ -4,22 +4,33 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.GenericHmppsApiGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import java.time.LocalDate
 
 @Service
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
   private val log = LoggerFactory.getLogger(this::class.java)
-  fun execute(services: MutableMap<String, String>, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): Map<String, Any> {
-    val responseObject = mutableMapOf<String, Any>()
 
-    services.forEach { (service, serviceUrl) ->
-      val response: Map<*, *>? = genericHmppsApiGateway.getSarData(serviceUrl, nomisId, ndeliusId, dateFrom, dateTo)
+  fun execute(services: List<DpsService>, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): LinkedHashMap<String, Any> {
+    val responseObject = linkedMapOf<String, Any>()
+
+    val orderedServices = this.order(services)
+
+    orderedServices.forEach {
+      val response: Map<*, *>? = genericHmppsApiGateway.getSarData(it.url!!, nomisId, ndeliusId, dateFrom, dateTo)
+      val serviceName = if (it.businessName != null) it.businessName!! else it.name!!
+
       if (response != null && response.containsKey("content")) {
-        responseObject[service] = response["content"] as Any
+        responseObject[serviceName] = response["content"] as Any
       } else {
-        responseObject[service] = "No Content"
+        responseObject[serviceName] = "No Content"
       }
     }
+
     return responseObject
+  }
+
+  fun order(services: List<DpsService>): List<DpsService> {
+    return services.sortedBy { it.orderPosition }
   }
 }
