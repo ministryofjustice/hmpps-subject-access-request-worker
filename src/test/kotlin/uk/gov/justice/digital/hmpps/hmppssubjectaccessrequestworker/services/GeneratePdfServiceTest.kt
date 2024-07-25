@@ -201,7 +201,7 @@ class GeneratePdfServiceTest(
             ),
           ),
         )
-        val testResponseObject: Map<String, Any> = mapOf("test-service" to testServiceData)
+        val testResponseObject: LinkedHashMap<String, Any> = linkedMapOf("test-service" to testServiceData)
         val writer = PdfWriter(FileOutputStream("dummy-template.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
