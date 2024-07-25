@@ -1,3 +1,0 @@
-test1.com
-test2.com
-newly-added-service.com
