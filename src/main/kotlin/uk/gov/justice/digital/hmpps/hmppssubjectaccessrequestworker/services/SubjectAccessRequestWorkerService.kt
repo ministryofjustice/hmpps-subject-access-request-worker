@@ -120,7 +120,7 @@ class SubjectAccessRequestWorkerService(
 
     val selectedServices = configOrderHelper.getDpsServices(servicesMap)
 
-    val serviceConfigObject = configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")
+    val serviceConfigObject = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
 
     for (service in selectedServices) {
       if (serviceConfigObject != null) {
