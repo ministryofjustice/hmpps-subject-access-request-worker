@@ -119,7 +119,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ),
     ).thenReturn(selectedDpsServices)
-    Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+    Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
     Mockito.`when`(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(mockSarGateway.claim(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
@@ -174,7 +174,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
       Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
         .thenReturn(linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
       Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -208,7 +208,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig(" src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
       Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
         .thenThrow(RuntimeException())
       Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
@@ -232,7 +232,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
       Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
         .thenReturn(linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
       Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -268,7 +268,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
       Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
         .thenReturn(linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
       Mockito.`when`(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
@@ -300,7 +300,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
       Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
         .thenReturn(linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
       Mockito.`when`(mockGeneratePdfService.createPdfStream())
@@ -384,7 +384,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
 
       val detailedSelectedServices = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
 
@@ -402,7 +402,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           ),
         ),
       ).thenReturn(selectedDpsServices)
-      Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
+      Mockito.`when`(configOrderHelper.extractServicesConfig("src/main/resources/servicesConfig.yaml")).thenReturn(serviceConfigObject)
 
       val detailedSelectedServices = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
 
