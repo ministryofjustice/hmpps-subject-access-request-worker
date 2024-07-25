@@ -2,11 +2,12 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Component
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.ServiceConfig
-import java.io.File
+
 
 @Component
 class ConfigOrderHelper {
@@ -19,7 +20,8 @@ class ConfigOrderHelper {
       .build()
     val mapper = ObjectMapper(yamlFactory)
 
-    val serviceConfigObject = mapper.readValue(File(configFilename), ServiceConfig::class.java)
+    val resource = ClassPathResource(configFilename)
+    val serviceConfigObject = mapper.readValue(resource.inputStream, ServiceConfig::class.java)
 
     return serviceConfigObject
   }

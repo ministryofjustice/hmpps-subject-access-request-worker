@@ -15,7 +15,7 @@ class ConfigOrderHelperTest {
 
     @Test
     fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() = runTest {
-      val testServiceDetails = configOrderHelper.extractServicesConfig("src/test/resources/services-config-test.yaml")
+      val testServiceDetails = configOrderHelper.extractServicesConfig("services-config-test.yaml")
 
       Assertions.assertThat(testServiceDetails).isInstanceOf(ServiceConfig::class.java)
       Assertions.assertThat(testServiceDetails?.dpsServices?.get(0)).isInstanceOf(DpsService::class.java)
