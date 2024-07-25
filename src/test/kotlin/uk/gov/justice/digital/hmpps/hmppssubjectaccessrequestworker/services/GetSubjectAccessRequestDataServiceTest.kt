@@ -109,6 +109,34 @@ class GetSubjectAccessRequestDataServiceTest(
         Assertions.assertThat(orderedDpsServices[1].orderPosition).isEqualTo(2)
         Assertions.assertThat(orderedDpsServices[2].orderPosition).isEqualTo(3)
       }
+
+      it("puts services with no order position last") {
+        val selectedDpsServices = mutableListOf(
+          DpsService(name = "fake-hmpps-prisoner-search", businessName = null, orderPosition = null, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
+          DpsService(name = "fake-hmpps-prisoner-search-2", businessName = null, orderPosition = 2, url = "https://fake-prisoner-search-2.prison.service.justice.gov.uk"),
+          DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = 1, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+        )
+
+        val orderedDpsServices = getSubjectAccessRequestDataService.order(selectedDpsServices)
+
+        Assertions.assertThat(orderedDpsServices[0].orderPosition).isEqualTo(1)
+        Assertions.assertThat(orderedDpsServices[1].orderPosition).isEqualTo(2)
+        Assertions.assertThat(orderedDpsServices[2].orderPosition).isEqualTo(null)
+      }
+
+      it("sorts services with no order position alphabetically by name") {
+        val selectedDpsServices = mutableListOf(
+          DpsService(name = "service-B", businessName = null, orderPosition = null, url = "https://service-b.prison.service.justice.gov.uk"),
+          DpsService(name = "service-A", businessName = null, orderPosition = null, url = "https://service-a.prison.service.justice.gov.uk"),
+          DpsService(name = "service-C", businessName = null, orderPosition = null, url = "https://service-c.prison.service.justice.gov.uk"),
+        )
+
+        val orderedDpsServices = getSubjectAccessRequestDataService.order(selectedDpsServices)
+
+        Assertions.assertThat(orderedDpsServices[0].name).isEqualTo("service-A")
+        Assertions.assertThat(orderedDpsServices[1].name).isEqualTo("service-B")
+        Assertions.assertThat(orderedDpsServices[2].name).isEqualTo("service-C")
+      }
     }
   },
 )

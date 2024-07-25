@@ -31,6 +31,20 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
   }
 
   fun order(services: List<DpsService>): List<DpsService> {
-    return services.sortedBy { it.orderPosition }
+    val servicesWithNoOrderPosition = mutableListOf<DpsService>()
+    val servicesWithOrderPosition = mutableListOf<DpsService>()
+
+    services.forEach { service ->
+      if (service.orderPosition != null) {
+        servicesWithOrderPosition.add(service)
+      } else {
+        servicesWithNoOrderPosition.add(service)
+      }
+    }
+
+    val servicesSortedByOrderPosition = servicesWithOrderPosition.sortedBy { it.orderPosition }
+    val servicesWithNoOrderPositionSortedByName = servicesWithNoOrderPosition.sortedBy { it.name }
+
+    return servicesSortedByOrderPosition + servicesWithNoOrderPositionSortedByName
   }
 }
