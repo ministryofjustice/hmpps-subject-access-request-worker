@@ -38,7 +38,7 @@ class GeneratePdfServiceTest(
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
@@ -47,7 +47,7 @@ class GeneratePdfServiceTest(
         val testResponseObject: LinkedHashMap<String, Any> = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val result = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mockStream)
+        val result = generatePdfService.execute(testResponseObject, "", "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mockStream)
 
         Assertions.assertThat(result).isEqualTo(mockStream)
       }
@@ -58,7 +58,7 @@ class GeneratePdfServiceTest(
         Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
 
-        val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+        val stream = generatePdfService.execute(testResponseObject, "", "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }

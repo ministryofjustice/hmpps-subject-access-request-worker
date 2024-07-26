@@ -49,6 +49,7 @@ class GeneratePdfService {
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
+    subjectName: String,
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
     pdfStream: ByteArrayOutputStream = createPdfStream(),

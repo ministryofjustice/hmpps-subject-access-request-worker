@@ -52,6 +52,9 @@ services:
   prison-api:
     base-url: http://localhost:4001
 
+  probation-api:
+    base-url: http://localhost:4002
+
   sar-api:
     base-url: http://hmpps-subject-access-request
 

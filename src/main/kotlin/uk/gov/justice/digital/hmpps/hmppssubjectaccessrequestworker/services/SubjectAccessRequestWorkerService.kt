@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.PrisonApiGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.ProbationApiGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
@@ -27,10 +29,13 @@ class SubjectAccessRequestWorkerService(
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   @Autowired val documentStorageGateway: DocumentStorageGateway,
   @Autowired val generatePdfService: GeneratePdfService,
+  @Autowired val prisonApiGateway: PrisonApiGateway,
+  @Autowired val probationApiGateway: ProbationApiGateway,
   @Autowired val configOrderHelper: ConfigOrderHelper,
   @Value("\${services.sar-api.base-url}") private val sarUrl: String,
   private val telemetryClient: TelemetryClient,
 ) {
+
   private val log = LoggerFactory.getLogger(this::class.java)
 
   suspend fun startPolling() {
@@ -82,11 +87,14 @@ class SubjectAccessRequestWorkerService(
     val selectedServices = getServiceDetails(chosenSAR)
 
     log.info("Creating report..")
-
     val responseObject = getSubjectAccessRequestDataService.execute(selectedServices, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
+
+    log.info("Fetching subject name")
+    val subjectName = getSubjectName(chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId)
+
     log.info("Extracted report")
 
-    val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo)
+    val pdfStream = generatePdfService.execute(responseObject, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, subjectName, chosenSAR.sarCaseReferenceNumber, chosenSAR.dateFrom, chosenSAR.dateTo)
     log.info("Created PDF")
 
     val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
@@ -133,5 +141,15 @@ class SubjectAccessRequestWorkerService(
       }
     }
     return selectedServices
+  }
+
+  fun getSubjectName(prisonId: String?, probationId: String?): String {
+    if (prisonId !== null) {
+      return prisonApiGateway.getOffenderName(prisonId)
+    }
+    if (probationId !== null) {
+      return probationApiGateway.getOffenderName(probationId)
+    }
+    throw RuntimeException("Prison and Probation IDs are both null")
   }
 }

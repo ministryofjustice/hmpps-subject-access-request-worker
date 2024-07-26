@@ -19,6 +19,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.PrisonApiGateway
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.ProbationApiGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
@@ -68,6 +70,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   )
   private val mockSarGateway = Mockito.mock(SubjectAccessRequestGateway::class.java)
   private val mockGetSubjectAccessRequestDataService = Mockito.mock(GetSubjectAccessRequestDataService::class.java)
+  private val mockPrisonApiGateway = Mockito.mock(PrisonApiGateway::class.java)
+  private val mockProbationApiGateway = Mockito.mock(ProbationApiGateway::class.java)
   private val mockGeneratePdfService = Mockito.mock(GeneratePdfService::class.java)
   private val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
   private val telemetryClient = Mockito.mock(TelemetryClient::class.java)
@@ -75,7 +79,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val mockWriter = Mockito.mock(PdfWriter::class.java)
   private val mockWebClient = Mockito.mock(WebClient::class.java)
 
-  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient)
+  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient)
 
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
@@ -92,7 +96,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(Mono.just(arrayOf(sampleSAR)))
     Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
 
-    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient)
+    Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
+
+    val result = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient)
       .pollForNewSubjectAccessRequests(mockWebClient)
 
     val expected: SubjectAccessRequest = sampleSAR
@@ -104,7 +110,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
 
-    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
+    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
 
     verify(mockSarGateway, Mockito.times(1)).getUnclaimed(mockWebClient)
   }
@@ -135,6 +141,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
         nomisId = null,
         ndeliusCaseReferenceId = "1",
+        subjectName = "testName",
         dateTo = dateToFormatted,
         dateFrom = dateFromFormatted,
         sarCaseReferenceNumber = "1234abc",
@@ -144,7 +151,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
 
-    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
+    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
 
     verify(mockSarGateway, Mockito.times(1)).claim(mockWebClient, sampleSAR)
     verify(mockSarGateway, Mockito.times(1)).complete(mockWebClient, sampleSAR)
@@ -156,7 +163,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(mockSarGateway.claim(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(400))
 
-    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
+    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
 
     verify(mockSarGateway, Mockito.times(1)).claim(mockWebClient, sampleSAR)
     verify(mockSarGateway, Mockito.times(0)).complete(mockWebClient, sampleSAR)
@@ -186,6 +193,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
+          subjectName = "testName",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -244,6 +252,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
+          subjectName = "testName",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -278,6 +287,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
+          subjectName = "testName",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -312,6 +322,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
+          subjectName = "testName",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -321,7 +332,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
         .thenReturn("")
 
-      SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient).doReport(sampleSAR)
+      SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient).doReport(sampleSAR)
 
       verify(documentGateway, Mockito.times(1)).storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)
     }
@@ -336,7 +347,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockSarGateway.claim(any(), any()))
       .thenThrow(RuntimeException())
 
-    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
+    SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient).doPoll()
 
     io.mockk.verify(exactly = 1) {
       Sentry.captureException(

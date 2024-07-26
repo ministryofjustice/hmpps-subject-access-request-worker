@@ -9,25 +9,25 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException
 
 @Component
-class PrisonApiGateway(
+class ProbationApiGateway(
   @Autowired val hmppsAuthGateway: HmppsAuthGateway,
-  @Value("\${services.prison-api.base-url}") prisonApiUrl: String,
+  @Value("\${services.probation-api.base-url}") probationApiUrl: String,
 ) {
-  private val webClient: WebClient = WebClient.builder().baseUrl(prisonApiUrl).build()
+  private val webClient: WebClient = WebClient.builder().baseUrl(probationApiUrl).build()
 
   fun getOffenderName(subjectId: String): String {
     return try {
       val token = hmppsAuthGateway.getClientToken()
       val response = webClient
         .get()
-        .uri("/api/offenders/$subjectId")
+        .uri("/probation-case/$subjectId")
         .header("Authorization", "Bearer $token")
         .retrieve()
         .bodyToMono(String::class.java)
         .block()
 
       val details = JSONParser(response).parseObject()
-      "${details.get("firstName")} ${details.get("lastName")}"
+      "${details["fullName"]}"
     } catch (exception: WebClientRequestException) {
       throw RuntimeException("Connection to ${exception.uri.authority} failed.")
     } catch (exception: WebClientResponseException.ServiceUnavailable) {

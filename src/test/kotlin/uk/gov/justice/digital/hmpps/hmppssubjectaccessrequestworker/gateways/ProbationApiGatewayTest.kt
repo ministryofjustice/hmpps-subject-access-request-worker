@@ -10,35 +10,35 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.ApplicationInsightsConfiguration
-import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers.PrisonApiMockServer
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers.ProbationApiMockServer
 
 @ActiveProfiles("test")
 @Import(ApplicationInsightsConfiguration::class)
 @ContextConfiguration(
   initializers = [ConfigDataApplicationContextInitializer::class],
-  classes = [(PrisonApiGateway::class)],
+  classes = [(ProbationApiGateway::class)],
 )
-class PrisonApiGatewayTest(
-  @Autowired val prisonApiGateway: PrisonApiGateway,
+class ProbationApiGatewayTest(
+  @Autowired val probationApiGateway: ProbationApiGateway,
   @MockBean val mockHmppsAuthGateway: HmppsAuthGateway,
 ) : DescribeSpec(
   {
-    val prisonApiMockServer = PrisonApiMockServer()
+    val probationApiMockServer = ProbationApiMockServer()
 
     Mockito.`when`(mockHmppsAuthGateway.getClientToken()).thenReturn("mock-bearer-token")
 
     beforeEach {
-      prisonApiMockServer.start()
-      prisonApiMockServer.stubGetOffenderDetails()
+      probationApiMockServer.start()
+      probationApiMockServer.stubGetOffenderDetails()
     }
 
     afterTest {
-      prisonApiMockServer.stop()
+      probationApiMockServer.stop()
     }
 
     describe("getOffenderName") {
       it("returns the offender name") {
-        val offenderName = prisonApiGateway.getOffenderName("A9999AA")
+        val offenderName = probationApiGateway.getOffenderName("A999999")
         offenderName.shouldBe("FIRSTNAME LASTNAME")
       }
     }
