@@ -6,7 +6,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 enum class Status {
   Pending,
