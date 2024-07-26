@@ -6,7 +6,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 enum class Status {
   Pending,
@@ -30,4 +30,5 @@ data class SubjectAccessRequest(
   val claimDateTime: LocalDateTime? = null,
   val claimAttempts: Int = 0,
   val objectUrl: String? = null,
+  val lastDownloaded: LocalDateTime? = null,
 )
