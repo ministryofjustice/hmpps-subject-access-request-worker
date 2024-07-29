@@ -30,4 +30,5 @@ data class SubjectAccessRequest(
   val claimDateTime: LocalDateTime? = null,
   val claimAttempts: Int = 0,
   val objectUrl: String? = null,
+  val lastDownloaded: LocalDateTime? = null,
 )
