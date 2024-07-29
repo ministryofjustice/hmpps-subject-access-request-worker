@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import com.itextpdf.html2pdf.ConverterProperties
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent
@@ -20,6 +21,8 @@ import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
+import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription
+import com.itextpdf.styledxmlparser.css.media.MediaType
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
@@ -159,7 +162,9 @@ class GeneratePdfService {
       val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = processedData)
       if (renderedTemplate !== null && renderedTemplate !== "") {
         // Template found - render using the data
-        val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
+        val rendererDeviceDescription = MediaDeviceDescription(MediaType.SCREEN).setWidth(4000f).setHeight(4000f)
+        val rendererProperties = ConverterProperties().setMediaDeviceDescription(rendererDeviceDescription)
+        val htmlElement = HtmlConverter.convertToElements(renderedTemplate, rendererProperties)
         for (element in htmlElement) {
           document.add(element as IBlockElement)
         }
