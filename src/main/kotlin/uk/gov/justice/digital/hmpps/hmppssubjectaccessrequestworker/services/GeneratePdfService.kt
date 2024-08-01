@@ -162,12 +162,15 @@ class GeneratePdfService {
       val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = processedData)
       if (renderedTemplate !== null && renderedTemplate !== "") {
         // Template found - render using the data
-        val rendererDeviceDescription = MediaDeviceDescription(MediaType.SCREEN).setWidth(4000f).setHeight(4000f)
-        val rendererProperties = ConverterProperties().setMediaDeviceDescription(rendererDeviceDescription)
-        val htmlElement = HtmlConverter.convertToElements(renderedTemplate, rendererProperties)
+        //val rendererDeviceDescription = MediaDeviceDescription(MediaType.SCREEN).setWidth(4000f).setHeight(4000f)
+        //val rendererProperties = ConverterProperties().setMediaDeviceDescription(rendererDeviceDescription)
+        val htmlElement = HtmlConverter.convertToElements(renderedTemplate)//, rendererProperties)
         for (element in htmlElement) {
           document.add(element as IBlockElement)
         }
+        val contentParagraph = Paragraph().setFixedLeading(DATA_LINE_SPACING)
+        contentParagraph.add(processedData.toString()).setFont(font).setFontSize(DATA_FONT_SIZE)
+        document.add(contentParagraph)
       } else {
         // No template rendered, fallback to old YAML layout
         val fallbackRender = renderAsBasicYaml(serviceData = processedData)
