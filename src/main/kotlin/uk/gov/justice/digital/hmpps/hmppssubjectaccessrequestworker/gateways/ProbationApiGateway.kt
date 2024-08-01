@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 
-import org.apache.tomcat.util.json.JSONParser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -23,11 +22,12 @@ class ProbationApiGateway(
         .uri("/probation-case/$subjectId")
         .header("Authorization", "Bearer $token")
         .retrieve()
-        .bodyToMono(String::class.java)
+        .bodyToMono(Map::class.java)
         .block()
 
-      val details = JSONParser(response).parseObject()
-      "${details["fullName"]}"
+      val nameMap = response["name"] as Map<String, String>
+
+      "${nameMap["surname"]?.uppercase()}, ${nameMap["forename"]?.uppercase()}"
     } catch (exception: WebClientRequestException) {
       throw RuntimeException("Connection to ${exception.uri.authority} failed.")
     } catch (exception: WebClientResponseException.ServiceUnavailable) {

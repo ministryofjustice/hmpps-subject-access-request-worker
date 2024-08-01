@@ -27,7 +27,7 @@ class PrisonApiGateway(
         .block()
 
       val details = JSONParser(response).parseObject()
-      "${details.get("firstName")} ${details.get("lastName")}"
+      "${details.get("lastName").toString().uppercase()}, ${details.get("firstName").toString().uppercase()}"
     } catch (exception: WebClientRequestException) {
       throw RuntimeException("Connection to ${exception.uri.authority} failed.")
     } catch (exception: WebClientResponseException.ServiceUnavailable) {

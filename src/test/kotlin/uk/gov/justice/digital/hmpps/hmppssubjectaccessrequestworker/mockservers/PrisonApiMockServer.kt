@@ -23,9 +23,9 @@ class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
             .withBody(
               """
               {
-                "firstName": "FIRSTNAME",
-                "middleName": "MIDDLENAME",
-                "lastName": "LASTNAME"
+                "firstName": "FirstName",
+                "middleName": "MiddleName",
+                "lastName": "LastName"
               }
               """.trimIndent(),
             ),

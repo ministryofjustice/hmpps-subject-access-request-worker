@@ -23,7 +23,10 @@ class ProbationApiMockServer : WireMockServer(WIREMOCK_PORT) {
             .withBody(
               """
               {
-                "fullName": "FIRSTNAME LASTNAME"
+                "name" : {
+                  "forename": "FirstName",
+                  "surname": "LastName"
+                  }
               }
               """.trimIndent(),
             ),
