@@ -93,6 +93,7 @@ class GeneratePdfService {
     val coverPageDocument = Document(coverPage)
     addInternalCoverPage(
       coverPageDocument,
+      subjectName,
       nomisId,
       ndeliusCaseReferenceId,
       sarCaseReferenceNumber,
@@ -189,6 +190,7 @@ class GeneratePdfService {
 
   fun addInternalCoverPage(
     document: Document,
+    subjectName: String,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
@@ -201,7 +203,8 @@ class GeneratePdfService {
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(180f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-    document.add(coverpageText)
+    document.add(coverpageText).setTextAlignment(TextAlignment.CENTER)
+    document.add(Paragraph("Name: $subjectName")).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))

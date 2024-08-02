@@ -126,13 +126,14 @@ class GeneratePdfServiceTest(
             )
           generatePdfService.addInternalCoverPage(
             document = coverPageDocument,
+            subjectName = "LASTNAME, FIRSTNAME",
             nomisId = "mockNomisNumber",
             ndeliusCaseReferenceId = null,
             sarCaseReferenceNumber = "mockCaseReference",
             dateFrom = LocalDate.now(),
             dateTo = LocalDate.now(),
             dataFromServices = testDataFromServices,
-            numberOfPagesWithoutCoverpage,
+            numPages = numberOfPagesWithoutCoverpage,
           )
           coverPageDocument.close()
           val fullDocument = PdfDocument(fullDocumentWriter)
@@ -153,6 +154,7 @@ class GeneratePdfServiceTest(
           val text = PdfTextExtractor.getTextFromPage(page)
           Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
           Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+          Assertions.assertThat(text).contains("Name: LASTNAME, FIRSTNAME")
           Assertions.assertThat(text).contains("Total Pages: 3")
         }
 
@@ -346,13 +348,14 @@ class GeneratePdfServiceTest(
         val coverPageDocument = Document(coverPage)
         generatePdfService.addInternalCoverPage(
           document = coverPageDocument,
+          subjectName = "LASTNAME, FIRSTNAME",
           nomisId = "mockNomisNumber",
           ndeliusCaseReferenceId = null,
           sarCaseReferenceNumber = "mockCaseReference",
           dateFrom = LocalDate.now(),
           dateTo = LocalDate.now(),
           dataFromServices = testDataFromServices,
-          numPages,
+          numPages = numPages,
         )
         coverPageDocument.close()
         val fullDocument = PdfDocument(fullDocumentWriter)
