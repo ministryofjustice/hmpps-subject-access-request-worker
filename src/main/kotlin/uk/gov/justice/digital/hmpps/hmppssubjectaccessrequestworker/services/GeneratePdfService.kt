@@ -59,6 +59,7 @@ class GeneratePdfService {
     val mainPdfStream = createPdfStream()
     val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
+
     log.info("Started writing to PDF")
     addInternalContentsPage(pdfDocument, document, content)
     addExternalCoverPage(
@@ -76,7 +77,7 @@ class GeneratePdfService {
         pdfDocument,
         document,
         getSubjectIdLine(nomisId, ndeliusCaseReferenceId),
-        sarCaseReferenceNumber,
+        subjectName,
       ),
     )
     document.setMargins(50F, 50F, 100F, 50F)

@@ -11,7 +11,7 @@ import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.properties.TextAlignment
 
-class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val nID: String, private val sarID: String) : IEventHandler {
+class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val subjectId: String, private val subjectName: String) : IEventHandler {
 
   override fun handleEvent(currentEvent: Event) {
     val docEvent = currentEvent as PdfDocumentEvent
@@ -21,8 +21,8 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
       leftHeaderText = ""
       rightHeaderText = ""
     } else {
-      leftHeaderText = nID
-      rightHeaderText = "CASE REFERENCE: $sarID"
+      leftHeaderText = ""
+      rightHeaderText = "$subjectId    $subjectName"
     }
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = docEvent.page.pageSize

@@ -334,7 +334,7 @@ class GeneratePdfServiceTest(
           )
         generatePdfService.addInternalContentsPage(pdfDocument = mockPdfDocument, document = mockDocument, dataFromServices = testDataFromServices)
         generatePdfService.addExternalCoverPage(pdfDocument = mockPdfDocument, document = mockDocument, nomisId = "mockNomisNumber", ndeliusCaseReferenceId = null, sarCaseReferenceNumber = "mockCaseReference", dateFrom = LocalDate.now(), dateTo = LocalDate.now())
-        mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
+        mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "TEST-SUBJECT-ID", "LASTNAME, FIRSTNAME"))
         generatePdfService.addData(mockPdfDocument, mockDocument, testContentObject)
         val numPages = mockPdfDocument.numberOfPages
         generatePdfService.addRearPage(mockPdfDocument, mockDocument, numPages)
@@ -368,10 +368,16 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(fullDocument.numberOfPages).isEqualTo(5)
         fullDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
-        val page = reader.getPage(1)
-        val text = PdfTextExtractor.getTextFromPage(page)
-        Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
-        Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+
+        val coverpage = reader.getPage(1)
+        val coverpageText = PdfTextExtractor.getTextFromPage(coverpage)
+        val dataPage = reader.getPage(3)
+        val dataPageText = PdfTextExtractor.getTextFromPage(dataPage)
+        val expectedHeaderText = "TEST-SUBJECT-ID    LASTNAME, FIRSTNAME"
+
+        Assertions.assertThat(coverpageText).contains("SUBJECT ACCESS REQUEST REPORT")
+        Assertions.assertThat(coverpageText).contains("NOMIS ID: mockNomisNumber")
+        Assertions.assertThat(dataPageText).contains(expectedHeaderText)
       }
     }
 
