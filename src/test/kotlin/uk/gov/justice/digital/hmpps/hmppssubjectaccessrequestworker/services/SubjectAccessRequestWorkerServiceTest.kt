@@ -137,15 +137,17 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
       .thenReturn(mockWriter)
+    Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
+      .thenReturn("TEST, NAME")
     Mockito.`when`(
       mockGeneratePdfService.execute(
         content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
         nomisId = null,
         ndeliusCaseReferenceId = "1",
-        subjectName = "testName",
-        dateTo = dateToFormatted,
-        dateFrom = dateFromFormatted,
         sarCaseReferenceNumber = "1234abc",
+        subjectName = "TEST, NAME",
+        dateFrom = dateFromFormatted,
+        dateTo = dateToFormatted,
       ),
     )
       .thenReturn(mockStream)
@@ -189,12 +191,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockStream)
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
+      Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
+        .thenReturn("TEST, NAME")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "testName",
+          subjectName = "TEST, NAME",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -248,12 +252,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockStream)
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
+      Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
+        .thenReturn("TEST, NAME")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "testName",
+          subjectName = "TEST, NAME",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -283,12 +289,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
       Mockito.`when`(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
+      Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
+        .thenReturn("TEST, NAME")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "testName",
+          subjectName = "TEST, NAME",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -318,12 +326,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockStream)
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
+      Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
+        .thenReturn("TEST, NAME")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "testName",
+          subjectName = "TEST, NAME",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
