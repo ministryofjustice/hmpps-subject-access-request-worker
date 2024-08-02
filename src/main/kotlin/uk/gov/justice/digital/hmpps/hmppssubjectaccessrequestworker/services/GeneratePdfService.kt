@@ -65,6 +65,7 @@ class GeneratePdfService {
     addExternalCoverPage(
       pdfDocument,
       document,
+      subjectName,
       nomisId,
       ndeliusCaseReferenceId,
       sarCaseReferenceNumber,
@@ -228,6 +229,7 @@ class GeneratePdfService {
   fun addExternalCoverPage(
     pdfDocument: PdfDocument,
     document: Document,
+    subjectName: String,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
@@ -240,6 +242,7 @@ class GeneratePdfService {
     coverpageText.add(Text("\u00a0\n").setFontSize(180f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
     document.add(coverpageText)
+    document.add(Paragraph("Name: $subjectName").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
   }

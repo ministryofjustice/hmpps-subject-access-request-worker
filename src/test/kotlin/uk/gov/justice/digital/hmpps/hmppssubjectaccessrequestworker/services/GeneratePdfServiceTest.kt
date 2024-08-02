@@ -178,6 +178,22 @@ class GeneratePdfServiceTest(
           Assertions.assertThat(text).contains("CONTENTS")
           Assertions.assertThat(text).contains("INTERNAL ONLY")
         }
+
+        it("adds external coverpage for recipient to a PDF") {
+          val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+          val mockPdfDocument = PdfDocument(writer)
+          val mockDocument = Document(mockPdfDocument)
+          generatePdfService.addExternalCoverPage(mockPdfDocument, mockDocument, "LASTNAME, FIRSTNAME", "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now(), mutableMapOf("mockService" to "mockServiceUrl"))
+          mockDocument.close()
+
+          val reader = PdfDocument(PdfReader("dummy.pdf"))
+          val page = reader.getPage(1)
+          val text = PdfTextExtractor.getTextFromPage(page)
+
+          Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+          Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+          Assertions.assertThat(text).contains("Name: LASTNAME, FIRSTNAME")
+        }
       }
 
       it("renders a template if a template exists") {
