@@ -22,14 +22,18 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
       rightHeaderText = ""
     } else {
       leftHeaderText = ""
-      rightHeaderText = "$subjectId    $subjectName"
+      rightHeaderText = """
+          |Name: $subjectName
+          |
+          |ID: $subjectId
+      """.trimMargin()
     }
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = docEvent.page.pageSize
     val leftCoord = pageSize.left + document.leftMargin
     val rightCoord = pageSize.right - document.rightMargin
     val midCoord = (leftCoord + rightCoord) / 2
-    val headerY: Float = pageSize.top - document.topMargin + 10
+    val headerY: Float = pageSize.top - document.topMargin - 10
     val footerY: Float = pageSize.bottom + 20
     val canvas = Canvas(docEvent.page, pageSize)
     canvas
