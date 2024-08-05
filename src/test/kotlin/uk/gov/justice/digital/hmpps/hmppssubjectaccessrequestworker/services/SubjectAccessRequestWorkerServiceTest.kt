@@ -137,14 +137,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
       .thenReturn(mockWriter)
     Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
-      .thenReturn("TEST, NAME")
+      .thenReturn("TEST, Name")
     Mockito.`when`(
       mockGeneratePdfService.execute(
         content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
         nomisId = null,
         ndeliusCaseReferenceId = "1",
         sarCaseReferenceNumber = "1234abc",
-        subjectName = "TEST, NAME",
+        subjectName = "TEST, Name",
         dateFrom = dateFromFormatted,
         dateTo = dateToFormatted,
       ),
@@ -191,13 +191,13 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
       Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
-        .thenReturn("TEST, NAME")
+        .thenReturn("TEST, Name")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "TEST, NAME",
+          subjectName = "TEST, Name",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -252,13 +252,13 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
       Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
-        .thenReturn("TEST, NAME")
+        .thenReturn("TEST, Name")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "TEST, NAME",
+          subjectName = "TEST, Name",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -289,13 +289,13 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       Mockito.`when`(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
       Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
-        .thenReturn("TEST, NAME")
+        .thenReturn("TEST, Name")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "TEST, NAME",
+          subjectName = "TEST, Name",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
@@ -326,13 +326,13 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
       Mockito.`when`(mockProbationApiGateway.getOffenderName("1"))
-        .thenReturn("TEST, NAME")
+        .thenReturn("TEST, Name")
       Mockito.`when`(
         mockGeneratePdfService.execute(
           content = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())),
           nomisId = null,
           ndeliusCaseReferenceId = "1",
-          subjectName = "TEST, NAME",
+          subjectName = "TEST, Name",
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",

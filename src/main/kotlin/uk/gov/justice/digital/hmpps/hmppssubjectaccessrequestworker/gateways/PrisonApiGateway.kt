@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import java.util.*
 
 @Component
 class PrisonApiGateway(
@@ -27,7 +28,8 @@ class PrisonApiGateway(
         .block()
 
       val details = JSONParser(response).parseObject()
-      "${details.get("lastName").toString().uppercase()}, ${details.get("firstName").toString().uppercase()}"
+      "${details.get("lastName").toString().uppercase()}, ${details.get("firstName").toString()?.lowercase()
+        ?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
     } catch (exception: WebClientRequestException) {
       throw RuntimeException("Connection to ${exception.uri.authority} failed.")
     } catch (exception: WebClientResponseException.ServiceUnavailable) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import java.util.*
 
 @Component
 class ProbationApiGateway(
@@ -27,7 +28,8 @@ class ProbationApiGateway(
 
       val nameMap = response["name"] as Map<String, String>
 
-      "${nameMap["surname"]?.uppercase()}, ${nameMap["forename"]?.uppercase()}"
+      "${nameMap["surname"]?.uppercase()}, ${nameMap["forename"]?.lowercase()
+        ?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
     } catch (exception: WebClientRequestException) {
       throw RuntimeException("Connection to ${exception.uri.authority} failed.")
     } catch (exception: WebClientResponseException.ServiceUnavailable) {

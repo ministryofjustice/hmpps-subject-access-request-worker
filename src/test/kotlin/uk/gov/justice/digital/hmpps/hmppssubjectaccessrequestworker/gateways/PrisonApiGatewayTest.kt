@@ -39,7 +39,7 @@ class PrisonApiGatewayTest(
     describe("getOffenderName") {
       it("returns the offender name") {
         val offenderName = prisonApiGateway.getOffenderName("A9999AA")
-        offenderName.shouldBe("LASTNAME, FIRSTNAME")
+        offenderName.shouldBe("LASTNAME, Firstname")
       }
     }
   },
