@@ -49,6 +49,7 @@ class GeneratePdfService {
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
+    subjectName: String,
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
     pdfStream: ByteArrayOutputStream = createPdfStream(),
@@ -58,11 +59,13 @@ class GeneratePdfService {
     val mainPdfStream = createPdfStream()
     val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
+
     log.info("Started writing to PDF")
     addInternalContentsPage(pdfDocument, document, content)
     addExternalCoverPage(
       pdfDocument,
       document,
+      subjectName,
       nomisId,
       ndeliusCaseReferenceId,
       sarCaseReferenceNumber,
@@ -75,7 +78,7 @@ class GeneratePdfService {
         pdfDocument,
         document,
         getSubjectIdLine(nomisId, ndeliusCaseReferenceId),
-        sarCaseReferenceNumber,
+        subjectName,
       ),
     )
     document.setMargins(50F, 50F, 100F, 50F)
@@ -91,6 +94,7 @@ class GeneratePdfService {
     val coverPageDocument = Document(coverPage)
     addInternalCoverPage(
       coverPageDocument,
+      subjectName,
       nomisId,
       ndeliusCaseReferenceId,
       sarCaseReferenceNumber,
@@ -187,6 +191,7 @@ class GeneratePdfService {
 
   fun addInternalCoverPage(
     document: Document,
+    subjectName: String,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
@@ -199,7 +204,8 @@ class GeneratePdfService {
     val coverpageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
     coverpageText.add(Text("\u00a0\n").setFontSize(180f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-    document.add(coverpageText)
+    document.add(coverpageText).setTextAlignment(TextAlignment.CENTER)
+    document.add(Paragraph("Name: $subjectName")).setTextAlignment(TextAlignment.CENTER)
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
@@ -223,6 +229,7 @@ class GeneratePdfService {
   fun addExternalCoverPage(
     pdfDocument: PdfDocument,
     document: Document,
+    subjectName: String,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
@@ -235,6 +242,7 @@ class GeneratePdfService {
     coverpageText.add(Text("\u00a0\n").setFontSize(180f))
     coverpageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
     document.add(coverpageText)
+    document.add(Paragraph("Name: $subjectName").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
   }

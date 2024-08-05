@@ -38,7 +38,7 @@ class GeneratePdfServiceTest(
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
@@ -47,7 +47,7 @@ class GeneratePdfServiceTest(
         val testResponseObject: LinkedHashMap<String, Any> = linkedMapOf("content" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()))
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val result = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mockStream)
+        val result = generatePdfService.execute(testResponseObject, "", "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mockStream)
 
         Assertions.assertThat(result).isEqualTo(mockStream)
       }
@@ -58,7 +58,7 @@ class GeneratePdfServiceTest(
         Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject).isEqualTo(emptyMap<Any, Any>())
 
-        val stream = generatePdfService.execute(testResponseObject, "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+        val stream = generatePdfService.execute(testResponseObject, "", "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
@@ -126,13 +126,14 @@ class GeneratePdfServiceTest(
             )
           generatePdfService.addInternalCoverPage(
             document = coverPageDocument,
+            subjectName = "LASTNAME, Firstname",
             nomisId = "mockNomisNumber",
             ndeliusCaseReferenceId = null,
             sarCaseReferenceNumber = "mockCaseReference",
             dateFrom = LocalDate.now(),
             dateTo = LocalDate.now(),
             dataFromServices = testDataFromServices,
-            numberOfPagesWithoutCoverpage,
+            numPages = numberOfPagesWithoutCoverpage,
           )
           coverPageDocument.close()
           val fullDocument = PdfDocument(fullDocumentWriter)
@@ -153,6 +154,7 @@ class GeneratePdfServiceTest(
           val text = PdfTextExtractor.getTextFromPage(page)
           Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
           Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+          Assertions.assertThat(text).contains("Name: LASTNAME, Firstname")
           Assertions.assertThat(text).contains("Total Pages: 3")
         }
 
@@ -175,6 +177,22 @@ class GeneratePdfServiceTest(
 
           Assertions.assertThat(text).contains("CONTENTS")
           Assertions.assertThat(text).contains("INTERNAL ONLY")
+        }
+
+        it("adds external coverpage for recipient to a PDF") {
+          val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+          val mockPdfDocument = PdfDocument(writer)
+          val mockDocument = Document(mockPdfDocument)
+          generatePdfService.addExternalCoverPage(mockPdfDocument, mockDocument, "LASTNAME, FIRSTNAME", "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now())
+          mockDocument.close()
+
+          val reader = PdfDocument(PdfReader("dummy.pdf"))
+          val page = reader.getPage(2)
+          val text = PdfTextExtractor.getTextFromPage(page)
+
+          Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+          Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+          Assertions.assertThat(text).contains("Name: LASTNAME, FIRSTNAME")
         }
       }
 
@@ -333,8 +351,8 @@ class GeneratePdfServiceTest(
             "fake-service-name-2" to mapOf("fake-prisoner-search-property-eg-age" to "dummy age", "fake-prisoner-search-property-eg-name" to "dummy name"),
           )
         generatePdfService.addInternalContentsPage(pdfDocument = mockPdfDocument, document = mockDocument, dataFromServices = testDataFromServices)
-        generatePdfService.addExternalCoverPage(pdfDocument = mockPdfDocument, document = mockDocument, nomisId = "mockNomisNumber", ndeliusCaseReferenceId = null, sarCaseReferenceNumber = "mockCaseReference", dateFrom = LocalDate.now(), dateTo = LocalDate.now())
-        mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "testHeader", "123456"))
+        generatePdfService.addExternalCoverPage(pdfDocument = mockPdfDocument, document = mockDocument, subjectName = "LASTNAME, Firstname", nomisId = "mockNomisNumber", ndeliusCaseReferenceId = null, sarCaseReferenceNumber = "mockCaseReference", dateFrom = LocalDate.now(), dateTo = LocalDate.now())
+        mockPdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, CustomHeaderEventHandler(mockPdfDocument, mockDocument, "mockNomisNumber", "LASTNAME, Firstname"))
         generatePdfService.addData(mockPdfDocument, mockDocument, testContentObject)
         val numPages = mockPdfDocument.numberOfPages
         generatePdfService.addRearPage(mockPdfDocument, mockDocument, numPages)
@@ -346,13 +364,14 @@ class GeneratePdfServiceTest(
         val coverPageDocument = Document(coverPage)
         generatePdfService.addInternalCoverPage(
           document = coverPageDocument,
+          subjectName = "LASTNAME, Firstname",
           nomisId = "mockNomisNumber",
           ndeliusCaseReferenceId = null,
           sarCaseReferenceNumber = "mockCaseReference",
           dateFrom = LocalDate.now(),
           dateTo = LocalDate.now(),
           dataFromServices = testDataFromServices,
-          numPages,
+          numPages = numPages,
         )
         coverPageDocument.close()
         val fullDocument = PdfDocument(fullDocumentWriter)
@@ -368,10 +387,18 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(fullDocument.numberOfPages).isEqualTo(5)
         fullDocument.close()
         val reader = PdfDocument(PdfReader("dummy.pdf"))
-        val page = reader.getPage(1)
-        val text = PdfTextExtractor.getTextFromPage(page)
-        Assertions.assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
-        Assertions.assertThat(text).contains("NOMIS ID: mockNomisNumber")
+
+        val coverpage = reader.getPage(1)
+        val coverpageText = PdfTextExtractor.getTextFromPage(coverpage)
+        val dataPage = reader.getPage(4)
+        val dataPageText = PdfTextExtractor.getTextFromPage(dataPage)
+        val expectedHeaderSubjectName = "Name: LASTNAME, Firstname"
+        val expectedHeaderSubjectId = "ID: mockNomisNumber"
+
+        Assertions.assertThat(coverpageText).contains("SUBJECT ACCESS REQUEST REPORT")
+        Assertions.assertThat(coverpageText).contains("NOMIS ID: mockNomisNumber")
+        Assertions.assertThat(dataPageText).contains(expectedHeaderSubjectName)
+        Assertions.assertThat(dataPageText).contains(expectedHeaderSubjectId)
       }
     }
 

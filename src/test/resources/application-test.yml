@@ -11,6 +11,12 @@ services:
     username: mock-username
     password: mock-password
 
+  prison-api:
+    base-url: http://localhost:4001
+
+  ndelius-api:
+    base-url: http://localhost:4002
+
   document-storage:
     base-url: http://localhost:4040
 

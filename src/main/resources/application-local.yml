@@ -1,8 +1,14 @@
 services:
   hmpps-auth:
     base-url: https://sign-in-dev.hmpps.service.justice.gov.uk
-    username: clientid # until we get a client seeded
-    password: clientsecret
+    username: ${SYSTEM_CLIENT_ID}
+    password: ${SYSTEM_CLIENT_SECRET}
+
+  prison-api:
+    base-url: https://prison-api-dev.prison.service.justice.gov.uk
+
+  probation-api:
+    base-url: https://subject-access-requests-and-delius-dev.hmpps.service.justice.gov.uk
 
   sar-api:
     base-url: http://localhost:8080
