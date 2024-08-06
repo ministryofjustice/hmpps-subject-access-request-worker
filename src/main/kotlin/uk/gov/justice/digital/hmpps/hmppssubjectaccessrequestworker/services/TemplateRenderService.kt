@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 
+import com.github.jknack.handlebars.Handlebars
 import com.github.mustachejava.DefaultMustacheFactory
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.DateConversionHelper
 import java.io.StringReader
 import java.io.StringWriter
 
@@ -25,11 +27,11 @@ class TemplateRenderService {
   }
 
   fun renderServiceTemplate(serviceName: String, serviceData: Any?): String? {
-    val mf = DefaultMustacheFactory()
+    val handlebars = Handlebars()
+    handlebars.registerHelpers(TemplateHelpers())
     val serviceTemplate = getServiceTemplate(serviceName) ?: return null
-    val compiledServiceTemplate = mf.compile(StringReader(serviceTemplate), "serviceTemplate.$serviceName")
-    val renderedServiceTemplate = StringWriter()
-    compiledServiceTemplate.execute(renderedServiceTemplate, serviceData).flush()
+    val compiledServiceTemplate = handlebars.compileInline(serviceTemplate)
+    val renderedServiceTemplate = compiledServiceTemplate.apply(serviceData)
     return renderedServiceTemplate.toString()
   }
 
@@ -49,5 +51,16 @@ class TemplateRenderService {
     val renderedServiceTemplate = renderServiceTemplate(serviceName, serviceData) ?: return null
     val renderedStyleTemplate = renderStyleTemplate(renderedServiceTemplate)
     return renderedStyleTemplate
+  }
+}
+
+class TemplateHelpers {
+  fun formatDate(input: String): String {
+    return DateConversionHelper().convertDates(input)
+  }
+
+  fun optionalValue(input: String?): String {
+    if (input == null || input == "") return "No Data Held"
+    return input
   }
 }

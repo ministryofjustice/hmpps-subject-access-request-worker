@@ -17,6 +17,7 @@ dependencies {
   implementation("com.itextpdf:html2pdf:5.0.4")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("com.github.spullara.mustache.java:compiler:0.9.5")
+  implementation("com.github.jknack:handlebars:4.4.0")
   implementation("org.apache.commons:commons-lang3:3.12.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:6.34.0")
