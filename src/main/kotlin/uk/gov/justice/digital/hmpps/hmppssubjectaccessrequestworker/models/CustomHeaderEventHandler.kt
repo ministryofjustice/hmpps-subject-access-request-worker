@@ -11,7 +11,7 @@ import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.properties.TextAlignment
 
-class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val subjectId: String, private val subjectName: String) : IEventHandler {
+class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val subjectIdLine: String, private val subjectName: String) : IEventHandler {
 
   override fun handleEvent(currentEvent: Event) {
     val docEvent = currentEvent as PdfDocumentEvent
@@ -25,7 +25,7 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
       rightHeaderText = """
           |Name: $subjectName
           |
-          |ID: $subjectId
+          |$subjectIdLine
       """.trimMargin()
     }
     val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
