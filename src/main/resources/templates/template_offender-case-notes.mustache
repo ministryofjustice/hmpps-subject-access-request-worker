@@ -2,24 +2,21 @@
 {{#.}}
     <h2>Case notes</h2>
     <table>
-        <tr><td>Type</td><td>OMIC</td></tr>
-        <tr><td>Sub type</td><td>OPEN_COMM</td></tr>
-        <tr><td>Creation date time</td><td>30 January 2024, 3:00:59pm</td></tr>
-        <tr><td>Author name</td><td>David Middleton</td></tr>
-        <tr><td>Creation date time</td><td>30 January 2024, 3:00:59pm</td></tr>
-        <tr><td>Text</td><td>Testing<br>Testing</td></tr>
+        <tr><td>Type</td><td>{{ type }}</td></tr>
+        <tr><td>Sub type</td><td>{{ subType }}</td></tr>
+        <tr><td>Creation date time</td><td>{{ creationDateTime }}</td></tr>
+        <tr><td>Author name</td><td>{{ authorName }}</td></tr>
+        <tr><td>Text</td><td>{{{ text }}}</td></tr>
     </table>
 
     <h3>Amendments</h3>
+    {{#amendments}}
     <table>
-        <tr><td>Type</td><td>OMIC</td></tr>
-        <tr><td>Sub type</td><td>OPEN_COMM</td></tr>
-        <tr><td>Creation date time</td><td>30 January 2024, 3:00:59pm</td></tr>
-        <tr><td>Author name</td><td>David Middleton</td></tr>
-        <tr><td>Creation date time</td><td>30 January 2024, 3:00:59pm</td></tr>
-        <tr><td>Text</td><td>Testing<br>Testing</td></tr>
+        <tr><td>Creation date time</td><td>{{ creationDateTime }}</td></tr>
+        <tr><td>Author Name</td><td>{{ authorName }}</td></tr>
+        <tr><td>Additional note text</td><td>{{{ additionalNoteText }}}</td></tr>
     </table>
-
+    {{/amendments}}
 {{/.}}
 
 <!--            <div class="govuk-summary-list__row">-->
