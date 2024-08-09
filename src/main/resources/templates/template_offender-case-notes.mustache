@@ -1,0 +1,20 @@
+<h1>Offender case notes</h1>
+{{#.}}
+    <h2>Case notes</h2>
+    <table>
+        <tr><td>Type</td><td>{{ optionalValue type }}</td></tr>
+        <tr><td>Sub type</td><td>{{ optionalValue subType }}</td></tr>
+        <tr><td>Creation date time</td><td>{{ optionalValue (formatDate creationDateTime) }}</td></tr>
+        <tr><td>Author name</td><td>{{ optionalValue authorName }}</td></tr>
+        <tr><td>Text</td><td>{{{ optionalValue text }}}</td></tr>
+    </table>
+
+    {{#amendments}}
+    <h3>Amendments</h3>
+    <table>
+        <tr><td>Creation date time</td><td>{{ optionalValue (formatDate creationDateTime) }}</td></tr>
+        <tr><td>Author Name</td><td>{{ optionalValue authorName }}</td></tr>
+        <tr><td>Additional note text</td><td>{{{ optionalValue additionalNoteText }}}</td></tr>
+    </table>
+    {{/amendments}}
+{{/.}}

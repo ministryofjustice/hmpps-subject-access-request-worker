@@ -140,23 +140,10 @@ class GeneratePdfService {
 
   fun addData(pdfDocument: PdfDocument, document: Document, content: LinkedHashMap<String, Any>) {
     content.forEach { entry ->
-      log.info("Compiling data from " + entry.key)
-
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-      val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-      val headerParagraph = Paragraph().setFixedLeading(DATA_LINE_SPACING)
-      val boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
       log.info("Compiling data from " + entry.key)
-      headerParagraph.add(
-        Text("${HeadingHelper.format(entry.key)}\n")
-          .setFont(boldFont)
-          .setFontSize(DATA_HEADER_FONT_SIZE),
-      )
-      document.add(headerParagraph)
 
-      val processedData = preProcessData(entry.value)
-
-      val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = processedData)
+      val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = entry.value)
       if (renderedTemplate !== null && renderedTemplate !== "") {
         // Template found - render using the data
         val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
@@ -165,10 +152,21 @@ class GeneratePdfService {
         }
       } else {
         // No template rendered, fallback to old YAML layout
-        val fallbackRender = renderAsBasicYaml(serviceData = processedData)
-        val contentParagraph = Paragraph().setFixedLeading(DATA_LINE_SPACING)
-        contentParagraph.add(fallbackRender).setFont(font).setFontSize(DATA_FONT_SIZE)
-        document.add(contentParagraph)
+        document.add(
+          Paragraph()
+            .setFixedLeading(DATA_LINE_SPACING)
+            .add(Text("${HeadingHelper.format(entry.key)}\n"))
+            .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
+            .setFontSize(DATA_HEADER_FONT_SIZE),
+        )
+        val processedData = preProcessData(entry.value)
+        document.add(
+          Paragraph()
+            .setFixedLeading(DATA_LINE_SPACING)
+            .add(renderAsBasicYaml(serviceData = processedData))
+            .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
+            .setFontSize(DATA_FONT_SIZE),
+        )
       }
     }
     log.info("Added data to PDF")
