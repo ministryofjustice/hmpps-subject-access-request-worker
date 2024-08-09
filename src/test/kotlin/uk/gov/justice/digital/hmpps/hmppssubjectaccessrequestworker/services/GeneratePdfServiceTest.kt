@@ -196,41 +196,6 @@ class GeneratePdfServiceTest(
         }
       }
 
-//      it("renders a template if a template exists") {
-//        val testServiceData: ArrayList<Any> = arrayListOf(
-//          mapOf(
-//            "testKey" to "testValue",
-//            "moreData" to mapOf(
-//              "nestedKey" to "nestedValue",
-//            ),
-//            "arrayData" to arrayListOf(
-//              "arrayValue1-1",
-//              "arrayValue1-2",
-//            ),
-//          ),
-//          mapOf(
-//            "testKey" to "testValue2",
-//            "moreData" to mapOf(
-//              "nestedKey" to "nestedValue2",
-//            ),
-//            "arrayData" to arrayListOf(
-//              "arrayValue2-1",
-//              "arrayValue2-2",
-//            ),
-//          ),
-//        )
-//        val testResponseObject: LinkedHashMap<String, Any> = linkedMapOf("test-service" to testServiceData)
-//        val writer = PdfWriter(FileOutputStream("dummy-template.pdf"))
-//        val mockPdfDocument = PdfDocument(writer)
-//        val mockDocument = Document(mockPdfDocument)
-//        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
-//        mockDocument.close()
-//        val reader = PdfDocument(PdfReader("dummy-template.pdf"))
-//        val page = reader.getPage(2)
-//        val text = PdfTextExtractor.getTextFromPage(page)
-//        Assertions.assertThat(text).contains("Test Data")
-//      }
-
       it("renders a template if a template exists") {
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
