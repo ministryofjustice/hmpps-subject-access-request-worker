@@ -68,5 +68,37 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>Array Data:</td><td><ul><li>arrayValue2-1</li><li>arrayValue2-2</li></ul></td>")
       }
     }
+
+    describe("keyworkerTemplate") {
+      it("renders a template given a keyworker template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "offenderKeyworkerId" to 12912,
+            "offenderNo" to "A1234AA",
+            "staffId" to 485634,
+            "assignedDateTime" to "2019-12-03T11:00:58.21264",
+            "active" to false,
+            "allocationReason" to "MANUAL",
+            "allocationType" to "M",
+            "userId" to "JROBERTSON_GEN",
+            "prisonId" to "MDI",
+            "expiryDateTime" to "2020-12-02T16:31:01",
+            "deallocationReason" to "RELEASED",
+            "creationDateTime" to "2019-12-03T11:00:58.213527",
+            "createUserId" to "JROBERTSON_GEN",
+            "modifyDateTime" to "2020-12-02T16:31:32.128317",
+            "modifyUserId" to "JROBERTSON_GEN"
+          ),
+        )
+        val renderedStyleTemplate = templateRenderService.renderTemplate("keyworker-api", testServiceData)
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<td>Offender Keyworker ID</td><td>12912</td>")
+        renderedStyleTemplate.shouldContain("<td>Allocation reason</td><td>MANUAL</td>")
+        renderedStyleTemplate.shouldContain("<td>Creation date</td><td>2019-12-03T11:00:58.213527</td>")
+      }
+    }
   },
 )
