@@ -59,18 +59,8 @@ class TemplateHelpers {
     return DateConversionHelper().convertDates(input)
   }
 
-  fun optionalString(input: String?): String {
+  fun optionalValue(input: Any?): Any {
     if (input == null || input == "") return "No Data Held"
-    return input
-  }
-
-  fun optionalInt(input: Int?): Any {
-    if (input == null) return "No Data Held"
-    return input
-  }
-
-  fun optionalBool(input: Boolean?): Any {
-    if (input == null) return "No Data Held"
     return input
   }
 }
