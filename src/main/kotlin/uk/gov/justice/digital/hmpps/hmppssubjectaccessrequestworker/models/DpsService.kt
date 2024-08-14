@@ -5,4 +5,5 @@ class DpsService(
   val name: String? = null,
   var orderPosition: Int? = null,
   var businessName: String? = null,
+  var content: Any? = null,
 )
