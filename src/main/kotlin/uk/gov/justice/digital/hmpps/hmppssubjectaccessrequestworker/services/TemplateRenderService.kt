@@ -65,12 +65,12 @@ class TemplateHelpers {
   }
 
   fun optionalInt(input: Int?): Any {
-    if (input == null ) return "No Data Held"
+    if (input == null) return "No Data Held"
     return input
   }
 
   fun optionalBool(input: Boolean?): Any {
-    if (input == null ) return "No Data Held"
+    if (input == null) return "No Data Held"
     return input
   }
 }

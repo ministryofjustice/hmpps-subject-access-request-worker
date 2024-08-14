@@ -88,7 +88,7 @@ class TemplateRenderServiceTest : DescribeSpec(
             "creationDateTime" to "2019-12-03T11:00:58.213527",
             "createUserId" to "JROBERTSON_GEN",
             "modifyDateTime" to "2020-12-02T16:31:32.128317",
-            "modifyUserId" to "JROBERTSON_GEN"
+            "modifyUserId" to "JROBERTSON_GEN",
           ),
         )
         val renderedStyleTemplate = templateRenderService.renderTemplate("keyworker-api", testServiceData)
