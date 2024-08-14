@@ -5186,6 +5186,11 @@
   .govuk-summary-list__row {
     border-bottom: 1px solid #b1b4b6;
   }
+  @media (max-width: 40.0525em) {
+    .govuk-summary-list__row {
+      margin-bottom: 15px;
+    }
+  }
   @media (min-width: 0em) {
     .govuk-summary-list__row {
       display: table-row;
@@ -5282,7 +5287,7 @@
       border: 0;
     }
   }
-  @media (min-width: 40.0625em) {
+  @media (min-width: 0em) {
     .govuk-summary-list__actions-list-item {
       margin-left: 10px;
       padding-left: 10px;
@@ -5303,7 +5308,7 @@
   .govuk-summary-list--no-border .govuk-summary-list__row {
     border: 0;
   }
-  @media (min-width: 40.0625em) {
+  @media (min-width: 0em) {
     .govuk-summary-list--no-border .govuk-summary-list__key,
     .govuk-summary-list--no-border .govuk-summary-list__value,
     .govuk-summary-list--no-border .govuk-summary-list__actions {
@@ -5314,7 +5319,7 @@
   .govuk-summary-list__row--no-border {
     border: 0;
   }
-  @media (min-width: 40.0625em) {
+  @media (min-width: 0em) {
     .govuk-summary-list__row--no-border .govuk-summary-list__key,
     .govuk-summary-list__row--no-border .govuk-summary-list__value,
     .govuk-summary-list__row--no-border .govuk-summary-list__actions {
@@ -8023,182 +8028,376 @@
 </style>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full-width">
-
-        <h1 class="govuk-heading-xl">
-            Offender case notes
-        </h1>
-
-        {{#.}}
-        <!--Start of first section-->
-        <h2 class="govuk-heading-l">
-            Case notes
-        </h2>
-
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Type
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    OMIC
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Sub type
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    OPEN_COMM
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Creation date time
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    30 January 2024, 3:00:59pm
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Author name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    David Middleton
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Text
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <p class="govuk-body">Testing</p>
-                    <p class="govuk-body">Testing</p>
-                </dd>
-            </div>
-        </dl>
-
-        <h3 class="govuk-heading-m">
-            Amendments
-        </h3>
-
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Creation date time
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    30 January 2024, 2:54:46pm
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Author name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    David Middleton
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Additional note text
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <p class="govuk-body">More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added. More text added.</p>
-                    <p class="govuk-body">More text added. More text added. More text added.</p>
-                </dd>
-            </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Creation date time
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    30 January 2024, 2:59:46pm
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Author name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    David Middleton
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Additional note text
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum sapien et odio suscipit, vitae scelerisque velit vehicula. Nulla mauris purus, semper eu ipsum vel, sollicitudin fringilla est. Ut dui turpis, malesuada non blandit vel, imperdiet ac libero. Nullam aliquam interdum augue nec placerat. Duis euismod, arcu nec dapibus efficitur, eros nisl mollis nibh, semper congue nunc ligula quis purus. Vestibulum in rutrum nibh. Nunc a lectus a eros tristique pharetra et quis velit. Maecenas efficitur justo quis magna porta, ut dapibus enim dapibus. Phasellus vitae turpis at dolor tincidunt cursus non non diam. Mauris accumsan quam mauris, quis aliquam turpis condimentum ac. Quisque sollicitudin cursus sem. Sed ultrices accumsan ipsum, sed auctor ex.</p>
-                    <p class="govuk-body">Praesent dapibus arcu vel metus mollis, ut pulvinar purus sagittis. Curabitur mi ligula, luctus at hendrerit in, vestibulum a orci. Proin lorem orci, sagittis vel molestie sit amet, fermentum in libero. Donec id tortor augue. Aenean vulputate vel nibh sit amet pellentesque. Nam laoreet sodales porttitor. Pellentesque condimentum est ut eros tempus pretium. Vestibulum eget consequat orci. Curabitur pellentesque sem eget neque ullamcorper, vel condimentum neque pellentesque. Nullam fringilla feugiat finibus. Fusce posuere est nec leo viverra sollicitudin. Proin facilisis nibh in ante dignissim volutpat. Donec vitae leo ultricies, suscipit turpis vitae, ultricies augue. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                    <p class="govuk-body">Proin efficitur sed lectus et sagittis. Aliquam semper nibh quis molestie cursus. Donec finibus velit ut dictum pretium. Maecenas bibendum odio nec ex sodales, at dapibus dui maximus. Nam ullamcorper est et risus ullamcorper, eu consequat lacus posuere. Cras sit amet est ultrices, maximus neque et, luctus magna. Praesent dignissim augue dignissim, dictum massa id, gravida sapien. Nunc a dolor rutrum, porttitor felis eu, suscipit sapien. Donec semper leo a egestas tempor. Duis non ultricies ex. Fusce orci libero, dignissim at diam pellentesque, pulvinar viverra sem. Integer vel eleifend tortor, ut sagittis lorem. Vivamus rhoncus varius sem, eu sollicitudin nibh laoreet a\r\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum sapien et odio suscipit, vitae scelerisque velit vehicula. Nulla mauris purus, semper eu ipsum vel, sollicitudin fringilla est. Ut dui turpis, malesuada non blandit vel, imperdiet ac libero. Nullam aliquam interdum augue nec placerat. Duis euismod, arcu nec dapibus efficitur, eros nisl mollis nibh, semper congue nunc ligula quis purus. Vestibulum in rutrum nibh. Nunc a lectus a eros tristique pharetra et quis velit. Maecenas efficitur justo quis magna porta, ut dapibus enim dapibus. Phasellus vitae turpis at dolor tincidunt cursus non non diam. Mauris accumsan quam mauris, quis aliquam turpis condimentum ac. Quisque sollicitudin cursus sem. Sed ultrices accumsan ipsum, sed auctor ex.\r\n\r\nPraesent dapibus arcu vel metus mollis, ut pulvinar purus sagittis. Curabitur mi ligula, luctus at hendrerit in, vestibulum a orci. Proin lorem orci, sagittis vel molestie sit amet, fermentum in libero. Donec id tortor augue. Aenean vulputate vel nibh sit amet pellentesque. Nam laoreet sodales porttitor. Pellentesque condimentum est ut eros tempus pretium. Vestibulum eget consequat orci. Curabitur pellentesque sem eget neque ullamcorper, vel condimentum neque pellentesque. Nullam fringilla feugiat finibus. Fusce posuere est nec leo viverra sollicitudin. Proin facilisis nibh in ante dignissim volutpat. Donec vitae leo ultricies, suscipit turpis vitae, ultricies augue. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                    <p class="govuk-body">Proin efficitur sed lectus et sagittis. Aliquam se</p>
-                </dd>
-            </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Creation date time
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    30 January 2024, 3:00:13pm
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Author name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    David Middleton
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Additional note text
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum sapien et odio suscipit, vitae scelerisque velit vehicula. Nulla mauris purus, semper eu ipsum vel, sollicitudin fringilla est. Ut dui turpis, malesuada non blandit vel, imperdiet ac libero. Nullam aliquam interdum augue nec placerat. Duis euismod, arcu nec dapibus efficitur, eros nisl mollis nibh, semper congue nunc ligula quis purus. Vestibulum in rutrum nibh. Nunc a lectus a eros tristique pharetra et quis velit. Maecenas efficitur justo quis magna porta, ut dapibus enim dapibus. Phasellus vitae turpis at dolor tincidunt cursus non non diam. Mauris accumsan quam mauris, quis aliquam turpis condimentum ac. Quisque sollicitudin cursus sem. Sed ultrices accumsan ipsum, sed auctor ex.</p>
-                    <p class="govuk-body">Praesent dapibus arcu vel metus mollis, ut pulvinar purus sagittis. Curabitur mi ligula, luctus at hendrerit in, vestibulum a orci. Proin lorem orci, sagittis vel molestie sit amet, fermentum in libero. Donec id tortor augue. Aenean vulputate vel nibh sit amet pellentesque. Nam laoreet sodales porttitor. Pellentesque condimentum est ut eros tempus pretium. Vestibulum eget consequat orci. Curabitur pellentesque sem eget neque ullamcorper, vel condimentum neque pellentesque. Nullam fringilla feugiat finibus. Fusce posuere est nec leo viverra sollicitudin. Proin facilisis nibh in ante dignissim volutpat. Donec vitae leo ultricies, suscipit turpis vitae, ultricies augue. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                    <p class="govuk-body">Proin efficitur sed lectus et sagittis. Aliquam semper nibh quis molestie cursus. Donec finibus velit ut dictum pretium. Maecenas bibendum odio nec ex sodales, at dapibus dui maximus. Nam ullamcorper est et risus ullamcorper, eu consequat lacus posuere. Cras sit amet est ultrices, maximus neque et, luctus magna. Praesent dignissim augue dignissim, dictum massa id, gravida sapien. Nunc a dolor rutrum, porttitor felis eu, suscipit sapien. Donec semper leo a egestas tempor. Duis non ultricies ex. Fusce orci libero, dignissim at diam pellentesque, pulvinar viverra sem. Integer vel eleifend tortor, ut sagittis lorem. Vivamus rhoncus varius sem, eu sollicitudin nibh laoreet a</p>
-                </dd>
-            </div>
-        </dl>
-
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Creation date time
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    30 January 2024, 3:01:21pm
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Author name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    David Middleton
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Additional note text
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum sapien et odio suscipit, vitae scelerisque velit vehicula. Nulla mauris purus, semper eu ipsum vel, sollicitudin fringilla est. Ut dui turpis, malesuada non blandit vel, imperdiet ac libero. Nullam aliquam interdum augue nec placerat. Duis euismod, arcu nec dapibus efficitur, eros nisl mollis nibh, semper congue nunc ligula quis purus. Vestibulum in rutrum nibh. Nunc a lectus a eros tristique pharetra et quis velit. Maecenas efficitur justo quis magna porta, ut dapibus enim dapibus. Phasellus vitae turpis at dolor tincidunt cursus non non diam. Mauris accumsan quam mauris, quis aliquam turpis condimentum ac. Quisque sollicitudin cursus sem. Sed ultrices accumsan ipsum, sed auctor ex.</p>
-                    <p class="govuk-body">Praesent dapibus arcu vel metus mollis, ut pulvinar purus sagittis. Curabitur mi ligula, luctus at hendrerit in, vestibulum a orci. Proin lorem orci, sagittis vel molestie sit amet, fermentum in libero. Donec id tortor augue. Aenean vulputate vel nibh sit amet pellentesque. Nam laoreet sodales porttitor. Pellentesque condimentum est ut eros tempus pretium. Vestibulum eget consequat orci. Curabitur pellentesque sem eget neque ullamcorper, vel condimentum neque pellentesque. Nullam fringilla feugiat finibus. Fusce posuere est nec leo viverra sollicitudin. Proin facilisis nibh in ante dignissim volutpat. Donec vitae leo ultricies, suscipit turpis vitae, ultricies augue. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-                    <p class="govuk-body">Proin efficitur sed lectus et sagittis. Aliquam semper nibh quis molestie cursus. Donec finibus velit ut dictum pretium. Maecenas bibendum odio nec ex sodales, at dapibus dui maximus. Nam ullamcorper est et risus ullamcorper, eu consequat lacus posuere. Cras sit amet est ultrices, maximus neque et, luctus magna. Praesent dignissim augue dignissim, dictum massa id, gravida sapien. Nunc a dolor rutrum, porttitor felis eu, suscipit sapien. Donec semper leo a egestas tempor. Duis non ultricies ex. Fusce orci libero, dignissim at diam pellentesque, pulvinar viverra sem. Integer vel eleifend tortor, ut sagittis lorem. Vivamus rhoncus varius sem, eu sollicitudin nibh laoreet a</p>
-                </dd>
-            </div>
-        </dl>
-        {{/.}}
-        <hr class="govuk-section-break govuk-section-break--xl">
-    </div>
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-xl">
+      Create and vary a licence
+    </h1>
+    <h2 class="govuk-heading-l">
+      Licences
+    </h2>
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Kind
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Variation
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          ID
+        </dt>
+        <dd class="govuk-summary-list__value">
+          157
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Type code
+        </dt>
+        <dd class="govuk-summary-list__value">
+          AP
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Version
+        </dt>
+        <dd class="govuk-summary-list__value">
+          2.1
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Status code
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Active
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Nomis Id
+        </dt>
+        <dd class="govuk-summary-list__value">
+          A8272DY
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Booking Id
+        </dt>
+        <dd class="govuk-summary-list__value">
+          1201812
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Appointment person
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Test
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Appointment time
+        </dt>
+        <dd class="govuk-summary-list__value">
+          No data held
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Appointment time type
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Immediate upon release
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Appointment address
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Test, , Test, Test, TEST
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Appointment contact
+        </dt>
+        <dd class="govuk-summary-list__value">
+          00000000000
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Approved date
+        </dt>
+        <dd class="govuk-summary-list__value">
+          26 July 2024 2:49:51pm
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Approved by username
+        </dt>
+        <dd class="govuk-summary-list__value">
+          CVL_ACO
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Submitted date
+        </dt>
+        <dd class="govuk-summary-list__value">
+          26 July 2024 2:47:02pm
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Approved by name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Tim Harrison
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Superseded date
+        </dt>
+        <dd class="govuk-summary-list__value">
+          No data held
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Date created
+        </dt>
+        <dd class="govuk-summary-list__value">
+          26 July 2024 2:44:07pm
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Created by username
+        </dt>
+        <dd class="govuk-summary-list__value">
+          CVL_COM
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Date last updated
+        </dt>
+        <dd class="govuk-summary-list__value">
+          26 July 2024 2:50:09pm
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Updated by username
+        </dt>
+        <dd class="govuk-summary-list__value">
+          CVL_COM
+        </dd>
+      </div>
+    </dl>
+    <hr class="govuk-section-break govuk-section-break--m">
+    <table class="govuk-table">
+      <caption class="govuk-table__caption govuk-table__caption--m">Standard licence conditions</caption>
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Code</th>
+        <th scope="col" class="govuk-table__header">Text</th>
+      </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">9ce9d594-e346-4785-9642-c87e764bee37</td>
+        <td class="govuk-table__cell">Be of good behaviour and not behave in a way which undermines the purpose of the licence period.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">3b19fdb0-4ca3-4615-9fdd-61fabc1587af</td>
+        <td class="govuk-table__cell">Not commit any offence.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">3361683a-504a-4357-ae22-6aa01b370b4a</td>
+        <td class="govuk-table__cell">Keep in touch with the supervising officer in accordance with instructions given by the supervising officer.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">9fc04065-df29-4bda-9b1d-bced8335c356</td>
+        <td class="govuk-table__cell">Receive visits from the supervising officer in accordance with any instructions given by the supervising officer.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">e670ac69-eda2-4b04-a0a1-a3c8492fe1e6</td>
+        <td class="govuk-table__cell">Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">78A5F860-4791-48F2-B707-D6D4413850EE</td>
+        <td class="govuk-table__cell">Tell the supervising officer if you use a name which is different to the name or names which appear on your licence.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">6FA6E492-F0AB-4E76-B868-63813DB44696</td>
+        <td class="govuk-table__cell">Tell the supervising officer if you change or add any contact details, including phone number or email.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">88069445-08cb-4f16-915f-5a162d085c26</td>
+        <td class="govuk-table__cell">Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work.</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">7d416906-0e94-4fde-ae86-8339d339ccb7</td>
+        <td class="govuk-table__cell">Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal.</td>
+      </tr>
+      </tbody>
+    </table>
+    <hr class="govuk-section-break govuk-section-break--m">
+    <h3 class="govuk-heading-m">
+      Standard pss conditions
+    </h3>
+    <p class="govuk-body">
+      No data held
+    </p>
+    <hr class="govuk-section-break govuk-section-break--m">
+    <table class="govuk-table">
+      <caption class="govuk-table__caption govuk-table__caption--m">Additional licence conditions</caption>
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Code</th>
+        <th scope="col" class="govuk-table__header">Version</th>
+        <th scope="col" class="govuk-table__header">Category</th>
+        <th scope="col" class="govuk-table__header">Expanded text</th>
+        <th scope="col" class="govuk-table__header">Data</th>
+        <th scope="col" class="govuk-table__header">Upload summary</th>
+        <th scope="col" class="govuk-table__header">Ready to submit</th>
+      </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd</td>
+        <td class="govuk-table__cell">2.1</td>
+        <td class="govuk-table__cell">Residence at a specific place</td>
+        <td class="govuk-table__cell">You must reside overnight within West Midlands probation region while of no fixed abode, unless otherwise approved by your supervising officer.</td>
+        <td class="govuk-table__cell">
+          <p class="govuk-body">Field: Probation region</p>
+          <p class="govuk-body">View: West Midlands</p>
+        </td>
+        <td class="govuk-table__cell">No data held</td>
+        <td class="govuk-table__cell">True</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">b72fdbf2-0dc9-4e7f-81e4-c2ccb5d1bc90</td>
+        <td class="govuk-table__cell">2.1</td>
+        <td class="govuk-table__cell">Contact with a person</td>
+        <td class="govuk-table__cell">Attend all appointments arranged for you with a psychiatrist / psychologist / medical practitioner, unless otherwise approved by your supervising officer.</td>
+        <td class="govuk-table__cell">No data held</td>
+        <td class="govuk-table__cell">No data held</td>
+        <td class="govuk-table__cell">True</td>
+      </tr>
+      </tbody>
+    </table>
+    <hr class="govuk-section-break govuk-section-break--m">
+    <h3 class="govuk-heading-m">
+      Additional pss conditions
+    </h3>
+    <p class="govuk-body">
+      No data held
+    </p>
+    <hr class="govuk-section-break govuk-section-break--m">
+    <h3 class="govuk-heading-m">
+      Bespoke conditions
+    </h3>
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Text
+        </dt>
+        <dd class="govuk-summary-list__value">
+          test
+        </dd>
+      </div>
+    </dl>
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Created by full name
+        </dt>
+        <dd class="govuk-summary-list__value">
+          CVL COM
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Licence version
+        </dt>
+        <dd class="govuk-summary-list__value">
+          2.0
+        </dd>
+      </div>
+    </dl>
+    <hr class="govuk-section-break govuk-section-break--xl">
+    <table class="govuk-table">
+      <caption class="govuk-table__caption govuk-table__caption--l">Audit events</caption>
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Licence Id</th>
+        <th scope="col" class="govuk-table__header">Event time</th>
+        <th scope="col" class="govuk-table__header">Username</th>
+        <th scope="col" class="govuk-table__header">Fullname</th>
+        <th scope="col" class="govuk-table__header">Event type</th>
+        <th scope="col" class="govuk-table__header">Summary</th>
+        <th scope="col" class="govuk-table__header">Detail</th>
+      </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">156</td>
+        <td class="govuk-table__cell">26 July 2024 9:03:30am</td>
+        <td class="govuk-table__cell">create-and-vary-a-licence-admin-1</td>
+        <td class="govuk-table__cell">CVL COM</td>
+        <td class="govuk-table__cell">USER_EVENT</td>
+        <td class="govuk-table__cell">Licence created for Shaun Pedro</td>
+        <td class="govuk-table__cell">ID 156 type AP status IN_PROGRESS version 2.1 kind HDC</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">156</td>
+        <td class="govuk-table__cell">26 July 2024 9:04:21am</td>
+        <td class="govuk-table__cell">CVL_COM</td>
+        <td class="govuk-table__cell">CVL COM</td>
+        <td class="govuk-table__cell">USER_EVENT</td>
+        <td class="govuk-table__cell">Updated ibnitial appointment details for Shaun Pedro</td>
+        <td class="govuk-table__cell">ID 156 type AP status IN_PROGRESS version 2.1</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">156</td>
+        <td class="govuk-table__cell">26 July 2024 9:04:28am</td>
+        <td class="govuk-table__cell">CVL_COM</td>
+        <td class="govuk-table__cell">CVL COM</td>
+        <td class="govuk-table__cell">USER_EVENT</td>
+        <td class="govuk-table__cell">Updated ibnitial appointment details for Shaun Pedro</td>
+        <td class="govuk-table__cell">ID 156 type AP status IN_PROGRESS version 2.1</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">156</td>
+        <td class="govuk-table__cell">26 July 2024 9:04:33am</td>
+        <td class="govuk-table__cell">CVL_COM</td>
+        <td class="govuk-table__cell">CVL COM</td>
+        <td class="govuk-table__cell">USER_EVENT</td>
+        <td class="govuk-table__cell">Updated ibnitial appointment details for Shaun Pedro</td>
+        <td class="govuk-table__cell">ID 156 type AP status IN_PROGRESS version 2.1</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">156</td>
+        <td class="govuk-table__cell">26 July 2024 9:04:37am</td>
+        <td class="govuk-table__cell">CVL_COM</td>
+        <td class="govuk-table__cell">CVL COM</td>
+        <td class="govuk-table__cell">USER_EVENT</td>
+        <td class="govuk-table__cell">Updated ibnitial appointment details for Shaun Pedro</td>
+        <td class="govuk-table__cell">ID 156 type AP status IN_PROGRESS version 2.1</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
