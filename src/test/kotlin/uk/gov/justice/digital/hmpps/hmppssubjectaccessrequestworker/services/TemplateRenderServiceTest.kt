@@ -97,7 +97,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<td>Offender Keyworker ID</td><td>12912</td>")
         renderedStyleTemplate.shouldContain("<td>Allocation reason</td><td>MANUAL</td>")
-        renderedStyleTemplate.shouldContain("<td>Creation date</td><td>2019-12-03T11:00:58.213527</td>")
+        renderedStyleTemplate.shouldContain("<td>Creation date</td><td>03 December 2019, 11:00:58 am</td>")
       }
     }
   },
