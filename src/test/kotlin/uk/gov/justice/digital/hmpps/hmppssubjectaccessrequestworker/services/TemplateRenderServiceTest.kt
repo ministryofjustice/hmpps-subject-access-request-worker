@@ -125,6 +125,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1208204</td>")
+        renderedStyleTemplate.shouldContain("<td>Next review date</td><td>03 December 2019</td>")
         renderedStyleTemplate.shouldContain("<td>Review time</td><td>03 July 2023, 9:14:25 pm</td>")
         renderedStyleTemplate.shouldContain("<td>Current</td><td>true</td>")
       }
