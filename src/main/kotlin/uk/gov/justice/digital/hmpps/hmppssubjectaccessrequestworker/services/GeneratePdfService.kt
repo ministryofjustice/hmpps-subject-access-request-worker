@@ -152,27 +152,31 @@ class GeneratePdfService {
           for (element in htmlElement) {
             document.add(element as IBlockElement)
           }
-        }
+        } else addYamlLayout(document, service)
       } else {
         // No template rendered, fallback to old YAML layout
-        document.add(
-          Paragraph()
-            .setFixedLeading(DATA_LINE_SPACING)
-            .add(Text("${service.businessName ?: HeadingHelper.format(service.name!!)}\n"))
-            .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
-            .setFontSize(DATA_HEADER_FONT_SIZE),
-        )
-        val processedData = preProcessData(service.content)
-        document.add(
-          Paragraph()
-            .setFixedLeading(DATA_LINE_SPACING)
-            .add(renderAsBasicYaml(serviceData = processedData))
-            .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
-            .setFontSize(DATA_FONT_SIZE),
-        )
+        addYamlLayout(document, service)
       }
     }
     log.info("Added data to PDF")
+  }
+
+  fun addYamlLayout(document: Document, service: DpsService) {
+    document.add(
+      Paragraph()
+        .setFixedLeading(DATA_LINE_SPACING)
+        .add(Text("${service.businessName ?: HeadingHelper.format(service.name!!)}\n"))
+        .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
+        .setFontSize(DATA_HEADER_FONT_SIZE),
+    )
+    val processedData = preProcessData(service.content)
+    document.add(
+      Paragraph()
+        .setFixedLeading(DATA_LINE_SPACING)
+        .add(renderAsBasicYaml(serviceData = processedData))
+        .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
+        .setFontSize(DATA_FONT_SIZE),
+    )
   }
 
   fun renderAsBasicYaml(serviceData: Any?): Text {
