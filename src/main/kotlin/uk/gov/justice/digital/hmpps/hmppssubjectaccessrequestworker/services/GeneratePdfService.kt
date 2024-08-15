@@ -267,7 +267,7 @@ class GeneratePdfService {
 
     val serviceList = Paragraph()
     services.forEach {
-      serviceList.add("\u2022 ${it.businessName}\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
+      serviceList.add("\u2022 ${it.businessName ?: it.name}\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
     }
     document.add(serviceList)
 
@@ -304,7 +304,7 @@ class GeneratePdfService {
         serviceNamesList.add(service.name!!)
       }
     }
-    return "Services: $serviceNamesList"
+    return "Services: ${serviceNamesList.joinToString(separator = ",")}"
   }
 
   fun preProcessData(input: Any?): Any? {
