@@ -20,7 +20,7 @@ class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: 
       if (response != null && response.containsKey("content")) {
         it.content = response["content"]
       } else {
-        it.content = "No Content"
+        it.content = "No Data Held"
       }
     }
     return orderedServices

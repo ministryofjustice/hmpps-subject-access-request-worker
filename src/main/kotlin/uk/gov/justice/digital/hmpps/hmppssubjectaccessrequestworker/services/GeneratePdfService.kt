@@ -142,10 +142,10 @@ class GeneratePdfService {
   fun addData(pdfDocument: PdfDocument, document: Document, services: List<DpsService>) {
     services.forEach { service ->
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-      log.info("Compiling data from " + service.businessName)
+      log.info("Compiling data from ${service.businessName ?: service.name}")
 
       val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
-      if (renderedTemplate !== null && renderedTemplate !== "") {
+      if (renderedTemplate !== null && renderedTemplate !== "" && service.content != "No Data Held") {
         // Template found - render using the data
         val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
         for (element in htmlElement) {
