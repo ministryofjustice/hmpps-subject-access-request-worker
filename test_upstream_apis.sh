@@ -22,19 +22,17 @@
 
 # Get auth token with ROLE_SAR_DATA_ACCESS
 auth_response_role=$(curl --no-progress-meter -s -X POST "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials" \ -H 'Content-Type: application/json' -H "Authorization: Basic $(echo -n $client_with_sar_role:$secret_for_client_with_sar_role | base64)")
-role_token=$( echo $auth_response_role | grep "\"access_token\":*" | awk -F\: '{print $2}' | awk -F\, '{print $1}')
-role_token_without_quotes=$(eval echo $role_token)
+role_token=$( echo $auth_response_role | grep "\"access_token\":*" | awk -F\: '{print $2}' | awk -F\, '{print $1}' | sed 's/"//g')
 
 # Get auth token without ROLE_SAR_DATA_ACCESS
 auth_response_no_role=$(curl -s --no-progress-meter -X POST "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/oauth/token?grant_type=client_credentials" \ -H 'Content-Type: application/json' -H "Authorization: Basic $(echo -n $client_without_sar_role:$secret_for_client_without_sar_role | base64)")
-no_role_token=$(echo $auth_response_no_role | grep "\"access_token\":*" | awk -F\: '{print $2}' | awk -F\, '{print $1}')
-no_role_token_without_quotes=$(eval echo $no_role_token)
+no_role_token=$(echo $auth_response_no_role | grep "\"access_token\":*" | awk -F\: '{print $2}' | awk -F\, '{print $1}' | sed 's/"//g')
 
 # Declare endpoints
 declare -a endpoints=(
 # https://complexity-of-need-staging.hmpps.service.justice.gov.uk 
 # https://incident-reporting-api-dev.hmpps.service.justice.gov.uk 
-# https://activities-api-dev.prison.service.justice.gov.uk 
+# https://activities-api-dev.prison.service.justice.gov.uk
 # https://hdc-api-dev.hmpps.service.justice.gov.uk
 # https://keyworker-api-dev.prison.service.justice.gov.uk
 # https://restricted-patients-api-dev.hmpps.service.justice.gov.uk
@@ -44,12 +42,14 @@ declare -a endpoints=(
 # https://dev.offender-case-notes.service.justice.gov.uk
 # https://hmpps-book-secure-move-api-staging.apps.cloud-platform.service.justice.gov.uk
 # https://learningandworkprogress-api-dev.hmpps.service.justice.gov.uk
-# https://dev.moic.service.justice.gov.uk
-# https://hmpps-uof-data-api-dev.hmpps.service.justice.gov.uk
+# https://test.moic.service.justice.gov.uk
+https://hmpps-uof-data-api-dev.hmpps.service.justice.gov.uk
+# https://incentives-api-dev.hmpps.service.justice.gov.uk
 # https://court-case-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
 # https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk
 # https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
-https://accredited-programmes-api-dev.hmpps.service.justice.gov.uk
+# https://accredited-programmes-api-dev.hmpps.service.justice.gov.uk
+# https://resettlement-passport-api-dev.hmpps.service.justice.gov.uk
 )
 
 for endpoint in "${endpoints[@]}"
@@ -100,7 +100,7 @@ do
 
    # Response with token without ROLE_SAR_DATA_ACCESS (should be 403)
    echo "/subject-access-request with token without ROLE_SAR_DATA_ACCESS (should be 403)" 
-   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?$expected_id_type=$valid_id --header "Authorization: Bearer $no_role_token_without_quotes")
+   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?$expected_id_type=$valid_id --header "Authorization: Bearer $no_role_token")
    echo "Response code: $status_code"
    if [ $status_code != 403 ]; then 
      echo -e "\n** FLAG **\n" 
@@ -109,7 +109,7 @@ do
 
    # Response with valid token and no ID (should be 209)
    echo "/subject-access-request with token and no ID (should be 209)" 
-   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?$unexpected_id_type=$dummy_id --header "Authorization: Bearer $role_token_without_quotes")
+   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?$unexpected_id_type=$dummy_id --header "Authorization: Bearer $role_token")
    echo "Response code: $status_code"
    if [ $status_code != 209 ]; then
      echo -e "\n** FLAG **\n" 
@@ -118,7 +118,7 @@ do
 
    # Response with valid token and dummy ID (should be 204)
    echo "/subject-access-request with token and dummy ID (should be 204)" 
-   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?$expected_id_type=$dummy_id --header "Authorization: Bearer $role_token_without_quotes")
+   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $endpoint/subject-access-request?$expected_id_type=$dummy_id --header "Authorization: Bearer $role_token")
    echo "Response code: $status_code"
    if [ $status_code != 204 ]; then
      echo -e "\n** FLAG **\n" 
@@ -127,9 +127,9 @@ do
 
    # Response with valid token and ID (should be 200)
    cmd=$endpoint/subject-access-request?$expected_id_type=$valid_id
-   response=$(curl --no-progress-meter $cmd --header "Authorization: Bearer $role_token_without_quotes")
+   response=$(curl --no-progress-meter $cmd --header "Authorization: Bearer $role_token")
    echo "/subject-access-request with token and ID (should be 200)" 
-   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $cmd --header "Authorization: Bearer $role_token_without_quotes")
+   status_code=$(curl --no-progress-meter --write-out %{http_code} --silent --output /dev/null $cmd --header "Authorization: Bearer $role_token")
    echo "Response code: $status_code"
    if [ $status_code != 200 ]; then 
      echo -e "\n** FLAG **\n" 

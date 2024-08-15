@@ -55,7 +55,8 @@ class TemplateRenderService {
 }
 
 class TemplateHelpers {
-  fun formatDate(input: String): String {
+  fun formatDate(input: String?): String {
+    if (input == null) return ""
     return DateConversionHelper().convertDates(input)
   }
 
