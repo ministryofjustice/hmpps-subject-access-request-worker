@@ -144,19 +144,21 @@ class GeneratePdfService {
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       log.info("Compiling data from ${service.businessName ?: service.name}")
 
-      val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
-      if (renderedTemplate !== null && renderedTemplate !== "" && service.content != "No Data Held") {
-        // Template found - render using the data
-        val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
-        for (element in htmlElement) {
-          document.add(element as IBlockElement)
-        }
+      if(service.content != "No Data Held") {
+          val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
+          if (renderedTemplate !== null && renderedTemplate !== "") {
+            // Template found - render using the data
+            val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
+            for (element in htmlElement) {
+              document.add(element as IBlockElement)
+            }
+          }
       } else {
         // No template rendered, fallback to old YAML layout
         document.add(
           Paragraph()
             .setFixedLeading(DATA_LINE_SPACING)
-            .add(Text("${service.businessName ?: HeadingHelper.format(service.name)}\n"))
+            .add(Text("${service.businessName ?: HeadingHelper.format(service.name!!)}\n"))
             .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
             .setFontSize(DATA_HEADER_FONT_SIZE),
         )
