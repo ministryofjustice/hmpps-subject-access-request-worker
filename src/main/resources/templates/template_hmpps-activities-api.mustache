@@ -8,17 +8,18 @@
 
     <h2>Allocations</h2>
     {{#allocations}}
-    <table class="summary-list">
-        <tr><td>Allocation ID</td><td>{{ optionalValue allocationId }}</td></tr>
-        <tr><td>Prison code</td><td>{{ optionalValue prisonCode }}</td></tr>
-        <tr><td>Prisoner status</td><td>{{ optionalValue prisonerStatus }}</td></tr>
-        <tr><td>Start date</td><td>{{ optionalValue (formatDate startDate) }}</td></tr>
-        <tr><td>End date</td><td>{{ optionalValue (formatDate endDate) }}</td></tr>
-        <tr><td>Activity ID</td><td>{{ optionalValue activityId }}</td></tr>
-        <tr><td>Activity summary</td><td>{{ optionalValue activitySummary }}</td></tr>
-        <tr><td>Pay band</td><td>{{ optionalValue payBand }}</td></tr>
-        <tr><td>Date created</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
-    </table>
+        <h3>Allocation</h3>
+        <table class="summary-list">
+            <tr><td>Allocation ID</td><td>{{ optionalValue allocationId }}</td></tr>
+            <tr><td>Prison code</td><td>{{ optionalValue prisonCode }}</td></tr>
+            <tr><td>Prisoner status</td><td>{{ optionalValue prisonerStatus }}</td></tr>
+            <tr><td>Start date</td><td>{{ optionalValue (formatDate startDate) }}</td></tr>
+            <tr><td>End date</td><td>{{ optionalValue (formatDate endDate) }}</td></tr>
+            <tr><td>Activity ID</td><td>{{ optionalValue activityId }}</td></tr>
+            <tr><td>Activity summary</td><td>{{ optionalValue activitySummary }}</td></tr>
+            <tr><td>Pay band</td><td>{{ optionalValue payBand }}</td></tr>
+            <tr><td>Date created</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
+        </table>
     {{/allocations}}
 
     <h2>Attendance summary</h2>
@@ -31,6 +32,7 @@
 
     <h2>Waiting list applications</h2>
     {{#waitingListApplications}}
+        <h3>Application</h3>
         <table class="summary-list">
             <tr><td>Waiting list ID</td><td>{{ optionalValue waitingListId }}</td></tr>
             <tr><td>Prison code</td><td>{{ optionalValue prisonCode }}</td></tr>
@@ -46,15 +48,16 @@
 
     <h2>Appointments</h2>
     {{#appointments}}
-    <table class="summary-list">
-        <tr><td>Appointment ID</td><td>{{ optionalValue appointmentId }}</td></tr>
-        <tr><td>Prison code</td><td>{{ optionalValue prisonCode }}</td></tr>
-        <tr><td>Category code</td><td>{{ optionalValue categoryCode }}</td></tr>
-        <tr><td>Start date</td><td>{{ optionalValue (formatDate startDate) }}</td></tr>
-        <tr><td>Start time</td><td>{{ optionalValue startTime }}</td></tr>
-        <tr><td>Extra information</td><td>{{ optionalValue extraInformation }}</td></tr>
-        <tr><td>Attended</td><td>{{ optionalValue attended }}</td></tr>
-        <tr><td>Date created</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
-    </table>
+        <h3>Appointment</h3>
+        <table class="summary-list">
+            <tr><td>Appointment ID</td><td>{{ optionalValue appointmentId }}</td></tr>
+            <tr><td>Prison code</td><td>{{ optionalValue prisonCode }}</td></tr>
+            <tr><td>Category code</td><td>{{ optionalValue categoryCode }}</td></tr>
+            <tr><td>Start date</td><td>{{ optionalValue (formatDate startDate) }}</td></tr>
+            <tr><td>Start time</td><td>{{ optionalValue startTime }}</td></tr>
+            <tr><td>Extra information</td><td>{{ optionalValue extraInformation }}</td></tr>
+            <tr><td>Attended</td><td>{{ optionalValue attended }}</td></tr>
+            <tr><td>Date created</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
+        </table>
     {{/appointments}}
 {{/.}}
