@@ -56,11 +56,18 @@ class GetSubjectAccessRequestDataServiceTest(
 
       it("uses the service name as a content key if the business name is not present") {
         val selectedDpsServices = mutableListOf(DpsService(name = "fake-hmpps-prisoner-search", businessName = "Fake HMPPS Prisoner Search", orderPosition = 1, url = "https://fake-prisoner-search.prison.service.justice.gov.uk"), DpsService(name = "fake-hmpps-prisoner-search-indexer", businessName = null, orderPosition = null, url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"))
-        val expectedResponseObject = mapOf("Fake HMPPS Prisoner Search" to mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()), "fake-hmpps-prisoner-search-indexer" to mapOf<String, Any>("fake-indexer-property" to emptyMap<String, Any>()))
+        val expectedResponseObject = listOf(
+          DpsService(
+            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()),
+          ),
+          DpsService(
+            content = mapOf<String, Any>("fake-indexer-property" to emptyMap<String, Any>()),
+          ),
+        )
 
         val responseObject = getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
-        Assertions.assertThat(responseObject).isEqualTo(expectedResponseObject)
+        Assertions.assertThat(responseObject[0].content).isEqualTo(expectedResponseObject[0].content)
       }
 
       it("calls the gateway separately for each service given") {
@@ -77,9 +84,10 @@ class GetSubjectAccessRequestDataServiceTest(
 
         val response = getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
-        response.keys.shouldBe(setOf("fake-hmpps-prisoner-search", "fake-hmpps-prisoner-search-indexer"))
-        response["fake-hmpps-prisoner-search"].toString().shouldContain("fake-prisoner-search-property")
-        response["fake-hmpps-prisoner-search-indexer"].toString().shouldContain("fake-indexer-property")
+        response[0].name.shouldBe("fake-hmpps-prisoner-search")
+        response[1].name.shouldBe("fake-hmpps-prisoner-search-indexer")
+        response[0].content.toString().shouldContain("fake-prisoner-search-property")
+        response[1].content.toString().shouldContain("fake-indexer-property")
       }
 
       it("returns upstream API response data in the correct order") {
@@ -90,8 +98,8 @@ class GetSubjectAccessRequestDataServiceTest(
         )
         val response = getSubjectAccessRequestDataService.execute(services = selectedDpsServices, nomisId = "A1234AA", dateTo = dateToFormatted)
 
-        response.firstEntry().key.shouldBe("fake-hmpps-prisoner-search-indexer")
-        response.lastEntry().key.shouldBe("fake-hmpps-prisoner-search-2")
+        response[0].name.shouldBe("fake-hmpps-prisoner-search-indexer")
+        response[1].name.shouldBe("fake-hmpps-prisoner-search")
       }
     }
 

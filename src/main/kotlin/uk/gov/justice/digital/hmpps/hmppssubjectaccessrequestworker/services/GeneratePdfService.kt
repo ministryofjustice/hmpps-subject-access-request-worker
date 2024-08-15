@@ -24,6 +24,7 @@ import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.DateConversionHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
@@ -45,7 +46,7 @@ class GeneratePdfService {
   }
 
   fun execute(
-    content: LinkedHashMap<String, Any>,
+    services: List<DpsService>,
     nomisId: String?,
     ndeliusCaseReferenceId: String?,
     sarCaseReferenceNumber: String,
@@ -61,7 +62,7 @@ class GeneratePdfService {
     val document = Document(pdfDocument)
 
     log.info("Started writing to PDF")
-    addInternalContentsPage(pdfDocument, document, content)
+    addInternalContentsPage(pdfDocument, document, services)
     addExternalCoverPage(
       pdfDocument,
       document,
@@ -82,7 +83,7 @@ class GeneratePdfService {
       ),
     )
     document.setMargins(50F, 50F, 100F, 50F)
-    addData(pdfDocument, document, content)
+    addData(pdfDocument, document, services)
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
 
@@ -100,7 +101,7 @@ class GeneratePdfService {
       sarCaseReferenceNumber,
       dateFrom,
       dateTo,
-      content,
+      services,
       numPages,
     )
     coverPageDocument.close()
@@ -138,12 +139,12 @@ class GeneratePdfService {
     document.add(endPageText)
   }
 
-  fun addData(pdfDocument: PdfDocument, document: Document, content: LinkedHashMap<String, Any>) {
-    content.forEach { entry ->
+  fun addData(pdfDocument: PdfDocument, document: Document, services: List<DpsService>) {
+    services.forEach { service ->
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-      log.info("Compiling data from " + entry.key)
+      log.info("Compiling data from " + service.businessName)
 
-      val renderedTemplate = templateRenderService.renderTemplate(serviceName = entry.key, serviceData = entry.value)
+      val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
       if (renderedTemplate !== null && renderedTemplate !== "") {
         // Template found - render using the data
         val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
@@ -155,11 +156,11 @@ class GeneratePdfService {
         document.add(
           Paragraph()
             .setFixedLeading(DATA_LINE_SPACING)
-            .add(Text("${HeadingHelper.format(entry.key)}\n"))
+            .add(Text("${service.businessName ?: HeadingHelper.format(service.name)}\n"))
             .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
             .setFontSize(DATA_HEADER_FONT_SIZE),
         )
-        val processedData = preProcessData(entry.value)
+        val processedData = preProcessData(service.content)
         document.add(
           Paragraph()
             .setFixedLeading(DATA_LINE_SPACING)
@@ -195,7 +196,7 @@ class GeneratePdfService {
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
-    dataFromServices: LinkedHashMap<String, Any>,
+    services: List<DpsService>,
     numPages: Int,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
@@ -218,7 +219,7 @@ class GeneratePdfService {
         }",
       ).setTextAlignment(TextAlignment.CENTER),
     )
-    document.add(Paragraph("${getServiceListLine(dataFromServices)}\n").setTextAlignment(TextAlignment.CENTER))
+    document.add(Paragraph("${getServiceListLine(services)}\n").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
@@ -248,7 +249,7 @@ class GeneratePdfService {
   fun addInternalContentsPage(
     pdfDocument: PdfDocument,
     document: Document,
-    dataFromServices: LinkedHashMap<String, Any>,
+    services: List<DpsService>,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
@@ -257,8 +258,8 @@ class GeneratePdfService {
     document.add(contentsPageText)
 
     val serviceList = Paragraph()
-    dataFromServices.keys.toList().forEach {
-      serviceList.add("\u2022 $it\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
+    services.forEach {
+      serviceList.add("\u2022 ${it.businessName}\n").setTextAlignment(TextAlignment.CENTER).setFontSize(14f)
     }
     document.add(serviceList)
 
@@ -286,8 +287,15 @@ class GeneratePdfService {
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
-  fun getServiceListLine(dataFromServices: LinkedHashMap<String, Any>): String {
-    val serviceNamesList = dataFromServices.keys.toList().joinToString(", ")
+  fun getServiceListLine(services: List<DpsService>): String {
+    val serviceNamesList = mutableListOf<String>()
+    services.forEach { service ->
+      if (service.businessName != null) {
+        serviceNamesList.add(service.businessName!!)
+      } else {
+        serviceNamesList.add(service.name!!)
+      }
+    }
     return "Services: $serviceNamesList"
   }
 
