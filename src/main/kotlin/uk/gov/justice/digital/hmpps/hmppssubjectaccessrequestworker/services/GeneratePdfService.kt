@@ -304,7 +304,7 @@ class GeneratePdfService {
         serviceNamesList.add(service.name!!)
       }
     }
-    return "Services: $serviceNamesList"
+    return "Services: ${serviceNamesList.joinToString(separator = ",")}"
   }
 
   fun preProcessData(input: Any?): Any? {
