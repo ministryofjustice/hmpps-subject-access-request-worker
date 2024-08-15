@@ -32,6 +32,15 @@
     <h2>Waiting list applications</h2>
     {{#waitingListApplications}}
         <table class="summary-list">
+            <tr><td>Waiting list ID</td><td>{{ optionalValue waitingListId }}</td></tr>
+            <tr><td>Prison code</td><td>{{ optionalValue prisonCode }}</td></tr>
+            <tr><td>Activity summary</td><td>{{ optionalValue activitySummary }}</td></tr>
+            <tr><td>Application date</td><td>{{ optionalValue (formatDate applicationDate) }}</td></tr>
+            <tr><td>Originator</td><td>{{ optionalValue originator }}</td></tr>
+            <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
+            <tr><td>Status date</td><td>{{ optionalValue (formatDate statusDate) }}</td></tr>
+            <tr><td>Comments</td><td>{{ optionalValue comments }}</td></tr>
+            <tr><td>Date created</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
         </table>
     {{/waitingListApplications}}
 

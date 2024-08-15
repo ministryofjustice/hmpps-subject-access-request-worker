@@ -111,15 +111,16 @@ class TemplateRenderServiceTest : DescribeSpec(
             "toDate" to "2000-01-01",
             "allocations" to arrayListOf(
               mapOf(
-              "allocationId" to 16,
-              "prisonCode" to "LEI",
-              "prisonerStatus" to "ENDED",
-              "startDate" to "2023-07-21",
-              "endDate" to "2023-07-21",
-              "activityId" to 3,
-              "activitySummary" to "QAtestingKitchenActivity",
-              "payBand" to "Pay band 5",
-              "createdDate" to "2023-07-20"),
+                "allocationId" to 16,
+                "prisonCode" to "LEI",
+                "prisonerStatus" to "ENDED",
+                "startDate" to "2023-07-21",
+                "endDate" to "2023-07-21",
+                "activityId" to 3,
+                "activitySummary" to "QAtestingKitchenActivity",
+                "payBand" to "Pay band 5",
+                "createdDate" to "2023-07-20",
+              ),
               mapOf(
                 "allocationId" to 16,
                 "prisonCode" to "LEI",
@@ -129,20 +130,43 @@ class TemplateRenderServiceTest : DescribeSpec(
                 "activityId" to 3,
                 "activitySummary" to "QAtestingKitchenActivity",
                 "payBand" to "Pay band 5",
-                "createdDate" to "2023-07-20"
+                "createdDate" to "2023-07-20",
               ),
             ),
             "attendanceSummary" to arrayListOf(
               mapOf(
                 "attendanceReasonCode" to "ATTENDED",
                 "count" to 12,
-                ),
+              ),
               mapOf(
                 "attendanceReasonCode" to "CANCELLED",
                 "count" to 8,
               ),
             ),
-            "waitingListApplications" to emptyArray<String>(),
+            "waitingListApplications" to arrayListOf(
+              mapOf(
+                "waitingListId" to 1,
+                "prisonCode" to "LEI",
+                "activitySummary" to "Summary",
+                "applicationDate" to "2023-08-11",
+                "originator" to "Prison staff",
+                "status" to "APPROVED",
+                "statusDate" to "2022-11-12",
+                "comments" to null,
+                "createdDate" to "2023-08-10",
+              ),
+              mapOf(
+                "waitingListId" to 10,
+                "prisonCode" to "LEI",
+                "activitySummary" to "Summary",
+                "applicationDate" to "2024-08-11",
+                "originator" to "Prison staff",
+                "status" to "APPROVED",
+                "statusDate" to null,
+                "comments" to null,
+                "createdDate" to "2023-08-10",
+              ),
+            ),
             "appointments" to arrayListOf(
               mapOf(
                 "appointmentId" to 18305,
@@ -153,7 +177,7 @@ class TemplateRenderServiceTest : DescribeSpec(
                 "endTime" to "11:00",
                 "extraInformation" to "",
                 "attended" to "Unmarked",
-                "createdDate" to "2023-08-10"
+                "createdDate" to "2023-08-10",
               ),
               mapOf(
                 "appointmentId" to 16340,
@@ -164,7 +188,7 @@ class TemplateRenderServiceTest : DescribeSpec(
                 "endTime" to "11:00",
                 "extraInformation" to "",
                 "attended" to "Unmarked",
-                "createdDate" to "2023-08-10"
+                "createdDate" to "2023-08-10",
               ),
             ),
           ),
@@ -178,6 +202,9 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>End date</td><td>21 July 2023</td>")
         renderedStyleTemplate.shouldContain("<td>Count</td><td>8</td>")
         renderedStyleTemplate.shouldContain("<td>Count</td><td>12</td>")
+        renderedStyleTemplate.shouldContain("<td>Waiting list ID</td><td>1</td>")
+        renderedStyleTemplate.shouldContain("<td>Waiting list ID</td><td>10</td>")
+        renderedStyleTemplate.shouldContain("<td>Status date</td><td>12 November 2022</td>")
         renderedStyleTemplate.shouldContain("<td>Appointment ID</td><td>18305</td>")
         renderedStyleTemplate.shouldContain("<td>Appointment ID</td><td>16340</td>")
       }
