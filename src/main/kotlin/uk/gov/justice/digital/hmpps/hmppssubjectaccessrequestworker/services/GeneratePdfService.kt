@@ -144,15 +144,15 @@ class GeneratePdfService {
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       log.info("Compiling data from ${service.businessName ?: service.name}")
 
-      if(service.content != "No Data Held") {
-          val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
-          if (renderedTemplate !== null && renderedTemplate !== "") {
-            // Template found - render using the data
-            val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
-            for (element in htmlElement) {
-              document.add(element as IBlockElement)
-            }
+      if (service.content != "No Data Held") {
+        val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
+        if (renderedTemplate !== null && renderedTemplate !== "") {
+          // Template found - render using the data
+          val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
+          for (element in htmlElement) {
+            document.add(element as IBlockElement)
           }
+        }
       } else {
         // No template rendered, fallback to old YAML layout
         document.add(
