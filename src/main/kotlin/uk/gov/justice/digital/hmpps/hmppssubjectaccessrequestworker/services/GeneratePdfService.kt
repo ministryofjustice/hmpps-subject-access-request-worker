@@ -152,7 +152,9 @@ class GeneratePdfService {
           for (element in htmlElement) {
             document.add(element as IBlockElement)
           }
-        } else addYamlLayout(document, service)
+        } else {
+          addYamlLayout(document, service)
+        }
       } else {
         // No template rendered, fallback to old YAML layout
         addYamlLayout(document, service)
