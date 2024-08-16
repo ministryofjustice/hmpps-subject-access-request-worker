@@ -194,7 +194,7 @@ class TemplateRenderServiceTest : DescribeSpec(
           ),
         )
 
-        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-activities-api", testServiceData)
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-activities-management-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
