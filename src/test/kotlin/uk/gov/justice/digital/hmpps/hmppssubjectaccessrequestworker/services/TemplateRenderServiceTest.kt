@@ -101,6 +101,115 @@ class TemplateRenderServiceTest : DescribeSpec(
       }
     }
 
+    describe("activitiesTemplate") {
+      it("renders a template given an activities template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "prisonerNumber" to "A4743DZ",
+            "fromDate" to "1970-01-01",
+            "toDate" to "2000-01-01",
+            "allocations" to arrayListOf(
+              mapOf(
+                "allocationId" to 16,
+                "prisonCode" to "LEI",
+                "prisonerStatus" to "ENDED",
+                "startDate" to "2023-07-21",
+                "endDate" to "2023-07-21",
+                "activityId" to 3,
+                "activitySummary" to "QAtestingKitchenActivity",
+                "payBand" to "Pay band 5",
+                "createdDate" to "2023-07-20",
+              ),
+              mapOf(
+                "allocationId" to 16,
+                "prisonCode" to "LEI",
+                "prisonerStatus" to "ENDED",
+                "startDate" to "2023-07-21",
+                "endDate" to "2023-07-21",
+                "activityId" to 3,
+                "activitySummary" to "QAtestingKitchenActivity",
+                "payBand" to "Pay band 5",
+                "createdDate" to "2023-07-20",
+              ),
+            ),
+            "attendanceSummary" to arrayListOf(
+              mapOf(
+                "attendanceReasonCode" to "ATTENDED",
+                "count" to 12,
+              ),
+              mapOf(
+                "attendanceReasonCode" to "CANCELLED",
+                "count" to 8,
+              ),
+            ),
+            "waitingListApplications" to arrayListOf(
+              mapOf(
+                "waitingListId" to 1,
+                "prisonCode" to "LEI",
+                "activitySummary" to "Summary",
+                "applicationDate" to "2023-08-11",
+                "originator" to "Prison staff",
+                "status" to "APPROVED",
+                "statusDate" to "2022-11-12",
+                "comments" to null,
+                "createdDate" to "2023-08-10",
+              ),
+              mapOf(
+                "waitingListId" to 10,
+                "prisonCode" to "LEI",
+                "activitySummary" to "Summary",
+                "applicationDate" to "2024-08-11",
+                "originator" to "Prison staff",
+                "status" to "APPROVED",
+                "statusDate" to null,
+                "comments" to null,
+                "createdDate" to "2023-08-10",
+              ),
+            ),
+            "appointments" to arrayListOf(
+              mapOf(
+                "appointmentId" to 18305,
+                "prisonCode" to "LEI",
+                "categoryCode" to "CAREER",
+                "startDate" to "2023-08-11",
+                "startTime" to "10:00",
+                "endTime" to "11:00",
+                "extraInformation" to "",
+                "attended" to "Unmarked",
+                "createdDate" to "2023-08-10",
+              ),
+              mapOf(
+                "appointmentId" to 16340,
+                "prisonCode" to "LEI",
+                "categoryCode" to "CAREER",
+                "startDate" to "2023-08-11",
+                "startTime" to "10:00",
+                "endTime" to "11:00",
+                "extraInformation" to "",
+                "attended" to "Unmarked",
+                "createdDate" to "2023-08-10",
+              ),
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-activities-api", testServiceData)
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<td>Prisoner number</td><td>A4743DZ</td>")
+        renderedStyleTemplate.shouldContain("<td>End date</td><td>21 July 2023</td>")
+        renderedStyleTemplate.shouldContain("<td>Count</td><td>8</td>")
+        renderedStyleTemplate.shouldContain("<td>Count</td><td>12</td>")
+        renderedStyleTemplate.shouldContain("<td>Waiting list ID</td><td>1</td>")
+        renderedStyleTemplate.shouldContain("<td>Waiting list ID</td><td>10</td>")
+        renderedStyleTemplate.shouldContain("<td>Status date</td><td>12 November 2022</td>")
+        renderedStyleTemplate.shouldContain("<td>Appointment ID</td><td>18305</td>")
+        renderedStyleTemplate.shouldContain("<td>Appointment ID</td><td>16340</td>")
+      }
+    }
+
     describe("incentivesTemplate") {
       it("renders a template given a incentives template") {
         val templateRenderService = TemplateRenderService()
