@@ -120,7 +120,7 @@ class TemplateRenderServiceTest : DescribeSpec(
             "reviewType" to "REVIEW",
           ),
         )
-        val renderedStyleTemplate = templateRenderService.renderTemplate("incentives-api", testServiceData)
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-incentives-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
