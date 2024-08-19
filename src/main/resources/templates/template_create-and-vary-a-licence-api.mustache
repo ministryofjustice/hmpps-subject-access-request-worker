@@ -1,0 +1,103 @@
+<h1>Create and vary a licence</h1>
+{{#licences}}
+    <h2>Licence</h2>
+    <table class="summary-list">
+        <tr><td>Kind</td><td>{{ optionalValue kind }}</td></tr>
+        <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+        <tr><td>Type code</td><td>{{ optionalValue typeCode }}</td></tr>
+        <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
+        <tr><td>Status code</td><td>{{{ optionalValue statusCode }}}</td></tr>
+        <tr><td>Nomis ID</td><td>{{ optionalValue nomsId }}</td></tr>
+        <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
+        <tr><td>Appointment person</td><td>{{ optionalValue appointmentPerson }}</td></tr>
+        <tr><td>Appointment time</td><td>{{ optionalValue appointmentTime }}</td></tr>
+        <tr><td>Appointment time type</td><td>{{ optionalValue appointmentTimeType }}</td></tr>
+        <tr><td>Appointment address</td><td>{{ optionalValue appointmentAddress }}</td></tr>
+        <tr><td>Appointment contact</td><td>{{ optionalValue appointmentContact }}</td></tr>
+        <tr><td>Approved date</td><td>{{ optionalValue (formatDate approvedDate) }}</td></tr>
+        <tr><td>Approved by username</td><td>{{ optionalValue approvedByUsername }}</td></tr>
+        <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
+        <tr><td>Approved by name</td><td>{{ optionalValue approvedByName }}</td></tr>
+        <tr><td>Superseded date</td><td>{{ optionalValue (formatDate supersededDate) }}</td></tr>
+        <tr><td>Date created</td><td>{{ optionalValue (formatDate dateCreated) }}</td></tr>
+        <tr><td>Created by username</td><td>{{ optionalValue createdByUsername }}</td></tr>
+        <tr><td>Date last updated</td><td>{{ optionalValue (formatDate dateLastUpdated) }}</td></tr>
+        <tr><td>Updated by username</td><td>{{ optionalValue updatedByUsername }}</td></tr>
+        <tr><td>Created by full name</td><td>{{ optionalValue createdByFullName }}</td></tr>
+        <tr><td>Licence Version</td><td>{{ optionalValue licenceVersion }}</td></tr>
+    </table>
+    <h2>Standard licence conditions</h2>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Code</td>
+            <td class="data-column-75">Text</td>
+        </tr>
+        {{#standardLicenceConditions}}
+            <tr>
+                <td>{{ optionalValue code }}</td>
+                <td>{{ optionalValue text }}</td>
+            </tr>
+        {{/standardLicenceConditions}}
+        {{^standardLicenceConditions}}
+            <tr>
+                <td>No data held</td>
+                <td>No data held</td>
+            </tr>
+        {{/standardLicenceConditions}}
+    </table>
+    <h2>Standard pss conditions</h2>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Code</td>
+            <td class="data-column-75">Text</td>
+        </tr>
+        {{#standardPssConditions}}
+            <tr>
+                <td>{{ optionalValue code }}</td>
+                <td>{{ optionalValue text }}</td>
+            </tr>
+        {{/standardPssConditions}}
+        {{^standardPssConditions}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+            </tr>
+        {{/standardPssConditions}}
+    </table>
+    {{#additionalLicenceConditions}}
+        <h2>Additional licence condition</h2>
+        <table class="summary-list">
+            <tr><td>Code</td><td>{{ optionalValue code }}</td></tr>
+            <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
+            <tr><td>Category</td><td>{{ optionalValue category }}</td></tr>
+            <tr><td>Expanded text</td><td>{{ optionalValue expandedText }}</td></tr>
+            <tr><td>Status code</td><td>{{{ optionalValue statusCode }}}</td></tr>
+            <tr><td>Data</td><td>{{#data}}{{optionalValue field}} = {{ optionalValue value }}{{/data}}{{^data}}No Data Held{{/data}}</td></tr>
+            <tr><td>Upload summary</td><td>{{{ optionalValue uploadSummary }}}</td></tr>
+            <tr><td>Ready to submit</td><td>{{{ optionalValue readyToSubmit }}}</td></tr>
+        </table>
+    {{/additionalLicenceConditions}}
+    {{#additionalPssConditions}}
+        <h2>Additional PSS condition</h2>
+        <table class="summary-list">
+            <tr><td>Code</td><td>{{ optionalValue code }}</td></tr>
+            <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
+            <tr><td>Category</td><td>{{ optionalValue category }}</td></tr>
+            <tr><td>Expanded text</td><td>{{ optionalValue expandedText }}</td></tr>
+            <tr><td>Status code</td><td>{{{ optionalValue statusCode }}}</td></tr>
+            <tr><td>Data</td><td>{{#data}}{{optionalValue field}} = {{ optionalValue value }}{{/data}}{{^data}}No Data Held{{/data}}</td></tr>
+            <tr><td>Upload summary</td><td>{{{ optionalValue uploadSummary }}}</td></tr>
+            <tr><td>Ready to submit</td><td>{{{ optionalValue readyToSubmit }}}</td></tr>
+        </table>
+    {{/additionalPssConditions}}
+    <h2>Bespoke conditions</h2>
+    <table class="data-table">
+        <tr><td>Text</td></tr>
+        {{#bespokeConditions}}
+            <tr><td>{{{ optionalValue text }}}</td></tr>
+        {{/bespokeConditions}}
+        {{^bespokeConditions}}
+            <tr><td>No Data Held</td></tr>
+        {{/bespokeConditions}}
+    </table>
+{{/licences}}
