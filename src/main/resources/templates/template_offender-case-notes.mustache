@@ -1,6 +1,6 @@
 <h1>Offender case notes</h1>
 {{#.}}
-    <h2>Case notes</h2>
+    <h2>Case note</h2>
     <table class="summary-list">
         <tr><td>Type</td><td>{{ optionalValue type }}</td></tr>
         <tr><td>Sub type</td><td>{{ optionalValue subType }}</td></tr>
@@ -13,7 +13,7 @@
     </table>
 
     {{#amendments}}
-        <h3>Amendments</h3>
+        <h3>Amendment</h3>
         <table class="summary-list">
             <tr><td>Creation date time</td><td>{{ optionalValue (formatDate creationDateTime) }}</td></tr>
             <tr><td>Author Name</td><td>{{ optionalValue authorName }}</td></tr>

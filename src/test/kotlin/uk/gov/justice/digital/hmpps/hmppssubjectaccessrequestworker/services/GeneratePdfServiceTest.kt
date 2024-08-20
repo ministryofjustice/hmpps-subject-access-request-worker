@@ -291,7 +291,7 @@ class GeneratePdfServiceTest(
         val reader = PdfDocument(PdfReader("dummy-template.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
-        Assertions.assertThat(text).contains("Case notes")
+        Assertions.assertThat(text).contains("Case note")
       }
 
       it("converts data to YAML format in the event of no template") {
