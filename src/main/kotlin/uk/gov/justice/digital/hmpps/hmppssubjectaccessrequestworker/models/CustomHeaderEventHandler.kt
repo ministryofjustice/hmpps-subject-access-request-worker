@@ -24,7 +24,6 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
       leftHeaderText = ""
       rightHeaderText = """
           |Name: $subjectName
-          |
           |$subjectIdLine
       """.trimMargin()
     }
@@ -33,7 +32,7 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
     val leftCoord = pageSize.left + document.leftMargin
     val rightCoord = pageSize.right - document.rightMargin
     val midCoord = (leftCoord + rightCoord) / 2
-    val headerY: Float = pageSize.top - document.topMargin - 10
+    val headerY: Float = pageSize.top - document.topMargin
     val footerY: Float = pageSize.bottom + 20
     val canvas = Canvas(docEvent.page, pageSize)
     canvas
@@ -44,13 +43,13 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
         leftCoord,
         headerY,
         TextAlignment.LEFT,
-      )
+      ).setBold()
       .showTextAligned(
         rightHeaderText,
         rightCoord,
         headerY,
         TextAlignment.RIGHT,
-      )
+      ).setBold()
       .showTextAligned(
         "Official Sensitive",
         midCoord,
