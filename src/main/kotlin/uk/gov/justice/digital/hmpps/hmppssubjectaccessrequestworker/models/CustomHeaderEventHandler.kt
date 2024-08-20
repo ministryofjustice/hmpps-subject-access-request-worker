@@ -43,13 +43,13 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
         leftCoord,
         headerY,
         TextAlignment.LEFT,
-      )
+      ).setBold()
       .showTextAligned(
         rightHeaderText,
         rightCoord,
         headerY,
         TextAlignment.RIGHT,
-      )
+      ).setBold()
       .showTextAligned(
         "Official Sensitive",
         midCoord,
