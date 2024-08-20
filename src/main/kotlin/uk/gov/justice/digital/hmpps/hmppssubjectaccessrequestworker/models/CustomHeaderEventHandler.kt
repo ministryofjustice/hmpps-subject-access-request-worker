@@ -24,7 +24,6 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
       leftHeaderText = ""
       rightHeaderText = """
           |Name: $subjectName
-          |
           |$subjectIdLine
       """.trimMargin()
     }
