@@ -294,35 +294,35 @@ class GeneratePdfServiceTest(
                 ),
                 mapOf(
                   "code" to "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
-                  "text" to "Not commit any offence."
+                  "text" to "Not commit any offence.",
                 ),
                 mapOf(
                   "code" to "3361683a-504a-4357-ae22-6aa01b370b4a",
-                  "text" to "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+                  "text" to "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer.",
                 ),
                 mapOf(
                   "code" to "9fc04065-df29-4bda-9b1d-bced8335c356",
-                  "text" to "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+                  "text" to "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer.",
                 ),
                 mapOf(
                   "code" to "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
-                  "text" to "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+                  "text" to "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address.",
                 ),
                 mapOf(
                   "code" to "78A5F860-4791-48F2-B707-D6D4413850EE",
-                  "text" to "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+                  "text" to "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence.",
                 ),
                 mapOf(
                   "code" to "6FA6E492-F0AB-4E76-B868-63813DB44696",
-                  "text" to "Tell the supervising officer if you change or add any contact details, including phone number or email."
+                  "text" to "Tell the supervising officer if you change or add any contact details, including phone number or email.",
                 ),
                 mapOf(
                   "code" to "88069445-08cb-4f16-915f-5a162d085c26",
-                  "text" to "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+                  "text" to "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work.",
                 ),
                 mapOf(
                   "code" to "7d416906-0e94-4fde-ae86-8339d339ccb7",
-                  "text" to "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+                  "text" to "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal.",
                 ),
               ),
               "standardPssConditions" to null,
@@ -335,11 +335,11 @@ class GeneratePdfServiceTest(
                   "data" to arrayListOf(
                     mapOf(
                       "field" to "probationRegion",
-                      "value" to "West Midlands"
+                      "value" to "West Midlands",
                     ),
                   ),
                   "uploadSummary" to null,
-                  "readyToSubmit" to true
+                  "readyToSubmit" to true,
                 ),
                 mapOf(
                   "code" to "b72fdbf2-0dc9-4e7f-81e4-c2ccb5d1bc90",
@@ -348,19 +348,19 @@ class GeneratePdfServiceTest(
                   "expandedText" to "Attend all appointments arranged for you with a psychiatrist / psychologist / medical practitioner, unless otherwise approved by your supervising officer.",
                   "data" to null,
                   "uploadSummary" to null,
-                  "readyToSubmit" to true
+                  "readyToSubmit" to true,
                 ),
               ),
               "additionalPssConditions" to null,
               "bespokeConditions" to arrayListOf(
                 mapOf(
-                  "text" to "test"
+                  "text" to "test",
                 ),
               ),
               "createdByFullName" to "CVL COM",
               "licenceVersion" to "2.0",
-            )
-          )
+            ),
+          ),
         )
 
         val testResponseObject: LinkedHashMap<String, Any> = linkedMapOf("create-and-vary-a-licence-api" to testServiceData)
