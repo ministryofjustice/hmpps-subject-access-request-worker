@@ -354,52 +354,56 @@ class TemplateRenderServiceTest : DescribeSpec(
             ),
             "punishments" to arrayListOf(
               mapOf(
-              "id" to 241,
-              "type" to "PRIVILEGE",
-              "privilegeType" to "TV",
-              "schedule" to mapOf(
-              "days" to 7,
-              "duration" to 7,
-              "measurement" to "DAYS",
-              "startDate" to "2023-06-09",
-              "endDate" to "2023-06-16"
-              ),
-              "canRemove" to true,
-              "canEdit" to true,
-              "rehabilitativeActivities" to mapOf(
                 "id" to 241,
-                "details" to "Some info",
-                "monitor" to "yes",
-                "endDate" to "2023-06-09",
-                "totalSessions" to 16,
-                "completed" to true,
-              )
+                "type" to "PRIVILEGE",
+                "privilegeType" to "TV",
+                "schedule" to mapOf(
+                  "days" to 7,
+                  "duration" to 7,
+                  "measurement" to "DAYS",
+                  "startDate" to "2023-06-09",
+                  "endDate" to "2023-06-16"
+                ),
+                "canRemove" to true,
+                "canEdit" to true,
+                "rehabilitativeActivities" to arrayListOf(
+                  mapOf(
+                    "id" to 241,
+                    "details" to "Some info",
+                    "monitor" to "yes",
+                    "endDate" to "2023-06-09",
+                    "totalSessions" to 16,
+                    "completed" to true,
+                  ),
+                ),
               ),
-            mapOf(
-              "id" to 240,
-              "type" to "DAMAGES_OWED",
-              "schedule" to mapOf(
-              "days" to 0,
-              "duration" to 0,
-              "measurement" to "DAYS"
+              mapOf(
+                "id" to 240,
+                "type" to "DAMAGES_OWED",
+                "schedule" to mapOf(
+                  "days" to 0,
+                  "duration" to 0,
+                  "measurement" to "DAYS"
+                ),
+                "damagesOwedAmount" to 20,
+                "canRemove" to true,
+                "canEdit" to true,
+                "rehabilitativeActivities" to emptyList<Any>()
               ),
-              "damagesOwedAmount" to 20,
-              "canRemove" to true,
-              "canEdit" to true,
-              "rehabilitativeActivities" to emptyList<String>()
-            )
             ),
             "punishmentComments" to mapOf(
               "id" to 1,
               "comment" to "test comment",
               "reasonForChange" to "APPEAL",
               "nomisCreatedBy" to "person",
-              "actualCreatedDate" to "2023-06-16"),
+              "actualCreatedDate" to "2023-06-16",
+            ),
             "outcomeEnteredInNomis" to false,
             "originatingAgencyId" to "MDI",
             "linkedChargeNumbers" to arrayListOf("9872-1", "9872-2"),
-            "canActionFromHistory" to false
-          ))
+            "canActionFromHistory" to false,
+            ),
+          )
         val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-manage-adjudications-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
@@ -416,6 +420,11 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>OIC hearing type</td><td>INAD_ADULT</td>")
         renderedStyleTemplate.shouldContain("<td>James Warburton</td>")
         renderedStyleTemplate.shouldContain("<td>Code</td><td>CHARGE_PROVED</td>")
+        renderedStyleTemplate.shouldContain("<td>Privilege type</td><td>TV</td>")
+        renderedStyleTemplate.shouldContain("<td>Linked charge numbers</td><td>[9872-1, 9872-2]</td>")
+        renderedStyleTemplate.shouldContain("<td>DAYS</td>")
+        renderedStyleTemplate.shouldContain("<td>Some info</td>")
+        renderedStyleTemplate.shouldContain("<td>Reason for change</td><td>APPEAL</td>")
       }
     }
   },

@@ -215,6 +215,7 @@
             </tr>
         {{/disIssueHistory}}
     </table>
+
     <table class="summary-list">
         <tr><td>Date and time of first hearing</td><td>{{ optionalValue (formatDate dateTimeOfFirstHearing) }}</td></tr>
     </table>
@@ -266,6 +267,7 @@
             {{/outcome}}
         {{/outcome}}
     {{/outcomes}}
+
     <h2>Punishments</h2>
     {{#punishments}}
         <h3>Punishment</h3>
@@ -286,8 +288,85 @@
             <tr><td>Rehab completed</td><td>{{ optionalValue rehabCompleted }}</td></tr>
             <tr><td>Rehab not completed outcome</td><td>{{ optionalValue rehabNotCompletedOutcome }}</td></tr>
         </table>
+
+        <h3>Schedule</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-25">Duration</td>
+                <td class="data-column-75">Measurement</td>
+                <td class="data-column-75">Start date</td>
+                <td class="data-column-75">End date</td>
+                <td class="data-column-75">Suspend until</td>
+            </tr>
+            {{#schedule}}
+                <tr>
+                    <td>{{ optionalValue id }}</td>
+                    <td>{{ optionalValue duration }}</td>
+                    <td>{{ optionalValue measurement }}</td>
+                    <td>{{ optionalValue (formatDate startDate) }}</td>
+                    <td>{{ optionalValue (formatDate endDate) }}</td>
+                    <td>{{ optionalValue suspendUntil }}</td>
+                </tr>
+            {{/schedule}}
+            {{^schedule}}
+                <tr>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                </tr>
+            {{/schedule}}
+        </table>
+
+        <h3>Rehabilitative activities</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-25">Details</td>
+                <td class="data-column-75">Monitor</td>
+                <td class="data-column-75">Total sessions</td>
+                <td class="data-column-75">End date</td>
+                <td class="data-column-75">Completed</td>
+            </tr>
+            {{#rehabilitativeActivities}}
+                <tr>
+                    <td>{{ optionalValue id }}</td>
+                    <td>{{ optionalValue details }}</td>
+                    <td>{{ optionalValue monitor }}</td>
+                    <td>{{ optionalValue totalSessions }}</td>
+                    <td>{{ optionalValue (formatDate endDate) }}</td>
+                    <td>{{ optionalValue completed }}</td>
+                </tr>
+            {{/rehabilitativeActivities}}
+            {{^rehabilitativeActivities}}
+                <tr>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                </tr>
+            {{/rehabilitativeActivities}}
+        </table>
     {{/punishments}}
 
+    <h2>Punishment comments</h2>
+    {{#punishmentComments}}
+        <table class="summary-list">
+            <tr><td>Comment</td><td>{{ optionalValue comment }}</td></tr>
+            <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+            <tr><td>Reason for change</td><td>{{ optionalValue reasonForChange }}</td></tr>
+            <tr><td>Nomis created by</td><td>{{ optionalValue nomisCreatedBy }}</td></tr>
+            <tr><td>Actual created date</td><td>{{ optionalValue (formatDate actualCreatedDate) }}</td></tr>
+        </table>
+    {{/punishmentComments}}
 
-
+    <table class="summary-list">
+        <tr><td>Originating agency ID</td><td>{{ optionalValue originatingAgencyId }}</td></tr>
+        <tr><td>Actionable from history</td><td>{{ optionalValue canActionFromHistory }}</td></tr>
+        <tr><td>Linked charge numbers</td><td>{{ optionalValue linkedChargeNumbers }}</td></tr>
+        <tr><td>Has the outcome been entered in Nomis</td><td>{{ optionalValue outcomeEnteredInNomis }}</td></tr>
+    </table>
 {{/.}}
