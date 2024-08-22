@@ -1,0 +1,18 @@
+<h1>Incentives</h1>
+{{#.}}
+    <h2>Incentives</h2>
+    <table class="summary-list">
+        <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+        <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
+        <tr><td>Prisoner Number</td><td>{{ optionalValue prisonerNumber }}</td></tr>
+        <tr><td>Next review date</td><td>{{ optionalValue (formatDate nextReviewDate) }}</td></tr>
+        <tr><td>Level code</td><td>{{{ optionalValue levelCode }}}</td></tr>
+        <tr><td>Prison ID</td><td>{{ optionalValue prisonId }}</td></tr>
+        <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+        <tr><td>Review time</td><td>{{ optionalValue (formatDate reviewTime) }}</td></tr>
+        <tr><td>Reviewed by</td><td>{{ optionalValue reviewedBy }}</td></tr>
+        <tr><td>Comment text</td><td>{{{ optionalValue commentText }}}</td></tr>
+        <tr><td>Current</td><td>{{ optionalValue current }}</td></tr>
+        <tr><td>Review type</td><td>{{ optionalValue reviewType }}</td></tr>
+    </table>
+{{/.}}
