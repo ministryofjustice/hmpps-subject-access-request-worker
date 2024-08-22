@@ -196,4 +196,127 @@
         </table>
     {{/hearings}}
 
+    <h2>DIS issue history</h2>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Issuing officer</td>
+            <td class="data-column-25">Date and time of issue</td>
+        </tr>
+        {{#disIssueHistory}}
+            <tr>
+                <td>{{ optionalValue issuingOfficer }}</td>
+                <td>{{ optionalValue (formatDate dateTimeOfIssue) }}</td>
+            </tr>
+        {{/disIssueHistory}}
+        {{^disIssueHistory}}
+            <tr>
+                <td>No data held</td>
+                <td>No data held</td>
+            </tr>
+        {{/disIssueHistory}}
+    </table>
+    <table class="summary-list">
+        <tr><td>Date and time of first hearing</td><td>{{ optionalValue (formatDate dateTimeOfFirstHearing) }}</td></tr>
+    </table>
+
+    <h2>Outcomes</h2>
+    {{#outcomes}}
+        <h3>Hearing</h3>
+        {{#hearing}}
+            <table class="summary-list">
+                <tr><td>Date and time of hearing</td><td>{{ optionalValue (formatDate dateTimeOfHearing) }}</td></tr>
+                <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+                <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+                <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
+                <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
+            </table>
+            <h3>Outcome</h3>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Plea</td>
+                    <td class="data-column-25">Adjudicator</td>
+                    <td class="data-column-75">ID</td>
+                    <td class="data-column-75">Code</td>
+                </tr>
+                {{#outcome}}
+                    <tr>
+                        <td>{{ optionalValue plea }}</td>
+                        <td>{{ optionalValue adjudicator }}</td>
+                        <td>{{ optionalValue id }}</td>
+                        <td>{{ optionalValue code }}</td>
+                    </tr>
+                {{/outcome}}
+                {{^outcome}}
+                    <tr>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                    </tr>
+                {{/outcome}}
+            </table>
+        {{/hearing}}
+        {{#outcome}}
+            {{#outcome}}
+                <table class="summary-list">
+                    <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+                    <tr><td>Code</td><td>{{ optionalValue code }}</td></tr>
+                    <tr><td>Removable</td><td>{{ optionalValue canRemove }}</td></tr>
+                </table>
+            {{/outcome}}
+        {{/outcome}}
+    {{/outcomes}}
+    <h2>Punishments</h2>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Type</td>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-75">Privilege type</td>
+                <td class="data-column-75">Other privilege</td>
+                <td class="data-column-75">Percentage stopped</td>
+                <td class="data-column-75">Activated by charge number</td>
+                <td class="data-column-75">Suspended until</td>
+                <td class="data-column-75">Amount</td>
+                <td class="data-column-75">Sanction sequence</td>
+                <td class="data-column-75">Deleted</td>
+                <td class="data-column-75">Consecutive to charge number</td>
+                <td class="data-column-75">Nomis status</td>
+                <td class="data-column-75">Actual created date</td>
+                <td class="data-column-75">Payback notes</td>
+                <td class="data-column-75">Rehab completed</td>
+                <td class="data-column-75">Rehab not completed outcome</td>
+
+            </tr>
+        {{#punishments}}
+                <tr>
+                    <td>{{ optionalValue type }}</td>
+                    <td>{{ optionalValue id }}</td>
+                    <td>{{ optionalValue privilegeType }}</td>
+                    <td>{{ optionalValue otherPrivilege }}</td>
+                    <td>{{ optionalValue stoppedPercentage }}</td>
+                    <td>{{ optionalValue activatedByChargeNumber }}</td>
+                    <td>{{ optionalValue (formatDate suspendedUntil) }}</td>
+                    <td>{{ optionalValue amount }}</td>
+                    <td>{{ optionalValue sanctionSeq }}</td>
+                    <td>{{ optionalValue deleted }}</td>
+                    <td>{{ optionalValue consecutiveToChargeNumber }}</td>
+                    <td>{{ optionalValue nomisStatus }}</td>
+                    <td>{{ optionalValue actualCreatedDate }}</td>
+                    <td>{{ optionalValue paybackNotes }}</td>
+                    <td>{{ optionalValue rehabCompleted }}</td>
+                    <td>{{ optionalValue rehabNotCompletedOutcome }}</td>
+
+                </tr>
+        {{/punishments}}
+        {{^punishments}}
+                <tr>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                    <td>No data held</td>
+                </tr>
+        {{/punishments}}
+        </table>
+
+
 {{/.}}

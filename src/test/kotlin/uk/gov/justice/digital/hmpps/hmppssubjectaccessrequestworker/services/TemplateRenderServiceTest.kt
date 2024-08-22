@@ -310,48 +310,47 @@ class TemplateRenderServiceTest : DescribeSpec(
             ),
             "hearings" to arrayListOf(
               mapOf(
-              "id" to 467,
-              "locationId" to 775,
-              "dateTimeOfHearing" to "2023-06-08T14:25:00",
-              "oicHearingType" to "INAD_ADULT",
-              "outcome" to mapOf(
-              "id" to 534,
-              "adjudicator" to "James Warburton",
-              "code" to "COMPLETE",
-              "plea" to "GUILTY"
-              ),
-              "agencyId" to "MDI"
+                "id" to 467,
+                "locationId" to 775,
+                "dateTimeOfHearing" to "2023-06-08T14:25:00",
+                "oicHearingType" to "INAD_ADULT",
+                "outcome" to mapOf(
+                  "id" to 534,
+                  "adjudicator" to "James Warburton",
+                  "code" to "COMPLETE",
+                  "plea" to "GUILTY"
+                  ),
+                "agencyId" to "MDI"
               )
-            )
-          ),
+            ),
             "disIssueHistory" to arrayListOf(
               mapOf("issuingOfficer" to "someone",
                 "dateTimeOfIssue" to "2023-06-08T14:25:00",)
             ),
             "dateTimeOfFirstHearing" to "2023-06-08T14:25:00",
             "outcomes" to arrayListOf(
-            mapOf(
-              "hearing" to mapOf(
-              "id" to 467,
-              "locationId" to 775,
-              "dateTimeOfHearing" to "2023-06-08T14:25:00",
-              "oicHearingType" to "INAD_ADULT",
-              "outcome" to mapOf(
-              "id" to 534,
-              "adjudicator" to "James Warburton",
-              "code" to "COMPLETE",
-              "plea" to "GUILTY"
+              mapOf(
+                "hearing" to mapOf(
+                  "id" to 467,
+                  "locationId" to 775,
+                  "dateTimeOfHearing" to "2023-06-08T14:25:00",
+                  "oicHearingType" to "INAD_ADULT",
+                  "outcome" to mapOf(
+                    "id" to 534,
+                    "adjudicator" to "James Warburton",
+                    "code" to "COMPLETE",
+                    "plea" to "GUILTY",
+                  ),
+                  "agencyId" to "MDI",
               ),
-              "agencyId" to "MDI"
-              ),
               "outcome" to mapOf(
-              "outcome" to mapOf(
-              "id" to 733,
-              "code" to "CHARGE_PROVED",
-              "canRemove" to true
+                "outcome" to mapOf(
+                  "id" to 733,
+                  "code" to "CHARGE_PROVED",
+                  "canRemove" to true,
+                  )
+                )
               )
-              )
-            )
             ),
             "punishments" to arrayListOf(
               mapOf(
@@ -400,7 +399,7 @@ class TemplateRenderServiceTest : DescribeSpec(
             "originatingAgencyId" to "MDI",
             "linkedChargeNumbers" to arrayListOf("9872-1", "9872-2"),
             "canActionFromHistory" to false
-          )
+          ))
         val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-manage-adjudications-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
@@ -416,6 +415,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>BAGGED_AND_TAGGED</td>")
         renderedStyleTemplate.shouldContain("<td>OIC hearing type</td><td>INAD_ADULT</td>")
         renderedStyleTemplate.shouldContain("<td>James Warburton</td>")
+        renderedStyleTemplate.shouldContain("<td>Code</td><td>CHARGE_PROVED</td>")
       }
     }
   },
