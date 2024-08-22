@@ -296,7 +296,7 @@ class GeneratePdfServiceTest(
 
       it("renders for Create and Vary a License Service") {
 
-        val testServiceData = mapOf(
+        val testInput = mapOf(
           "licences" to arrayListOf(
             mapOf(
               "kind" to "VARIATION",
@@ -396,7 +396,7 @@ class GeneratePdfServiceTest(
           ),
         )
 
-        val testResponseObject: LinkedHashMap<String, Any> = linkedMapOf("create-and-vary-a-licence-api" to testServiceData)
+        val testResponseObject = listOf(DpsService(name = "create-and-vary-a-licence-api", content = testInput))
         val writer = PdfWriter(FileOutputStream("dummy-template.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
