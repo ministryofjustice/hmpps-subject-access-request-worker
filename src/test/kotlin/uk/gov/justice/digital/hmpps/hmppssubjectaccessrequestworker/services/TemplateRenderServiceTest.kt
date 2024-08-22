@@ -309,6 +309,7 @@ class TemplateRenderServiceTest : DescribeSpec(
               )
             ),
             "hearings" to arrayListOf(
+              mapOf(
               "id" to 467,
               "locationId" to 775,
               "dateTimeOfHearing" to "2023-06-08T14:25:00",
@@ -320,6 +321,7 @@ class TemplateRenderServiceTest : DescribeSpec(
               "plea" to "GUILTY"
               ),
               "agencyId" to "MDI"
+              )
             )
           ),
             "disIssueHistory" to arrayListOf(
@@ -408,6 +410,12 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>Incident role code</td><td>25c</td>")
         renderedStyleTemplate.shouldContain("<td>Description</td><td>Assists another prisoner to commit, or to attempt to commit, any of the foregoing offences:</td>")
         renderedStyleTemplate.shouldContain("<td>Description</td><td>Intentionally or recklessly sets fire to any part of a prison or any other property, whether or not her own</td>")
+        renderedStyleTemplate.shouldContain("<td>Is completed</td><td>true</td>")
+        renderedStyleTemplate.shouldContain("<td>Status</td><td>CHARGE_PROVED</td>")
+        renderedStyleTemplate.shouldContain("<td>ELECTRICAL_REPAIR</td>")
+        renderedStyleTemplate.shouldContain("<td>BAGGED_AND_TAGGED</td>")
+        renderedStyleTemplate.shouldContain("<td>OIC hearing type</td><td>INAD_ADULT</td>")
+        renderedStyleTemplate.shouldContain("<td>James Warburton</td>")
       }
     }
   },
