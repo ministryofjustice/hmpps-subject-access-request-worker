@@ -388,20 +388,26 @@ class TemplateRenderServiceTest : DescribeSpec(
               "rehabilitativeActivities" to emptyList<String>()
             )
             ),
-            "punishmentComments" to emptyList<String>(),
+            "punishmentComments" to mapOf(
+              "id" to 1,
+              "comment" to "test comment",
+              "reasonForChange" to "APPEAL",
+              "nomisCreatedBy" to "person",
+              "actualCreatedDate" to "2023-06-16"),
             "outcomeEnteredInNomis" to false,
             "originatingAgencyId" to "MDI",
-            "linkedChargeNumbers" to emptyList<String>(),
+            "linkedChargeNumbers" to arrayListOf("9872-1", "9872-2"),
             "canActionFromHistory" to false
           )
         val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-manage-adjudications-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1208204</td>")
-        renderedStyleTemplate.shouldContain("<td>Next review date</td><td>03 December 2019</td>")
-        renderedStyleTemplate.shouldContain("<td>Review time</td><td>03 July 2023, 9:14:25 pm</td>")
-        renderedStyleTemplate.shouldContain("<td>Current</td><td>true</td>")
+        renderedStyleTemplate.shouldContain("<td>Prisoner number</td><td>A3863DZ</td>")
+        renderedStyleTemplate.shouldContain("<td>Date and time of incident</td><td>08 June 2023, 12:00:00 pm</td>")
+        renderedStyleTemplate.shouldContain("<td>Incident role code</td><td>25c</td>")
+        renderedStyleTemplate.shouldContain("<td>Description</td><td>Assists another prisoner to commit, or to attempt to commit, any of the foregoing offences:</td>")
+        renderedStyleTemplate.shouldContain("<td>Description</td><td>Intentionally or recklessly sets fire to any part of a prison or any other property, whether or not her own</td>")
       }
     }
   },
