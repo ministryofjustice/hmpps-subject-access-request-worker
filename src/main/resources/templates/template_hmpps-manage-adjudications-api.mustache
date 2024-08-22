@@ -1,0 +1,41 @@
+<h1>Manage Adjudications</h1>
+{{#.}}
+    <table class="summary-list">
+        <tr><td>Charge number</td><td>{{ optionalValue chargeNumber }}</td></tr>
+        <tr><td>Prisoner number</td><td>{{ optionalValue (formatDate prisonerNumber) }}</td></tr>
+        <tr><td>Gender</td><td>{{ optionalValue (formatDate gender) }}</td></tr>
+        <tr><td>Youth offender</td><td>{{ optionalValue (formatDate isYouthOffender) }}</td></tr>
+    </table>
+
+    <h2>Incident details</h2>
+    {{#incidentDetails}}
+        <table class="summary-list">
+            <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+            <tr><td>Date and time of incident</td><td>{{ optionalValue dateTimeOfIncident }}</td></tr>
+            <tr><td>Date and time of discovery</td><td>{{ optionalValue dateTimeOfDiscovery }}</td></tr>
+            <tr><td>Handover deadline</td><td>{{ optionalValue (formatDate handoverDeadline) }}</td></tr>
+        </table>
+    {{/incidentDetails}}
+
+    {{#incidentRole}}
+        <table class="summary-list">
+            <tr><td>Incident role code</td><td>{{ optionalValue roleCode }}</td></tr>
+            <tr><td>Associated prisoners number</td><td>{{ optionalValue associatedPrisonersNumber }}</td></tr>
+        </table>
+    {{/incidentRole}}
+
+        {{#offenceRule}}
+            <table class="summary-list">
+                <tr><td>Paragraph number</td><td>{{ optionalValue paragraphNumber }}</td></tr>
+                <tr><td>Description</td><td>{{ optionalValue paragraphDescription }}</td></tr>
+            </table>
+        {{/offenceRule}}
+
+    <h2>Offence details</h2>
+    {{#offenceDetails}}
+        <table class="summary-list">
+            <tr><td>Code</td><td>{{ optionalValue offenceCode }}</td></tr>
+            <tr><td>Other victim's name</td><td>{{ optionalValue victimOtherPersonsName }}</td></tr>
+        </table>
+    {{/offenceDetails}}
+{{/.}}
