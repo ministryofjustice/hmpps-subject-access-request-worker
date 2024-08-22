@@ -34,6 +34,7 @@
     {{#offenceDetails}}
         <table class="summary-list">
             <tr><td>Code</td><td>{{ optionalValue offenceCode }}</td></tr>
+            <tr><td>Other victim's name</td><td>{{ optionalValue victimOtherPersonsName }}</td></tr>
             <h3>Offence rule</h3>
             {{#offenceRule}}
                 <table class="summary-list">
@@ -61,7 +62,6 @@
                         <td>No data held</td>
                     </tr>
                 {{/protectedCharacteristics}}
-            <tr><td>Other victim's name</td><td>{{ optionalValue victimOtherPersonsName }}</td></tr>
             </table>
         </table>
     {{/offenceDetails}}
@@ -70,7 +70,7 @@
     {{#incidentStatement}}
         <table class="summary-list">
             <tr><td>Statement</td><td>{{ optionalValue statement }}</td></tr>
-            <tr><td>Is completed</td><td>{{ optionalValue completed }}</td></tr>
+            <tr><td>Completed</td><td>{{ optionalValue completed }}</td></tr>
         </table>
     {{/incidentStatement}}
 
