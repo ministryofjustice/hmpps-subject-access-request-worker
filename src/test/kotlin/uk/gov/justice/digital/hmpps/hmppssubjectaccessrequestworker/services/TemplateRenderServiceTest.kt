@@ -269,21 +269,21 @@ class TemplateRenderServiceTest : DescribeSpec(
                       "decision" to "No",
                     ),
                   ),
-                ),
-                "bassReferral" to mapOf(
-                  "bassRequest" to mapOf(
-                    "specificArea" to "No",
-                    "bassRequested" to "Yes",
-                    "additionalInformation" to "",
+                  "bassReferral" to mapOf(
+                    "bassRequest" to mapOf(
+                      "specificArea" to "No",
+                      "bassRequested" to "Yes",
+                      "additionalInformation" to "",
+                    ),
                   ),
-                ),
-                "proposedAddress" to mapOf(
-                  "optOut" to mapOf(
+                  "proposedAddress" to mapOf(
+                    "optOut" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "addressProposed" to mapOf(
                     "decision" to "No",
                   ),
-                ),
-                "addressProposed" to mapOf(
-                  "decision" to "No",
                 ),
               ),
             ),
@@ -318,144 +318,144 @@ class TemplateRenderServiceTest : DescribeSpec(
                       "manageInTheCommunityNotPossibleReason" to "",
                     ),
                   ),
-                ),
-                "curfew" to mapOf(
-                  "firstNight" to mapOf(
-                    "firstNightFrom" to "15:00",
-                    "firstNightUntil" to "07:00",
+                  "curfew" to mapOf(
+                    "firstNight" to mapOf(
+                      "firstNightFrom" to "15:00",
+                      "firstNightUntil" to "07:00",
+                    ),
                   ),
-                ),
-                "curfewHours" to mapOf(
-                  "allFrom" to "19:00",
-                  "allUntil" to "07:00",
-                  "fridayFrom" to "19:00",
-                  "mondayFrom" to "19:00",
-                  "sundayFrom" to "19:00",
-                  "fridayUntil" to "07:00",
-                  "mondayUntil" to "07:00",
-                  "sundayUntil" to "07:00",
-                  "tuesdayFrom" to "19:00",
-                  "saturdayFrom" to "19:00",
-                  "thursdayFrom" to "19:00",
-                  "tuesdayUntil" to "07:00",
-                  "saturdayUntil" to "07:00",
-                  "thursdayUntil" to "07:00",
-                  "wednesdayFrom" to "19:00",
-                  "wednesdayUntil" to "07:00",
-                  "daySpecificInputs" to "No",
-                ),
-                "victim" to mapOf(
-                  "victimLiaison" to mapOf(
-                    "decision" to "No",
+                  "curfewHours" to mapOf(
+                    "allFrom" to "19:00",
+                    "allUntil" to "07:00",
+                    "fridayFrom" to "19:00",
+                    "mondayFrom" to "19:00",
+                    "sundayFrom" to "19:00",
+                    "fridayUntil" to "07:00",
+                    "mondayUntil" to "07:00",
+                    "sundayUntil" to "07:00",
+                    "tuesdayFrom" to "19:00",
+                    "saturdayFrom" to "19:00",
+                    "thursdayFrom" to "19:00",
+                    "tuesdayUntil" to "07:00",
+                    "saturdayUntil" to "07:00",
+                    "thursdayUntil" to "07:00",
+                    "wednesdayFrom" to "19:00",
+                    "wednesdayUntil" to "07:00",
+                    "daySpecificInputs" to "No",
                   ),
-                ),
-                "approval" to mapOf(
-                  "release" to mapOf(
+                  "victim" to mapOf(
+                    "victimLiaison" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "approval" to mapOf(
+                    "release" to mapOf(
+                      "decision" to "Yes",
+                      "decisionMaker" to "Louise Norris",
+                      "reasonForDecision" to "",
+                    ),
+                  ),
+                  "consideration" to mapOf(
                     "decision" to "Yes",
-                    "decisionMaker" to "Louise Norris",
-                    "reasonForDecision" to "",
                   ),
-                ),
-                "consideration" to mapOf(
-                  "decision" to "Yes",
-                ),
-                "document" to mapOf(
-                  "template" to mapOf(
-                    "decision" to "hdc_ap",
-                    "offenceCommittedBeforeFeb2015" to "No",
+                  "document" to mapOf(
+                    "template" to mapOf(
+                      "decision" to "hdc_ap",
+                      "offenceCommittedBeforeFeb2015" to "No",
+                    ),
                   ),
-                ),
-                "reporting" to mapOf(
-                  "reportingInstructions" to mapOf(
-                    "name" to "sam",
-                    "postcode" to "S3 8RD",
-                    "telephone" to "47450",
-                    "townOrCity" to "Sheffield",
-                    "organisation" to "crc",
-                    "reportingDate" to "12/12/2024",
-                    "reportingTime" to "12:12",
-                    "buildingAndStreet1" to "10",
-                    "buildingAndStreet2" to "street",
+                  "reporting" to mapOf(
+                    "reportingInstructions" to mapOf(
+                      "name" to "sam",
+                      "postcode" to "S3 8RD",
+                      "telephone" to "47450",
+                      "townOrCity" to "Sheffield",
+                      "organisation" to "crc",
+                      "reportingDate" to "12/12/2024",
+                      "reportingTime" to "12:12",
+                      "buildingAndStreet1" to "10",
+                      "buildingAndStreet2" to "street",
+                    ),
                   ),
-                ),
-                "eligibility" to mapOf(
-                  "crdTime" to mapOf(
-                    "decision" to "No",
+                  "eligibility" to mapOf(
+                    "crdTime" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "excluded" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "suitability" to mapOf(
+                      "decision" to "No",
+                    ),
                   ),
-                  "excluded" to mapOf(
-                    "decision" to "No",
+                  "finalChecks" to mapOf(
+                    "onRemand" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "segregation" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "seriousOffence" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "confiscationOrder" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "undulyLenientSentence" to mapOf(
+                      "decision" to "No",
+                    ),
                   ),
-                  "suitability" to mapOf(
-                    "decision" to "No",
+                  "bassReferral" to mapOf(
+                    "bassOffer" to mapOf(
+                      "bassArea" to "Reading",
+                      "postCode" to "RG1 6HM",
+                      "telephone" to "",
+                      "addressTown" to "Reading",
+                      "addressLine1" to "The Street",
+                      "addressLine2" to "",
+                      "bassAccepted" to "Yes",
+                      "bassOfferDetails" to "",
+                    ),
+                    "bassRequest" to mapOf(
+                      "specificArea" to "No",
+                      "bassRequested" to "Yes",
+                      "additionalInformation" to "",
+                    ),
+                    "bassAreaCheck" to mapOf(
+                      "bassAreaReason" to "",
+                      "bassAreaCheckSeen" to "true",
+                      "approvedPremisesRequiredYesNo" to "No",
+                    ),
                   ),
-                ),
-                "finalChecks" to mapOf(
-                  "onRemand" to mapOf(
-                    "decision" to "No",
+                  "proposedAddress" to mapOf(
+                    "optOut" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "addressProposed" to mapOf(
+                      "decision" to "No",
+                    ),
                   ),
-                  "segregation" to mapOf(
-                    "decision" to "No",
-                  ),
-                  "seriousOffence" to mapOf(
-                    "decision" to "No",
-                  ),
-                  "confiscationOrder" to mapOf(
-                    "decision" to "No",
-                  ),
-                  "undulyLenientSentence" to mapOf(
-                    "decision" to "No",
-                  ),
-                ),
-                "bassReferral" to mapOf(
-                  "bassOffer" to mapOf(
-                    "bassArea" to "Reading",
-                    "postCode" to "RG1 6HM",
-                    "telephone" to "",
-                    "addressTown" to "Reading",
-                    "addressLine1" to "The Street",
-                    "addressLine2" to "",
-                    "bassAccepted" to "Yes",
-                    "bassOfferDetails" to "",
-                  ),
-                  "bassRequest" to mapOf(
-                    "specificArea" to "No",
-                    "bassRequested" to "Yes",
-                    "additionalInformation" to "",
-                  ),
-                  "bassAreaCheck" to mapOf(
-                    "bassAreaReason" to "",
-                    "bassAreaCheckSeen" to "true",
-                    "approvedPremisesRequiredYesNo" to "No",
-                  ),
-                ),
-                "proposedAddress" to mapOf(
-                  "optOut" to mapOf(
-                    "decision" to "No",
-                  ),
-                  "addressProposed" to mapOf(
-                    "decision" to "No",
-                  ),
-                ),
-                "licenceConditions" to mapOf(
-                  "standard" to mapOf(
-                    "additionalConditionsRequired" to "No",
+                  "licenceConditions" to mapOf(
+                    "standard" to mapOf(
+                      "additionalConditionsRequired" to "No",
+                    ),
                   ),
                 ),
               ),
+            ),
+          ),
+          mapOf(
+            "auditEvents" to arrayListOf(
               mapOf(
-                "auditEvents" to arrayListOf(
-                  mapOf(
-                    "id" to 40060,
-                    "timestamp" to "2024-08-23T09:36:51.186289",
-                    "user" to "cpxUKKZdbW",
-                    "action" to "UPDATE_SECTION",
-                    "details" to mapOf(
-                      "path" to "/hdc/curfew/approvedPremises/1108337",
-                      "bookingId" to "1108337",
-                      "userInput" to mapOf(
-                        "required" to "Yes",
-                      ),
-                    ),
+                "id" to 40060,
+                "timestamp" to "2024-08-23T09:36:51.186289",
+                "user" to "cpxUKKZdbW",
+                "action" to "UPDATE_SECTION",
+                "details" to mapOf(
+                  "path" to "/hdc/curfew/approvedPremises/1108337",
+                  "bookingId" to "1108337",
+                  "userInput" to mapOf(
+                    "required" to "Yes",
                   ),
                 ),
               ),
@@ -471,6 +471,19 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>Vary version</td><td>0</td>")
         renderedStyleTemplate.shouldContain("<td>Deleted at</td><td>15 March 2024, 11:11:14 am</td>")
         renderedStyleTemplate.shouldContain("<td>Has considered checks</td><td>Yes</td>")
+        renderedStyleTemplate.shouldContain("<td>First night from</td><td>15:00</td>")
+        renderedStyleTemplate.shouldContain("<td>Friday from</td><td>19:00</td>")
+        renderedStyleTemplate.shouldContain("<td>Decision maker</td><td>Louise Norris</td>")
+        renderedStyleTemplate.shouldContain("<td>Offence committed before Feb 2015</td><td>No</td>")
+        renderedStyleTemplate.shouldContain("<td>Telephone</td><td>47450</td>")
+        renderedStyleTemplate.shouldContain("<td>Address line 1</td><td>The Street</td>")
+        renderedStyleTemplate.shouldContain("<td>Bass requested</td><td>Yes</td>")
+        renderedStyleTemplate.shouldContain("<td>Bass area check seen</td><td>true</td>")
+        renderedStyleTemplate.shouldContain("<td>Additional conditions required</td><td>No</td>")
+        renderedStyleTemplate.shouldContain("<td>Action</td><td>UPDATE_SECTION</td>")
+        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
+
+
       }
     }
   },

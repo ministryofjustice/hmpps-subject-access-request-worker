@@ -105,212 +105,213 @@
                     </table>
                 {{/riskManagement}}
             {{/risk}}
+
+            {{#curfew}}
+                <h4>Curfew</h4>
+                {{#firstNight}}
+                    <h4>First night</h4>
+                    <table class="summary-list">
+                        <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
+                        <tr><td>First night until</td><td>{{ optionalValue (formatDate firstNightUntil) }}</td></tr>
+                    </table>
+                {{/firstNight}}
+                {{#curfewHours}}
+                    <h4>Curfew hours</h4>
+                    <table class="summary-list">
+                        <tr><td>All from</td><td>{{ optionalValue (formatDate allFrom) }}</td></tr>
+                        <tr><td>All until</td><td>{{ optionalValue (formatDate allUntil) }}</td></tr>
+                        <tr><td>Friday from</td><td>{{ optionalValue (formatDate fridayFrom) }}</td></tr>
+                        <tr><td>Monday from</td><td>{{ optionalValue (formatDate mondayFrom) }}</td></tr>
+                        <tr><td>Sunday from</td><td>{{ optionalValue (formatDate sundayFrom) }}</td></tr>
+                        <tr><td>Friday until</td><td>{{ optionalValue (formatDate fridayUntil) }}</td></tr>
+                        <tr><td>Monday until</td><td>{{ optionalValue (formatDate mondayUntil) }}</td></tr>
+                        <tr><td>Sunday until</td><td>{{ optionalValue (formatDate sundayUntil) }}</td></tr>
+                        <tr><td>Tuesday from</td><td>{{ optionalValue (formatDate tuesdayFrom) }}</td></tr>
+                        <tr><td>Saturday from</td><td>{{ optionalValue (formatDate saturdayFrom) }}</td></tr>
+                        <tr><td>Thursday from</td><td>{{ optionalValue (formatDate thursdayFrom) }}</td></tr>
+                        <tr><td>Tuesday until</td><td>{{ optionalValue (formatDate tuesdayUntil) }}</td></tr>
+                        <tr><td>Saturday until</td><td>{{ optionalValue (formatDate saturdayUntil) }}</td></tr>
+                        <tr><td>Thursday until</td><td>{{ optionalValue (formatDate thursdayUntil) }}</td></tr>
+                        <tr><td>Wednesday from</td><td>{{ optionalValue (formatDate wednesdayFrom) }}</td></tr>
+                        <tr><td>Wednesday until</td><td>{{ optionalValue (formatDate wednesdayUntil) }}</td></tr>                    <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
+                        <tr><td>Day specific inputs</td><td>{{ optionalValue (formatDate daySpecificInputs) }}</td></tr>
+                    </table>
+                {{/curfewHours}}
+            {{/curfew}}
+
+            {{#victim}}
+                <h4>Victim</h4>
+                {{#victimLiaison}}
+                    <h4>Victim Liaison</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/victimLiaison}}
+            {{/victim}}
+
+            {{#approval}}
+                <h4>Approval</h4>
+                {{#release}}
+                    <h4>Release</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                        <tr><td>Decision maker</td><td>{{ optionalValue decisionMaker }}</td></tr>
+                        <tr><td>Reason for decision</td><td>{{ optionalValue reasonForDecision }}</td></tr>
+                    </table>
+                {{/release}}
+                {{#consideration}}
+                    <h4>Consideration</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/consideration}}
+            {{/approval}}
+
+            {{#document}}
+                <h4>Document</h4>
+                {{#template}}
+                    <h4>Template</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                        <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue offenceCommittedBeforeFeb2015 }}</td></tr>
+                    </table>
+                {{/template}}
+            {{/document}}
+
+            {{#reporting}}
+                <h4>Reporting</h4>
+                {{#reportingInstructions}}
+                    <h4>Reporting instructions</h4>
+                    <table class="summary-list">
+                        <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
+                        <tr><td>Postcode</td><td>{{ optionalValue postcode }}</td></tr>
+                        <tr><td>Telephone</td><td>{{ optionalValue telephone }}</td></tr>
+                        <tr><td>Town/city</td><td>{{ optionalValue townOrCity }}</td></tr>
+                        <tr><td>Organisation</td><td>{{ optionalValue organisation }}</td></tr>
+                        <tr><td>Reporting date</td><td>{{ optionalValue reportingDate }}</td></tr>
+                        <tr><td>Reporting time</td><td>{{ optionalValue reportingTime }}</td></tr>
+                        <tr><td>Building and street 1</td><td>{{ optionalValue buildingAndStreet1 }}</td></tr>
+                        <tr><td>Building and street 2</td><td>{{ optionalValue buildingAndStreet2 }}</td></tr>
+                    </table>
+                {{/reportingInstructions}}
+            {{/reporting}}
+
+            {{#eligibility}}
+                <h4>Eligibility</h4>
+                {{#crdTime}}
+                    <h4>CRD time</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/crdTime}}
+                {{#excluded}}
+                    <h4>Excluded</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/excluded}}
+                {{#suitability}}
+                    <h4>Suitability</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/suitability}}
+            {{/eligibility}}
+
+            {{#finalChecks}}
+                <h4>Final checks</h4>
+                {{#onRemand}}
+                    <h4>On remand</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/onRemand}}
+                {{#segregation}}
+                    <h4>Segregation</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/segregation}}
+                {{#seriousOffence}}
+                    <h4>Serious offence</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/seriousOffence}}
+                {{#confiscationOrder}}
+                    <h4>Confiscation order</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/confiscationOrder}}
+                {{#undulyLenientSentence}}
+                    <h4>Unduly lenient sentence</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/undulyLenientSentence}}
+            {{/finalChecks}}
+
+            {{#bassReferral}}
+                <h4>Base referral</h4>
+                {{#bassOffer}}
+                    <h4>Bass offer</h4>
+                    <table class="summary-list">
+                        <tr><td>Bass area</td><td>{{ optionalValue bassArea }}</td></tr>
+                        <tr><td>Postcode</td><td>{{ optionalValue postCode }}</td></tr>
+                        <tr><td>Telephone</td><td>{{ optionalValue telephone }}</td></tr>
+                        <tr><td>Address town</td><td>{{ optionalValue addressTown }}</td></tr>
+                        <tr><td>Address line 1</td><td>{{ optionalValue addressLine1 }}</td></tr>
+                        <tr><td>Address line 2</td><td>{{ optionalValue addressLine2 }}</td></tr>
+                        <tr><td>Bass accepted</td><td>{{ optionalValue bassAccepted }}</td></tr>
+                        <tr><td>Bass offer details</td><td>{{ optionalValue bassOfferDetails }}</td></tr>
+                    </table>
+                {{/bassOffer}}
+                {{#bassRequest}}
+                    <h4>Bass request</h4>
+                    <table class="summary-list">
+                        <tr><td>Specific area</td><td>{{ optionalValue specificArea }}</td></tr>
+                        <tr><td>Bass requested</td><td>{{ optionalValue bassRequested }}</td></tr>
+                        <tr><td>Additional information</td><td>{{ optionalValue additionalInformation }}</td></tr>
+                    </table>
+                {{/bassRequest}}
+                {{#bassAreaCheck}}
+                    <h4>Bass area check</h4>
+                    <table class="summary-list">
+                        <tr><td>Bass area reason</td><td>{{ optionalValue bassAreaReason }}</td></tr>
+                        <tr><td>Bass area check seen</td><td>{{ optionalValue bassAreaCheckSeen }}</td></tr>
+                        <tr><td>Approved premises required (Y/N)</td><td>{{ optionalValue approvedPremisesRequiredYesNo }}</td></tr>
+                    </table>
+                {{/bassAreaCheck}}
+            {{/bassReferral}}
+
+            {{#proposedAddress}}
+                <h4>Proposed address</h4>
+                {{#optOut}}
+                    <h4>Opt out</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/optOut}}
+                {{#addressProposed}}
+                    <h4>Address proposed</h4>
+                    <table class="summary-list">
+                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
+                    </table>
+                {{/addressProposed}}
+            {{/proposedAddress}}
+
+            {{#licenceConditions}}
+                <h4>Licence conditions</h4>
+                {{#standard}}
+                    <h4>Standard</h4>
+                    <table class="summary-list">
+                        <tr><td>Additional conditions required</td><td>{{ optionalValue additionalConditionsRequired }}</td></tr>
+                    </table>
+                {{/standard}}
+            {{/licenceConditions}}
+
         {{/licence}}
-
-        {{#curfew}}
-            <h4>Curfew</h4>
-            {{#firstNight}}
-                <h4>First night</h4>
-                <table class="summary-list">
-                    <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
-                    <tr><td>First night until</td><td>{{ optionalValue (formatDate firstNightUntil) }}</td></tr>
-                </table>
-            {{/firstNight}}
-            {{#curfewHours}}
-                <h4>Curfew hours</h4>
-                <table class="summary-list">
-                    <tr><td>All from</td><td>{{ optionalValue (formatDate allFrom) }}</td></tr>
-                    <tr><td>All until</td><td>{{ optionalValue (formatDate allUntil) }}</td></tr>
-                    <tr><td>Friday from</td><td>{{ optionalValue (formatDate fridayFrom) }}</td></tr>
-                    <tr><td>Monday from</td><td>{{ optionalValue (formatDate mondayFrom) }}</td></tr>
-                    <tr><td>Sunday from</td><td>{{ optionalValue (formatDate sundayFrom) }}</td></tr>
-                    <tr><td>Friday until</td><td>{{ optionalValue (formatDate fridayUntil) }}</td></tr>
-                    <tr><td>Monday until</td><td>{{ optionalValue (formatDate mondayUntil) }}</td></tr>
-                    <tr><td>Sunday until</td><td>{{ optionalValue (formatDate sundayUntil) }}</td></tr>
-                    <tr><td>Tuesday from</td><td>{{ optionalValue (formatDate tuesdayFrom) }}</td></tr>
-                    <tr><td>Saturday from</td><td>{{ optionalValue (formatDate saturdayFrom) }}</td></tr>
-                    <tr><td>Thursday from</td><td>{{ optionalValue (formatDate thursdayFrom) }}</td></tr>
-                    <tr><td>Tuesday until</td><td>{{ optionalValue (formatDate tuesdayUntil) }}</td></tr>
-                    <tr><td>Saturday until</td><td>{{ optionalValue (formatDate saturdayUntil) }}</td></tr>
-                    <tr><td>Thursday until</td><td>{{ optionalValue (formatDate thursdayUntil) }}</td></tr>
-                    <tr><td>Wednesday from</td><td>{{ optionalValue (formatDate wednesdayFrom) }}</td></tr>
-                    <tr><td>Wednesday until</td><td>{{ optionalValue (formatDate wednesdayUntil) }}</td></tr>                    <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
-                    <tr><td>Day specific inputs</td><td>{{ optionalValue (formatDate daySpecificInputs) }}</td></tr>
-                </table>
-            {{/curfewHours}}
-        {{/curfew}}
-
-        {{#victim}}
-            <h4>Victim</h4>
-            {{#victimLiaison}}
-                <h4>Victim Liaison</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/victimLiaison}}
-        {{/victim}}
-
-        {{#approval}}
-            <h4>Approval</h4>
-            {{#release}}
-                <h4>Release</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    <tr><td>Decision maker</td><td>{{ optionalValue decisionMaker }}</td></tr>
-                    <tr><td>Reason for decision</td><td>{{ optionalValue reasonForDecision }}</td></tr>
-                </table>
-            {{/release}}
-            {{#consideration}}
-                <h4>Consideration</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/consideration}}
-        {{/approval}}
-
-        {{#document}}
-            <h4>Document</h4>
-            {{#template}}
-                <h4>Template</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue offenceCommittedBeforeFeb2015 }}</td></tr>
-                </table>
-            {{/template}}
-        {{/document}}
-
-        {{#reporting}}
-            <h4>Reporting</h4>
-            {{#reportingInstructions}}
-                <h4>Reporting instructions</h4>
-                <table class="summary-list">
-                    <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
-                    <tr><td>Postcode</td><td>{{ optionalValue postcode }}</td></tr>
-                    <tr><td>Telephone</td><td>{{ optionalValue telephone }}</td></tr>
-                    <tr><td>Town/city</td><td>{{ optionalValue townOrCity }}</td></tr>
-                    <tr><td>Organisation</td><td>{{ optionalValue organisation }}</td></tr>
-                    <tr><td>Reporting date</td><td>{{ optionalValue reportingDate }}</td></tr>
-                    <tr><td>Reporting time</td><td>{{ optionalValue reportingTime }}</td></tr>
-                    <tr><td>Building and street 1</td><td>{{ optionalValue buildingAndStreet1 }}</td></tr>
-                    <tr><td>Building and street 2</td><td>{{ optionalValue buildingAndStreet2 }}</td></tr>
-                </table>
-            {{/reportingInstructions}}
-        {{/reporting}}
-
-        {{#eligibility}}
-            <h4>Eligibility</h4>
-            {{#crdTime}}
-                <h4>CRD time</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/crdTime}}
-            {{#excluded}}
-                <h4>Excluded</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/excluded}}
-            {{#suitability}}
-                <h4>Suitability</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/suitability}}
-        {{/eligibility}}
-
-        {{#finalChecks}}
-            <h4>Final checks</h4>
-            {{#onRemand}}
-                <h4>On remand</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/onRemand}}
-            {{#segregation}}
-                <h4>Segregation</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/segregation}}
-            {{#seriousOffence}}
-                <h4>Serious offence</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/seriousOffence}}
-            {{#confiscationOrder}}
-                <h4>Confiscation order</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/confiscationOrder}}
-            {{#undulyLenientSentence}}
-                <h4>Unduly lenient sentence</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/undulyLenientSentence}}
-        {{/finalChecks}}
-
-        {{#bassReferral}}
-            <h4>Base referral</h4>
-            {{#bassOffer}}
-                <h4>Bass offer</h4>
-                <table class="summary-list">
-                    <tr><td>Bass area</td><td>{{ optionalValue bassArea }}</td></tr>
-                    <tr><td>Postcode</td><td>{{ optionalValue postCode }}</td></tr>
-                    <tr><td>Telephone</td><td>{{ optionalValue telephone }}</td></tr>
-                    <tr><td>Address town</td><td>{{ optionalValue addressTown }}</td></tr>
-                    <tr><td>Address line 1</td><td>{{ optionalValue addressLine1 }}</td></tr>
-                    <tr><td>Address line 2</td><td>{{ optionalValue addressLine2 }}</td></tr>
-                    <tr><td>Bass accepted</td><td>{{ optionalValue bassAccepted }}</td></tr>
-                    <tr><td>Bass offer details</td><td>{{ optionalValue bassOfferDetails }}</td></tr>
-                </table>
-            {{/bassOffer}}
-            {{#bassRequest}}
-                <h4>Bass request</h4>
-                <table class="summary-list">
-                    <tr><td>Specific area</td><td>{{ optionalValue specificArea }}</td></tr>
-                    <tr><td>Bass requested</td><td>{{ optionalValue bassRequested }}</td></tr>
-                    <tr><td>Additional information</td><td>{{ optionalValue additionalInformation }}</td></tr>
-                </table>
-            {{/bassRequest}}
-            {{#bassAreaCheck}}
-                <h4>Bass area check</h4>
-                <table class="summary-list">
-                    <tr><td>Bass area reason</td><td>{{ optionalValue bassAreaReason }}</td></tr>
-                    <tr><td>Bass area check seen</td><td>{{ optionalValue bassAreaCheckSeen }}</td></tr>
-                    <tr><td>Approved premises required (Y/N)</td><td>{{ optionalValue approvedPremisesRequiredYesNo }}</td></tr>
-                </table>
-            {{/bassAreaCheck}}
-        {{/bassReferral}}
-
-        {{#proposedAddress}}
-            <h4>Proposed address</h4>
-            {{#optOut}}
-                <h4>Opt out</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/optOut}}
-            {{#addressProposed}}
-                <h4>Address proposed</h4>
-                <table class="summary-list">
-                    <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                </table>
-            {{/addressProposed}}
-        {{/proposedAddress}}
-
-        {{#licenceConditions}}
-            <h4>licenceConditions</h4>
-            {{#standard}}
-                <h4>Standard</h4>
-                <table class="summary-list">
-                    <tr><td>Additional conditions required</td><td>{{ optionalValue additionalConditionsRequired }}</td></tr>
-                </table>
-            {{/standard}}
-        {{/licenceConditions}}
     {{/licenceVersions}}
 
     <h2>Audit events</h2>
@@ -336,6 +337,4 @@
             {{/userInput}}
         {{/details}}
     {{/auditEvents}}
-
-
 {{/.}}
