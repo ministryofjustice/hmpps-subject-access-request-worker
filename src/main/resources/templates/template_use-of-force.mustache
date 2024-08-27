@@ -1,0 +1,197 @@
+<h1>Use of force</h1>
+{{#.}}
+    <h2>Incident of use of force - ID {{ optionalValue id }}</h2>
+    <table class="summary-list">
+        <tr><td>Sequence no</td><td>{{ optionalValue sequenceNo }}</td></tr>
+        <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
+        <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
+        <tr><td>Incident date</td><td>{{ optionalValue (formatDate incidentDate) }}</td></tr>
+        <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
+        <tr><td>Deleted</td><td>{{ optionalValue deleted }}</td></tr>
+        <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
+        <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
+        <tr><td>User ID</td><td>{{ optionalValue userId }}</td></tr>
+        <tr><td>Reporter name</td><td>{{ optionalValue reporterName }}</td></tr>
+        <tr><td>Offender no</td><td>{{ optionalValue offenderNo }}</td></tr>
+        <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
+    </table>
+
+    <h3>Form response</h3>
+    {{#formResponse}}
+        <h4>Evidence</h4>
+        {{#evidence}}
+        <table class="summary-list">
+            <tr><td>CCTV recording</td><td>{{ optionalValue cctvRecording }}</td></tr>
+            <tr><td>Bagged evidence</td><td>{{ optionalValue baggedEvidence }}</td></tr>
+            <tr><td>Body worn camera</td><td>{{ optionalValue bodyWornCamera }}</td></tr>
+            <tr><td>Photographs taken</td><td>{{ optionalValue photographsTaken }}</td></tr>
+        </table>
+
+            <h5>Evidence tags and descriptions</h5>
+            {{#evidenceTagAndDescription}}
+            <table class="data-table">
+                <tr><td>Evidence tag reference</td><td>{{ optionalValue evidenceTagReference }}</td></tr>
+                <tr><td>Description</td><td>{{ optionalValue description }}</td></tr>
+            </table>
+            {{/evidenceTagAndDescription}}
+
+            <h5>Body worn camera numbers</h5>
+                {{#bodyWornCameraNumbers}}
+                    <table class="summary-list">
+                        <tr><td>Camera number</td><td>{{ optionalValue cameraNum }}</td></tr>
+                    </table>
+                {{/bodyWornCameraNumbers}}
+            </table>
+        {{/evidence}}
+
+         <h4>Involved staff</h4>
+         {{#involvedStaff}}
+         <table class="data-table">
+             <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
+             <tr><td>Email</td><td>{{ optionalValue email }}</td></tr>
+             <tr><td>Staff ID</td><td>{{ optionalValue staffId }}</td></tr>
+             <tr><td>Username</td><td>{{ optionalValue username }}</td></tr>
+             <tr><td>Verified</td><td>{{ optionalValue verified }}</td></tr>
+             <tr><td>Active case load ID</td><td>{{ optionalValue activeCaseLoadId }}</td></tr>
+         </table>
+         {{/involvedStaff}}
+
+         <h4>Incident details</h4>
+          {{#incidentDetails}}
+           <table class="summary-list">
+               <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+               <tr><td>Planned use of force</td><td>{{ optionalValue plannedUseOfForce }}</td></tr>
+               <tr><td>Authorised by</td><td>{{ optionalValue authorisedBy }}</td></tr>
+
+               <tr><td>Witnesses</td>
+                   <td>
+
+                           {{#witnesses}}
+                            {{ optionalValue name }}<br>
+                           {{/witnesses}}
+                   </td>
+               </tr>
+           </table>
+
+           {{/incidentDetails}}
+
+        <h4>Use of force details</h4>
+        {{#useOfForceDetails}}
+            <table class="summary-list">
+                <tr><td>Body worn camera</td><td>{{ optionalValue bodyWornCamera }}</td></tr>
+                <tr><td>Body worn camera numbers</td><td>
+                {{#bodyWornCameraNumbers}}
+                        {{ optionalValue cameraNum }}
+                {{/bodyWornCameraNumbers}}
+                </td></tr>
+                <tr><td>Pava drawn</td><td>{{ optionalValue pavaDrawn }}</td></tr>
+                <tr><td>Pava drawn against prisoner</td><td>{{ optionalValue pavaDrawnAgainstPrisoner }}</td></tr>
+                <tr><td>Pava used</td><td>{{ optionalValue pavaUsed }}</td></tr>
+                <tr><td>Weapons observed</td><td>{{ optionalValue weaponsObserved }}</td></tr>
+                <tr><td>Weapon types</td><td>
+                {{#weaponTypes}}
+                        {{ optionalValue weaponType }}
+                {{/weaponTypes}}
+                </td></tr>
+                <tr><td>Escorting hold</td><td>{{ optionalValue escortingHold }}</td></tr>
+                <tr><td>Restraint</td><td>{{ optionalValue restraint }}</td></tr>
+                <tr><td>Restraint positions</td><td>
+                    {{#restraintPositions}}
+                        {{ optionalValue . }}
+                    {{/restraintPositions}}
+                </td></tr>
+                <tr><td>Baton drawn</td><td>{{ optionalValue batonDrawn }}</td></tr>
+                <tr><td>Baton drawn against prisoner</td><td>{{ optionalValue batonDrawnAgainstPrisoner }}</td></tr>
+                <tr><td>Baton used</td><td>{{ optionalValue batonUsed }}</td></tr>
+                <tr><td>Guiding hold</td><td>{{ optionalValue guidingHold }}</td></tr>
+                <tr><td>Handcuffs applied</td><td>{{ optionalValue handcuffsApplied }}</td></tr>
+                <tr><td>Positive communication</td><td>{{ optionalValue positiveCommunication }}</td></tr>
+                <tr><td>Pain inducing techniques</td><td>{{ optionalValue painInducingTechniques }}</td></tr>
+                <tr><td>Pain inducing techniques used</td><td>{{ optionalValue painInducingTechniquesUsed }}</td></tr>
+                <tr><td>Personal protection techniques</td><td>{{ optionalValue personalProtectionTechniques }}</td></tr>
+            </table>
+        {{/useOfForceDetails}}
+
+        <h4>Reasons for use of force</h4>
+        {{#reasonsForUseOfForce}}
+            <table class="summary-list">
+                    <tr><td>Primary Reason</td><td>{{ optionalValue primaryReason }}</td></tr>
+                    <tr><td>Reasons</td><td>
+                        {{#reasons}}
+                            {{ optionalValue . }}
+                        {{/reasons}}
+                    </td></tr>
+            </table>
+        {{/reasonsForUseOfForce}}
+
+        <h4>Relocation and injuries</h4>
+        {{#relocationAndInjuries}}
+            <table class="summary-list">
+                <tr><td>Relocation type</td><td>{{ optionalValue relocationType }}</td></tr>
+                <tr><td>F213 completed by</td><td>{{ optionalValue f213CompletedBy }}</td></tr>
+                <tr><td>Prisoner injuries</td><td>{{ optionalValue prisonerInjuries }}</td></tr>
+                <tr><td>Healthcare involved</td><td>{{ optionalValue healthcareInvolved }}</td></tr>
+                <tr><td>Healthcare practioner name</td><td>{{ optionalValue healthcarePractionerName }}</td></tr>
+                <tr><td>Prisoner relocation</td><td>{{ optionalValue prisonerRelocation }}</td></tr>
+                <tr><td>Relocation compliancy</td><td>{{ optionalValue relocationCompliancy }}</td></tr>
+                <tr><td>Staff medical attention</td><td>{{ optionalValue staffMedicalAttention }}</td></tr>
+                <tr><td>Prisoner hospitalisation</td><td>{{ optionalValue prisonerHospitalisation }}</td></tr>
+                <tr><td>User specified relocation type</td><td>{{ optionalValue userSpecifiedRelocationType }}</td></tr>
+            </table>
+
+                <h4>Staff needing medical attention</h4>
+            {{#staffNeedingMedicalAttention}}
+                    <table class="data-table">
+                        <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
+                        <tr><td>Hospitalisation</td><td>{{ optionalValue hospitalisation }}</td></tr>
+                    </table>
+            {{/staffNeedingMedicalAttention}}
+        {{/relocationAndInjuries}}
+    {{/formResponse}}
+
+    <h3>Statements</h3>
+    {{#statements}}
+        <table class="data-table">
+            <tr><td>Statement</td></tr>
+            <tr><td>{{{ optionalValue statement }}}</td></tr>
+        </table>
+
+        <table class="summary-list">
+            <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+            <tr><td>Report ID</td><td>{{ optionalValue reportId }}</td></tr>
+            <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
+            <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
+            <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
+            <tr><td>Deleted</td><td>{{ optionalValue deleted }}</td></tr>
+            <tr><td>Next reminder date</td><td>{{ optionalValue nextReminderDate }}</td></tr>
+            <tr><td>Overdue date</td><td>{{ optionalValue overdueDate }}</td></tr>
+            <tr><td>Removal requested date</td><td>{{ optionalValue removalRequestedDate }}</td></tr>
+            <tr><td>User ID</td><td>{{ optionalValue userId }}</td></tr>
+            <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
+            <tr><td>Email</td><td>{{ optionalValue email }}</td></tr>
+            <tr><td>Statement status</td><td>{{ optionalValue statementStatus }}</td></tr>
+            <tr><td>Last training month</td><td>{{ optionalValue lastTrainingMonth }}</td></tr>
+            <tr><td>Last training year</td><td>{{ optionalValue lastTrainingYear }}</td></tr>
+            <tr><td>Job start year</td><td>{{ optionalValue jobStartYear }}</td></tr>
+            <tr><td>Staff ID</td><td>{{ optionalValue staffId }}</td></tr>
+            <tr><td>In progress</td><td>{{ optionalValue inProgress }}</td></tr>
+            <tr><td>Removal requested reason</td><td>{{ optionalValue removalRequestedReason }}</td></tr>
+        </table>
+
+        <h4>Statement amendments</h4>
+        {{#statementAmendments}}
+            <table class="data-table">
+                <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
+                <tr><td>Statement ID</td><td>{{ optionalValue statementId }}</td></tr>
+                <tr><td>Additional comment</td><td>{{ optionalValue additionalComment }}</td></tr>
+                <tr><td>Date submitted</td><td>{{ optionalValue dateSubmitted }}</td></tr>
+                <tr><td>Deleted</td><td>{{ optionalValue deleted }}</td></tr>
+            </table>
+        {{/statementAmendments}}
+        <br>
+
+    {{/statements}}
+
+
+
+{{/.}}
