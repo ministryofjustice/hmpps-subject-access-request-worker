@@ -246,7 +246,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
             "licences" to arrayListOf(
-            mapOf(
+              mapOf(
                 "id" to 1626,
                 "prisonNumber" to "G1556UH",
                 "bookingId" to 1108337,
@@ -258,73 +258,74 @@ class TemplateRenderServiceTest : DescribeSpec(
                 "standardConditionsVersion" to null,
                 "deletedAt" to "2024-03-18T09:25:06.780003",
                 "licence" to mapOf(
-                    "eligibility" to mapOf(
-                        "crdTime" to mapOf(
-                            "decision" to "No"
-                        ),
-                        "excluded" to mapOf(
-                            "decision" to "No"
-                        ),
-                        "suitability" to mapOf(
-                            "decision" to "No"
-                        ),
+                  "eligibility" to mapOf(
+                    "crdTime" to mapOf(
+                      "decision" to "No",
                     ),
+                    "excluded" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "suitability" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
                 ),
                 "bassReferral" to mapOf(
-                    "bassRequest" to mapOf(
-                        "specificArea" to "No",
-                        "bassRequested" to "Yes",
-                        "additionalInformation" to "",
-                    ),
+                  "bassRequest" to mapOf(
+                    "specificArea" to "No",
+                    "bassRequested" to "Yes",
+                    "additionalInformation" to "",
+                  ),
                 ),
                 "proposedAddress" to mapOf(
-                    "optOut" to mapOf(
-                        "decision" to "No"
-                    )
+                  "optOut" to mapOf(
+                    "decision" to "No",
+                  ),
                 ),
                 "addressProposed" to mapOf(
-                "decision" to "No"
-                )
-            )
-          )
+                  "decision" to "No",
+                ),
+              ),
+            ),
           ),
-          mapOf("licenceVersions" to arrayListOf(
-            mapOf(
-              "id" to 446,
-              "prisonNumber" to "G1556UH",
-              "bookingId" to 1108337,
-              "timestamp" to "2024-03-15T10:48:50.888663",
-              "version" to 1,
-              "template" to "hdc_ap",
-              "varyVersion" to 0,
-              "deletedAt" to "2024-03-15T11:11:14.361319",
-              "licence" to mapOf(
+          mapOf(
+            "licenceVersions" to arrayListOf(
+              mapOf(
+                "id" to 446,
+                "prisonNumber" to "G1556UH",
+                "bookingId" to 1108337,
+                "timestamp" to "2024-03-15T10:48:50.888663",
+                "version" to 1,
+                "template" to "hdc_ap",
+                "varyVersion" to 0,
+                "deletedAt" to "2024-03-15T11:11:14.361319",
+                "licence" to mapOf(
                   "risk" to mapOf(
-                      "riskManagement" to mapOf(
-                          "version" to "3",
-                          "emsInformation" to "No",
-                          "pomConsultation" to "Yes",
-                          "mentalHealthPlan" to "No",
-                          "unsuitableReason" to "",
-                          "hasConsideredChecks" to "Yes",
-                          "manageInTheCommunity" to "Yes",
-                          "emsInformationDetails" to "",
-                          "riskManagementDetails" to "",
-                          "proposedAddressSuitable" to "Yes",
-                          "awaitingOtherInformation" to "No",
-                          "nonDisclosableInformation" to "No",
-                          "nonDisclosableInformationDetails" to "",
-                          "manageInTheCommunityNotPossibleReason" to "",
-                      )
-                  )
-              ),
-              "curfew" to mapOf(
+                    "riskManagement" to mapOf(
+                      "version" to "3",
+                      "emsInformation" to "No",
+                      "pomConsultation" to "Yes",
+                      "mentalHealthPlan" to "No",
+                      "unsuitableReason" to "",
+                      "hasConsideredChecks" to "Yes",
+                      "manageInTheCommunity" to "Yes",
+                      "emsInformationDetails" to "",
+                      "riskManagementDetails" to "",
+                      "proposedAddressSuitable" to "Yes",
+                      "awaitingOtherInformation" to "No",
+                      "nonDisclosableInformation" to "No",
+                      "nonDisclosableInformationDetails" to "",
+                      "manageInTheCommunityNotPossibleReason" to "",
+                    ),
+                  ),
+                ),
+                "curfew" to mapOf(
                   "firstNight" to mapOf(
-                      "firstNightFrom" to "15:00",
-                      "firstNightUntil" to "07:00",
-                  )
-              ),
-              "curfewHours" to mapOf(
+                    "firstNightFrom" to "15:00",
+                    "firstNightUntil" to "07:00",
+                  ),
+                ),
+                "curfewHours" to mapOf(
                   "allFrom" to "19:00",
                   "allUntil" to "07:00",
                   "fridayFrom" to "19:00",
@@ -342,123 +343,124 @@ class TemplateRenderServiceTest : DescribeSpec(
                   "wednesdayFrom" to "19:00",
                   "wednesdayUntil" to "07:00",
                   "daySpecificInputs" to "No",
-              ),
-              "victim" to mapOf(
+                ),
+                "victim" to mapOf(
                   "victimLiaison" to mapOf(
-                     "decision" to "No"
-                  )
-              ),
-              "approval" to mapOf(
+                    "decision" to "No",
+                  ),
+                ),
+                "approval" to mapOf(
                   "release" to mapOf(
-                      "decision" to "Yes",
-                      "decisionMaker" to "Louise Norris",
-                      "reasonForDecision" to "",
-                  )
+                    "decision" to "Yes",
+                    "decisionMaker" to "Louise Norris",
+                    "reasonForDecision" to "",
+                  ),
+                ),
+                "consideration" to mapOf(
+                  "decision" to "Yes",
+                ),
+                "document" to mapOf(
+                  "template" to mapOf(
+                    "decision" to "hdc_ap",
+                    "offenceCommittedBeforeFeb2015" to "No",
+                  ),
+                ),
+                "reporting" to mapOf(
+                  "reportingInstructions" to mapOf(
+                    "name" to "sam",
+                    "postcode" to "S3 8RD",
+                    "telephone" to "47450",
+                    "townOrCity" to "Sheffield",
+                    "organisation" to "crc",
+                    "reportingDate" to "12/12/2024",
+                    "reportingTime" to "12:12",
+                    "buildingAndStreet1" to "10",
+                    "buildingAndStreet2" to "street",
+                  ),
+                ),
+                "eligibility" to mapOf(
+                  "crdTime" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "excluded" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "suitability" to mapOf(
+                    "decision" to "No",
+                  ),
+                ),
+                "finalChecks" to mapOf(
+                  "onRemand" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "segregation" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "seriousOffence" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "confiscationOrder" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "undulyLenientSentence" to mapOf(
+                    "decision" to "No",
+                  ),
+                ),
+                "bassReferral" to mapOf(
+                  "bassOffer" to mapOf(
+                    "bassArea" to "Reading",
+                    "postCode" to "RG1 6HM",
+                    "telephone" to "",
+                    "addressTown" to "Reading",
+                    "addressLine1" to "The Street",
+                    "addressLine2" to "",
+                    "bassAccepted" to "Yes",
+                    "bassOfferDetails" to "",
+                  ),
+                  "bassRequest" to mapOf(
+                    "specificArea" to "No",
+                    "bassRequested" to "Yes",
+                    "additionalInformation" to "",
+                  ),
+                  "bassAreaCheck" to mapOf(
+                    "bassAreaReason" to "",
+                    "bassAreaCheckSeen" to "true",
+                    "approvedPremisesRequiredYesNo" to "No",
+                  ),
+                ),
+                "proposedAddress" to mapOf(
+                  "optOut" to mapOf(
+                    "decision" to "No",
+                  ),
+                  "addressProposed" to mapOf(
+                    "decision" to "No",
+                  ),
+                ),
+                "licenceConditions" to mapOf(
+                  "standard" to mapOf(
+                    "additionalConditionsRequired" to "No",
+                  ),
+                ),
               ),
-              "consideration" to mapOf(
-                  "decision" to "Yes"
-              ),
-              "document" to mapOf(
-              "template" to mapOf(
-                "decision" to "hdc_ap",
-                "offenceCommittedBeforeFeb2015" to "No"
-                )
-              ),
-              "reporting" to mapOf(
-                "reportingInstructions" to mapOf(
-                  "name" to "sam",
-                  "postcode" to "S3 8RD",
-                  "telephone" to "47450",
-                  "townOrCity" to "Sheffield",
-                  "organisation" to "crc",
-                  "reportingDate" to "12/12/2024",
-                  "reportingTime" to "12:12",
-                  "buildingAndStreet1" to "10",
-                  "buildingAndStreet2" to "street"
-                )
-              ),
-              "eligibility" to mapOf(
-                "crdTime" to mapOf(
-                  "decision" to "No"
-                ),
-                "excluded" to mapOf(
-                  "decision" to "No"
-                ),
-                "suitability" to mapOf(
-                  "decision" to "No"
+              mapOf(
+                "auditEvents" to arrayListOf(
+                  mapOf(
+                    "id" to 40060,
+                    "timestamp" to "2024-08-23T09:36:51.186289",
+                    "user" to "cpxUKKZdbW",
+                    "action" to "UPDATE_SECTION",
+                    "details" to mapOf(
+                      "path" to "/hdc/curfew/approvedPremises/1108337",
+                      "bookingId" to "1108337",
+                      "userInput" to mapOf(
+                        "required" to "Yes",
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              "finalChecks" to mapOf(
-                "onRemand" to mapOf(
-                  "decision" to "No"
-                ),
-                "segregation" to mapOf(
-                  "decision" to "No"
-                ),
-                "seriousOffence" to mapOf(
-                   "decision" to "No"
-                ),
-                "confiscationOrder" to mapOf(
-                  "decision" to "No"
-                ),
-                "undulyLenientSentence" to mapOf(
-                  "decision" to "No"
-                ),
-              ),
-              "bassReferral" to mapOf(
-                "bassOffer" to mapOf(
-                  "bassArea" to "Reading",
-                  "postCode" to "RG1 6HM",
-                  "telephone" to "",
-                  "addressTown" to "Reading",
-                  "addressLine1" to "The Street",
-                  "addressLine2" to "",
-                  "bassAccepted" to "Yes",
-                  "bassOfferDetails" to "",
-                ),
-                "bassRequest" to mapOf(
-                  "specificArea" to "No",
-                  "bassRequested" to "Yes",
-                  "additionalInformation" to "",
-                ),
-                "bassAreaCheck" to mapOf(
-                  "bassAreaReason" to "",
-                  "bassAreaCheckSeen" to "true",
-                  "approvedPremisesRequiredYesNo" to "No"
-                )
-              ),
-              "proposedAddress" to mapOf(
-                "optOut" to mapOf(
-                  "decision" to "No"
-                ),
-              "addressProposed" to mapOf(
-                "decision" to "No"
-              ),
-              ),
-              "licenceConditions" to mapOf(
-                "standard" to mapOf(
-                  "additionalConditionsRequired" to "No"
-                )
-              ),
+            ),
           ),
-          mapOf("auditEvents" to arrayListOf(
-            mapOf(
-                "id" to 40060,
-                "timestamp" to "2024-08-23T09:36:51.186289",
-                "user" to "cpxUKKZdbW",
-                "action" to "UPDATE_SECTION",
-                "details" to mapOf(
-                  "path" to "/hdc/curfew/approvedPremises/1108337",
-                  "bookingId" to "1108337",
-                  "userInput" to mapOf(
-                    "required" to "Yes"
-                  )
-                )
-              )
-            )
-          ),
-        )
-          )
         )
         val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-hdc-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
