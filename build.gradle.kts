@@ -16,6 +16,7 @@ dependencies {
   implementation("com.itextpdf:itext7-core:7.2.6")
   implementation("com.itextpdf:html2pdf:5.0.4")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
+  implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.25")
   implementation("com.github.spullara.mustache.java:compiler:0.9.5")
   implementation("com.github.jknack:handlebars:4.4.0")
   implementation("org.apache.commons:commons-lang3:3.12.0")
