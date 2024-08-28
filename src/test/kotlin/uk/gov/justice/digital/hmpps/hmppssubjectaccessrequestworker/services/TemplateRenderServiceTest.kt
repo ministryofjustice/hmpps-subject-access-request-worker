@@ -245,22 +245,22 @@ class TemplateRenderServiceTest : DescribeSpec(
         val templateRenderService = TemplateRenderService()
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
-              "offenderNo" to "A1234AA",
-              "level" to "low",
-              "sourceSystem" to "keyworker-to-complexity-api-test",
-              "sourceUser" to "JSMITH_GEN",
-              "notes" to "string",
-              "createdTimeStamp" to "2021-03-30T11:45:10.266Z",
-              "active" to true,
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T11:45:10.266Z",
+            "active" to true,
           ),
           mapOf(
-              "offenderNo" to "A1234AA",
-              "level" to "low",
-              "sourceSystem" to "keyworker-to-complexity-api-test",
-              "sourceUser" to "JSMITH_GEN",
-              "notes" to "string",
-              "createdTimeStamp" to "2021-03-30T19:54:46.056Z",
-              "active" to true,
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T19:54:46.056Z",
+            "active" to true,
           ),
         )
         val renderedStyleTemplate = templateRenderService.renderTemplate("complexity-of-need", testServiceData)
