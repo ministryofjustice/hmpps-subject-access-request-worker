@@ -245,28 +245,30 @@ class TemplateRenderServiceTest : DescribeSpec(
         val templateRenderService = TemplateRenderService()
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
-            "id" to 2898970,
-            "bookingId" to "1208204",
-            "prisonerNumber" to "A485634",
-            "nextReviewDate" to "2019-12-03",
-            "levelCode" to "ENH",
-            "prisonId" to "UAL",
-            "locationId" to "M-16-15",
-            "reviewTime" to "2023-07-03T21:14:25.059172",
-            "reviewedBy" to "MDI",
-            "commentText" to "comment",
-            "current" to true,
-            "reviewType" to "REVIEW",
+              "offenderNo" to "A1234AA",
+              "level" to "low",
+              "sourceSystem" to "keyworker-to-complexity-api-test",
+              "sourceUser" to "JSMITH_GEN",
+              "notes" to "string",
+              "createdTimeStamp" to "2021-03-30T11:45:10.266Z",
+              "active" to true,
+          ),
+          mapOf(
+              "offenderNo" to "A1234AA",
+              "level" to "low",
+              "sourceSystem" to "keyworker-to-complexity-api-test",
+              "sourceUser" to "JSMITH_GEN",
+              "notes" to "string",
+              "createdTimeStamp" to "2021-03-30T19:54:46.056Z",
+              "active" to true,
           ),
         )
-        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-incentives-api", testServiceData)
+        val renderedStyleTemplate = templateRenderService.renderTemplate("complexity-of-need", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1208204</td>")
-        renderedStyleTemplate.shouldContain("<td>Next review date</td><td>03 December 2019</td>")
-        renderedStyleTemplate.shouldContain("<td>Review time</td><td>03 July 2023, 9:14:25 pm</td>")
-        renderedStyleTemplate.shouldContain("<td>Current</td><td>true</td>")
+        renderedStyleTemplate.shouldContain("<td>Offender number</td><td>A1234AA</td>")
+        renderedStyleTemplate.shouldContain("<td>Source system</td><td>keyworker-to-complexity-api-test</td>")
       }
     }
   },

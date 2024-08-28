@@ -294,6 +294,39 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Case note")
       }
 
+      it("renders for Complexity of Need Service") {
+        val testInput = arrayListOf(
+          mapOf(
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T11:45:10.266Z",
+            "active" to true,
+          ),
+          mapOf(
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T19:54:46.056Z",
+            "active" to true,
+          ),
+        )
+        val testResponseObject = listOf(DpsService(name = "complexity-of-need", content = testInput))
+        val writer = PdfWriter(FileOutputStream("dummy-template-con.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-template-con.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("Complexity of need")
+      }
+
       it("renders for Create and Vary a License Service") {
 
         val testInput = mapOf(
