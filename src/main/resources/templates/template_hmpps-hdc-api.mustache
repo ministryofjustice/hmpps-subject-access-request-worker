@@ -52,9 +52,8 @@
             </table>
 
             {{#bassReferral}}
-                <h4>Bass referral</h4>
+                <h4>Bass referral: Bass request</h4>
                 {{#bassRequest}}
-                    <h4>Bass request</h4>
                     <table class="summary-list">
                         <tr><td>Specific area</td><td>{{ optionalValue specificArea }}</td></tr>
                         <tr><td>Bass requested</td><td>{{ optionalValue bassRequested }}</td></tr>
@@ -107,10 +106,9 @@
             <tr><td>Vary version</td><td>{{ optionalValue varyVersion }}</td></tr>
             <tr><td>Deleted at</td><td>{{ optionalValue (formatDate deletedAt) }}</td></tr>
         </table>
-        <h3>Licence</h3>
+        <h4>Licence: Risk management</h4>
         {{#licence}}
             {{#risk}}
-                <h3>Risk management</h3>
                 {{#riskManagement}}
                     <table class="summary-list">
                         <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
@@ -132,7 +130,7 @@
             {{/risk}}
 
             {{#curfew}}
-                <h3>Curfew</h3>
+                <h4>Curfew</h4>
                 {{#firstNight}}
                     <table class="summary-list">
                         <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
@@ -140,7 +138,7 @@
                     </table>
                 {{/firstNight}}
                 {{#curfewHours}}
-                    <h3>Curfew hours</h3>
+                    <h5>Curfew hours</h5>
                     <table class="summary-list">
                         <tr><td>All from</td><td>{{ optionalValue (formatDate allFrom) }}</td></tr>
                         <tr><td>All until</td><td>{{ optionalValue (formatDate allUntil) }}</td></tr>
@@ -165,7 +163,7 @@
 
             {{#victim}}
                 {{#victimLiaison}}
-                    <h3>Victim Liaison</h3>
+                    <h4>Victim Liaison</h4>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                     </table>
@@ -174,7 +172,7 @@
 
             {{#approval}}
                 {{#release}}
-                    <h3>Approval: Release</h3>
+                    <h4>Approval: Release</h4>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                         <tr><td>Decision maker</td><td>{{ optionalValue decisionMaker }}</td></tr>
@@ -182,7 +180,7 @@
                     </table>
                 {{/release}}
                 {{#consideration}}
-                    <h3>Approval: Consideration</h3>
+                    <h4>Approval: Consideration</h4>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                     </table>
@@ -191,7 +189,7 @@
 
             {{#document}}
                 {{#template}}
-                    <h3>Document Template</h3>
+                    <h4>Document Template</h4>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                         <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue offenceCommittedBeforeFeb2015 }}</td></tr>
@@ -201,7 +199,7 @@
 
             {{#reporting}}
                 {{#reportingInstructions}}
-                    <h3>Reporting instructions</h3>
+                    <h4>Reporting instructions</h4>
                     <table class="summary-list">
                         <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
                         <tr><td>Postcode</td><td>{{ optionalValue postcode }}</td></tr>
@@ -216,7 +214,7 @@
                 {{/reportingInstructions}}
             {{/reporting}}
 
-            <h3>Eligibility</h3>
+            <h4>Eligibility</h4>
             <table class="data-table">
                 <tr>
                     <td class="data-column-25"></td>
@@ -251,7 +249,7 @@
                 {{/eligibility}}
             </table>
 
-            <h3>Final checks</h3>
+            <h4>Final checks</h4>
             <table class="data-table">
                 <tr>
                     <td class="data-column-25"></td>
@@ -299,9 +297,8 @@
             </table>
 
             {{#bassReferral}}
-                <h4>Bass referral</h4>
                 {{#bassOffer}}
-                    <h4>Bass offer</h4>
+                    <h4>Bass referral: Bass offer</h4>
                     <table class="summary-list">
                         <tr><td>Bass area</td><td>{{ optionalValue bassArea }}</td></tr>
                         <tr><td>Postcode</td><td>{{ optionalValue postCode }}</td></tr>
@@ -314,7 +311,7 @@
                     </table>
                 {{/bassOffer}}
                 {{#bassRequest}}
-                    <h4>Bass request</h4>
+                    <h4>Bass referral: Bass request</h4>
                     <table class="summary-list">
                         <tr><td>Specific area</td><td>{{ optionalValue specificArea }}</td></tr>
                         <tr><td>Bass requested</td><td>{{ optionalValue bassRequested }}</td></tr>
@@ -381,13 +378,13 @@
             <tr><td>User</td><td>{{ optionalValue user }}</td></tr>
             <tr><td>Action</td><td>{{ optionalValue action }}</td></tr>
         </table>
-        <h3>Details</h3>
+        <h4>Details</h4>
         {{#details}}
             <table class="summary-list">
                 <tr><td>Path</td><td>{{ optionalValue path }}</td></tr>
                 <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
             </table>
-            <h4>User Input</h4>
+            <h5>User Input</h5>
             {{#userInput}}
                 <table class="summary-list">
                     <tr><td>Required</td><td>{{ optionalValue required }}</td></tr>
