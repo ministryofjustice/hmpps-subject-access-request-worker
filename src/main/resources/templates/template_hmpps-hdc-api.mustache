@@ -16,30 +16,43 @@
             <tr><td>Deleted at</td><td>{{ optionalValue (formatDate deletedAt) }}</td></tr>
         </table>
         {{#licence}}
-            <h3>Licence</h3>
-            {{#eligibility}}
-                <h4>Eligibility</h4>
-                {{#crdTime}}
-                    <h4>CRD time</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/crdTime}}
-                {{#excluded}}
-                    <h4>Excluded</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/excluded}}
-                {{#suitability}}
-                    <h4>Suitability</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/suitability}}
-            {{/eligibility}}
+            <h4>Licence eligibility</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25"></td>
+                    <td class="data-column-75">Decision</td>
+                </tr>
+                {{#eligibility}}
+                    {{#crdTime}}
+                        <tr>
+                            <td>CRD time</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/crdTime}}
+                    {{#excluded}}
+                        <tr>
+                            <td>Excluded</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/excluded}}
+                    {{#suitability}}
+                        <tr>
+                            <td>Suitability</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/suitability}}
+                {{/eligibility}}
+                {{^eligibility}}
+                    <tr>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                    </tr>
+                {{/eligibility}}
+            </table>
+
             {{#bassReferral}}
-                <h3>Bass referral</h3>
+                <h4>Bass referral</h4>
                 {{#bassRequest}}
                     <h4>Bass request</h4>
                     <table class="summary-list">
@@ -49,21 +62,34 @@
                     </table>
                 {{/bassRequest}}
             {{/bassReferral}}
-            {{#proposedAddress}}
-                <h4>Proposed address</h4>
-                {{#optOut}}
-                    <h4>Opt out</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/optOut}}
-                {{#addressProposed}}
-                    <h4>Address proposed</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/addressProposed}}
-            {{/proposedAddress}}
+
+            <h4>Proposed address</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25"></td>
+                    <td class="data-column-75">Decision</td>
+                </tr>
+                {{#proposedAddress}}
+                    {{#optOut}}
+                        <tr>
+                            <td>Opt out</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/optOut}}
+                    {{#addressProposed}}
+                        <tr>
+                            <td>Address proposed</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/addressProposed}}
+                {{/proposedAddress}}
+                {{^proposedAddress}}
+                    <tr>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                    </tr>
+                {{/proposedAddress}}
+            </table>
         {{/licence}}
 
     {{/licences}}
@@ -83,9 +109,8 @@
         </table>
         <h3>Licence</h3>
         {{#licence}}
-            <h4>Risk</h4>
             {{#risk}}
-                <h4>Risk management</h4>
+                <h3>Risk management</h3>
                 {{#riskManagement}}
                     <table class="summary-list">
                         <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
@@ -107,16 +132,15 @@
             {{/risk}}
 
             {{#curfew}}
-                <h4>Curfew</h4>
+                <h3>Curfew</h3>
                 {{#firstNight}}
-                    <h4>First night</h4>
                     <table class="summary-list">
                         <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
                         <tr><td>First night until</td><td>{{ optionalValue (formatDate firstNightUntil) }}</td></tr>
                     </table>
                 {{/firstNight}}
                 {{#curfewHours}}
-                    <h4>Curfew hours</h4>
+                    <h3>Curfew hours</h3>
                     <table class="summary-list">
                         <tr><td>All from</td><td>{{ optionalValue (formatDate allFrom) }}</td></tr>
                         <tr><td>All until</td><td>{{ optionalValue (formatDate allUntil) }}</td></tr>
@@ -140,9 +164,8 @@
             {{/curfew}}
 
             {{#victim}}
-                <h4>Victim</h4>
                 {{#victimLiaison}}
-                    <h4>Victim Liaison</h4>
+                    <h3>Victim Liaison</h3>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                     </table>
@@ -150,9 +173,8 @@
             {{/victim}}
 
             {{#approval}}
-                <h4>Approval</h4>
                 {{#release}}
-                    <h4>Release</h4>
+                    <h3>Approval: Release</h3>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                         <tr><td>Decision maker</td><td>{{ optionalValue decisionMaker }}</td></tr>
@@ -160,7 +182,7 @@
                     </table>
                 {{/release}}
                 {{#consideration}}
-                    <h4>Consideration</h4>
+                    <h3>Approval: Consideration</h3>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                     </table>
@@ -168,9 +190,8 @@
             {{/approval}}
 
             {{#document}}
-                <h4>Document</h4>
                 {{#template}}
-                    <h4>Template</h4>
+                    <h3>Document Template</h3>
                     <table class="summary-list">
                         <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
                         <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue offenceCommittedBeforeFeb2015 }}</td></tr>
@@ -179,9 +200,8 @@
             {{/document}}
 
             {{#reporting}}
-                <h4>Reporting</h4>
                 {{#reportingInstructions}}
-                    <h4>Reporting instructions</h4>
+                    <h3>Reporting instructions</h3>
                     <table class="summary-list">
                         <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
                         <tr><td>Postcode</td><td>{{ optionalValue postcode }}</td></tr>
@@ -196,64 +216,90 @@
                 {{/reportingInstructions}}
             {{/reporting}}
 
-            {{#eligibility}}
-                <h4>Eligibility</h4>
-                {{#crdTime}}
-                    <h4>CRD time</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/crdTime}}
-                {{#excluded}}
-                    <h4>Excluded</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/excluded}}
-                {{#suitability}}
-                    <h4>Suitability</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/suitability}}
-            {{/eligibility}}
+            <h3>Eligibility</h3>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25"></td>
+                    <td class="data-column-75">Decision</td>
+                </tr>
+                {{#eligibility}}
+                    {{#crdTime}}
+                        <tr>
+                            <td>CRD time</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/crdTime}}
+                    {{#excluded}}
+                        <tr>
+                            <td>Excluded</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/excluded}}
+                    {{#suitability}}
+                        <tr>
+                            <td>Suitability</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/suitability}}
+                {{/eligibility}}
+                {{^eligibility}}
+                    <tr>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                    </tr>
+                {{/eligibility}}
+            </table>
 
-            {{#finalChecks}}
-                <h4>Final checks</h4>
+            <h3>Final checks</h3>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25"></td>
+                    <td class="data-column-75">Decision</td>
+                </tr>
+                {{#finalChecks}}
                 {{#onRemand}}
-                    <h4>On remand</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
+                    <tr>
+                        <td>On remand</td>
+                        <td>{{ optionalValue decision }}</td>
+                    </tr>
                 {{/onRemand}}
                 {{#segregation}}
-                    <h4>Segregation</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
+                    <tr>
+                        <td>Segregation</td>
+                        <td>{{ optionalValue decision }}</td>
+                    </tr>
                 {{/segregation}}
                 {{#seriousOffence}}
-                    <h4>Serious offence</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
+                    <tr>
+                        <td>Serious offence</td>
+                        <td>{{ optionalValue decision }}</td>
+                    </tr>
                 {{/seriousOffence}}
                 {{#confiscationOrder}}
-                    <h4>Confiscation order</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
+                    <tr>
+                        <td>Confiscation order</td>
+                        <td>{{ optionalValue decision }}</td>
+                    </tr>
                 {{/confiscationOrder}}
                 {{#undulyLenientSentence}}
-                    <h4>Unduly lenient sentence</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
+                    <tr>
+                        <td>Unduly lenient sentence</td>
+                        <td>{{ optionalValue decision }}</td>
+                    </tr>
                 {{/undulyLenientSentence}}
-            {{/finalChecks}}
+                {{/finalChecks}}
+                {{^finalChecks}}
+                    <tr>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                    </tr>
+                {{/finalChecks}}
+            </table>
 
             {{#bassReferral}}
-                <h4>Base referral</h4>
+                <h4>Bass referral</h4>
                 {{#bassOffer}}
                     <h4>Bass offer</h4>
                     <table class="summary-list">
@@ -285,21 +331,33 @@
                 {{/bassAreaCheck}}
             {{/bassReferral}}
 
-            {{#proposedAddress}}
-                <h4>Proposed address</h4>
-                {{#optOut}}
-                    <h4>Opt out</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/optOut}}
-                {{#addressProposed}}
-                    <h4>Address proposed</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/addressProposed}}
-            {{/proposedAddress}}
+            <h4>Proposed address</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25"></td>
+                    <td class="data-column-75">Decision</td>
+                </tr>
+                {{#proposedAddress}}
+                    {{#optOut}}
+                        <tr>
+                            <td>Opt out</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/optOut}}
+                    {{#addressProposed}}
+                        <tr>
+                            <td>Address proposed</td>
+                            <td>{{ optionalValue decision }}</td>
+                        </tr>
+                    {{/addressProposed}}
+                {{/proposedAddress}}
+                {{^proposedAddress}}
+                    <tr>
+                        <td>No data held</td>
+                        <td>No data held</td>
+                    </tr>
+                {{/proposedAddress}}
+            </table>
 
             {{#licenceConditions}}
                 <h4>Licence conditions</h4>
