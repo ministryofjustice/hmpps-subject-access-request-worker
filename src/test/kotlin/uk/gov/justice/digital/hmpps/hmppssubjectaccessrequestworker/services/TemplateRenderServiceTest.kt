@@ -482,8 +482,6 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>Additional conditions required</td><td>No</td>")
         renderedStyleTemplate.shouldContain("<td>Action</td><td>UPDATE_SECTION</td>")
         renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
-
-
       }
     }
   },

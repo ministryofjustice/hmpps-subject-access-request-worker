@@ -409,8 +409,7 @@ class GeneratePdfServiceTest(
       }
 
       it("renders for Home Detention Curfew Service") {
-        val testServiceData: Map<Any, Any> =
-        mapOf(
+        val testServiceData: Map<Any, Any> = mapOf(
           "licences" to arrayListOf(
             mapOf(
               "id" to 1626,
