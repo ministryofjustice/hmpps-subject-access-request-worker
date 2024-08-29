@@ -199,14 +199,13 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<td>Prisoner number</td><td>A4743DZ</td>")
-        renderedStyleTemplate.shouldContain("<td>End date</td><td>21 July 2023</td>")
-        renderedStyleTemplate.shouldContain("<td>Count</td><td>8</td>")
-        renderedStyleTemplate.shouldContain("<td>Count</td><td>12</td>")
-        renderedStyleTemplate.shouldContain("<td>Waiting list ID</td><td>1</td>")
-        renderedStyleTemplate.shouldContain("<td>Waiting list ID</td><td>10</td>")
-        renderedStyleTemplate.shouldContain("<td>Status date</td><td>12 November 2022</td>")
-        renderedStyleTemplate.shouldContain("<td>Appointment ID</td><td>18305</td>")
-        renderedStyleTemplate.shouldContain("<td>Appointment ID</td><td>16340</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">End date</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-50\">Count</td>")
+        renderedStyleTemplate.shouldContain("<h3>Application - Waiting list ID 1</h3>")
+        renderedStyleTemplate.shouldContain("<h3>Application - Waiting list ID 10</h3>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Status date</td>")
+        renderedStyleTemplate.shouldContain("<h3>Appointment - ID 18305</h3>")
+        renderedStyleTemplate.shouldContain("<h3>Appointment - ID 16340</h3>")
       }
     }
 
