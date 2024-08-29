@@ -294,6 +294,38 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Case note")
       }
 
+      it("renders for Keyworker Service") {
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "offenderKeyworkerId" to 12912,
+            "offenderNo" to "A1234AA",
+            "staffId" to 485634,
+            "assignedDateTime" to "2019-12-03T11:00:58.21264",
+            "active" to false,
+            "allocationReason" to "MANUAL",
+            "allocationType" to "M",
+            "userId" to "JROBERTSON_GEN",
+            "prisonId" to "MDI",
+            "expiryDateTime" to "2020-12-02T16:31:01",
+            "deallocationReason" to "RELEASED",
+            "creationDateTime" to "2019-12-03T11:00:58.213527",
+            "createUserId" to "JROBERTSON_GEN",
+            "modifyDateTime" to "2020-12-02T16:31:32.128317",
+            "modifyUserId" to "JROBERTSON_GEN",
+          ),
+        )
+        val testResponseObject = listOf(DpsService(name = "keyworker-api", content = testServiceData))
+        val writer = PdfWriter(FileOutputStream("dummy-keyworker-template.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-keyworker-template.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("Keyworker")
+      }
+
       it("renders for Create and Vary a License Service") {
 
         val testInput = mapOf(
