@@ -4,9 +4,9 @@
     <h3>Offender number {{ optionalValue offenderNo }}</h3>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Level</td>
-            <td class="data-column-25">Source system</td>
-            <td class="data-column-50">Source user</td>
+            <td class="data-column-20">Level</td>
+            <td class="data-column-50">Source system</td>
+            <td class="data-column-30">Source user</td>
         </tr>
         <tr>
             <td>{{ optionalValue level }}</td>
@@ -16,13 +16,13 @@
     </table>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Active</td>
-            <td class="data-column-25">Creation timestamp</td>
-            <td class="data-column-50">Notes</td>
+            <td class="data-column-20">Active</td>
+            <td class="data-column-50">Creation timestamp</td>
+            <td class="data-column-30">Notes</td>
         </tr>
         <tr>
             <td>{{ optionalValue active }}</td>
-            <td>{{ optionalValue (formatDate createdTimestamp) }}</td>
+            <td>{{ optionalValue (formatDate createdTimeStamp) }}</td>
             <td>{{ optionalValue notes }}</td>
         </tr>
     </table>

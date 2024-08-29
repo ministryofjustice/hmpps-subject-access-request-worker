@@ -268,7 +268,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<h3>Offender number A1234AA</h3>")
-        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Source system</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-50\">Source system</td>")
       }
     }
     describe("hdcTemplate") {
