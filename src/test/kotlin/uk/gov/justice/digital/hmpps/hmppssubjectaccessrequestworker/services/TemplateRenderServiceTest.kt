@@ -95,7 +95,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Offender Keyworker ID</td><td>12912</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-40\">Offender Keyworker ID</td><td>12912</td>")
         renderedStyleTemplate.shouldContain("<td>Allocation reason</td><td>MANUAL</td>")
         renderedStyleTemplate.shouldContain("<td>Creation date</td><td>03 December 2019, 11:00:58 am</td>")
       }
@@ -269,6 +269,486 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<td>Offender number</td><td>A1234AA</td>")
         renderedStyleTemplate.shouldContain("<td>Source system</td><td>keyworker-to-complexity-api-test</td>")
+      }
+    }
+    describe("hdcTemplate") {
+      it("renders a template given a home detentions curfew template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "licences" to arrayListOf(
+              mapOf(
+                "id" to 1626,
+                "prisonNumber" to "G1556UH",
+                "bookingId" to 1108337,
+                "stage" to "PROCESSING_RO",
+                "version" to 1,
+                "transitionDate" to "2024-03-18T09:24:35.473079",
+                "varyVersion" to 0,
+                "additionalConditionsVersion" to null,
+                "standardConditionsVersion" to null,
+                "deletedAt" to "2024-03-18T09:25:06.780003",
+                "licence" to mapOf(
+                  "eligibility" to mapOf(
+                    "crdTime" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "excluded" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "suitability" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "bassReferral" to mapOf(
+                    "bassRequest" to mapOf(
+                      "specificArea" to "No",
+                      "bassRequested" to "Yes",
+                      "additionalInformation" to "",
+                    ),
+                  ),
+                  "proposedAddress" to mapOf(
+                    "optOut" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "addressProposed" to mapOf(
+                    "decision" to "No",
+                  ),
+                ),
+              ),
+            ),
+          ),
+          mapOf(
+            "licenceVersions" to arrayListOf(
+              mapOf(
+                "id" to 446,
+                "prisonNumber" to "G1556UH",
+                "bookingId" to 1108337,
+                "timestamp" to "2024-03-15T10:48:50.888663",
+                "version" to 1,
+                "template" to "hdc_ap",
+                "varyVersion" to 0,
+                "deletedAt" to "2024-03-15T11:11:14.361319",
+                "licence" to mapOf(
+                  "risk" to mapOf(
+                    "riskManagement" to mapOf(
+                      "version" to "3",
+                      "emsInformation" to "No",
+                      "pomConsultation" to "Yes",
+                      "mentalHealthPlan" to "No",
+                      "unsuitableReason" to "",
+                      "hasConsideredChecks" to "Yes",
+                      "manageInTheCommunity" to "Yes",
+                      "emsInformationDetails" to "",
+                      "riskManagementDetails" to "",
+                      "proposedAddressSuitable" to "Yes",
+                      "awaitingOtherInformation" to "No",
+                      "nonDisclosableInformation" to "No",
+                      "nonDisclosableInformationDetails" to "",
+                      "manageInTheCommunityNotPossibleReason" to "",
+                    ),
+                  ),
+                  "curfew" to mapOf(
+                    "firstNight" to mapOf(
+                      "firstNightFrom" to "15:00",
+                      "firstNightUntil" to "07:00",
+                    ),
+                  ),
+                  "curfewHours" to mapOf(
+                    "allFrom" to "19:00",
+                    "allUntil" to "07:00",
+                    "fridayFrom" to "19:00",
+                    "mondayFrom" to "19:00",
+                    "sundayFrom" to "19:00",
+                    "fridayUntil" to "07:00",
+                    "mondayUntil" to "07:00",
+                    "sundayUntil" to "07:00",
+                    "tuesdayFrom" to "19:00",
+                    "saturdayFrom" to "19:00",
+                    "thursdayFrom" to "19:00",
+                    "tuesdayUntil" to "07:00",
+                    "saturdayUntil" to "07:00",
+                    "thursdayUntil" to "07:00",
+                    "wednesdayFrom" to "19:00",
+                    "wednesdayUntil" to "07:00",
+                    "daySpecificInputs" to "No",
+                  ),
+                  "victim" to mapOf(
+                    "victimLiaison" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "approval" to mapOf(
+                    "release" to mapOf(
+                      "decision" to "Yes",
+                      "decisionMaker" to "Louise Norris",
+                      "reasonForDecision" to "",
+                    ),
+                  ),
+                  "consideration" to mapOf(
+                    "decision" to "Yes",
+                  ),
+                  "document" to mapOf(
+                    "template" to mapOf(
+                      "decision" to "hdc_ap",
+                      "offenceCommittedBeforeFeb2015" to "No",
+                    ),
+                  ),
+                  "reporting" to mapOf(
+                    "reportingInstructions" to mapOf(
+                      "name" to "sam",
+                      "postcode" to "S3 8RD",
+                      "telephone" to "47450",
+                      "townOrCity" to "Sheffield",
+                      "organisation" to "crc",
+                      "reportingDate" to "12/12/2024",
+                      "reportingTime" to "12:12",
+                      "buildingAndStreet1" to "10",
+                      "buildingAndStreet2" to "street",
+                    ),
+                  ),
+                  "eligibility" to mapOf(
+                    "crdTime" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "excluded" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "suitability" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "finalChecks" to mapOf(
+                    "onRemand" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "segregation" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "seriousOffence" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "confiscationOrder" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "undulyLenientSentence" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "bassReferral" to mapOf(
+                    "bassOffer" to mapOf(
+                      "bassArea" to "Reading",
+                      "postCode" to "RG1 6HM",
+                      "telephone" to "",
+                      "addressTown" to "Reading",
+                      "addressLine1" to "The Street",
+                      "addressLine2" to "",
+                      "bassAccepted" to "Yes",
+                      "bassOfferDetails" to "",
+                    ),
+                    "bassRequest" to mapOf(
+                      "specificArea" to "No",
+                      "bassRequested" to "Yes",
+                      "additionalInformation" to "",
+                    ),
+                    "bassAreaCheck" to mapOf(
+                      "bassAreaReason" to "",
+                      "bassAreaCheckSeen" to "true",
+                      "approvedPremisesRequiredYesNo" to "No",
+                    ),
+                  ),
+                  "proposedAddress" to mapOf(
+                    "optOut" to mapOf(
+                      "decision" to "No",
+                    ),
+                    "addressProposed" to mapOf(
+                      "decision" to "No",
+                    ),
+                  ),
+                  "licenceConditions" to mapOf(
+                    "standard" to mapOf(
+                      "additionalConditionsRequired" to "No",
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          mapOf(
+            "auditEvents" to arrayListOf(
+              mapOf(
+                "id" to 40060,
+                "timestamp" to "2024-08-23T09:36:51.186289",
+                "user" to "cpxUKKZdbW",
+                "action" to "UPDATE_SECTION",
+                "details" to mapOf(
+                  "path" to "/hdc/curfew/approvedPremises/1108337",
+                  "bookingId" to "1108337",
+                  "userInput" to mapOf(
+                    "required" to "Yes",
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-hdc-api", testServiceData)
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
+        renderedStyleTemplate.shouldContain("<td>Specific area</td><td>No</td>")
+        renderedStyleTemplate.shouldContain("<td>Vary version</td><td>0</td>")
+        renderedStyleTemplate.shouldContain("<td>Deleted at</td><td>15 March 2024, 11:11:14 am</td>")
+        renderedStyleTemplate.shouldContain("<td>Has considered checks</td><td>Yes</td>")
+        renderedStyleTemplate.shouldContain("<td>First night from</td><td>15:00</td>")
+        renderedStyleTemplate.shouldContain("<td>Friday from</td><td>19:00</td>")
+        renderedStyleTemplate.shouldContain("<td>Decision maker</td><td>Louise Norris</td>")
+        renderedStyleTemplate.shouldContain("<td>Offence committed before Feb 2015</td><td>No</td>")
+        renderedStyleTemplate.shouldContain("<td>Telephone</td><td>47450</td>")
+        renderedStyleTemplate.shouldContain("<td>Address line 1</td><td>The Street</td>")
+        renderedStyleTemplate.shouldContain("<td>Bass requested</td><td>Yes</td>")
+        renderedStyleTemplate.shouldContain("<td>Bass area check seen</td><td>true</td>")
+        renderedStyleTemplate.shouldContain("<td>Additional conditions required</td><td>No</td>")
+        renderedStyleTemplate.shouldContain("<td>Action</td><td>UPDATE_SECTION</td>")
+        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
+      }
+    }
+
+    describe("useOfForceTemplate") {
+      it("renders a template given a Use of Force template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "id" to 190,
+            "sequenceNo" to 2,
+            "createdDate" to "2020-09-04T12:12:53.812536",
+            "updatedDate" to "2021-03-30T11:31:16.854361",
+            "incidentDate" to "2020-09-07T02:02:00",
+            "submittedDate" to "2021-03-30T11:31:16.853",
+            "deleted" to "2021-11-30T15:47:13.139",
+            "status" to "SUBMITTED",
+            "agencyId" to "MDI",
+            "userId" to "ANDYLEE_ADM",
+            "reporterName" to "Andrew Lee",
+            "offenderNo" to "A1234AA",
+            "bookingId" to 1048991,
+            "formResponse" to mapOf(
+              "evidence" to mapOf(
+                "cctvRecording" to "YES",
+                "baggedEvidence" to true,
+                "bodyWornCamera" to "YES",
+                "photographsTaken" to false,
+                "evidenceTagAndDescription" to arrayListOf(
+                  mapOf(
+                    "description" to "sasasasas",
+                    "evidenceTagReference" to "sasa",
+                  ),
+                  mapOf(
+                    "description" to "sasasasas 2",
+                    "evidenceTagReference" to "sasa 2",
+                  ),
+                ),
+                "bodyWornCameraNumbers" to arrayListOf(
+                  mapOf(
+                    "cameraNum" to "sdsds",
+                  ),
+                  mapOf(
+                    "cameraNum" to "xxxxx",
+                  ),
+                ),
+              ),
+              "involvedStaff" to arrayListOf(
+                mapOf(
+                  "name" to "Andrew Lee",
+                  "email" to "andrew.lee@digital.justice.gov.uk",
+                  "staffId" to 486084,
+                  "username" to "ZANDYLEE_ADM",
+                  "verified" to true,
+                  "activeCaseLoadId" to "MDI",
+                ),
+                mapOf(
+                  "name" to "Lee Andrew",
+                  "email" to "lee.andrew@digital.justice.gov.uk",
+                  "staffId" to 486084,
+                  "username" to "AMD_LEE",
+                  "verified" to true,
+                  "activeCaseLoadId" to "MDI",
+                ),
+              ),
+              "incidentDetails" to mapOf(
+                "locationId" to 357591,
+                "plannedUseOfForce" to false,
+                "authorisedBy" to "",
+                "witnesses" to arrayListOf(
+                  mapOf(
+                    "name" to "Andrew Lee",
+                  ),
+                  mapOf(
+                    "name" to "Andrew Leedsd",
+                  ),
+                ),
+              ),
+              "useOfForceDetails" to mapOf(
+                "bodyWornCamera" to "YES",
+                "bodyWornCameraNumbers" to arrayListOf(
+                  mapOf(
+                    "cameraNum" to "sdsds",
+                  ),
+                  mapOf(
+                    "cameraNum" to "sdsds 2",
+                  ),
+                ),
+                "pavaDrawn" to false,
+                "pavaDrawnAgainstPrisoner" to false,
+                "pavaUsed" to false,
+                "weaponsObserved" to "YES",
+                "weaponTypes" to arrayListOf(
+                  mapOf(
+                    "weaponType" to "xxx",
+                  ),
+                  mapOf(
+                    "weaponType" to "yyy",
+                  ),
+                ),
+                "escortingHold" to false,
+                "restraint" to true,
+                "restraintPositions" to arrayListOf(
+                  "ON_BACK",
+                  "ON_FRONT",
+                ),
+                "batonDrawn" to false,
+                "batonDrawnAgainstPrisoner" to false,
+                "batonUsed" to false,
+                "guidingHold" to false,
+                "handcuffsApplied" to false,
+                "positiveCommunication" to false,
+                "painInducingTechniques" to false,
+                "painInducingTechniquesUsed" to "NONE",
+                "personalProtectionTechniques" to true,
+              ),
+              "reasonsForUseOfForce" to mapOf(
+                "reasons" to arrayListOf(
+                  "FIGHT_BETWEEN_PRISONERS",
+                  "REFUSAL_TO_LOCATE_TO_CELL",
+                ),
+                "primaryReason" to "REFUSAL_TO_LOCATE_TO_CELL",
+              ),
+              "relocationAndInjuries" to mapOf(
+                "relocationType" to "OTHER",
+                "f213CompletedBy" to "adcdas",
+                "prisonerInjuries" to false,
+                "healthcareInvolved" to true,
+                "healthcarePractionerName" to "dsffds",
+                "prisonerRelocation" to "CELLULAR_VEHICLE",
+                "relocationCompliancy" to false,
+                "staffMedicalAttention" to true,
+                "staffNeedingMedicalAttention" to arrayListOf(
+                  mapOf(
+                    "name" to "fdsfsdfs",
+                    "hospitalisation" to false,
+                  ),
+                  mapOf(
+                    "name" to "fdsfsdfs",
+                    "hospitalisation" to false,
+                  ),
+                ),
+                "prisonerHospitalisation" to false,
+                "userSpecifiedRelocationType" to "fsf FGSDgf s gfsdgGG  gf ggrf",
+              ),
+            ),
+            "statements" to arrayListOf(
+              mapOf(
+                "id" to 334,
+                "reportId" to 280,
+                "createdDate" to "2021-04-08T09:23:51.165439",
+                "updatedDate" to "2021-04-21T10:09:25.626246",
+                "submittedDate" to "2021-04-21T10:09:25.626246",
+                "deleted" to "2021-04-21T10:09:25.626246",
+                "nextReminderDate" to "2021-04-09T09:23:51.165",
+                "overdueDate" to "2021-04-11T09:23:51.165",
+                "removalRequestedDate" to "2021-04-21T10:09:25.626246",
+                "userId" to "ZANDYLEE_ADM",
+                "name" to "Andrew Lee",
+                "email" to "andrew.lee@digital.justice.gov.uk",
+                "statementStatus" to "REMOVAL_REQUESTED",
+                "lastTrainingMonth" to 1,
+                "lastTrainingYear" to 2019,
+                "jobStartYear" to 2019,
+                "staffId" to 486084,
+                "inProgress" to true,
+                "removalRequestedReason" to "example",
+                "statement" to "example",
+                "statementAmendments" to arrayListOf(
+                  mapOf(
+                    "id" to 334,
+                    "statementId" to 198,
+                    "additionalComment" to "this is an additional comment",
+                    "dateSubmitted" to "2020-10-01T13:08:37.25919",
+                    "deleted" to "2022-10-01T13:08:37.25919",
+                  ),
+                  mapOf(
+                    "id" to 335,
+                    "statementId" to 199,
+                    "additionalComment" to "this is an additional additional comment",
+                    "dateSubmitted" to "2020-10-01T13:08:37.25919",
+                    "deleted" to "2022-10-01T13:08:37.25919",
+                  ),
+                ),
+              ),
+              mapOf(
+                "id" to 334,
+                "reportId" to 280,
+                "createdDate" to "2021-04-08T09:23:51.165439",
+                "updatedDate" to "2021-04-21T10:09:25.626246",
+                "submittedDate" to "2021-04-21T10:09:25.626246",
+                "deleted" to "2021-04-21T10:09:25.626246",
+                "nextReminderDate" to "2021-04-09T09:23:51.165",
+                "overdueDate" to "2021-04-11T09:23:51.165",
+                "removalRequestedDate" to "2021-04-21T10:09:25.626246",
+                "userId" to "ZANDYLEE_ADM",
+                "name" to "Andrew Lee",
+                "email" to "andrew.lee@digital.justice.gov.uk",
+                "statementStatus" to "REMOVAL_REQUESTED",
+                "lastTrainingMonth" to 1,
+                "lastTrainingYear" to 2019,
+                "jobStartYear" to 2019,
+                "staffId" to 486084,
+                "inProgress" to true,
+                "removalRequestedReason" to "example",
+                "statement" to "example",
+                "statementAmendments" to arrayListOf(
+                  mapOf(
+                    "id" to 334,
+                    "statementId" to 198,
+                    "additionalComment" to "this is an additional comment",
+                    "dateSubmitted" to "2020-10-01T13:08:37.25919",
+                    "deleted" to "2022-10-01T13:08:37.25919",
+                  ),
+                  mapOf(
+                    "id" to 335,
+                    "statementId" to 199,
+                    "additionalComment" to "this is an additional additional comment",
+                    "dateSubmitted" to "2020-10-01T13:08:37.25919",
+                    "deleted" to "2022-10-01T13:08:37.25919",
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("use-of-force", testServiceData)
+
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<td>Incident date</td><td>07 September 2020, 2:02:00 am</td>")
+        renderedStyleTemplate.shouldContain("<td>CCTV recording</td><td>YES</td>")
+        renderedStyleTemplate.shouldContain("<td>Name</td><td>Andrew Lee</td>")
+        renderedStyleTemplate.shouldContain("<td>Baton drawn</td><td>false</td>")
+        renderedStyleTemplate.shouldContain("<td>Staff ID</td><td>486084</td>")
       }
     }
   },
