@@ -38,8 +38,8 @@ class GeneratePdfServiceTest(
         val testResponseObject: List<DpsService> = listOf(
           DpsService(
             name = "test-service",
-            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())
-          )
+            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()),
+          ),
         )
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
@@ -51,7 +51,7 @@ class GeneratePdfServiceTest(
           "EGsarID",
           "",
           LocalDate.of(1999, 12, 30),
-          LocalDate.of(2010, 12, 30)
+          LocalDate.of(2010, 12, 30),
         )
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
@@ -61,8 +61,8 @@ class GeneratePdfServiceTest(
         val testResponseObject: List<DpsService> = listOf(
           DpsService(
             name = "test-service",
-            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())
-          )
+            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()),
+          ),
         )
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
@@ -74,7 +74,7 @@ class GeneratePdfServiceTest(
           "",
           LocalDate.of(1999, 12, 30),
           LocalDate.of(2010, 12, 30),
-          mockStream
+          mockStream,
         )
 
         Assertions.assertThat(result).isEqualTo(mockStream)
@@ -93,7 +93,7 @@ class GeneratePdfServiceTest(
           "",
           "",
           LocalDate.of(1999, 12, 30),
-          LocalDate.of(2010, 12, 30)
+          LocalDate.of(2010, 12, 30),
         )
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
@@ -260,7 +260,7 @@ class GeneratePdfServiceTest(
             null,
             "mockCaseReference",
             LocalDate.now(),
-            LocalDate.now()
+            LocalDate.now(),
           )
           mockDocument.close()
 
