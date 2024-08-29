@@ -7,29 +7,20 @@
     </table>
 
     <h2>Allocations</h2>
-
-    <table class="summary-list">
+    {{#allocations}}
+        <h3>Allocation</h3>
     <table class="data-table">
         <tr>
             <td class="data-column-25">Allocation ID</td>
             <td class="data-column-25">Prison Code</td>
-            <td class="data-column-25">Prisoner Status</td>
-            <td class="data-column-25"></td>
+            <td class="data-column-50">Prisoner Status</td>
         </tr>
-        {{#allocations}}
+
             <tr>
                 <td>{{ optionalValue allocationId }}</td>
                 <td>{{ optionalValue prisonCode }}</td>
                 <td>{{ optionalValue prisonerStatus }}</td>
             </tr>
-        {{/allocations}}
-        {{^allocations}}
-            <tr>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
-            </tr>
-        {{/allocations}}
     </table>
     <table class="data-table">
         <tr>
@@ -37,20 +28,11 @@
             <td class="data-column-25">Activity ID</td>
             <td class="data-column-25">Date created</td>
         </tr>
-        {{#allocations}}
             <tr>
                 <td>{{ optionalValue activitySummary }}</td>
                 <td>{{ optionalValue activityId }}</td>
                 <td>{{ optionalValue dateCreated }}</td>
             </tr>
-        {{/allocations}}
-        {{^allocations}}
-            <tr>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
-            </tr>
-        {{/allocations}}
     </table>
     <table class="data-table">
         <tr>
@@ -59,24 +41,28 @@
             <td class="data-column-25">End date</td>
             <td class="data-column-25">Pay band</td>
         </tr>
-        {{#allocations}}
             <tr>
                 <td>{{ optionalValue prisonerStatus }}</td>
                 <td>{{ optionalValue startDate }}</td>
                 <td>{{ optionalValue endDate }}</td>
                 <td>{{ optionalValue payBand }}</td>
             </tr>
-        {{/allocations}}
-        {{^allocations}}
+    </table>
+    {{/allocations}}
+    {{^allocations}}
             <tr>
                 <td>No data held</td>
                 <td>No data held</td>
                 <td>No data held</td>
                 <td>No data held</td>
+                <td>No data held</td>
+                <td>No data held</td>
+                <td>No data held</td>
+                <td>No data held</td>
+                <td>No data held</td>
+                <td>No data held</td>
             </tr>
-        {{/allocations}}
-    </table>
-    </table>
+    {{/allocations}}
 
     <h2>Attendance summary</h2>
     {{#attendanceSummary}}
