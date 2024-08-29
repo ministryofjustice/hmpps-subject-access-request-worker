@@ -115,13 +115,13 @@
                 <tr><td>User specified relocation type</td><td>{{ optionalValue userSpecifiedRelocationType }}</td></tr>
             </table>
 
-                <h4>Staff needing medical attention</h4>
-            {{#staffNeedingMedicalAttention}}
-                    <table class="data-table">
-                        <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
-                        <tr><td>Hospitalisation</td><td>{{ optionalValue hospitalisation }}</td></tr>
-                    </table>
-            {{/staffNeedingMedicalAttention}}
+            <h4>Staff needing medical attention</h4>
+            <table class="data-table">
+                <tr><td>Name</td><td>Hospitalisation</td></tr>
+                {{#staffNeedingMedicalAttention}}
+                    <tr><td>{{ optionalValue name }}</td><td>{{ optionalValue hospitalisation }}</td></tr>
+                {{/staffNeedingMedicalAttention}}
+            </table>
         {{/relocationAndInjuries}}
     {{/formResponse}}
 
