@@ -979,6 +979,51 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Use of force")
       }
 
+      it("renders for Incentives Service") {
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "id" to 2898970,
+            "bookingId" to "1208204",
+            "prisonerNumber" to "A485634",
+            "nextReviewDate" to "2019-12-03",
+            "levelCode" to "ENH",
+            "prisonId" to "UAL",
+            "locationId" to "M-16-15",
+            "reviewTime" to "2023-07-03T21:14:25.059172",
+            "reviewedBy" to "MDI",
+            "commentText" to "comment",
+            "current" to true,
+            "reviewType" to "REVIEW",
+          ),
+          mapOf(
+            "id" to 2898971,
+            "bookingId" to "4028021",
+            "prisonerNumber" to "A1234AA",
+            "nextReviewDate" to "2020-12-03",
+            "levelCode" to "ENH",
+            "prisonId" to "UAL",
+            "locationId" to "M-16-15",
+            "reviewTime" to "2023-07-03T21:14:25.059172",
+            "reviewedBy" to "MDI",
+            "commentText" to "comment",
+            "current" to true,
+            "reviewType" to "REVIEW",
+          ),
+        )
+
+        val testResponseObject = listOf(DpsService(name = "hmpps-incentives-api", content = testServiceData))
+        val writer = PdfWriter(FileOutputStream("dummy-template.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-template.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+
+        Assertions.assertThat(text).contains("Incentives")
+      }
+
       it("renders a template given an activities template") {
         val templateRenderService = TemplateRenderService()
         val testServiceData: ArrayList<Any> = arrayListOf(

@@ -227,15 +227,32 @@ class TemplateRenderServiceTest : DescribeSpec(
             "current" to true,
             "reviewType" to "REVIEW",
           ),
+          mapOf(
+            "id" to 2898971,
+            "bookingId" to "4028021",
+            "prisonerNumber" to "A1234AA",
+            "nextReviewDate" to "2020-12-03",
+            "levelCode" to "ENH",
+            "prisonId" to "UAL",
+            "locationId" to "M-16-15",
+            "reviewTime" to "2023-07-03T21:14:25.059172",
+            "reviewedBy" to "MDI",
+            "commentText" to "comment",
+            "current" to true,
+            "reviewType" to "REVIEW",
+          ),
         )
+
         val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-incentives-api", testServiceData)
+
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1208204</td>")
-        renderedStyleTemplate.shouldContain("<td>Next review date</td><td>03 December 2019</td>")
-        renderedStyleTemplate.shouldContain("<td>Review time</td><td>03 July 2023, 9:14:25 pm</td>")
-        renderedStyleTemplate.shouldContain("<td>Current</td><td>true</td>")
+        renderedStyleTemplate.shouldContain("<td>1208204</td>")
+        renderedStyleTemplate.shouldContain("<td>03 December 2019</td>")
+        renderedStyleTemplate.shouldContain("<td>03 July 2023, 9:14:25 pm</td>")
+        renderedStyleTemplate.shouldContain("Incentive - ID 2898970")
+        renderedStyleTemplate.shouldContain("Incentive - ID 2898971")
       }
     }
 
