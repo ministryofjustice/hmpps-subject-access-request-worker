@@ -1,12 +1,29 @@
 <h1>Complexity of need</h1>
 {{#.}}
-    <table class="summary-list">
-        <tr><td>Offender number</td><td>{{ optionalValue offenderNo }}</td></tr>
-        <tr><td>Level</td><td>{{ optionalValue level }}</td></tr>
-        <tr><td>Source system</td><td>{{ optionalValue sourceSystem }}</td></tr>
-        <tr><td>Source user</td><td>{{ optionalValue sourceUser }}</td></tr>
-        <tr><td>Notes</td><td>{{{ optionalValue notes }}}</td></tr>
-        <tr><td>Creation timestamp</td><td>{{ optionalValue createdTimestamp }}</td></tr>
-        <tr><td>Active</td><td>{{ optionalValue active }}</td></tr>
+    <br>
+    <h3>Offender number {{ optionalValue offenderNo }}</h3>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Level</td>
+            <td class="data-column-25">Source system</td>
+            <td class="data-column-50">Source user</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue level }}</td>
+            <td>{{ optionalValue sourceSystem }}</td>
+            <td>{{ optionalValue sourceUser }}</td>
+        </tr>
+    </table>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Active</td>
+            <td class="data-column-25">Creation timestamp</td>
+            <td class="data-column-50">Notes</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue active }}</td>
+            <td>{{ optionalValue (formatDate createdTimestamp) }}</td>
+            <td>{{ optionalValue notes }}</td>
+        </tr>
     </table>
 {{/.}}
