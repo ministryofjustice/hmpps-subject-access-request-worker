@@ -617,13 +617,17 @@ class GeneratePdfServiceTest(
                 "bookingId" to "1108337",
                 "userInput" to mapOf(
                   "required" to "Yes",
-                )
-              )
-            )
-          )
+                ),
+              ),
+            ),
+          ),
         )
         val testResponseObject = listOf(DpsService(name = "hmpps-hdc-api", content = testServiceData))
         val writer = PdfWriter(FileOutputStream("dummy-hdc-template.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
         val reader = PdfDocument(PdfReader("dummy-hdc-template.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)

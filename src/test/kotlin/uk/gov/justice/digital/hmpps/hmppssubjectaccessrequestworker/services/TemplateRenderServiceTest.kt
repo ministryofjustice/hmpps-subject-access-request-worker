@@ -456,11 +456,11 @@ class TemplateRenderServiceTest : DescribeSpec(
                   "bookingId" to "1108337",
                   "userInput" to mapOf(
                     "required" to "Yes",
-                  )
-                )
-              )
-            )
-          )
+                  ),
+                ),
+              ),
+            ),
+          ),
         )
         val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-hdc-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
