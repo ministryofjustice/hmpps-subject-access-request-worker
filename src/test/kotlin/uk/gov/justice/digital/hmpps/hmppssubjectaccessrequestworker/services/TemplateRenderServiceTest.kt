@@ -239,6 +239,38 @@ class TemplateRenderServiceTest : DescribeSpec(
       }
     }
 
+    describe("complexityOfNeedTemplate") {
+      it("renders a template given a complexity of need template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: ArrayList<Any> = arrayListOf(
+          mapOf(
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T11:45:10.266Z",
+            "active" to true,
+          ),
+          mapOf(
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T19:54:46.056Z",
+            "active" to true,
+          ),
+        )
+        val renderedStyleTemplate = templateRenderService.renderTemplate("complexity-of-need", testServiceData)
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h3>Offender number A1234AA</h3>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-50\">Source system</td>")
+      }
+    }
+
     describe("adjudicationsTemplate") {
       it("renders a template given an adjudications template") {
         val templateRenderService = TemplateRenderService()

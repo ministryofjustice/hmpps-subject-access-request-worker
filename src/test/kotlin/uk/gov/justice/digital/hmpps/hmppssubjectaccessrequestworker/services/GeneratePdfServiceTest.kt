@@ -35,20 +35,47 @@ class GeneratePdfServiceTest(
   {
     describe("generatePdfService") {
       it("returns a ByteArrayOutputStream") {
-        val testResponseObject: List<DpsService> = listOf(DpsService(name = "test-service", content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+        val testResponseObject: List<DpsService> = listOf(
+          DpsService(
+            name = "test-service",
+            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()),
+          ),
+        )
         Mockito.mock(Document::class.java)
         Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val stream = generatePdfService.execute(testResponseObject, "EGnomisID", "EGnDeliusID", "EGsarID", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+        val stream = generatePdfService.execute(
+          testResponseObject,
+          "EGnomisID",
+          "EGnDeliusID",
+          "EGsarID",
+          "",
+          LocalDate.of(1999, 12, 30),
+          LocalDate.of(2010, 12, 30),
+        )
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
 
       it("returns the same stream") {
-        val testResponseObject: List<DpsService> = listOf(DpsService(name = "test-service", content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>())))
+        val testResponseObject: List<DpsService> = listOf(
+          DpsService(
+            name = "test-service",
+            content = mapOf<String, Any>("fake-prisoner-search-property" to emptyMap<String, Any>()),
+          ),
+        )
         val mockStream = Mockito.mock(ByteArrayOutputStream::class.java)
 
-        val result = generatePdfService.execute(testResponseObject, "", "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30), mockStream)
+        val result = generatePdfService.execute(
+          testResponseObject,
+          "",
+          "",
+          "",
+          "",
+          LocalDate.of(1999, 12, 30),
+          LocalDate.of(2010, 12, 30),
+          mockStream,
+        )
 
         Assertions.assertThat(result).isEqualTo(mockStream)
       }
@@ -59,7 +86,15 @@ class GeneratePdfServiceTest(
         Mockito.mock(ByteArrayOutputStream::class.java)
         Assertions.assertThat(testResponseObject[0].content).isNull()
 
-        val stream = generatePdfService.execute(testResponseObject, "", "", "", "", LocalDate.of(1999, 12, 30), LocalDate.of(2010, 12, 30))
+        val stream = generatePdfService.execute(
+          testResponseObject,
+          "",
+          "",
+          "",
+          "",
+          LocalDate.of(1999, 12, 30),
+          LocalDate.of(2010, 12, 30),
+        )
 
         Assertions.assertThat(stream).isInstanceOf(ByteArrayOutputStream::class.java)
       }
@@ -71,7 +106,8 @@ class GeneratePdfServiceTest(
 
         mockDocument.add(Paragraph("This page represents the upstream data pages"))
         val numberOfPagesWithoutRearAndCoverPage = mockPdfDocument.numberOfPages
-        mockDocument.add(AreaBreak(AreaBreakType.NEXT_PAGE)).add(Paragraph("This page represents the internal cover page"))
+        mockDocument.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+          .add(Paragraph("This page represents the internal cover page"))
         generatePdfService.addRearPage(mockPdfDocument, mockDocument, numberOfPagesWithoutRearAndCoverPage)
         val numberOfPagesWithRearAndCoverPage = mockPdfDocument.numberOfPages
         mockDocument.close()
@@ -216,7 +252,16 @@ class GeneratePdfServiceTest(
           val writer = PdfWriter(FileOutputStream("dummy.pdf"))
           val mockPdfDocument = PdfDocument(writer)
           val mockDocument = Document(mockPdfDocument)
-          generatePdfService.addExternalCoverPage(mockPdfDocument, mockDocument, "LASTNAME, FIRSTNAME", "mockNomisNumber", null, "mockCaseReference", LocalDate.now(), LocalDate.now())
+          generatePdfService.addExternalCoverPage(
+            mockPdfDocument,
+            mockDocument,
+            "LASTNAME, FIRSTNAME",
+            "mockNomisNumber",
+            null,
+            "mockCaseReference",
+            LocalDate.now(),
+            LocalDate.now(),
+          )
           mockDocument.close()
 
           val reader = PdfDocument(PdfReader("dummy.pdf"))
@@ -292,6 +337,39 @@ class GeneratePdfServiceTest(
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("Case note")
+      }
+
+      it("renders for Complexity of Need Service") {
+        val testInput = arrayListOf(
+          mapOf(
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T11:45:10.266Z",
+            "active" to true,
+          ),
+          mapOf(
+            "offenderNo" to "A1234AA",
+            "level" to "low",
+            "sourceSystem" to "keyworker-to-complexity-api-test",
+            "sourceUser" to "JSMITH_GEN",
+            "notes" to "string",
+            "createdTimeStamp" to "2021-03-30T19:54:46.056Z",
+            "active" to true,
+          ),
+        )
+        val testResponseObject = listOf(DpsService(name = "complexity-of-need", content = testInput))
+        val writer = PdfWriter(FileOutputStream("dummy-template-con.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-template-con.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("Complexity of need")
       }
 
       it("renders for Keyworker Service") {
