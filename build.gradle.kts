@@ -5,6 +5,12 @@ plugins {
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
+
+  configureEach {
+    resolutionStrategy {
+      force("org.apache.tomcat.embed:tomcat-embed-core:10.1.25")
+    }
+  }
 }
 
 dependencies {
