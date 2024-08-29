@@ -1,18 +1,49 @@
 <h1>Incentives</h1>
 {{#.}}
-    <h2>Incentives</h2>
-    <table class="summary-list">
-        <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
-        <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
-        <tr><td>Prisoner Number</td><td>{{ optionalValue prisonerNumber }}</td></tr>
-        <tr><td>Next review date</td><td>{{ optionalValue (formatDate nextReviewDate) }}</td></tr>
-        <tr><td>Level code</td><td>{{{ optionalValue levelCode }}}</td></tr>
-        <tr><td>Prison ID</td><td>{{ optionalValue prisonId }}</td></tr>
-        <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
-        <tr><td>Review time</td><td>{{ optionalValue (formatDate reviewTime) }}</td></tr>
-        <tr><td>Reviewed by</td><td>{{ optionalValue reviewedBy }}</td></tr>
-        <tr><td>Comment text</td><td>{{{ optionalValue commentText }}}</td></tr>
-        <tr><td>Current</td><td>{{ optionalValue current }}</td></tr>
-        <tr><td>Review type</td><td>{{ optionalValue reviewType }}</td></tr>
+    <h2>Incentive - ID {{ optionalValue id}}</h2>
+    <br>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Booking ID</td>
+            <td class="data-column-25">Prisoner Number</td>
+            <td class="data-column-30">Next review date</td>
+            <td class="data-column-20">Review type</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue bookingId }}</td>
+            <td>{{ optionalValue prisonerNumber }}</td>
+            <td>{{ optionalValue (formatDate nextReviewDate)}}</td>
+            <td>{{ optionalValue reviewType }}</td>
+        </tr>
     </table>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Prison ID</td>
+            <td class="data-column-25">Location ID</td>
+            <td class="data-column-30">Review time</td>
+            <td class="data-column-20">Reviewed by</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue prisonId }}</td>
+            <td>{{ optionalValue locationId }}</td>
+            <td>{{ optionalValue (formatDate reviewTime) }}</td>
+            <td>{{ optionalValue reviewedBy }}</td>
+        </tr>
+    </table>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Current</td>
+            <td class="data-column-25">Level code</td>
+            <td class="data-column-50">Comment text</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue current }}</td>
+            <td>{{ optionalValue levelCode }}</td>
+            <td>{{ optionalValue commentText }}</td>
+        </tr>
+    </table>
+    <br>
+{{/.}}
+{{^.}}
+    <p>No data held</p>
 {{/.}}
