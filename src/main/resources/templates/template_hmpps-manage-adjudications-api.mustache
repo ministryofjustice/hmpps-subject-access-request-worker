@@ -89,8 +89,8 @@
     <table class="data-table">
         <tr>
             <td class="data-column-25">Code</td>
-            <td class="data-column-75">Details</td>
-            <td class="data-column-75">Reporter</td>
+            <td class="data-column-55">Details</td>
+            <td class="data-column-20">Reporter</td>
         </tr>
         {{#damages}}
             <tr>
@@ -112,9 +112,9 @@
     <table class="data-table">
         <tr>
             <td class="data-column-25">Code</td>
-            <td class="data-column-25">Identifier</td>
-            <td class="data-column-75">Details</td>
-            <td class="data-column-75">Reporter</td>
+            <td class="data-column-30">Identifier</td>
+            <td class="data-column-25">Details</td>
+            <td class="data-column-20">Reporter</td>
         </tr>
         {{#evidence}}
             <tr>
@@ -138,9 +138,9 @@
     <table class="data-table">
         <tr>
             <td class="data-column-25">Code</td>
-            <td class="data-column-25">First name</td>
-            <td class="data-column-75">Last name</td>
-            <td class="data-column-75">Reporter</td>
+            <td class="data-column-30">First name</td>
+            <td class="data-column-25">Last name</td>
+            <td class="data-column-20">Reporter</td>
         </tr>
         {{#witnesses}}
             <tr>
@@ -173,9 +173,9 @@
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Plea</td>
-                <td class="data-column-25">Adjudicator</td>
-                <td class="data-column-75">ID</td>
-                <td class="data-column-75">Code</td>
+                <td class="data-column-35">Adjudicator</td>
+                <td class="data-column-20">ID</td>
+                <td class="data-column-20">Code</td>
             </tr>
             {{#outcome}}
                 <tr>
@@ -292,12 +292,12 @@
         <h3>Schedule</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">ID</td>
-                <td class="data-column-25">Duration</td>
-                <td class="data-column-75">Measurement</td>
-                <td class="data-column-75">Start date</td>
-                <td class="data-column-75">End date</td>
-                <td class="data-column-75">Suspend until</td>
+                <td class="data-column-15">ID</td>
+                <td class="data-column-15">Duration</td>
+                <td class="data-column-20">Measurement</td>
+                <td class="data-column-15">Start date</td>
+                <td class="data-column-15">End date</td>
+                <td class="data-column-20">Suspend until</td>
             </tr>
             {{#schedule}}
                 <tr>
@@ -323,12 +323,12 @@
         <h3>Rehabilitative activities</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">ID</td>
-                <td class="data-column-25">Details</td>
-                <td class="data-column-75">Monitor</td>
-                <td class="data-column-75">Total sessions</td>
-                <td class="data-column-75">End date</td>
-                <td class="data-column-75">Completed</td>
+                <td class="data-column-15">ID</td>
+                <td class="data-column-15">Details</td>
+                <td class="data-column-20">Monitor</td>
+                <td class="data-column-15">Total sessions</td>
+                <td class="data-column-15">End date</td>
+                <td class="data-column-20">Completed</td>
             </tr>
             {{#rehabilitativeActivities}}
                 <tr>
@@ -342,6 +342,7 @@
             {{/rehabilitativeActivities}}
             {{^rehabilitativeActivities}}
                 <tr>
+                    <td>No data held</td>
                     <td>No data held</td>
                     <td>No data held</td>
                     <td>No data held</td>
