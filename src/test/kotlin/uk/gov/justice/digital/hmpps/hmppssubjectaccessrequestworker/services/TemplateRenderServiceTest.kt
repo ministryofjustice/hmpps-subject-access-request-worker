@@ -949,7 +949,7 @@ class TemplateRenderServiceTest : DescribeSpec(
           ),
         )
 
-        val renderedStyleTemplate = templateRenderService.renderTemplate("use-of-force", testServiceData)
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-uof-data-api", testServiceData)
 
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
