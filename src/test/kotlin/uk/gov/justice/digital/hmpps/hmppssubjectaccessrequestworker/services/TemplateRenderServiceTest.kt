@@ -957,7 +957,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Incident date</td>")
         renderedStyleTemplate.shouldContain("<td>CCTV recording</td>")
         renderedStyleTemplate.shouldContain("<td>Name</td><td>Andrew Lee</td>")
-        renderedStyleTemplate.shouldContain("<td class=\"data-column-20\">Baton drawn</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Baton drawn</td>")
         renderedStyleTemplate.shouldContain("<td>Staff ID</td><td>486084</td>")
       }
     }
