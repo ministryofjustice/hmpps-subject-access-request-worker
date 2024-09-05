@@ -360,7 +360,7 @@ class GeneratePdfServiceTest(
             "active" to true,
           ),
         )
-        val testResponseObject = listOf(DpsService(name = "complexity-of-need", content = testInput))
+        val testResponseObject = listOf(DpsService(name = "hmpps-complexity-of-need", content = testInput))
         val writer = PdfWriter(FileOutputStream("dummy-template-con.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)

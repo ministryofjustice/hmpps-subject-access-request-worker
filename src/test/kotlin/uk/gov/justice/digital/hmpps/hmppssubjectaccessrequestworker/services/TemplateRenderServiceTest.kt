@@ -279,7 +279,7 @@ class TemplateRenderServiceTest : DescribeSpec(
             "active" to true,
           ),
         )
-        val renderedStyleTemplate = templateRenderService.renderTemplate("complexity-of-need", testServiceData)
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-complexity-of-need", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
