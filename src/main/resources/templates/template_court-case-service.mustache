@@ -1,0 +1,85 @@
+<h1>Prepare a Case for Sentence</h1>
+{{#.}}
+    <br>
+    <h3>Comments</h3>
+        {{#comments}}
+        <br>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>{{{ optionalValue comment }}}</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue author }}</td>
+                <td>{{ optionalValue (formatDate created) }}</td>
+                <td>{{ optionalValue createdBy }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate lastUpdated) }}</td>
+                <td>{{ optionalValue lastUpdatedBy }}</td>
+                <td>{{ optionalValue caseNumber }}</td>
+            </tr>
+        </table>
+        {{/comments}}
+
+    <br>
+    <h3>Hearing Outcomes</h3>
+        {{#hearingOutcomes}}
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Outcome type</td>
+                <td class="data-column-30">Outcome date</td>
+                <td class="data-column-30">Resulted date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue outcomeType }}</td>
+                <td>{{ optionalValue (formatDate outcomeDate) }}</td>
+                <td>{{ optionalValue (formatDate resultedDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">State</td>
+                <td class="data-column-30">Assigned to</td>
+                <td class="data-column-30">Created date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue state}}</td>
+                <td>{{ optionalValue assignedTo }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+            </tr>
+        </table>
+        {{/hearingOutcomes}}
+
+    <br>
+    <h3>Hearing Notes</h3>
+    {{#hearingNotes}}
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Hearing ID</td>
+                <td class="data-column-30">Author</td>
+                <td class="data-column-30">Note</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue hearingId }}</td>
+                <td>{{ optionalValue author }}</td>
+                <td>{{ optionalValue note }}</td>
+            </tr>
+        </table>
+    {{/hearingNotes}}
+
+{{/.}}
