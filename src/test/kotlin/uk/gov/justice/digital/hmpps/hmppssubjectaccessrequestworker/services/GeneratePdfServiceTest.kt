@@ -1025,7 +1025,6 @@ class GeneratePdfServiceTest(
       }
 
       it("renders a template given an activities template") {
-        val templateRenderService = TemplateRenderService()
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
             "prisonerNumber" to "A4743DZ",
@@ -1130,7 +1129,6 @@ class GeneratePdfServiceTest(
       }
 
       it("renders a template given an activities template with missing data") {
-        val templateRenderService = TemplateRenderService()
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
             "prisonerNumber" to "A4743DZ",
@@ -1218,7 +1216,7 @@ class GeneratePdfServiceTest(
             "creationDate" to "2023-11-17T14:49:58.308566",
             "crn" to "U328968",
             "prisonId" to "MDI",
-            "releaseDate" to "2024-09-17"
+            "releaseDate" to "2024-09-17",
           ),
           "assessment" to mapOf(
             "id" to 518,
@@ -1254,20 +1252,20 @@ class GeneratePdfServiceTest(
               "creationDate" to "2023-11-17T14:49:58.308566",
               "crn" to "U328968",
               "prisonId" to "MDI",
-              "releaseDate" to "2024-09-17"
+              "releaseDate" to "2024-09-17",
             ),
             "logs" to arrayListOf(
               mapOf(
                 "id" to 3302,
                 "status" to "Pending",
-                "changeDate" to "2023-12-01T00:00:00"
+                "changeDate" to "2023-12-01T00:00:00",
               ),
               mapOf(
                 "id" to 3303,
                 "status" to "Account opened",
-                "changeDate" to "2023-12-04T00:00:00"
+                "changeDate" to "2023-12-04T00:00:00",
               ),
-            )
+            ),
           ),
           "deliusContact" to arrayListOf(
             mapOf(
@@ -1276,7 +1274,7 @@ class GeneratePdfServiceTest(
               "creationDateTime" to "2023-12-13T12:33:30.514175",
               "occurenceDateTime" to "2023-12-13T12:33:30.514175",
               "createdBy" to "James Boobier",
-              "text" to "Resettlement status set to: Support not required. This is a case note from Delius"
+              "text" to "Resettlement status set to: Support not required. This is a case note from Delius",
             ),
             mapOf(
               "caseNoteId" to "db-3",
@@ -1284,7 +1282,7 @@ class GeneratePdfServiceTest(
               "creationDateTime" to "2023-12-13T12:33:30.514175",
               "occurenceDateTime" to "2023-12-13T12:33:30.514175",
               "createdBy" to "James Boobier",
-              "text" to "Resettlement status set to: Done. This is a case note from Delius"
+              "text" to "Resettlement status set to: Done. This is a case note from Delius",
             ),
           ),
           "idApplication" to mapOf(
@@ -1320,16 +1318,15 @@ class GeneratePdfServiceTest(
               "pathwayStatus" to arrayListOf(
                 mapOf(
                   "pathway" to "ACCOMMODATION",
-                  "assessmentStatus" to "SUBMITTED"
+                  "assessmentStatus" to "SUBMITTED",
                 ),
                 mapOf(
                   "pathway" to "DRUGS_AND_ALCOHOL",
-                  "assessmentStatus" to "SUBMITTED"
+                  "assessmentStatus" to "SUBMITTED",
                 ),
               ),
             ),
-
-            ),
+          ),
           "resettlementAssessment" to arrayListOf(
             mapOf(
               "originalAssessment" to mapOf(
@@ -1366,7 +1363,7 @@ class GeneratePdfServiceTest(
                   ),
                 ),
               ),
-            )
+            ),
           ),
         )
 
