@@ -473,7 +473,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>OIC hearing type</td><td>INAD_ADULT</td>")
         renderedStyleTemplate.shouldContain("<td>James Warburton</td>")
         renderedStyleTemplate.shouldContain("<td>Code</td><td>CHARGE_PROVED</td>")
-        renderedStyleTemplate.shouldContain("<td>Privilege type</td><td>TV</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-30\">Privilege type</td>")
         renderedStyleTemplate.shouldContain("<td>Linked charge numbers</td><td>[9872-1, 9872-2]</td>")
         renderedStyleTemplate.shouldContain("<td>DAYS</td>")
         renderedStyleTemplate.shouldContain("<td>Some info</td>")

@@ -1,4 +1,5 @@
 <h1>Manage Adjudications</h1>
+<br>
 {{#.}}
     <table class="summary-list">
         <tr><td>Charge number</td><td>{{ optionalValue chargeNumber }}</td></tr>
@@ -7,7 +8,9 @@
         <tr><td>Youth offender</td><td>{{ optionalValue isYouthOffender }}</td></tr>
     </table>
 
+    <br>
     <h2>Incident details</h2>
+    <br>
     {{#incidentDetails}}
         <table class="summary-list">
             <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
@@ -30,6 +33,7 @@
         {{/offenceRule}}
     {{/incidentRole}}
 
+    <br>
     <h2>Offence details</h2>
     {{#offenceDetails}}
         <table class="summary-list">
@@ -44,6 +48,7 @@
                     <tr><td>With others Nomis code</td><td>{{ optionalValue withOthersNomisCode }}</td></tr>
                 </table>
             {{/offenceRule}}
+            <br>
             <h3>Protected characteristics</h3>
             <table class="data-table">
                 <tr>
@@ -56,16 +61,11 @@
                         <td>{{ optionalValue id }}</td>
                     </tr>
                 {{/protectedCharacteristics}}
-                {{^protectedCharacteristics}}
-                    <tr>
-                        <td>No data held</td>
-                        <td>No data held</td>
-                    </tr>
-                {{/protectedCharacteristics}}
             </table>
         </table>
     {{/offenceDetails}}
 
+    <br>
     <h2>Incident statement</h2>
     {{#incidentStatement}}
         <table class="summary-list">
@@ -73,7 +73,7 @@
             <tr><td>Completed</td><td>{{ optionalValue completed }}</td></tr>
         </table>
     {{/incidentStatement}}
-
+    <br>
     <h3>Creation details</h3>
         <table class="summary-list">
             <tr><td>Created by</td><td>{{ optionalValue createdByUserId }}</td></tr>
@@ -84,12 +84,12 @@
             <tr><td>Status details</td><td>{{ optionalValue statusDetails }}</td></tr>
         </table>
 
-
+    <br>
     <h2>Damages</h2>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Code</td>
-            <td class="data-column-55">Details</td>
+            <td class="data-column-30">Code</td>
+            <td class="data-column-50">Details</td>
             <td class="data-column-20">Reporter</td>
         </tr>
         {{#damages}}
@@ -99,47 +99,34 @@
                 <td>{{ optionalValue reporter }}</td>
             </tr>
         {{/damages}}
-        {{^damages}}
-            <tr>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
-            </tr>
-        {{/damages}}
     </table>
 
+    <br>
     <h2>Evidence</h2>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Code</td>
-            <td class="data-column-30">Identifier</td>
-            <td class="data-column-25">Details</td>
+            <td class="data-column-30">Code</td>
+            <td class="data-column-30">Details</td>
+            <td class="data-column-20">Identifier</td>
             <td class="data-column-20">Reporter</td>
         </tr>
         {{#evidence}}
             <tr>
                 <td>{{ optionalValue code }}</td>
-                <td>{{ optionalValue identifier }}</td>
                 <td>{{ optionalValue details }}</td>
+                <td>{{ optionalValue identifier }}</td>
                 <td>{{ optionalValue reporter }}</td>
-            </tr>
-        {{/evidence}}
-        {{^evidence}}
-            <tr>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
             </tr>
         {{/evidence}}
     </table>
 
+    <br>
     <h2>Witnesses</h2>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Code</td>
+            <td class="data-column-30">Code</td>
             <td class="data-column-30">First name</td>
-            <td class="data-column-25">Last name</td>
+            <td class="data-column-20">Last name</td>
             <td class="data-column-20">Reporter</td>
         </tr>
         {{#witnesses}}
@@ -150,16 +137,9 @@
                 <td>{{ optionalValue reporter }}</td>
             </tr>
         {{/witnesses}}
-        {{^witnesses}}
-            <tr>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
-                <td>No data held</td>
-            </tr>
-        {{/witnesses}}
     </table>
 
+    <br>
     <h2>Hearings</h2>
     {{#hearings}}
         <table class="summary-list">
@@ -169,6 +149,7 @@
             <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
             <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
         </table>
+        <br>
         <h3>Outcome</h3>
         <table class="data-table">
             <tr>
@@ -185,33 +166,20 @@
                     <td>{{ optionalValue code }}</td>
                 </tr>
             {{/outcome}}
-            {{^outcome}}
-                <tr>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                </tr>
-            {{/outcome}}
         </table>
     {{/hearings}}
 
+    <br>
     <h2>DIS issue history</h2>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Issuing officer</td>
-            <td class="data-column-25">Date and time of issue</td>
+            <td class="data-column-30">Issuing officer</td>
+            <td class="data-column-70">Date and time of issue</td>
         </tr>
         {{#disIssueHistory}}
             <tr>
                 <td>{{ optionalValue issuingOfficer }}</td>
                 <td>{{ optionalValue (formatDate dateTimeOfIssue) }}</td>
-            </tr>
-        {{/disIssueHistory}}
-        {{^disIssueHistory}}
-            <tr>
-                <td>No data held</td>
-                <td>No data held</td>
             </tr>
         {{/disIssueHistory}}
     </table>
@@ -220,6 +188,7 @@
         <tr><td>Date and time of first hearing</td><td>{{ optionalValue (formatDate dateTimeOfFirstHearing) }}</td></tr>
     </table>
 
+    <br>
     <h2>Outcomes</h2>
     {{#outcomes}}
         <h3>Hearing</h3>
@@ -231,13 +200,13 @@
                 <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
                 <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
             </table>
-            <h3>Outcome</h3>
+            <h4>Outcome</h4>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Plea</td>
+                    <td class="data-column-30">Plea</td>
                     <td class="data-column-25">Adjudicator</td>
-                    <td class="data-column-75">ID</td>
-                    <td class="data-column-75">Code</td>
+                    <td class="data-column-20">ID</td>
+                    <td class="data-column-25">Code</td>
                 </tr>
                 {{#outcome}}
                     <tr>
@@ -245,14 +214,6 @@
                         <td>{{ optionalValue adjudicator }}</td>
                         <td>{{ optionalValue id }}</td>
                         <td>{{ optionalValue code }}</td>
-                    </tr>
-                {{/outcome}}
-                {{^outcome}}
-                    <tr>
-                        <td>No data held</td>
-                        <td>No data held</td>
-                        <td>No data held</td>
-                        <td>No data held</td>
                     </tr>
                 {{/outcome}}
             </table>
@@ -268,27 +229,72 @@
         {{/outcome}}
     {{/outcomes}}
 
+    <br>
     <h2>Punishments</h2>
     {{#punishments}}
         <h3>Punishment</h3>
-        <table class="summary-list">
-            <tr><td>Type</td><td>{{ optionalValue type }}</td></tr>
-            <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
-            <tr><td>Privilege type</td><td>{{ optionalValue privilegeType }}</td></tr>
-            <tr><td>Percentage stopped</td><td>{{ optionalValue stoppedPercentage }}</td></tr>
-            <tr><td>Activated by charge number</td><td>{{ optionalValue activatedByChargeNumber }}</td></tr>
-            <tr><td>Suspended until</td><td>{{ optionalValue (formatDate suspendedUntil) }}</td></tr>
-            <tr><td>Amount</td><td>{{ optionalValue amount }}</td></tr>
-            <tr><td>Sanction sequence</td><td>{{ optionalValue sanctionSeq }}</td></tr>
-            <tr><td>Deleted</td><td>{{ optionalValue deleted }}</td></tr>
-            <tr><td>Consecutive to charge number</td><td>{{ optionalValue consecutiveToChargeNumber }}</td></tr>
-            <tr><td>Nomis status</td><td>{{ optionalValue nomisStatus }}</td></tr>
-            <tr><td>Actual created date</td><td>{{ optionalValue (formatDate actualCreatedDate) }}</td></tr>
-            <tr><td>Payback notes</td><td>{{ optionalValue paybackNotes }}</td></tr>
-            <tr><td>Rehab completed</td><td>{{ optionalValue rehabCompleted }}</td></tr>
-            <tr><td>Rehab not completed outcome</td><td>{{ optionalValue rehabNotCompletedOutcome }}</td></tr>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">ID</td>
+                <td class="data-column-30">Type</td>
+                <td class="data-column-30">Privilege type</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue type }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue privilegeType }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Percentage stopped</td>
+                <td class="data-column-30">Activated by charge number</td>
+                <td class="data-column-30">Suspended until</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue stoppedPercentage }}</td>
+                <td>{{ optionalValue activatedByChargeNumber }}</td>
+                <td>{{ optionalValue (formatDate suspendedUntil) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Amount</td>
+                <td class="data-column-30">Sanction sequence</td>
+                <td class="data-column-30">Deleted</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue amount }}</td>
+                <td>{{ optionalValue sanctionSeq }}</td>
+                <td>{{ optionalValue deleted }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Consecutive to charge number</td>
+                <td class="data-column-30">NOMIS status</td>
+                <td class="data-column-30">Actual created date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue consecutiveToChargeNumber }}</td>
+                <td>{{ optionalValue nomisStatus }}</td>
+                <td>{{ optionalValue (formatDate actualCreatedDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Payback notes</td>
+                <td class="data-column-30">Rehab completed</td>
+                <td class="data-column-30">Rehab not completed outcome</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue paybackNotes }}</td>
+                <td>{{ optionalValue rehabCompleted }}</td>
+                <td>{{ optionalValue rehabNotCompletedOutcome }}</td>
+            </tr>
         </table>
 
+        <br>
         <h3>Schedule</h3>
         <table class="data-table">
             <tr>
@@ -309,17 +315,9 @@
                     <td>{{ optionalValue suspendUntil }}</td>
                 </tr>
             {{/schedule}}
-            {{^schedule}}
-                <tr>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                </tr>
-            {{/schedule}}
         </table>
 
+        <br>
         <h3>Rehabilitative activities</h3>
         <table class="data-table">
             <tr>
@@ -338,16 +336,6 @@
                     <td>{{ optionalValue totalSessions }}</td>
                     <td>{{ optionalValue (formatDate endDate) }}</td>
                     <td>{{ optionalValue completed }}</td>
-                </tr>
-            {{/rehabilitativeActivities}}
-            {{^rehabilitativeActivities}}
-                <tr>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
-                    <td>No data held</td>
                 </tr>
             {{/rehabilitativeActivities}}
         </table>
