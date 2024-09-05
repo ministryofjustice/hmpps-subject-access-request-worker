@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 
 class TemplateRenderServiceTest : DescribeSpec(
@@ -28,6 +29,28 @@ class TemplateRenderServiceTest : DescribeSpec(
         val testTemplate = templateRenderService.getStyleTemplate()
         testTemplate.shouldNotBeNull()
         testTemplate.shouldContain("{{ serviceTemplate }}")
+      }
+    }
+
+    describe("TemplateHelpers") {
+      val templateHelpers = TemplateHelpers()
+
+      describe("getElementNumber") {
+        it("returns the index of the list item + 1") {
+          val indexOfArrayElement = 1
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(2)
+        }
+
+        it("returns null if given null") {
+          val indexOfArrayElement = null
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(null)
+        }
       }
     }
 

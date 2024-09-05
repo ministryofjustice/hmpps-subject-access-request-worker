@@ -1,6 +1,7 @@
 <h1>Accredited programmes</h1>
 <h2>Referrals</h2>
     {{#referrals}}
+        <h3>Referral {{ optionalValue (getIndexPlusOne @index) }}</h3>
         <br>
         <table class="data-table">
             <tr>
@@ -51,6 +52,7 @@
 
     <h2>Course participation</h2>
     {{#courseParticipation}}
+        <h3>Course {{ optionalValue (getIndexPlusOne @index) }}</h3>
         <br>
         <table class="data-table">
             <tr>
