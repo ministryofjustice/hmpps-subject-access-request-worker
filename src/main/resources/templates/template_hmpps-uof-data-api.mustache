@@ -1,35 +1,75 @@
 <h1>Use of force</h1>
 {{#.}}
     <h2>Incident of use of force - ID {{ optionalValue id }}</h2>
-    <table class="summary-list">
-        <tr><td>Sequence no</td><td>{{ optionalValue sequenceNo }}</td></tr>
-        <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
-        <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
-        <tr><td>Incident date</td><td>{{ optionalValue (formatDate incidentDate) }}</td></tr>
-        <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
-        <tr><td>Deleted</td><td>{{ optionalValue deleted }}</td></tr>
-        <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
-        <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
-        <tr><td>User ID</td><td>{{ optionalValue userId }}</td></tr>
-        <tr><td>Reporter name</td><td>{{ optionalValue reporterName }}</td></tr>
-        <tr><td>Offender no</td><td>{{ optionalValue offenderNo }}</td></tr>
-        <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
+    <br>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Offender no</td>
+            <td class="data-column-25">Booking ID</td>
+            <td class="data-column-25">Date created</td>
+            <td class="data-column-25">Date updated</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue offenderNo }}</td>
+            <td>{{ optionalValue bookingId }}</td>
+            <td>{{ optionalValue (formatDate createdDate) }}</td>
+            <td>{{ optionalValue (formatDate updatedDate) }}</td>
+        </tr>
+    </table>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Sequence number</td>
+            <td class="data-column-25">Deleted</td>
+            <td class="data-column-25">Incident date</td>
+            <td class="data-column-25">Date submitted</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue sequenceNo }}</td>
+            <td>{{ optionalValue deleted }}</td>
+            <td>{{ optionalValue (formatDate incidentDate)}}</td>
+            <td>{{ optionalValue (formatDate submittedDate) }}</td>
+        </tr>
+    </table>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Status</td>
+            <td class="data-column-25">Agency ID</td>
+            <td class="data-column-25">Reporter name</td>
+            <td class="data-column-25">User ID</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue status }}</td>
+            <td>{{ optionalValue agencyId }}</td>
+            <td>{{ optionalValue reporterName }}</td>
+            <td>{{ optionalValue userId }}</td>
+        </tr>
     </table>
 
-    <h3>Form response</h3>
+    <br>
+    <h2>Form response</h2>
     {{#formResponse}}
         <h4>Evidence</h4>
         {{#evidence}}
-        <table class="summary-list">
-            <tr><td>CCTV recording</td><td>{{ optionalValue cctvRecording }}</td></tr>
-            <tr><td>Bagged evidence</td><td>{{ optionalValue baggedEvidence }}</td></tr>
-            <tr><td>Body worn camera</td><td>{{ optionalValue bodyWornCamera }}</td></tr>
-            <tr><td>Photographs taken</td><td>{{ optionalValue photographsTaken }}</td></tr>
+        <table class="data-table">
+            <tr>
+                <td>CCTV recording</td>
+                <td>Bagged evidence</td>
+                <td>Body worn camera</td>
+                <td>Photographs taken</td>
+            </tr>
+        <tr>
+            <td>{{ optionalValue cctvRecording }}</td>
+            <td>{{ optionalValue baggedEvidence }}</td>
+            <td>{{ optionalValue bodyWornCamera }}</td>
+            <td>{{ optionalValue photographsTaken }}</td>
+        </tr>
         </table>
-
-            <h5>Evidence tags and descriptions</h5>
+            <br>
             <table class="data-table">
-                <tr><td>Evidence tag reference</td><td>Description</td></tr>
+                <tr>
+                    <td class="data-column-25">Evidence tag reference</td>
+                    <td class="data-column-75">Description</td>
+                </tr>
                 {{#evidenceTagAndDescription}}
                 <tr><td>{{ optionalValue evidenceTagReference }}</td><td>{{ optionalValue description }}</td></tr>
                 {{/evidenceTagAndDescription}}
@@ -38,21 +78,29 @@
             <h5>Body worn camera numbers</h5>
             <table class="summary-list">
                 {{#bodyWornCameraNumbers}}
-                    <tr><td>Camera number</td><td>{{ optionalValue cameraNum }}</td></tr>
+                    <tr><td>{{ optionalValue cameraNum }}</td></tr>
                 {{/bodyWornCameraNumbers}}
             </table>
         {{/evidence}}
 
          <h4>Involved staff</h4>
          {{#involvedStaff}}
-             <h5>Staff member</h5>
-             <table class="summary-list">
-                 <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
-                 <tr><td>Email</td><td>{{ optionalValue email }}</td></tr>
-                 <tr><td>Staff ID</td><td>{{ optionalValue staffId }}</td></tr>
-                 <tr><td>Username</td><td>{{ optionalValue username }}</td></tr>
-                 <tr><td>Verified</td><td>{{ optionalValue verified }}</td></tr>
-                 <tr><td>Active case load ID</td><td>{{ optionalValue activeCaseLoadId }}</td></tr>
+             <h5>Staff member - ID {{ optionalValue staffId }}</h5>
+             <table class="data-table">
+                 <tr>
+                     <td class="data-column-20">Name</td>
+                     <td class="data-column-25">Email</td>
+                     <td class="data-column-20">Username</td>
+                     <td class="data-column-15">Verified</td>
+                     <td class="data-column-20">Active caseload ID</td>
+                 </tr>
+                 <tr>
+                     <td>{{ optionalValue name }}</td>
+                     <td>{{ optionalValue email }}</td>
+                     <td>{{ optionalValue username }}</td>
+                     <td>{{ optionalValue verified }}</td>
+                     <td>{{ optionalValue activeCaseLoadId }}</td>
+                 </tr>
              </table>
          {{/involvedStaff}}
 
@@ -67,65 +115,142 @@
            </table>
            {{/incidentDetails}}
 
-         <h4>Use of force details</h4>
+        <br>
+        <h4>Use of force details</h4>
          {{#useOfForceDetails}}
-            <table class="summary-list">
-                <tr><td>Body worn camera</td><td>{{ optionalValue bodyWornCamera }}</td></tr>
-                <tr><td>Body worn camera numbers</td><td>{{#bodyWornCameraNumbers}}{{ optionalValue cameraNum }}{{/bodyWornCameraNumbers}}</td></tr>
-                <tr><td>Pava drawn</td><td>{{ optionalValue pavaDrawn }}</td></tr>
-                <tr><td>Pava drawn against prisoner</td><td>{{ optionalValue pavaDrawnAgainstPrisoner }}</td></tr>
-                <tr><td>Pava used</td><td>{{ optionalValue pavaUsed }}</td></tr>
-                <tr><td>Weapons observed</td><td>{{ optionalValue weaponsObserved }}</td></tr>
-                <tr><td>Weapon types</td><td>{{#weaponTypes}}{{ optionalValue weaponType }}{{/weaponTypes}}</td></tr>
-                <tr><td>Escorting hold</td><td>{{ optionalValue escortingHold }}</td></tr>
-                <tr><td>Restraint</td><td>{{ optionalValue restraint }}</td></tr>
-                <tr><td>Restraint positions</td><td><ul>{{#restraintPositions}}<li>{{ optionalValue . }}</li>{{/restraintPositions}}</ul></td></td></tr>
-                <tr><td>Baton drawn</td><td>{{ optionalValue batonDrawn }}</td></tr>
-                <tr><td>Baton drawn against prisoner</td><td>{{ optionalValue batonDrawnAgainstPrisoner }}</td></tr>
-                <tr><td>Baton used</td><td>{{ optionalValue batonUsed }}</td></tr>
-                <tr><td>Guiding hold</td><td>{{ optionalValue guidingHold }}</td></tr>
-                <tr><td>Handcuffs applied</td><td>{{ optionalValue handcuffsApplied }}</td></tr>
-                <tr><td>Positive communication</td><td>{{ optionalValue positiveCommunication }}</td></tr>
-                <tr><td>Pain inducing techniques</td><td>{{ optionalValue painInducingTechniques }}</td></tr>
-                <tr><td>Pain inducing techniques used</td><td>{{ optionalValue painInducingTechniquesUsed }}</td></tr>
-                <tr><td>Personal protection techniques</td><td>{{ optionalValue personalProtectionTechniques }}</td></tr>
-            </table>
+             <table class="data-table">
+                 <tr>
+                     <td class="data-column-20">Body-worn camera</td>
+                     <td class="data-column-20">Body-worn camera numbers</td>
+                     <td class="data-column-20">Pava drawn</td>
+                     <td class="data-column-20">Pava drawn against prisoner</td>
+                     <td class="data-column-20">Pava used</td>
+                 </tr>
+                 <tr>
+                     <td>{{ optionalValue bodyWornCamera }}</td>
+                     <td>{{#bodyWornCameraNumbers}}{{ optionalValue cameraNum }}{{/bodyWornCameraNumbers}}</td>
+                     <td>{{ optionalValue pavaDrawn }}</td>
+                     <td>{{ optionalValue pavaDrawnAgainstPrisoner }}</td>
+                     <td>{{ optionalValue pavaUsed }}</td>
+                 </tr>
+             </table>
+             <table class="data-table">
+                 <tr>
+                     <td class="data-column-20">Weapons observed</td>
+                     <td class="data-column-20">Weapon types</td>
+                     <td class="data-column-20">Escorting hold</td>
+                     <td class="data-column-20">Restraint</td>
+                     <td class="data-column-20">Restraint positions</td>
+                 </tr>
+                 <tr>
+                     <td>{{ optionalValue weaponsObserved }}</td>
+                     <td>{{#weaponTypes}}{{ optionalValue weaponType }}{{/weaponTypes}}</td>
+                     <td>{{ optionalValue escortingHold }}</td>
+                     <td>{{ optionalValue restraint }}</td>
+                     <td>{{#restraintPositions}}<li>{{ optionalValue . }}</li>{{/restraintPositions}}</td>
+                 </tr>
+             </table>
+             <table class="data-table">
+                 <tr>
+                     <td class="data-column-20">Baton drawn</td>
+                     <td class="data-column-20">Baton drawn against prisoner</td>
+                     <td class="data-column-20">Baton used</td>
+                     <td class="data-column-20">Guiding hold</td>
+                     <td class="data-column-20">Handcuffs applied</td>
+                 </tr>
+                 <tr>
+                     <td>{{ optionalValue batonDrawn }}</td>
+                     <td>{{ optionalValue batonDrawnAgainstPrisoner }}</td>
+                     <td>{{ optionalValue batonUsed }}</td>
+                     <td>{{ optionalValue guidingHold }}</td>
+                     <td>{{ optionalValue handcuffsApplied }}</td>
+                 </tr>
+             </table>
+             <table class="data-table">
+                 <tr>
+                     <td class="data-column-20">Positive communication</td>
+                     <td class="data-column-20">Pain inducing techniques</td>
+                     <td class="data-column-20">Pain inducing techniques used</td>
+                     <td class="data-column-20">Personal protection techniques</td>
+                     <td class="data-column-20"></td>
+                 </tr>
+                 <tr>
+                     <td>{{ optionalValue positiveCommunication }}</td>
+                     <td>{{ optionalValue painInducingTechniques }}</td>
+                     <td>{{ optionalValue painInducingTechniquesUsed }}</td>
+                     <td>{{ optionalValue personalProtectionTechniques }}</td>
+                     <td></td>
+                 </tr>
+             </table>
         {{/useOfForceDetails}}
 
+        <br>
         <h4>Reasons for use of force</h4>
         {{#reasonsForUseOfForce}}
             <table class="summary-list">
                     <tr><td>Primary Reason</td><td>{{ optionalValue primaryReason }}</td></tr>
-                    <tr><td>Reasons</td><td><ul>{{#reasons}}<li>{{ optionalValue . }}</li>{{/reasons}}</ul></td></td></tr>
+                    <tr><td>Reasons</td><td><ul>{{#reasons}}<li>{{ optionalValue . }}</li>{{/reasons}}</ul></td></tr>
             </table>
         {{/reasonsForUseOfForce}}
 
+        <br>
         <h4>Relocation and injuries</h4>
         {{#relocationAndInjuries}}
-            <table class="summary-list">
-                <tr><td>Relocation type</td><td>{{ optionalValue relocationType }}</td></tr>
-                <tr><td>F213 completed by</td><td>{{ optionalValue f213CompletedBy }}</td></tr>
-                <tr><td>Prisoner injuries</td><td>{{ optionalValue prisonerInjuries }}</td></tr>
-                <tr><td>Healthcare involved</td><td>{{ optionalValue healthcareInvolved }}</td></tr>
-                <tr><td>Healthcare practioner name</td><td>{{ optionalValue healthcarePractionerName }}</td></tr>
-                <tr><td>Prisoner relocation</td><td>{{ optionalValue prisonerRelocation }}</td></tr>
-                <tr><td>Relocation compliancy</td><td>{{ optionalValue relocationCompliancy }}</td></tr>
-                <tr><td>Staff medical attention</td><td>{{ optionalValue staffMedicalAttention }}</td></tr>
-                <tr><td>Prisoner hospitalisation</td><td>{{ optionalValue prisonerHospitalisation }}</td></tr>
-                <tr><td>User specified relocation type</td><td>{{ optionalValue userSpecifiedRelocationType }}</td></tr>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Relocation type</td>
+                    <td class="data-column-25">F213 completed by</td>
+                    <td class="data-column-25">Prisoner injuries</td>
+                    <td class="data-column-25">Healthcare involved</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue relocationType }}</td>
+                    <td>{{ optionalValue f213CompletedBy }}</td>
+                    <td>{{ optionalValue prisonerInjuries }}</td>
+                    <td>{{ optionalValue healthcareInvolved }}</td>
+
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Healthcare practioner name</td>
+                    <td class="data-column-25">Relocation compliancy</td>
+                    <td class="data-column-25">Staff medical attention</td>
+                    <td class="data-column-25">Prisoner hospitalisation</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue healthcarePractionerName }}</td>
+                    <td>{{ optionalValue relocationCompliancy }}</td>
+                    <td>{{ optionalValue staffMedicalAttention }}</td>
+                    <td>{{ optionalValue prisonerHospitalisation }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Prisoner relocation</td>
+                    <td class="data-column-50">User specified relocation type</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue prisonerRelocation }}</td>
+                    <td>{{ optionalValue userSpecifiedRelocationType }}</td>
+                </tr>
             </table>
 
+            <br>
             <h4>Staff needing medical attention</h4>
             <table class="data-table">
                 <tr><td>Name</td><td>Hospitalisation</td></tr>
                 {{#staffNeedingMedicalAttention}}
-                    <tr><td>{{ optionalValue name }}</td><td>{{ optionalValue hospitalisation }}</td></tr>
+                    <tr>
+                        <td class="data-column-25">{{ optionalValue name }}</td>
+                        <td class="data-column-75">{{ optionalValue hospitalisation }}</td>
+                    </tr>
                 {{/staffNeedingMedicalAttention}}
             </table>
         {{/relocationAndInjuries}}
     {{/formResponse}}
 
-    <h3>Statements</h3>
+    <h2>Statements</h2>
     {{#statements}}
         <h4>Statement {{ optionalValue id }}</h4>
         <table class="data-table">
@@ -166,5 +291,5 @@
         {{/statementAmendments}}
         <br>
     {{/statements}}
-
+    <h3>End of information for use of force incident {{ optionalValue id }}</h3>
 {{/.}}
