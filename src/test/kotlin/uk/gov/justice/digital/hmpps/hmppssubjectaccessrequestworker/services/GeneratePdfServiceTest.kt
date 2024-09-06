@@ -1144,12 +1144,12 @@ class GeneratePdfServiceTest(
         )
 
         val testResponseObject = listOf(DpsService(name = "hmpps-uof-data-api", content = testServiceData))
-        val writer = PdfWriter(FileOutputStream("dummy-template.pdf"))
+        val writer = PdfWriter(FileOutputStream("dummy-uof-template.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
-        val reader = PdfDocument(PdfReader("dummy-template.pdf"))
+        val reader = PdfDocument(PdfReader("dummy-uof-template.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
 

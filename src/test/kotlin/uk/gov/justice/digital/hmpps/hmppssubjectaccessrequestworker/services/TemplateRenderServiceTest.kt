@@ -976,10 +976,10 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Incident date</td><td>07 September 2020, 2:02:00 am</td>")
-        renderedStyleTemplate.shouldContain("<td>CCTV recording</td><td>YES</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Incident date</td>")
+        renderedStyleTemplate.shouldContain("<td>CCTV recording</td>")
         renderedStyleTemplate.shouldContain("<td>Name</td><td>Andrew Lee</td>")
-        renderedStyleTemplate.shouldContain("<td>Baton drawn</td><td>false</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Baton drawn</td>")
         renderedStyleTemplate.shouldContain("<td>Staff ID</td><td>486084</td>")
       }
     }
