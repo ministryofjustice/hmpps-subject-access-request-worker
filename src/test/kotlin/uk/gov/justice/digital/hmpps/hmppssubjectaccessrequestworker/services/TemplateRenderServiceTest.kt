@@ -1356,5 +1356,85 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("This is a test for SAR")
       }
     }
+
+    describe("interventionsTemplate") {
+      it("renders a template given a Interventions Service template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: Map<Any, Any> = mapOf(
+          "crn" to "X718253",
+          "referral" to arrayListOf(
+            mapOf(
+              "referral_number" to "JE2862AC",
+              "accessibility_needs" to "SAR test 9 - Does Sadie have any other mobility, disability or accessibility needs? (optional)\r\n - None",
+              "additional_needs_information" to "SAR test 10 - Additional information about Sadie’s needs (optional) - None",
+              "when_unavailable" to "SAR test 11 - Provide details of when Sadie will not be able to attend sessions - Weekday mornings",
+              "end_requested_comments" to "",
+              "appointment" to arrayListOf(
+                mapOf(
+                  "session_summary" to "SAR Test 22 - What did you do in the session?",
+                  "session_response" to "SAR Test 23 - How did Sadie Borer respond to the session?",
+                  "session_concerns" to "SAR Test 25 - Yes, something concerned me about Sadie Borer",
+                  "late_reason" to "SAR Test 21 - Add how late they were and anything you know about the reason.",
+                  "future_session_plan" to "SAR Test 26 - Add anything you have planned for the next session (optional)",
+                ),
+                mapOf(
+                  "session_summary" to "SAR 27 - What did you do in the session?",
+                  "session_response" to "SAR 28 - How did Sadie Borer respond to the session?",
+                  "session_concerns" to "SAR 30 - Yes, something concerned me about Sadie Borer",
+                  "late_reason" to "",
+                  "future_session_plan" to "SAR 31 - Add anything you have planned for the next session (optional)",
+                ),
+              ),
+              "action_plan_activity" to arrayListOf(
+                mapOf(
+                  "description" to arrayListOf(
+                    "SAR Test 19 - Please write the details of the activity here.",
+                    "SAR Test 20 - Activity 2 - Please write the details of the activity here.",
+                  ),
+                ),
+                mapOf(
+                  "description" to arrayListOf(
+                    "example",
+                  ),
+                ),
+              ),
+              "end_of_service_report" to mapOf(
+                "end_of_service_outcomes" to arrayListOf(
+                  mapOf(
+                    "progression_comments" to "SAR Test 32 - Describe their progress on this outcome.",
+                    "additional_task_comments" to "SAR Test 33 - Enter if anything else needs to be done (optional)",
+                  ),
+                  mapOf(
+                    "progression_comments" to "test.",
+                    "additional_task_comments" to "test",
+                  ),
+                ),
+              ),
+            ),
+            mapOf(
+              "referral_number" to "FY7705FI",
+              "accessibility_needs" to "mobility",
+              "additional_needs_information" to "",
+              "when_unavailable" to "Fridays",
+              "end_requested_comments" to "",
+              "appointment" to emptyList<Any>(),
+              "action_plan_activity" to emptyList<Any>(),
+              "end_of_service_report" to null,
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-interventions-service", testServiceData)
+
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h2>Referrals</h2>")
+        renderedStyleTemplate.shouldContain("<tr><td>Referral number</td><td>JE2862AC</td></tr>")
+        renderedStyleTemplate.shouldContain("<tr><td>Late reason</td><td>SAR Test 21 - Add how late they were and anything you know about the reason.</td></tr>")
+        renderedStyleTemplate.shouldContain("<tr><td>Referral number</td><td>FY7705FI</td></tr>")
+        renderedStyleTemplate.shouldContain("<p>No Data Held</p>")
+      }
+    }
   },
 )

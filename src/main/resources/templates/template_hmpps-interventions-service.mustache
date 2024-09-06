@@ -1,0 +1,62 @@
+<h1>Refer and monitor an intervention</h1>
+
+<h2>Referrals</h2>
+{{#referral}}
+
+    <h3>Referral {{ optionalValue (getIndexPlusOne @index) }}</h3>
+    <table class="summary-list">
+        <tr><td>Referral number</td><td>{{ optionalValue referral_number }}</td></tr>
+        <tr><td>Accessibility needs</td><td>{{ optionalValue accessibility_needs }}</td></tr>
+        <tr><td>Additional needs information</td><td>{{ optionalValue additional_needs_information }}</td></tr>
+        <tr><td>When unavailable</td><td>{{ optionalValue when_unavailable }}</td></tr>
+        <tr><td>End requested comments</td><td>{{ optionalValue end_requested_comments }}</td></tr>
+    </table>
+
+    <h4>Appointments</h4>
+    {{#appointment}}
+
+    <h5>Appointment {{ optionalValue (getIndexPlusOne @index) }}</h5>
+    <table class="summary-list">
+        <tr><td>Session summary</td><td>{{ optionalValue session_summary }}</td></tr>
+        <tr><td>Session response</td><td>{{ optionalValue session_response }}</td></tr>
+        <tr><td>Session concerns</td><td>{{ optionalValue session_concerns }}</td></tr>
+        <tr><td>Late reason</td><td>{{ optionalValue late_reason }}</td></tr>
+        <tr><td>Future session plan</td><td>{{ optionalValue future_session_plan }}</td></tr>
+    </table>
+
+    {{/appointment}}
+    {{^appointment}}
+        <p>No Data Held</p>
+    {{/appointment}}
+
+    <h4>Action plan activities</h4>
+    {{#action_plan_activity}}
+
+        <table class="summary-list">
+            <tr><td>Activity {{ optionalValue (getIndexPlusOne @index) }}</td><td><ul>{{#description}}<li>{{ optionalValue . }}</li>{{/description}}</ul></td></tr>
+        </table>
+
+    {{/action_plan_activity}}
+    {{^action_plan_activity}}
+        <p>No Data Held</p>
+    {{/action_plan_activity}}
+
+    <h4>End of service report</h4>
+    {{#end_of_service_report}}
+        {{#end_of_service_outcomes}}
+
+        <h5>Outcome {{ optionalValue (getIndexPlusOne @index) }}</h5>
+        <table class="summary-list">
+            <tr><td>Progression comments</td><td>{{ optionalValue progression_comments }}</td></tr>
+            <tr><td>Additional task comments</td><td>{{ optionalValue additional_task_comments }}</td></tr>
+        </table>
+
+        {{/end_of_service_outcomes}}
+    {{/end_of_service_report}}
+    {{^end_of_service_report}}
+        <p>No Data Held</p>
+    {{/end_of_service_report}}
+
+
+{{/referral}}
+
