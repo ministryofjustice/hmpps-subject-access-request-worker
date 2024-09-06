@@ -33,10 +33,10 @@
     <h3>Previous work experiences</h3>
     <table class="data-table">
         <tr>
-            <td class="data-column-15">Type</td>
+            <td class="data-column-20">Type</td>
             <td class="data-column-15">Type Other</td>
             <td class="data-column-25">Role</td>
-            <td class="data-column-45">Details</td>
+            <td class="data-column-40">Details</td>
         </tr>
         {{#previousWorkExperiences.experiences}}
             <tr>
@@ -50,53 +50,11 @@
 
     <h3>Interests and skills</h3>
     <table class="summary-list">
-        <tr><td>In prison work interests</td><td>{{#inPrisonInterests.inPrisonWorkInterests}}{{ workType }}{{#if workTypeOther}} ({{ workTypeOther }}){{/if}}{{/inPrisonInterests.inPrisonWorkInterests}}</td></tr>
-        <tr><td>In prison training interests</td><td>{{#inPrisonInterests.inPrisonTrainingInterests}}{{ trainingType }}{{#if trainingTypeOther}} ({{ trainingTypeOther }}){{/if}}{{/inPrisonInterests.inPrisonTrainingInterests}}</td></tr>
-        <tr><td>Skills</td><td>{{#personalSkillsAndInterests.skills}}{{ skillType }}{{#if skillTypeOther}} ({{ skillTypeOther }}){{/if}}{{/personalSkillsAndInterests.skills}}</td></tr>
-        <tr><td>Interests</td><td>{{#personalSkillsAndInterests.interests}}{{ interestType }}{{#if interestTypeOther}} ({{ interestTypeOther }}){{/if}}{{/personalSkillsAndInterests.interests}}</td></tr>
-        <tr><td>Future work interests</td><td>{{#futureWorkInterests.interests}}{{ workType }}{{#if workTypeOther}} ({{ workTypeOther }}){{/if}} - {{ role }}{{/futureWorkInterests.interests}}</td></tr>
-    </table>
-
-    <h3>In prison work interests</h3>
-    <table class="data-table">
-        <tr>
-            <td class="data-column-50">Type</td>
-            <td class="data-column-50">Other Type</td>
-        </tr>
-        {{#inPrisonInterests.inPrisonWorkInterests}}
-            <tr>
-                <td>{{ optionalValue workType }}</td>
-                <td>{{ optionalValue workTypeOther }}</td>
-            </tr>
-        {{/inPrisonInterests.inPrisonWorkInterests}}
-    </table>
-
-    <h3>In prison training interests</h3>
-    <table class="data-table">
-        <tr>
-            <td class="data-column-50">Type</td>
-            <td class="data-column-50">Other Type</td>
-        </tr>
-        {{#inPrisonInterests.inPrisonTrainingInterests}}
-            <tr>
-                <td>{{ optionalValue trainingType }}</td>
-                <td>{{ optionalValue trainingTypeOther }}</td>
-            </tr>
-        {{/inPrisonInterests.inPrisonTrainingInterests}}
-    </table>
-
-    <h3>Personal skills</h3>
-    <table class="data-table">
-        <tr>
-            <td class="data-column-50">Type</td>
-            <td class="data-column-50">Other Type</td>
-        </tr>
-        {{#inPrisonInterests.inPrisonTrainingInterests}}
-            <tr>
-                <td>{{ optionalValue trainingType }}</td>
-                <td>{{ optionalValue trainingTypeOther }}</td>
-            </tr>
-        {{/inPrisonInterests.inPrisonTrainingInterests}}
+        <tr><td>In prison work interests</td><td>{{#inPrisonInterests.inPrisonWorkInterests}}{{ workType }}{{#if workTypeOther}} ({{ workTypeOther }}){{/if}}{{#unless @last}}<br>{{/unless}}{{/inPrisonInterests.inPrisonWorkInterests}}{{^inPrisonInterests.inPrisonWorkInterests}}No Data Held{{/inPrisonInterests.inPrisonWorkInterests}}</td></tr>
+        <tr><td>In prison training interests</td><td>{{#inPrisonInterests.inPrisonTrainingInterests}}{{ trainingType }}{{#if trainingTypeOther}} ({{ trainingTypeOther }}){{/if}}{{#unless @last}}<br>{{/unless}}{{/inPrisonInterests.inPrisonTrainingInterests}}{{^inPrisonInterests.inPrisonTrainingInterests}}No Data Held{{/inPrisonInterests.inPrisonTrainingInterests}}</td></tr>
+        <tr><td>Skills</td><td>{{#personalSkillsAndInterests.skills}}{{ skillType }}{{#if skillTypeOther}} ({{ skillTypeOther }}){{/if}}{{#unless @last}}<br>{{/unless}}{{/personalSkillsAndInterests.skills}}{{^personalSkillsAndInterests.skills}}No Data Held{{/personalSkillsAndInterests.skills}}</td></tr>
+        <tr><td>Interests</td><td>{{#personalSkillsAndInterests.interests}}{{ interestType }}{{#if interestTypeOther}} ({{ interestTypeOther }}){{/if}}{{#unless @last}}<br>{{/unless}}{{/personalSkillsAndInterests.interests}}{{^personalSkillsAndInterests.interests}}No Data Held{{/personalSkillsAndInterests.interests}}</td></tr>
+        <tr><td>Future work interests</td><td>{{#futureWorkInterests.interests}}{{ workType }}{{#if workTypeOther}} ({{ workTypeOther }}){{/if}}{{#if role}} - {{ role }}{{/if}}{{#unless @last}}<br>{{/unless}}{{/futureWorkInterests.interests}}{{^futureWorkInterests.interests}}No Data Held{{/futureWorkInterests.interests}}</td></tr>
     </table>
 {{/induction}}
 <br>
