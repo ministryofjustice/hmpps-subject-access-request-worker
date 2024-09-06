@@ -1649,19 +1649,18 @@ class GeneratePdfServiceTest(
 
         val testResponseObject = listOf(DpsService(name = "hmpps-education-and-work-plan-api", content = testServiceData))
         val writer = PdfWriter(FileOutputStream("dummy-template-hmpps-education-and-work-plan-api.pdf"))
-        
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
-        
+
         val reader = PdfDocument(PdfReader("dummy-template-hmpps-education-and-work-plan-api.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
 
         Assertions.assertThat(text).contains("Personal Learning Plan")
       }
-        
+
       it("renders for Prepare Someone for Release service") {
         val testServiceData: Map<Any, Any> = mapOf(
           "prisoner" to mapOf(
@@ -1823,12 +1822,12 @@ class GeneratePdfServiceTest(
 
         val testResponseObject = listOf(DpsService(name = "hmpps-resettlement-passport-api", content = testServiceData))
         val writer = PdfWriter(FileOutputStream("dummy-resettlement-template.pdf"))
-        
+
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
-        
+
         val reader = PdfDocument(PdfReader("dummy-resettlement-template.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
