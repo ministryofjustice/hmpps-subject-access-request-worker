@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 
 class TemplateRenderServiceTest : DescribeSpec(
@@ -28,6 +29,28 @@ class TemplateRenderServiceTest : DescribeSpec(
         val testTemplate = templateRenderService.getStyleTemplate()
         testTemplate.shouldNotBeNull()
         testTemplate.shouldContain("{{ serviceTemplate }}")
+      }
+    }
+
+    describe("TemplateHelpers") {
+      val templateHelpers = TemplateHelpers()
+
+      describe("getElementNumber") {
+        it("returns the index of the list item + 1") {
+          val indexOfArrayElement = 1
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(2)
+        }
+
+        it("returns null if given null") {
+          val indexOfArrayElement = null
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(null)
+        }
       }
     }
 
@@ -279,7 +302,7 @@ class TemplateRenderServiceTest : DescribeSpec(
             "active" to true,
           ),
         )
-        val renderedStyleTemplate = templateRenderService.renderTemplate("complexity-of-need", testServiceData)
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-complexity-of-need", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
@@ -473,7 +496,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>OIC hearing type</td><td>INAD_ADULT</td>")
         renderedStyleTemplate.shouldContain("<td>James Warburton</td>")
         renderedStyleTemplate.shouldContain("<td>Code</td><td>CHARGE_PROVED</td>")
-        renderedStyleTemplate.shouldContain("<td>Privilege type</td><td>TV</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-30\">Privilege type</td>")
         renderedStyleTemplate.shouldContain("<td>Linked charge numbers</td><td>[9872-1, 9872-2]</td>")
         renderedStyleTemplate.shouldContain("<td>DAYS</td>")
         renderedStyleTemplate.shouldContain("<td>Some info</td>")
@@ -708,17 +731,16 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
-        renderedStyleTemplate.shouldContain("<td>Specific area</td><td>No</td>")
-        renderedStyleTemplate.shouldContain("<td>Vary version</td><td>0</td>")
-        renderedStyleTemplate.shouldContain("<td>Deleted at</td><td>15 March 2024, 11:11:14 am</td>")
-        renderedStyleTemplate.shouldContain("<td>Has considered checks</td><td>Yes</td>")
-        renderedStyleTemplate.shouldContain("<td>First night from</td><td>15:00</td>")
-        renderedStyleTemplate.shouldContain("<td>Friday from</td><td>19:00</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Specific area</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Vary version</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Has considered checks</td>")
+        renderedStyleTemplate.shouldContain("<tr><td>First night from</td><td>No Data Held</td></tr>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-15\">Friday from</td>")
         renderedStyleTemplate.shouldContain("<td>Decision maker</td><td>Louise Norris</td>")
         renderedStyleTemplate.shouldContain("<td>Offence committed before Feb 2015</td><td>No</td>")
-        renderedStyleTemplate.shouldContain("<td>Telephone</td><td>47450</td>")
-        renderedStyleTemplate.shouldContain("<td>Address line 1</td><td>The Street</td>")
-        renderedStyleTemplate.shouldContain("<td>Bass requested</td><td>Yes</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Telephone</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Address line 1</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Bass requested</td>")
         renderedStyleTemplate.shouldContain("<td>Bass area check seen</td><td>true</td>")
         renderedStyleTemplate.shouldContain("<td>Additional conditions required</td><td>No</td>")
         renderedStyleTemplate.shouldContain("<td>Action</td><td>UPDATE_SECTION</td>")
@@ -1083,7 +1105,7 @@ class TemplateRenderServiceTest : DescribeSpec(
               ),
             ),
 
-          ),
+            ),
           "resettlementAssessment" to arrayListOf(
             mapOf(
               "originalAssessment" to mapOf(
@@ -1123,7 +1145,8 @@ class TemplateRenderServiceTest : DescribeSpec(
             ),
           ),
         )
-        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-resettlement-passport-api", testServiceData)
+        val renderedStyleTemplate =
+          templateRenderService.renderTemplate("hmpps-resettlement-passport-api", testServiceData)
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
@@ -1135,6 +1158,83 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("James Boobier")
         renderedStyleTemplate.shouldContain("DRUGS_AND_ALCOHOL")
         renderedStyleTemplate.shouldContain("Help finding accomodation")
+      }
+    }
+
+    describe("accreditedProgrammesTemplate") {
+      it("renders a template given a Accredited Programmes template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: Map<Any, Any> = mapOf(
+          "referrals" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to true,
+              "statusCode" to "DESELECTED",
+              "hasReviewedProgrammeHistory" to true,
+              "additionalInformation" to "test",
+              "submittedOn" to "2024-03-12T14:23:12.328775",
+              "referrerUsername" to "AELANGOVAN_ADM",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Sexual offence",
+              "courseOrganisation" to "WTI",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to false,
+              "statusCode" to "REFERRAL_STARTED",
+              "hasReviewedProgrammeHistory" to false,
+              "additionalInformation" to null,
+              "submittedOn" to null,
+              "referrerUsername" to "SMCALLISTER_GEN",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Intimate partner violence offence",
+              "courseOrganisation" to "AYI",
+            ),
+          ),
+          "courseParticipation" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to null,
+              "source" to null,
+              "type" to "CUSTODY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2020,
+              "location" to null,
+              "detail" to null,
+              "courseName" to "Kaizen",
+              "createdByUser" to "ACOOMER_GEN",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "ACOOMER_GEN",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to 2002,
+              "source" to "Example",
+              "type" to "COMMUNITY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2004,
+              "location" to "Example",
+              "detail" to "Example",
+              "courseName" to "Enhanced Thinking Skills",
+              "createdByUser" to "AELANGOVAN_ADM",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "AELANGOVAN_ADM",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-accredited-programmes-api", testServiceData)
+
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h2>Referrals</h2>")
+        renderedStyleTemplate.shouldContain("<td>Becoming New Me Plus</td>")
+        renderedStyleTemplate.shouldContain("<td>12 March 2024, 2:23:12 pm</td>")
+        renderedStyleTemplate.shouldContain("<td>Kaizen</td>")
+        renderedStyleTemplate.shouldContain("<td>AELANGOVAN_ADM</td>")
       }
     }
   },

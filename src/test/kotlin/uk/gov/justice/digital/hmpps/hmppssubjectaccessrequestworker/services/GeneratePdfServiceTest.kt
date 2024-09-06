@@ -360,7 +360,7 @@ class GeneratePdfServiceTest(
             "active" to true,
           ),
         )
-        val testResponseObject = listOf(DpsService(name = "complexity-of-need", content = testInput))
+        val testResponseObject = listOf(DpsService(name = "hmpps-complexity-of-need", content = testInput))
         val writer = PdfWriter(FileOutputStream("dummy-template-con.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
@@ -370,6 +370,184 @@ class GeneratePdfServiceTest(
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("Complexity of need")
+      }
+
+      it("renders for Adjudications service") {
+        val testServiceData: ArrayList<Any> =
+          arrayListOf(
+            mapOf(
+              "chargeNumber" to "1525733",
+              "prisonerNumber" to "A3863DZ",
+              "gender" to "FEMALE",
+              "incidentDetails" to mapOf(
+                "locationId" to 26149,
+                "dateTimeOfIncident" to "2023-06-08T12:00:00",
+                "dateTimeOfDiscovery" to "2023-06-08T12:00:00",
+                "handoverDeadline" to "2023-06-10T12:00:00",
+              ),
+              "isYouthOffender" to false,
+              "incidentRole" to mapOf(
+                "roleCode" to "25c",
+                "offenceRule" to mapOf(
+                  "paragraphNumber" to "25(c)",
+                  "paragraphDescription" to "Assists another prisoner to commit, or to attempt to commit, any of the foregoing offences:",
+                ),
+                "associatedPrisonersNumber" to "A3864DZ",
+              ),
+              "offenceDetails" to mapOf(
+                "offenceCode" to 16001,
+                "offenceRule" to mapOf(
+                  "paragraphNumber" to "16",
+                  "paragraphDescription" to "Intentionally or recklessly sets fire to any part of a prison or any other property, whether or not her own",
+                  "nomisCode" to "51:16",
+                  "withOthersNomisCode" to "51:25C",
+                ),
+                "protectedCharacteristics" to mapOf(
+                  "id" to 247,
+                  "characteristic" to "AGE",
+                ),
+              ),
+              "incidentStatement" to mapOf(
+                "statement" to "Vera incited Brian Duckworth to set fire to a lamp\r\ndamages - the lamp\r\nevidence includes something in a bag with a reference number of 1234\r\nwitnessed by amarktest",
+                "completed" to true,
+              ),
+              "createdByUserId" to "LBENNETT_GEN",
+              "createdDateTime" to "2023-06-08T14:17:20.831884",
+              "status" to "CHARGE_PROVED",
+              "reviewedByUserId" to "AMARKE_GEN",
+              "statusReason" to "",
+              "statusDetails" to "",
+              "damages" to arrayListOf(
+                mapOf(
+                  "code" to "ELECTRICAL_REPAIR",
+                  "details" to "mend a lamp",
+                  "reporter" to "LBENNETT_GEN",
+                ),
+              ),
+              "evidence" to arrayListOf(
+                mapOf(
+                  "code" to "BAGGED_AND_TAGGED",
+                  "identifier" to "1234",
+                  "details" to "evidence in a bag with a reference number",
+                  "reporter" to "LBENNETT_GEN",
+                ),
+              ),
+              "witnesses" to arrayListOf(
+                mapOf(
+                  "code" to "OFFICER",
+                  "firstName" to "Andrew",
+                  "lastName" to "Marke",
+                  "reporter" to "LBENNETT_GEN",
+                ),
+              ),
+              "hearings" to arrayListOf(
+                mapOf(
+                  "id" to 467,
+                  "locationId" to 775,
+                  "dateTimeOfHearing" to "2023-06-08T14:25:00",
+                  "oicHearingType" to "INAD_ADULT",
+                  "outcome" to mapOf(
+                    "id" to 534,
+                    "adjudicator" to "James Warburton",
+                    "code" to "COMPLETE",
+                    "plea" to "GUILTY",
+                  ),
+                  "agencyId" to "MDI",
+                ),
+              ),
+              "disIssueHistory" to arrayListOf(
+                mapOf(
+                  "issuingOfficer" to "someone",
+                  "dateTimeOfIssue" to "2023-06-08T14:25:00",
+                ),
+              ),
+              "dateTimeOfFirstHearing" to "2023-06-08T14:25:00",
+              "outcomes" to arrayListOf(
+                mapOf(
+                  "hearing" to mapOf(
+                    "id" to 467,
+                    "locationId" to 775,
+                    "dateTimeOfHearing" to "2023-06-08T14:25:00",
+                    "oicHearingType" to "INAD_ADULT",
+                    "outcome" to mapOf(
+                      "id" to 534,
+                      "adjudicator" to "James Warburton",
+                      "code" to "COMPLETE",
+                      "plea" to "GUILTY",
+                    ),
+                    "agencyId" to "MDI",
+                  ),
+                  "outcome" to mapOf(
+                    "outcome" to mapOf(
+                      "id" to 733,
+                      "code" to "CHARGE_PROVED",
+                      "canRemove" to true,
+                    ),
+                  ),
+                ),
+              ),
+              "punishments" to arrayListOf(
+                mapOf(
+                  "id" to 241,
+                  "type" to "PRIVILEGE",
+                  "privilegeType" to "TV",
+                  "schedule" to mapOf(
+                    "days" to 7,
+                    "duration" to 7,
+                    "measurement" to "DAYS",
+                    "startDate" to "2023-06-09",
+                    "endDate" to "2023-06-16",
+                  ),
+                  "canRemove" to true,
+                  "canEdit" to true,
+                  "rehabilitativeActivities" to arrayListOf(
+                    mapOf(
+                      "id" to 241,
+                      "details" to "Some info",
+                      "monitor" to "yes",
+                      "endDate" to "2023-06-09",
+                      "totalSessions" to 16,
+                      "completed" to true,
+                    ),
+                  ),
+                ),
+                mapOf(
+                  "id" to 240,
+                  "type" to "DAMAGES_OWED",
+                  "schedule" to mapOf(
+                    "days" to 0,
+                    "duration" to 0,
+                    "measurement" to "DAYS",
+                  ),
+                  "damagesOwedAmount" to 20,
+                  "canRemove" to true,
+                  "canEdit" to true,
+                  "rehabilitativeActivities" to emptyList<Any>(),
+                ),
+              ),
+              "punishmentComments" to mapOf(
+                "id" to 1,
+                "comment" to "test comment",
+                "reasonForChange" to "APPEAL",
+                "nomisCreatedBy" to "person",
+                "actualCreatedDate" to "2023-06-16",
+              ),
+              "outcomeEnteredInNomis" to false,
+              "originatingAgencyId" to "MDI",
+              "linkedChargeNumbers" to arrayListOf("9872-1", "9872-2"),
+              "canActionFromHistory" to false,
+            ),
+          )
+        val testResponseObject = listOf(DpsService(name = "hmpps-manage-adjudications-api", content = testServiceData))
+        val writer = PdfWriter(FileOutputStream("dummy-template-adjudications.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-template-adjudications.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("Manage Adjudications")
       }
 
       it("renders for Keyworker Service") {
@@ -507,12 +685,12 @@ class GeneratePdfServiceTest(
         )
 
         val testResponseObject = listOf(DpsService(name = "create-and-vary-a-licence-api", content = testInput))
-        val writer = PdfWriter(FileOutputStream("dummy-template.pdf"))
+        val writer = PdfWriter(FileOutputStream("dummy-cvl-template.pdf"))
         val mockPdfDocument = PdfDocument(writer)
         val mockDocument = Document(mockPdfDocument)
         generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
         mockDocument.close()
-        val reader = PdfDocument(PdfReader("dummy-template.pdf"))
+        val reader = PdfDocument(PdfReader("dummy-cvl-template.pdf"))
         val page = reader.getPage(2)
         val text = PdfTextExtractor.getTextFromPage(page)
         Assertions.assertThat(text).contains("Create and vary a licence")
@@ -745,7 +923,6 @@ class GeneratePdfServiceTest(
       }
 
       it("renders for Use of Force Service") {
-
         val testServiceData: ArrayList<Any> = arrayListOf(
           mapOf(
             "id" to 190,
@@ -1022,6 +1199,83 @@ class GeneratePdfServiceTest(
         val text = PdfTextExtractor.getTextFromPage(page)
 
         Assertions.assertThat(text).contains("Incentives")
+      }
+
+      it("renders for Accredited Programmes Service") {
+        val testServiceData: Map<Any, Any> = mapOf(
+          "referrals" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to true,
+              "statusCode" to "DESELECTED",
+              "hasReviewedProgrammeHistory" to true,
+              "additionalInformation" to "test",
+              "submittedOn" to "2024-03-12T14:23:12.328775",
+              "referrerUsername" to "AELANGOVAN_ADM",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Sexual offence",
+              "courseOrganisation" to "WTI",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to false,
+              "statusCode" to "REFERRAL_STARTED",
+              "hasReviewedProgrammeHistory" to false,
+              "additionalInformation" to null,
+              "submittedOn" to null,
+              "referrerUsername" to "SMCALLISTER_GEN",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Intimate partner violence offence",
+              "courseOrganisation" to "AYI",
+            ),
+          ),
+          "courseParticipation" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to null,
+              "source" to null,
+              "type" to "CUSTODY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2020,
+              "location" to null,
+              "detail" to null,
+              "courseName" to "Kaizen",
+              "createdByUser" to "ACOOMER_GEN",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "ACOOMER_GEN",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to 2002,
+              "source" to "Example",
+              "type" to "COMMUNITY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2004,
+              "location" to "Example",
+              "detail" to "Example",
+              "courseName" to "Enhanced Thinking Skills",
+              "createdByUser" to "AELANGOVAN_ADM",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "AELANGOVAN_ADM",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+          ),
+        )
+        val testResponseObject = listOf(DpsService(name = "hmpps-accredited-programmes-api", content = testServiceData))
+        val writer = PdfWriter(FileOutputStream("dummy-accredited-programmes-template.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-accredited-programmes-template.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+
+        Assertions.assertThat(text).contains("Accredited programmes")
+        Assertions.assertThat(text).contains("Referral")
       }
 
       it("renders a template given an activities template") {

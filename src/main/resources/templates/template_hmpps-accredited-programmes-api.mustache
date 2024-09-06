@@ -1,0 +1,115 @@
+<h1>Accredited programmes</h1>
+<h2>Referrals</h2>
+    {{#referrals}}
+        <h3>Referral {{ optionalValue (getIndexPlusOne @index) }}</h3>
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Course name</td>
+                <td class="data-column-33">Submitted on</td>
+                <td class="data-column-33">Course organisation</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue courseName }}</td>
+                <td>{{ optionalValue (formatDate submittedOn) }}</td>
+                <td>{{ optionalValue courseOrganisation}}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Status code</td>
+                <td class="data-column-33">Audience</td>
+                <td class="data-column-33">Oasys confirmed</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue statusCode }}</td>
+                <td>{{ optionalValue audience }}</td>
+                <td>{{ optionalValue oasysConfirmed }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Referrer username</td>
+                <td class="data-column-33">Has reviewed programme history</td>
+                <td class="data-column-33">Prisoner number</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue referrerUsername}}</td>
+                <td>{{ optionalValue hasReviewedProgrammeHistory }}</td>
+                <td>{{ optionalValue prisonerNumber }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-100">Additional information</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue additionalInformation }}</td>
+            </tr>
+        </table>
+        <br>
+    {{/referrals}}
+
+    <h2>Course participation</h2>
+    {{#courseParticipation}}
+        <h3>Course {{ optionalValue (getIndexPlusOne @index) }}</h3>
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Course name</td>
+                <td class="data-column-33">Created date-time</td>
+                <td class="data-column-33">Created by user</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue courseName }}</td>
+                <td>{{ optionalValue (formatDate createdDateTime) }}</td>
+                <td>{{ optionalValue createdByUser}}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Source</td>
+                <td class="data-column-33">Type</td>
+                <td class="data-column-33">Outcome status</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue source }}</td>
+                <td>{{ optionalValue type}}</td>
+                <td>{{ optionalValue outcomeStatus }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Year started</td>
+                <td class="data-column-33">Year completed</td>
+                <td class="data-column-33">Location</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue yearStarted }}</td>
+                <td>{{ optionalValue yearCompleted}}</td>
+                <td>{{ optionalValue location }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-33">Prisoner number</td>
+                <td class="data-column-33">Updated by user</td>
+                <td class="data-column-33">Updated date-time</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerNumber }}</td>
+                <td>{{ optionalValue updatedByUser}}</td>
+                <td>{{ optionalValue (formatDate updatedDateTime) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-100">Detail</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue detail }}</td>
+            </tr>
+        </table>
+        <br>
+    <br>
+    {{/courseParticipation}}
