@@ -1,6 +1,7 @@
 <h1>Create and vary a licence</h1>
 {{#licences}}
     <h2>Licence</h2>
+    <br>
     <table class="summary-list">
         <tr><td>Kind</td><td>{{ optionalValue kind }}</td></tr>
         <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
@@ -26,7 +27,9 @@
         <tr><td>Created by full name</td><td>{{ optionalValue createdByFullName }}</td></tr>
         <tr><td>Licence Version</td><td>{{ optionalValue licenceVersion }}</td></tr>
     </table>
+    <br>
     <h2>Standard licence conditions</h2>
+    <br>
     <table class="data-table">
         <tr>
             <td class="data-column-25">Code</td>
@@ -45,7 +48,9 @@
             </tr>
         {{/standardLicenceConditions}}
     </table>
+    <br>
     <h2>Standard pss conditions</h2>
+    <br>
     <table class="data-table">
         <tr>
             <td class="data-column-25">Code</td>
@@ -65,7 +70,9 @@
         {{/standardPssConditions}}
     </table>
     {{#additionalLicenceConditions}}
+        <br>
         <h2>Additional licence condition</h2>
+        <br>
         <table class="summary-list">
             <tr><td>Code</td><td>{{ optionalValue code }}</td></tr>
             <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
@@ -78,7 +85,9 @@
         </table>
     {{/additionalLicenceConditions}}
     {{#additionalPssConditions}}
+        <br>
         <h2>Additional PSS condition</h2>
+        <br>
         <table class="summary-list">
             <tr><td>Code</td><td>{{ optionalValue code }}</td></tr>
             <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
@@ -90,7 +99,9 @@
             <tr><td>Ready to submit</td><td>{{{ optionalValue readyToSubmit }}}</td></tr>
         </table>
     {{/additionalPssConditions}}
+    <br>
     <h2>Bespoke conditions</h2>
+    <br>
     <table class="data-table">
         <tr><td>Text</td></tr>
         {{#bespokeConditions}}

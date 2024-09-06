@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 
 class TemplateRenderServiceTest : DescribeSpec(
@@ -28,6 +29,28 @@ class TemplateRenderServiceTest : DescribeSpec(
         val testTemplate = templateRenderService.getStyleTemplate()
         testTemplate.shouldNotBeNull()
         testTemplate.shouldContain("{{ serviceTemplate }}")
+      }
+    }
+
+    describe("TemplateHelpers") {
+      val templateHelpers = TemplateHelpers()
+
+      describe("getElementNumber") {
+        it("returns the index of the list item + 1") {
+          val indexOfArrayElement = 1
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(2)
+        }
+
+        it("returns null if given null") {
+          val indexOfArrayElement = null
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(null)
+        }
       }
     }
 
@@ -953,11 +976,329 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Incident date</td><td>07 September 2020, 2:02:00 am</td>")
-        renderedStyleTemplate.shouldContain("<td>CCTV recording</td><td>YES</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Incident date</td>")
+        renderedStyleTemplate.shouldContain("<td>CCTV recording</td>")
         renderedStyleTemplate.shouldContain("<td>Name</td><td>Andrew Lee</td>")
-        renderedStyleTemplate.shouldContain("<td>Baton drawn</td><td>false</td>")
+        renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Baton drawn</td>")
         renderedStyleTemplate.shouldContain("<td>Staff ID</td><td>486084</td>")
+      }
+    }
+
+    describe("prepareSomeoneForReleaseTemplate") {
+      it("renders a template given a prepare someone for release template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: Map<Any, Any> = mapOf(
+          "prisoner" to mapOf(
+            "id" to 3,
+            "nomsId" to "A8731DY",
+            "creationDate" to "2023-11-17T14:49:58.308566",
+            "crn" to "U328968",
+            "prisonId" to "MDI",
+            "releaseDate" to "2024-09-17",
+          ),
+          "assessment" to mapOf(
+            "id" to 518,
+            "prisonerId" to 3,
+            "creationDate" to "2024-03-19T15:32:57.283459",
+            "assessmentDate" to "2023-01-08T00:00:00",
+            "isBankAccountRequired" to false,
+            "isIdRequired" to true,
+            "isDeleted" to false,
+            "deletionDate" to null,
+            "idDocuments" to arrayListOf(
+              mapOf(
+                "id" to 8,
+                "name" to "Deed poll certificate",
+              ),
+              mapOf(
+                "id" to 2,
+                "name" to "Marriage certificate",
+              ),
+            ),
+          ),
+          "bankApplication" to mapOf(
+            "id" to 1537,
+            "applicationSubmittedDate" to "2023-12-01T00:00:00",
+            "currentStatus" to "Account opened",
+            "bankName" to "Co-op",
+            "bankResponseDate" to "2023-12-12T00:00:00",
+            "isAddedToPersonalItems" to true,
+            "addedToPersonalItemsDate" to "2023-12-12T00:00:00",
+            "prisoner" to mapOf(
+              "id" to 3,
+              "nomsId" to "A8731DY",
+              "creationDate" to "2023-11-17T14:49:58.308566",
+              "crn" to "U328968",
+              "prisonId" to "MDI",
+              "releaseDate" to "2024-09-17",
+            ),
+            "logs" to arrayListOf(
+              mapOf(
+                "id" to 3302,
+                "status" to "Pending",
+                "changeDate" to "2023-12-01T00:00:00",
+              ),
+              mapOf(
+                "id" to 3303,
+                "status" to "Account opened",
+                "changeDate" to "2023-12-04T00:00:00",
+              ),
+            ),
+          ),
+          "deliusContact" to arrayListOf(
+            mapOf(
+              "caseNoteId" to "db-2",
+              "pathway" to "FINANCE_AND_ID",
+              "creationDateTime" to "2023-12-13T12:33:30.514175",
+              "occurenceDateTime" to "2023-12-13T12:33:30.514175",
+              "createdBy" to "James Boobier",
+              "text" to "Resettlement status set to: Support not required. This is a case note from Delius",
+            ),
+            mapOf(
+              "caseNoteId" to "db-3",
+              "pathway" to "FINANCE_AND_ID",
+              "creationDateTime" to "2023-12-13T12:33:30.514175",
+              "occurenceDateTime" to "2023-12-13T12:33:30.514175",
+              "createdBy" to "James Boobier",
+              "text" to "Resettlement status set to: Done. This is a case note from Delius",
+            ),
+          ),
+          "idApplication" to mapOf(
+            "idType" to mapOf(
+              "id" to 6,
+              "name" to "Driving licence",
+            ),
+            "creationDate" to "2024-05-01T11:12:32.681477",
+            "applicationSubmittedDate" to "2024-05-01T00:00:00",
+            "isPriorityApplication" to false,
+            "costOfApplication" to 100,
+            "refundAmount" to 100,
+            "haveGro" to null,
+            "isUkNationalBornOverseas" to null,
+            "countryBornIn" to null,
+            "caseNumber" to null,
+            "courtDetails" to null,
+            "driversLicenceType" to "Renewal",
+            "driversLicenceApplicationMadeAt" to "Online",
+            "isAddedToPersonalItems" to null,
+            "addedToPersonalItemsDate" to null,
+            "status" to "Rejected",
+            "statusUpdateDate" to "2024-05-01T12:43:56.722624",
+            "isDeleted" to false,
+            "deletionDate" to null,
+            "dateIdReceived" to null,
+            "id" to 2148,
+            "prisonerId" to 3,
+          ),
+          "statusSummary" to arrayListOf(
+            mapOf(
+              "type" to "BCST2",
+              "pathwayStatus" to arrayListOf(
+                mapOf(
+                  "pathway" to "ACCOMMODATION",
+                  "assessmentStatus" to "SUBMITTED",
+                ),
+                mapOf(
+                  "pathway" to "DRUGS_AND_ALCOHOL",
+                  "assessmentStatus" to "SUBMITTED",
+                ),
+              ),
+            ),
+          ),
+          "resettlementAssessment" to arrayListOf(
+            mapOf(
+              "originalAssessment" to mapOf(
+                "assessmentType" to "BCST2",
+                "lastUpdated" to "2024-09-02T08:54:37.979749",
+                "updatedBy" to "Nick Judge",
+                "questionsAndAnswers" to arrayListOf(
+                  mapOf(
+                    "questionTitle" to "Where did the person in prison live before custody?",
+                    "answer" to "No answer provided",
+                    "originalPageId" to "ACCOMMODATION_REPORT",
+                  ),
+                  mapOf(
+                    "questionTitle" to "Support needs?",
+                    "answer" to "None",
+                    "originalPageId" to "SUPPORT_REQUIREMENTS",
+                  ),
+                ),
+              ),
+              "latestAssessment" to mapOf(
+                "assessmentType" to "RESETTLEMENT_PLAN",
+                "lastUpdated" to "2024-09-02T08:54:37.979749",
+                "updatedBy" to "James Boobier",
+                "questionsAndAnswers" to arrayListOf(
+                  mapOf(
+                    "questionTitle" to "Where did the person in prison live before custody?",
+                    "answer" to "No answer provided",
+                    "originalPageId" to "ACCOMMODATION_REPORT",
+                  ),
+                  mapOf(
+                    "questionTitle" to "Support needs?",
+                    "answer" to "Help finding accomodation",
+                    "originalPageId" to "SUPPORT_REQUIREMENTS",
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+        val renderedStyleTemplate =
+          templateRenderService.renderTemplate("hmpps-resettlement-passport-api", testServiceData)
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("Prison ID")
+        renderedStyleTemplate.shouldContain("Deed poll certificate")
+        renderedStyleTemplate.shouldContain("Account opened")
+        renderedStyleTemplate.shouldContain("FINANCE_AND_ID")
+        renderedStyleTemplate.shouldContain("Date application submitted")
+        renderedStyleTemplate.shouldContain("James Boobier")
+        renderedStyleTemplate.shouldContain("DRUGS_AND_ALCOHOL")
+        renderedStyleTemplate.shouldContain("Help finding accomodation")
+      }
+    }
+
+    describe("courtCaseTemplate") {
+      it("renders a template given a court case service template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData = mapOf(
+          "comments" to arrayListOf(
+            mapOf(
+              "comment" to "test",
+              "author" to "Ravishankar Challapalli",
+              "created" to "2023-06-21T12:11:21.355792",
+              "createdBy" to "RAVI(prepare-a-case-for-court-1)",
+              "lastUpdated" to "2023-06-21T12:11:21.355792",
+              "lastUpdatedBy" to "RAVI(prepare-a-case-for-court-1)",
+              "caseNumber" to "2106223516243653402",
+            ),
+            mapOf(
+              "comment" to "Defendant details\\r\\nName\\tJohn Marston\\r\\nGender\\tMale\\r\\nDate of birth\\t28 February 1997 (25 years old)\\r\\nPhone number\\tUnavailable\\r\\nAddress\\t14 Tottenham Court Road\\r\\nLondon Road\\r\\nEngland\\r\\nUK\\r\\nEarth\\r\\nW1T 7RJ\\r\\nComments\\r\\nAdd notes and observations about this case. Your colleagues who use Prepare a Case will be able to read them.\\r\\n\\r\\nThese comments will not be saved to NDelius.\\r\\n\\r\\n",
+              "author" to "Ravishankar Challapalli",
+              "created" to "2023-06-21T12:11:21.355792",
+              "createdBy" to "RAVI(prepare-a-case-for-court-1)",
+              "lastUpdated" to "2023-06-21T12:11:21.355792",
+              "lastUpdatedBy" to "RAVI(prepare-a-case-for-court-1)",
+              "caseNumber" to "2106223516243653402",
+            ),
+          ),
+          "hearingOutcomes" to arrayListOf(
+            mapOf(
+              "outcomeType" to "OTHER",
+              "outcomeDate" to "2023-06-22T14:12:31.396105",
+              "resultedDate" to "2023-09-12T15:30:13.558769",
+              "state" to "RESULTED",
+              "assignedTo" to "Ryan",
+              "createdDate" to "2023-06-22T14:12:31.428778",
+            ),
+            mapOf(
+              "outcomeType" to "ADJOURNED",
+              "outcomeDate" to "2023-06-22T14:12:31.396105",
+              "resultedDate" to "2023-09-12T15:30:13.558769",
+              "state" to "RESULTED",
+              "assignedTo" to "Johny Farrar",
+              "createdDate" to "2023-06-22T14:12:31.428778",
+            ),
+          ),
+          "hearingNotes" to arrayListOf(
+            mapOf(
+              "hearingId" to "605e08b9-8544-417e-84fa-39ce337ab04e",
+              "note" to "This is a note",
+              "author" to "Joana Aguia",
+            ),
+            mapOf(
+              "hearingId" to "605e08b9-8544-417e-84fa-39ce337ab04e",
+              "note" to "This is a note",
+              "author" to "Joana Aguia",
+            ),
+          ),
+        )
+        val renderedStyleTemplate = templateRenderService.renderTemplate("court-case-service", testServiceData)
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h3>Hearing Outcomes</h3>")
+        renderedStyleTemplate.shouldContain("Ravishankar Challapalli")
+        renderedStyleTemplate.shouldContain("This is a note")
+      }
+    }
+
+    describe("accreditedProgrammesTemplate") {
+      it("renders a template given a Accredited Programmes template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: Map<Any, Any> = mapOf(
+          "referrals" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to true,
+              "statusCode" to "DESELECTED",
+              "hasReviewedProgrammeHistory" to true,
+              "additionalInformation" to "test",
+              "submittedOn" to "2024-03-12T14:23:12.328775",
+              "referrerUsername" to "AELANGOVAN_ADM",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Sexual offence",
+              "courseOrganisation" to "WTI",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to false,
+              "statusCode" to "REFERRAL_STARTED",
+              "hasReviewedProgrammeHistory" to false,
+              "additionalInformation" to null,
+              "submittedOn" to null,
+              "referrerUsername" to "SMCALLISTER_GEN",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Intimate partner violence offence",
+              "courseOrganisation" to "AYI",
+            ),
+          ),
+          "courseParticipation" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to null,
+              "source" to null,
+              "type" to "CUSTODY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2020,
+              "location" to null,
+              "detail" to null,
+              "courseName" to "Kaizen",
+              "createdByUser" to "ACOOMER_GEN",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "ACOOMER_GEN",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to 2002,
+              "source" to "Example",
+              "type" to "COMMUNITY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2004,
+              "location" to "Example",
+              "detail" to "Example",
+              "courseName" to "Enhanced Thinking Skills",
+              "createdByUser" to "AELANGOVAN_ADM",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "AELANGOVAN_ADM",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-accredited-programmes-api", testServiceData)
+
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h2>Referrals</h2>")
+        renderedStyleTemplate.shouldContain("<td>Becoming New Me Plus</td>")
+        renderedStyleTemplate.shouldContain("<td>12 March 2024, 2:23:12 pm</td>")
+        renderedStyleTemplate.shouldContain("<td>Kaizen</td>")
+        renderedStyleTemplate.shouldContain("<td>AELANGOVAN_ADM</td>")
       }
     }
   },
