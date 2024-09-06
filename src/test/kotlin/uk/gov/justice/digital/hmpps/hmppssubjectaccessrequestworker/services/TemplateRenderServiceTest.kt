@@ -1104,8 +1104,7 @@ class TemplateRenderServiceTest : DescribeSpec(
                 ),
               ),
             ),
-
-            ),
+          ),
           "resettlementAssessment" to arrayListOf(
             mapOf(
               "originalAssessment" to mapOf(
