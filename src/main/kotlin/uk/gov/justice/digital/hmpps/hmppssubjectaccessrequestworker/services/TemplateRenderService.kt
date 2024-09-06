@@ -64,4 +64,11 @@ class TemplateHelpers {
     if (input == null || input == "") return "No Data Held"
     return input
   }
+
+  fun getIndexPlusOne(elementIndex: Int?): Int? {
+    if (elementIndex != null) {
+      return elementIndex + 1
+    }
+    return null
+  }
 }

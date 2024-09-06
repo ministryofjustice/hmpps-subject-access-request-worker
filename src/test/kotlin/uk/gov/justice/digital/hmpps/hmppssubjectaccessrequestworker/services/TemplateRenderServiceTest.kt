@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.services
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 
 class TemplateRenderServiceTest : DescribeSpec(
@@ -28,6 +29,28 @@ class TemplateRenderServiceTest : DescribeSpec(
         val testTemplate = templateRenderService.getStyleTemplate()
         testTemplate.shouldNotBeNull()
         testTemplate.shouldContain("{{ serviceTemplate }}")
+      }
+    }
+
+    describe("TemplateHelpers") {
+      val templateHelpers = TemplateHelpers()
+
+      describe("getElementNumber") {
+        it("returns the index of the list item + 1") {
+          val indexOfArrayElement = 1
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(2)
+        }
+
+        it("returns null if given null") {
+          val indexOfArrayElement = null
+
+          val indexOfArrayElementPlusOne = templateHelpers.getIndexPlusOne(indexOfArrayElement)
+
+          indexOfArrayElementPlusOne.shouldBe(null)
+        }
       }
     }
 
@@ -1023,6 +1046,83 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<h3>Hearing Outcomes</h3>")
         renderedStyleTemplate.shouldContain("Ravishankar Challapalli")
         renderedStyleTemplate.shouldContain("This is a note")
+      }
+    }
+
+    describe("accreditedProgrammesTemplate") {
+      it("renders a template given a Accredited Programmes template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData: Map<Any, Any> = mapOf(
+          "referrals" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to true,
+              "statusCode" to "DESELECTED",
+              "hasReviewedProgrammeHistory" to true,
+              "additionalInformation" to "test",
+              "submittedOn" to "2024-03-12T14:23:12.328775",
+              "referrerUsername" to "AELANGOVAN_ADM",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Sexual offence",
+              "courseOrganisation" to "WTI",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "oasysConfirmed" to false,
+              "statusCode" to "REFERRAL_STARTED",
+              "hasReviewedProgrammeHistory" to false,
+              "additionalInformation" to null,
+              "submittedOn" to null,
+              "referrerUsername" to "SMCALLISTER_GEN",
+              "courseName" to "Becoming New Me Plus",
+              "audience" to "Intimate partner violence offence",
+              "courseOrganisation" to "AYI",
+            ),
+          ),
+          "courseParticipation" to arrayListOf(
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to null,
+              "source" to null,
+              "type" to "CUSTODY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2020,
+              "location" to null,
+              "detail" to null,
+              "courseName" to "Kaizen",
+              "createdByUser" to "ACOOMER_GEN",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "ACOOMER_GEN",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+            mapOf(
+              "prisonerNumber" to "A8610DY",
+              "yearStarted" to 2002,
+              "source" to "Example",
+              "type" to "COMMUNITY",
+              "outcomeStatus" to "COMPLETE",
+              "yearCompleted" to 2004,
+              "location" to "Example",
+              "detail" to "Example",
+              "courseName" to "Enhanced Thinking Skills",
+              "createdByUser" to "AELANGOVAN_ADM",
+              "createdDateTime" to "2024-07-12T14:57:42.431163",
+              "updatedByUser" to "AELANGOVAN_ADM",
+              "updatedDateTime" to "2024-07-12T14:58:38.597915",
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-accredited-programmes-api", testServiceData)
+
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h2>Referrals</h2>")
+        renderedStyleTemplate.shouldContain("<td>Becoming New Me Plus</td>")
+        renderedStyleTemplate.shouldContain("<td>12 March 2024, 2:23:12 pm</td>")
+        renderedStyleTemplate.shouldContain("<td>Kaizen</td>")
+        renderedStyleTemplate.shouldContain("<td>AELANGOVAN_ADM</td>")
       }
     }
   },
