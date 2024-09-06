@@ -1901,6 +1901,88 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Prepare a Case for Sentence")
       }
 
+      it("renders for Non-associations Service") {
+        val testInput = mapOf(
+          "prisonerNumber" to "A4743DZ",
+          "firstName" to "SOLOMON",
+          "lastName" to "ANTHONY",
+          "prisonId" to "LEI",
+          "prisonName" to "Leeds (HMP)",
+          "cellLocation" to "RECP",
+          "openCount" to 1,
+          "closedCount" to 0,
+          "nonAssociations" to arrayListOf(
+            mapOf(
+              "id" to 83493,
+              "role" to "PERPETRATOR",
+              "roleDescription" to "Perpetrator",
+              "reason" to "ORGANISED_CRIME",
+              "reasonDescription" to "Organised crime",
+              "restrictionType" to "LANDING",
+              "restrictionTypeDescription" to "Cell and landing",
+              "comment" to "This is a test for SAR",
+              "authorisedBy" to "MWILLIS_GEN",
+              "whenCreated" to "2024-05-07T14:49:51",
+              "whenUpdated" to "2024-05-07T14:49:51",
+              "updatedBy" to "MWILLIS_GEN",
+              "isClosed" to false,
+              "closedBy" to null,
+              "closedReason" to null,
+              "closedAt" to null,
+              "otherPrisonerDetails" to mapOf(
+                "prisonerNumber" to "G4769GD",
+                "role" to "PERPETRATOR",
+                "roleDescription" to "Perpetrator",
+                "firstName" to "UDFSANAYE",
+                "lastName" to "AARELL",
+                "prisonId" to "PRI",
+                "prisonName" to "Parc (HMP)",
+                "cellLocation" to "T-5-41",
+              ),
+            ),
+            mapOf(
+              "id" to 83493,
+              "role" to "PERPETRATOR",
+              "roleDescription" to "Perpetrator",
+              "reason" to "ORGANISED_CRIME",
+              "reasonDescription" to "Organised crime",
+              "restrictionType" to "LANDING",
+              "restrictionTypeDescription" to "Cell and landing",
+              "comment" to "This is a test for SAR",
+              "authorisedBy" to "MWILLIS_GEN",
+              "whenCreated" to "2024-05-07T14:49:51",
+              "whenUpdated" to "2024-05-07T14:49:51",
+              "updatedBy" to "MWILLIS_GEN",
+              "isClosed" to false,
+              "closedBy" to null,
+              "closedReason" to null,
+              "closedAt" to null,
+              "otherPrisonerDetails" to mapOf(
+                "prisonerNumber" to "G4769GD",
+                "role" to "PERPETRATOR",
+                "roleDescription" to "Perpetrator",
+                "firstName" to "UDFSANAYE",
+                "lastName" to "AARELL",
+                "prisonId" to "PRI",
+                "prisonName" to "Parc (HMP)",
+                "cellLocation" to "T-5-41",
+              ),
+            ),
+          ),
+        )
+        val testResponseObject = listOf(DpsService(name = "hmpps-non-associations-api", content = testInput))
+        val writer = PdfWriter(FileOutputStream("dummy-template-non-associations.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+
+        val reader = PdfDocument(PdfReader("dummy-template-non-associations.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("Non-associations")
+      }
+
       it("converts data to YAML format in the event of no template") {
         val testInput = mapOf(
           "testDateText" to "Test",

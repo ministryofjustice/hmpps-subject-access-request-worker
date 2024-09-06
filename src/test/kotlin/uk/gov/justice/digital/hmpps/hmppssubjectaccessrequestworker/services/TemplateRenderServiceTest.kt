@@ -1301,5 +1301,60 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>AELANGOVAN_ADM</td>")
       }
     }
+
+    describe("nonAssociationsTemplate") {
+      it("renders a template given a Non-associations template") {
+        val templateRenderService = TemplateRenderService()
+        val testServiceData = mapOf(
+          "prisonerNumber" to "A4743DZ",
+          "firstName" to "SOLOMON",
+          "lastName" to "ANTHONY",
+          "prisonId" to "LEI",
+          "prisonName" to "Leeds (HMP)",
+          "cellLocation" to "RECP",
+          "openCount" to 1,
+          "closedCount" to 0,
+          "nonAssociations" to arrayListOf(
+            mapOf(
+              "id" to 83493,
+              "role" to "PERPETRATOR",
+              "roleDescription" to "Perpetrator",
+              "reason" to "ORGANISED_CRIME",
+              "reasonDescription" to "Organised crime",
+              "restrictionType" to "LANDING",
+              "restrictionTypeDescription" to "Cell and landing",
+              "comment" to "This is a test for SAR",
+              "authorisedBy" to "MWILLIS_GEN",
+              "whenCreated" to "2024-05-07T14:49:51",
+              "whenUpdated" to "2024-05-07T14:49:51",
+              "updatedBy" to "MWILLIS_GEN",
+              "isClosed" to false,
+              "closedBy" to null,
+              "closedReason" to null,
+              "closedAt" to null,
+              "otherPrisonerDetails" to mapOf(
+                "prisonerNumber" to "G4769GD",
+                "role" to "PERPETRATOR",
+                "roleDescription" to "Perpetrator",
+                "firstName" to "UDFSANAYE",
+                "lastName" to "AARELL",
+                "prisonId" to "PRI",
+                "prisonName" to "Parc (HMP)",
+                "cellLocation" to "T-5-41",
+              ),
+            ),
+          ),
+        )
+
+        val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-non-associations-api", testServiceData)
+
+        renderedStyleTemplate.shouldNotBeNull()
+        renderedStyleTemplate.shouldContain("<style>")
+        renderedStyleTemplate.shouldContain("</style>")
+        renderedStyleTemplate.shouldContain("<h3>Non-association - ID 83493</h3>")
+        renderedStyleTemplate.shouldContain("Restriction type description")
+        renderedStyleTemplate.shouldContain("This is a test for SAR")
+      }
+    }
   },
 )

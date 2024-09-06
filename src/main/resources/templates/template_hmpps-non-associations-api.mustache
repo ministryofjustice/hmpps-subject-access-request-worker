@@ -1,0 +1,146 @@
+<h1>Non-associations</h1>
+<br>
+{{#.}}
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Prisoner number</td>
+            <td class="data-column-25">First name</td>
+            <td class="data-column-25">Last name</td>
+            <td class="data-column-25">Prison ID</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue prisonerNumber }}</td>
+            <td>{{ optionalValue firstName }}</td>
+            <td>{{ optionalValue lastName }}</td>
+            <td>{{ optionalValue prisonId }}</td>
+        </tr>
+    </table>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">Prison name</td>
+            <td class="data-column-25">Cell location</td>
+            <td class="data-column-25">Open count</td>
+            <td class="data-column-25">Closed count</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue prisonName }}</td>
+            <td>{{ optionalValue cellLocation }}</td>
+            <td>{{ optionalValue openCount }}</td>
+            <td>{{ optionalValue closedCount }}</td>
+        </tr>
+    </table>
+
+    {{#nonAssociations}}
+        <br>
+        <br>
+        <h3>Non-association - ID {{ optionalValue id }}</h3>
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Role</td>
+                <td class="data-column-75">Role description</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue role }}</td>
+                <td>{{ optionalValue roleDescription }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Reason</td>
+                <td class="data-column-75">Reason description</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue reason }}</td>
+                <td>{{ optionalValue reasonDescription }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Restriction type</td>
+                <td class="data-column-75">Restriction type description</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue restriction }}</td>
+                <td>{{ optionalValue restrictionTypeDescription }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>{{{ optionalValue comment }}}</td></tr>
+        </table>
+        <br>
+        <h4>Creation details</h4>
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Authorised by</td>
+                <td class="data-column-25">Date created</td>
+                <td class="data-column-25">Updated by</td>
+                <td class="data-column-25">Date updated</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue authorisedBy }}</td>
+                <td>{{ optionalValue (formatDate whenCreated) }}</td>
+                <td>{{ optionalValue updatedBy }}</td>
+                <td>{{ optionalValue (formatDate whenUpdated) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Is closed?</td>
+                <td class="data-column-25">Closed by</td>
+                <td class="data-column-25">Reason closed</td>
+                <td class="data-column-25">Closed at</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue isClosed }}</td>
+                <td>{{ optionalValue closedBy }}</td>
+                <td>{{ optionalValue closedReason }}</td>
+                <td>{{ optionalValue (formatDate closedAt) }}</td>
+            </tr>
+        </table>
+        <br>
+        <h4>Other prisoner details</h4>
+        <br>
+        {{#otherPrisonerDetails}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Prisoner number</td>
+                    <td class="data-column-25">First name</td>
+                    <td class="data-column-25">Last name</td>
+                    <td class="data-column-25">Prison ID</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue prisonerNumber }}</td>
+                    <td>{{ optionalValue firstName }}</td>
+                    <td>{{ optionalValue lastName }}</td>
+                    <td>{{ optionalValue prisonId }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Prison name</td>
+                    <td class="data-column-75">Cell location</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue prisonName }}</td>
+                    <td>{{ optionalValue cellLocation }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Role</td>
+                    <td class="data-column-75">Role description</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue role }}</td>
+                    <td>{{ optionalValue roleDescription }}</td>
+                </tr>
+            </table>
+        {{/otherPrisonerDetails}}
+    {{/nonAssociations}}
+{{/.}}
+{{^.}}
+    <p>No data held</p>
+{{/.}}
