@@ -8,3 +8,6 @@ dpsServices:
   - name: court-case-service
     orderPosition: 3
     businessName: Court Case Service
+  - name: hmpps-restricted-patients-api
+    orderPosition: 4
+    businessName: Restricted Patients
