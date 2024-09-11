@@ -39,8 +39,8 @@ class GeneratePdfServiceRestrictedPatientsTest(
       it("renders for Restricted Patients API") {
         val testInput = mapOf(
           "prisonerNumber" to "A1234AA",
-          "supportingPrisonId" to "EXI",
-          "hospitalLocationCode" to "WESTON",
+          "supportingPrisonDescription" to "HMP Exeter",
+          "hospitalLocationDescription" to "Weston Park Hospital",
           "dischargeTime" to "2024-09-05T08:50:44.19812",
           "commentText" to "This is a restricted patients comment",
         )
@@ -48,25 +48,29 @@ class GeneratePdfServiceRestrictedPatientsTest(
           val page = it.getPage(2)
           val text = PdfTextExtractor.getTextFromPage(page)
           assertThat(text).contains("Restricted Patients")
-          assertThat(text).contains("Prison number Discharge time Hospital location Supporting Prison")
-          assertThat(text).contains("A1234AA 05 September 2024, WESTON EXI")
-          assertThat(text).contains("This is a restricted patients comment")
+          assertThat(text).contains("Prison number A1234AA")
+          assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
+          assertThat(text).contains("Hospital location Weston Park Hospital")
+          assertThat(text).contains("Supporting prison HMP Exeter")
+          assertThat(text).contains("Comments This is a restricted patients comment")
         }
       }
       it("renders for Restricted Patients API with optional data missing") {
         val testInput = mapOf(
           "prisonerNumber" to "A1234AA",
-          "supportingPrisonId" to "EXI",
-          "hospitalLocationCode" to "WESTON",
+          "supportingPrisonDescription" to "HMP Exeter",
+          "hospitalLocationDescription" to "Weston Park Hospital",
           "dischargeTime" to "2024-09-05T08:50:44.19812",
         )
         writeAndThenReadPdf(testInput).use {
           val page = it.getPage(2)
           val text = PdfTextExtractor.getTextFromPage(page)
           assertThat(text).contains("Restricted Patients")
-          assertThat(text).contains("Prison number Discharge time Hospital location Supporting Prison")
-          assertThat(text).contains("A1234AA 05 September 2024, WESTON EXI")
-          assertThat(text).contains("No Data Held")
+          assertThat(text).contains("Prison number A1234AA")
+          assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
+          assertThat(text).contains("Hospital location Weston Park Hospital")
+          assertThat(text).contains("Supporting prison HMP Exeter")
+          assertThat(text).contains("Comments No Data Held")
         }
       }
       it("renders for Restricted Patients API with no data held") {

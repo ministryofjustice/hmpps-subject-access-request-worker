@@ -1,21 +1,11 @@
 <h1>Restricted Patients</h1>
 {{#.}}
     <br>
-    <table class="data-table">
-        <tr>
-            <td class="data-column-25">Prison number</td>
-            <td class="data-column-25">Discharge time</td>
-            <td class="data-column-25">Hospital location code</td>
-            <td class="data-column-25">Supporting Prison ID</td>
-        </tr>
-        <tr>
-            <td>{{ prisonerNumber }}</td>
-            <td>{{ formatDate dischargeTime }}</td>
-            <td>{{ hospitalLocationCode }}</td>
-            <td>{{ supportingPrisonId }}</td>
-        </tr>
-    </table>
     <table class="summary-list">
+        <tr><td>Prison number</td><td>{{ prisonerNumber }}</td></tr>
+        <tr><td>Discharge time</td><td>{{ formatDate dischargeTime }}</td></tr>
+        <tr><td>Hospital location</td><td>{{ hospitalLocationDescription }}</td></tr>
+        <tr><td>Supporting prison</td><td>{{ supportingPrisonDescription }}</td></tr>
         <tr><td>Comments</td><td>{{ optionalValue commentText }}</td></tr>
     </table>
 {{/.}}
