@@ -2065,113 +2065,116 @@ class GeneratePdfServiceTest(
 
       it("renders for Categorisation Service") {
         val testServiceData: Map<Any, Any> = mapOf(
-          "crn" to "X718253",
-          "referral" to arrayListOf(
-            mapOf(
-              "categorisationTool" to mapOf(
-                "catForm" to mapOf(
-                  "form_response" to mapOf(
-                    "ratings" to mapOf(
-                      "escapeRating" to mapOf(
-                        "escapeCatB" to "Yes",
-                        "escapeCatBText" to "Test",
-                        "escapeOtherEvidence" to "Yes",
-                        "escapeOtherEvidenceText" to "Yes"
-                      ),
-                      "extremismRating" to mapOf(
-                        "previousTerrorismOffences" to "Yes",
-                        "previousTerrorismOffencesText" to "Testing - talking about bombs"
-                      ),
-                      "furtherCharges" to mapOf(
-                        "furtherCharges" to "Yes",
-                        "furtherChargesCatB" to "Yes",
-                        "furtherChargesText" to "hjhkjhkjhkj"
-                      ),
-                      "violenceRating" to mapOf(
-                        "seriousThreat" to "Yes",
-                        "seriousThreatText" to "jlkjljkl",
-                        "highRiskOfViolence" to "Yes",
-                        "highRiskOfViolenceText" to "jhkjkkj"
-                      ),
-                      "offendingHistory" to mapOf(
-                        "previousConvictions" to "No"
-                      ),
-                      "securityInput" to mapOf(
-                        "securityInputNeeded" to "Yes",
-                        "securityInputNeededText" to "Test"
-                      ),
-                      "securityBack" to mapOf(
-                        "catB" to "Yes"
-                      ),
-                      "decision" to mapOf(
-                        "category" to "Test"
-                      )
-                    )
+          "categorisationTool" to mapOf(
+            "catForm" to mapOf(
+              "form_response" to mapOf(
+                "ratings" to mapOf(
+                  "escapeRating" to mapOf(
+                    "escapeCatB" to "Yes",
+                    "escapeCatBText" to "escape cat b text",
+                    "escapeOtherEvidence" to "Yes",
+                    "escapeOtherEvidenceText" to "escape other evidence text"
                   ),
-                  "booking_id" to "832899"
+                  "extremismRating" to mapOf(
+                    "previousTerrorismOffences" to "Yes",
+                    "previousTerrorismOffencesText" to "previous terrorism offences text - talking about bombs"
+                  ),
+                  "furtherCharges" to mapOf(
+                    "furtherCharges" to "Yes",
+                    "furtherChargesCatB" to "Yes",
+                    "furtherChargesText" to "further charges text"
+                  ),
+                  "violenceRating" to mapOf(
+                    "seriousThreat" to "Yes",
+                    "seriousThreatText" to "serious threat text",
+                    "highRiskOfViolence" to "Yes",
+                    "highRiskOfViolenceText" to "high risk of violence text"
+                  ),
+                  "offendingHistory" to mapOf(
+                    "previousConvictions" to "No"
+                  ),
+                  "securityInput" to mapOf(
+                    "securityInputNeeded" to "Yes",
+                    "securityInputNeededText" to "Test"
+                  ),
+                  "securityBack" to mapOf(
+                    "catB" to "Yes"
+                  ),
+                  "decision" to mapOf(
+                    "category" to "Test"
+                  )
                 )
-              )
-
-              "accessibility_needs" to "SAR test 9 - Does Sadie have any other mobility, disability or accessibility needs? (optional)\r\n - None",
-              "additional_needs_information" to "SAR test 10 - Additional information about Sadie’s needs (optional) - None",
-              "when_unavailable" to "SAR test 11 - Provide details of when Sadie will not be able to attend sessions - Weekday mornings",
-              "end_requested_comments" to "",
-              "appointment" to arrayListOf(
-                mapOf(
-                  "session_summary" to "SAR Test 22 - What did you do in the session?",
-                  "session_response" to "SAR Test 23 - How did Sadie Borer respond to the session?",
-                  "session_concerns" to "SAR Test 25 - Yes, something concerned me about Sadie Borer",
-                  "late_reason" to "SAR Test 21 - Add how late they were and anything you know about the reason.",
-                  "future_session_plan" to "SAR Test 26 - Add anything you have planned for the next session (optional)",
-                ),
-                mapOf(
-                  "session_summary" to "SAR 27 - What did you do in the session?",
-                  "session_response" to "SAR 28 - How did Sadie Borer respond to the session?",
-                  "session_concerns" to "SAR 30 - Yes, something concerned me about Sadie Borer",
-                  "late_reason" to "",
-                  "future_session_plan" to "SAR 31 - Add anything you have planned for the next session (optional)",
-                ),
               ),
-              "action_plan_activity" to arrayListOf(
-                mapOf(
-                  "description" to arrayListOf(
-                    "SAR Test 19 - Please write the details of the activity here.",
-                    "SAR Test 20 - Activity 2 - Please write the details of the activity here.",
-                  ),
+              "booking_id" to "832899", // not included - system ID
+              "status" to "STARTED",
+              "referred_date" to "30-12-2020",
+              "sequence_no" to "1", // not included - system ID
+              "risk_profile" to mapOf(
+                "lifeProfile" to mapOf(
+                  "life" to true,
+                  "nomsId" to "example", // not included - duplicate ID
+                  "riskType" to "example",
+                  "provisionalCategorisation" to "example"
                 ),
-                mapOf(
-                  "description" to arrayListOf(
-                    "example",
-                  ),
+                "escapeProfile" to mapOf(
+                  "nomsId" to "example", // not included - duplicate ID
+                  "riskType" to "example",
+                  "provisionalCategorisation" to "example"
                 ),
+                "violenceProfile" to mapOf(
+                  "nomsId" to "example", // not included - duplicate ID
+                  "riskType" to "example",
+                  "displayAssaults" to true,
+                  "numberOfAssaults" to 2,
+                  "notifySafetyCustodyLead" to true,
+                  "numberOfSeriousAssaults" to 1,
+                  "numberOfNonSeriousAssaults" to 1,
+                  "veryHighRiskViolentOffender" to true,
+                  "provisionalCategorisation" to "example"
+                )
               ),
-              "end_of_service_report" to mapOf(
-                "end_of_service_outcomes" to arrayListOf(
-                  mapOf(
-                    "progression_comments" to "SAR Test 32 - Describe their progress on this outcome.",
-                    "additional_task_comments" to "SAR Test 33 - Enter if anything else needs to be done (optional)",
-                  ),
-                  mapOf(
-                    "progression_comments" to "test.",
-                    "additional_task_comments" to "test",
-                  ),
-                ),
-              ),
+              "prison_id" to "MDI",
+              "offender_no" to "G2515UU", // not included - duplicate ID
+              "start_date" to "2024-05-22 10:45:22.627786+01",
+              "cat_type" to "INITIAL",
+              "review_reason" to "MANUAL",
+              "due_by_date" to "2014-06-16",
+              "cancelled_date" to "exampleDate"
             ),
-            mapOf(
-              "referral_number" to "FY7705FI",
-              "accessibility_needs" to "mobility",
-              "additional_needs_information" to "",
-              "when_unavailable" to "Fridays",
-              "end_requested_comments" to "",
-              "appointment" to emptyList<Any>(),
-              "action_plan_activity" to emptyList<Any>(),
-              "end_of_service_report" to null,
-            ),
+            "liteCategory" to mapOf(
+              "category" to "U",
+              "supervisorCategory" to "U",
+              "offender_no" to "G0552UV", // not included - duplicate ID
+              "prison_id" to "MDI", // not included - duplicate ID
+              "created_date" to "2021-05-04T06:58:12.399139Z",
+              "approved_date" to "2021-05-04T00:00Z",
+              "assessment_committee" to "OCA",
+              "assessment_comment" to "steve test 677", // ADD
+              "next_review_date" to "2021-06-04",
+              "placement_prison_id" to "",
+              "approved_committee" to "OCA",
+              "approved_placement_prison_id" to "",
+              "approved_placement_comment" to "",
+              "approved_comment" to "steve test 677",
+              "sequence" to "15" // not included - system ID
+            )
           ),
+          "riskProfiler" to mapOf(
+            "offender_no" to "G2515UU", // not included - system ID
+            "violence" to mapOf(
+              "nomsId" to "G2515UU", // not included - duplicate ID
+              "riskType" to "VIOLENCE",
+              "displayAssaults" to true,
+              "numberOfAssaults" to 4,
+              "notifySafetyCustodyLead" to false,
+              "numberOfSeriousAssaults" to 0,
+              "numberOfNonSeriousAssaults" to 0,
+              "provisionalCategorisation" to "C",
+              "veryHighRiskViolentOffender" to false
+              ),
+            "execute_date_time" to "2021-07-27T02:17:48.130833Z"
+          )
         )
-
-
 
         val testResponseObject = listOf(DpsService(name = "hmpps-offender-categorisation-api", content = testServiceData))
         val writer = PdfWriter(FileOutputStream("dummy-categorisation-api-template.pdf"))
