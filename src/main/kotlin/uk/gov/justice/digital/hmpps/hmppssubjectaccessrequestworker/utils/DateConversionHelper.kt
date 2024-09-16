@@ -38,6 +38,18 @@ class DateConversionHelper {
         "dd/MM/yyyy HH:mm:ss",
         "dd MMMM yyyy, h:mm:ss a",
       ),
+      // "2024-05-01 12:34:56[.1|12|123|1234|12345|123456][+00]"
+      DateConversion(
+        "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})(\\+\\d{2})?$".toRegex(),
+        "yyyy-MM-dd HH:mm:ss",
+        "dd MMMM yyyy, h:mm:ss a",
+      ),
+      // "2024-05-01T12:34[Z]"
+      DateConversion(
+        "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}Z?$".toRegex(),
+        "yyyy-MM-dd'T'HH:mm",
+        "dd MMMM yyyy, h:mm a",
+      ),
     )
   }
 
