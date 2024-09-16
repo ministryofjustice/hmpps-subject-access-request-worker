@@ -36,13 +36,13 @@ class GeneratePdfServiceManagePrisonOffenderManagerCasesTest(
     }
 
     describe("generatePdfService") {
-      it("renders for Restricted Patients API with no data held") {
+      it("renders for Manage Prison Offender Manager Cases API with no data held") {
         writeAndThenReadPdf(null).use {
           val page = it.getPage(2)
           val text = PdfTextExtractor.getTextFromPage(page)
           assertThat(text).contains("Manage Prison Offender Manager Cases")
           assertThat(text).doesNotContain("NOMS number")
-          //assertThat(text).contains("No data held")
+          assertThat(text).contains("No data held")
         }
       }
 
