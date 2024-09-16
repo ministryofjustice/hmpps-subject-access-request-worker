@@ -1,0 +1,354 @@
+<!-- The following keys have been left out of this template because they appear to be redacted: -->
+<!-- (content > categorisationTool > catForm > risk_profile > ) history -->
+<!-- (content > categorisationTool > catForm > risk_profile > ) offences -->
+<!-- (content > categorisationTool > catForm > risk_profile > ) socProfile -->
+<!-- (content > categorisationTool > catForm > risk_profile > ) extremismProfile -->
+<!-- (content > riskProfiler > ) escape -->
+<!-- (content > riskProfiler > ) extremism -->
+<!-- (content > riskProfiler > ) soc -->
+
+<h1>Prisoner categorisation</h1>
+
+<h2>Categorisation</h2>
+{{#categorisationTool}}
+
+    <h3>Categorisation form</h3>
+    {{#catForm}}
+
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Referred date</td>
+                <td class="data-column-25">Status</td>
+                <td class="data-column-25">Prison ID</td>
+                <td class="data-column-25">Start date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate referred_date) }}</td>
+                <td>{{ optionalValue status }}</td>
+                <td>{{ optionalValue prison_id }}</td>
+                <td>{{ optionalValue (formatDate start_date) }}</td>
+            </tr>
+        </table>
+
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Category type</td>
+                <td class="data-column-25">Review reason</td>
+                <td class="data-column-25">Due by date</td>
+                <td class="data-column-25">Cancelled date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue cat_type }}</td>
+                <td>{{ optionalValue review_reason }}</td>
+                <td>{{ optionalValue (formatDate due_by_date) }}</td>
+                <td>{{ optionalValue (formatDate cancelled_date) }}</td>
+            </tr>
+        </table>
+
+        {{#form_response}}
+
+            <h4>Ratings</h4>
+            {{#ratings}}
+
+            <h5>Escape Rating</h5>
+                {{#escapeRating}}
+                    <table class="summary-list">
+                        <tr><td>Category B</td><td>{{ optionalValue escapeCatB }}</td></tr>
+                        <tr><td>Category B text</td><td>{{ optionalValue escapeCatBText }}</td></tr>
+                        <tr><td>Other evidence</td><td>{{ optionalValue escapeOtherEvidence }}</td></tr>
+                        <tr><td>Other evidence text</td><td>{{ optionalValue escapeOtherEvidenceText }}</td></tr>
+                    </table>
+                {{/escapeRating}}
+                {{^escapeRating}}
+                    <p>No Data Held</p>
+                {{/escapeRating}}
+
+            <h5>Extremism Rating</h5>
+            {{#extremismRating}}
+                <table class="summary-list">
+                    <tr><td>Previous terrorism offences</td><td>{{ optionalValue previousTerrorismOffences }}</td></tr>
+                    <tr><td>Text</td><td>{{ optionalValue previousTerrorismOffencesText }}</td></tr>
+                </table>
+            {{/extremismRating}}
+            {{^extremismRating}}
+                <p>No Data Held</p>
+            {{/extremismRating}}
+
+            <h5>Violence Rating</h5>
+            {{#violenceRating}}
+                <table class="summary-list">
+                    <tr><td>Serious threat</td><td>{{ optionalValue seriousThreat }}</td></tr>
+                    <tr><td>Serious threat text</td><td>{{ optionalValue seriousThreatText }}</td></tr>
+                    <tr><td>High risk of violence</td><td>{{ optionalValue highRiskOfViolence }}</td></tr>
+                    <tr><td>High risk of violence text</td><td>{{ optionalValue highRiskOfViolenceText }}</td></tr>
+                </table>
+            {{/violenceRating}}
+            {{^violenceRating}}
+                <p>No Data Held</p>
+            {{/violenceRating}}
+
+            <h5>Offending history</h5>
+            {{#offendingHistory}}
+                <table class="summary-list">
+                    <tr><td>Previous convictions</td><td>{{ optionalValue previousConvictions }}</td></tr>
+                </table>
+            {{/offendingHistory}}
+            {{^offendingHistory}}
+                <p>No Data Held</p>
+            {{/offendingHistory}}
+
+            <h5>Security Input</h5>
+            {{#securityInput}}
+                <table class="summary-list">
+                    <tr><td>Security input needed</td><td>{{ optionalValue securityInputNeeded }}</td></tr>
+                    <tr><td>Text</td><td>{{ optionalValue securityInputNeededText }}</td></tr>
+                </table>
+            {{/securityInput}}
+            {{^securityInput}}
+                <p>No Data Held</p>
+            {{/securityInput}}
+
+            <h5>Security back</h5>
+            {{#securityBack}}
+                <table class="summary-list">
+                    <tr><td>Cat B</td><td>{{ optionalValue catB }}</td></tr>
+                </table>
+            {{/securityBack}}
+            {{^securityBack}}
+                <p>No Data Held</p>
+            {{/securityBack}}
+
+            <h5>Decision</h5>
+            {{#decision}}
+                <table class="summary-list">
+                    <tr><td>Category</td><td>{{ optionalValue category }}</td></tr>
+                </table>
+            {{/decision}}
+            {{^decision}}
+                <p>No Data Held</p>
+            {{/decision}}
+
+            <h5>Further charges</h5>
+            {{#furtherCharges}}
+                <table class="summary-list">
+                    <tr><td>Further charges</td><td>{{ optionalValue furtherCharges }}</td></tr>
+                    <tr><td>Category B</td><td>{{ optionalValue furtherChargesCatB }}</td></tr>
+                    <tr><td>Text</td><td>{{ optionalValue furtherChargesText }}</td></tr>
+                </table>
+            {{/furtherCharges}}
+            {{^furtherCharges}}
+                <p>No Data Held</p>
+            {{/furtherCharges}}
+
+            {{/ratings}}
+            {{^ratings}}
+                <p>No Data Held</p>
+            {{/ratings}}
+        {{/form_response}}
+        {{^form_response}}
+            <p>No Data Held</p>
+        {{/form_response}}
+
+        {{#risk_profile}}
+            <h4>Risk profile</h4>
+
+            <h5>Life profile</h5>
+            {{#lifeProfile}}
+            <br>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Life</td>
+                    <td class="data-column-25">Risk type</td>
+                    <td class="data-column-50">Provisional categorisation</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue life }}</td>
+                    <td>{{ optionalValue riskType }}</td>
+                    <td>{{ optionalValue provisionalCategorisation }}</td>
+                </tr>
+            </table>
+            {{/lifeProfile}}
+            {{^lifeProfile}}
+                <p>No Data Held</p>
+            {{/lifeProfile}}
+
+
+            <h5>Escape profile</h5>
+            {{#escapeProfile}}
+                <br>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk type</td>
+                        <td class="data-column-75">Provisional categorisation</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskType }}</td>
+                        <td>{{ optionalValue provisionalCategorisation }}</td>
+                    </tr>
+                </table>
+            {{/escapeProfile}}
+            {{^escapeProfile}}
+                <p>No Data Held</p>
+            {{/escapeProfile}}
+
+            <h5>Violence profile</h5>
+            {{#violenceProfile}}
+                <br>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk type</td>
+                        <td class="data-column-25">Display assaults</td>
+                        <td class="data-column-25">Number of assaults</td>
+                        <td class="data-column-25">Number of serious assaults</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskType }}</td>
+                        <td>{{ optionalValue displayAssaults }}</td>
+                        <td>{{ optionalValue numberOfAssaults }}</td>
+                        <td>{{ optionalValue numberOfSeriousAssaults }}</td>
+                    </tr>
+                </table>
+
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Number of non-serious assaults</td>
+                        <td class="data-column-25">Very high risk offender</td>
+                        <td class="data-column-25">Provisional categorisation</td>
+                        <td class="data-column-25">Notify safety custody lead</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue numberOfNonSeriousAssaults }}</td>
+                        <td>{{ optionalValue veryHighRiskViolentOffender }}</td>
+                        <td>{{ optionalValue provisionalCategorisation }}</td>
+                        <td>{{ optionalValue notifySafetyCustodyLead }}</td>
+                    </tr>
+                </table>
+            {{/violenceProfile}}
+            {{^violenceProfile}}
+                <p>No Data Held</p>
+            {{/violenceProfile}}
+
+        {{/risk_profile}}
+
+        {{#liteCategory}}
+            <h4>Lite category</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Category</td>
+                    <td class="data-column-25">Supervisor category</td>
+                    <td class="data-column-25">Created date</td>
+                    <td class="data-column-25">Approved date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue category }}</td>
+                    <td>{{ optionalValue supervisorCategory }}</td>
+                    <td>{{ optionalValue (formatDate created_date) }}</td>
+                    <td>{{ optionalValue (formatDate approved_date) }}</td>
+                </tr>
+            </table>
+
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Assessment committee</td>
+                    <td class="data-column-75">Assessment comment</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue assessment_committee }}</td>
+                    <td>{{ optionalValue assessment_comment }}</td>
+                </tr>
+            </table>
+
+            <table class="data-table">
+            <tr>
+                <td class="data-column-25">Approved committee</td>
+                <td class="data-column-75">Approved comment</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue approved_committee }}</td>
+                <td>{{ optionalValue approved_comment }}</td>
+            </tr>
+            </table>
+
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Approved placement prison ID</td>
+                    <td class="data-column-75">Approved placement comment</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue approved_placement_prison_id }}</td>
+                    <td>{{ optionalValue approved_placement_comment }}</td>
+                </tr>
+            </table>
+
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Next review date</td>
+                    <td class="data-column-75">Placement prison ID</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate next_review_date) }}</td>
+                    <td>{{ optionalValue placement_prison_id }}</td>
+                </tr>
+            </table>
+
+        {{/liteCategory}}
+        {{^liteCategory}}
+            <p>No Data Held</p>
+        {{/liteCategory}}
+
+        {{/catForm}}
+        {{^catForm}}
+            <p>No Data Held</p>
+        {{/catForm}}
+
+    {{#riskProfiler}}
+        <h3>Risk profiler</h3>
+        <table class="summary-list">
+            <tr><td>Execute date-time</td><td>{{ optionalValue (formatDate execute_date_time) }}</td></tr>
+        </table>
+
+        {{#violence}}
+        <h4>Violence</h4>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Risk type</td>
+                <td class="data-column-25">Display assaults</td>
+                <td class="data-column-25">Number of assaults</td>
+                <td class="data-column-25">Number of serious assaults</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue riskType }}</td>
+                <td>{{ optionalValue displayAssaults }}</td>
+                <td>{{ optionalValue numberOfAssaults }}</td>
+                <td>{{ optionalValue numberOfSeriousAssaults }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Number of non-serious assaults</td>
+                <td class="data-column-25">Notify safety custody lead</td>
+                <td class="data-column-25">Provisional categorisation</td>
+                <td class="data-column-25">Very high risk violent offender</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue numberOfNonSeriousAssaults }}</td>
+                <td>{{ optionalValue notifySafetyCustodyLead }}</td>
+                <td>{{ optionalValue provisionalCategorisation }}</td>
+                <td>{{ optionalValue veryHighRiskViolentOffender }}</td>
+            </tr>
+        </table>
+        {{/violence}}
+        {{^violence}}
+            <p>No Data Held</p>
+        {{/violence}}
+
+    {{/riskProfiler}}
+    {{^riskProfiler}}
+        <p>No Data Held</p>
+    {{/riskProfiler}}
+
+    {{/categorisationTool}}
+    {{^categorisationTool}}
+        <p>No Data Held</p>
+    {{/categorisationTool}}
