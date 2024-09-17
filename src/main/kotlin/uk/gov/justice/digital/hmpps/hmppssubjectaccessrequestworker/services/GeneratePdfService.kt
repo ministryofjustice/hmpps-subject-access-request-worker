@@ -82,7 +82,7 @@ class GeneratePdfService {
         subjectName,
       ),
     )
-    document.setMargins(50F, 50F, 100F, 50F)
+    document.setMargins(50F, 35F, 70F, 35F)
     addData(pdfDocument, document, services)
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
