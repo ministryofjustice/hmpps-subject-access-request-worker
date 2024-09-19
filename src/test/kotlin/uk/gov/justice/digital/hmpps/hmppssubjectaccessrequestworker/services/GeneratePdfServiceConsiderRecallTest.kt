@@ -282,7 +282,7 @@ class GeneratePdfServiceConsiderRecallTest(
                 ),
                 "additionalLicenceConditions" to mapOf(
                   "selected" to arrayListOf(
-                    "ITEM, ITEM"
+                    "ITEM, ITEM",
                   ),
                   "selectedOptions" to arrayListOf(
                     mapOf(
@@ -296,7 +296,7 @@ class GeneratePdfServiceConsiderRecallTest(
                     "title" to "title",
                     "details" to "detail",
                     "note" to "some text",
-                  )
+                  ),
                 ),
               ),
               "cvlLicenceConditionsBreached" to mapOf(
@@ -396,8 +396,8 @@ class GeneratePdfServiceConsiderRecallTest(
               "indeterminateOrExtendedSentenceDetails" to mapOf(
                 "selected" to arrayListOf(
                   mapOf(
-                  "value" to "some value",
-                  "details" to "some details",
+                    "value" to "some value",
+                    "details" to "some details",
                   ),
                 ),
                 "allOptions" to arrayListOf(
@@ -438,7 +438,7 @@ class GeneratePdfServiceConsiderRecallTest(
                   ),
                 ),
                 "dateTimeOfAppointment" to "2023-09-01T09:40:29.810Z",
-                "probationPhoneNumber" to "0834"
+                "probationPhoneNumber" to "0834",
               ),
               "hasBeenReviewed" to mapOf(
                 "personOnProbation" to true,
@@ -449,12 +449,12 @@ class GeneratePdfServiceConsiderRecallTest(
                 "lastReleaseDate" to "2023-09-01T09:40:29.810Z",
                 "lastReleasingPrisonOrCustodialEstablishment" to "string",
                 "hasBeenReleasedPreviously" to false,
-                "previousReleaseDates" to arrayListOf("2023-09-01T09:40:29.810Z", "2023-09-01T09:40:29.810Z")
+                "previousReleaseDates" to arrayListOf("2023-09-01T09:40:29.810Z", "2023-09-01T09:40:29.810Z"),
               ),
               "previousRecalls" to mapOf(
                 "lastRecallDate" to "2023-09-01T09:40:29.810Z",
                 "hasBeenRecalledPreviously" to false,
-                "previousRecallDates" to arrayListOf("2023-09-01T09:40:29.810Z", "2023-09-01T09:40:29.810Z")
+                "previousRecallDates" to arrayListOf("2023-09-01T09:40:29.810Z", "2023-09-01T09:40:29.810Z"),
               ),
               "recommendationStartedDomainEventSent" to false,
               "currentRoshForPartA" to mapOf(
@@ -510,11 +510,11 @@ class GeneratePdfServiceConsiderRecallTest(
                 "localDeliveryUnit" to "delivery",
               ),
               "revocationOrderRecipients" to arrayListOf(
-                "string", "another string"
+                "string", "another string",
               ),
               "decisionDateTime" to "2023-09-01T09:40:29.810Z",
               "ppcsQueryEmails" to arrayListOf(
-                "string", "another string"
+                "string", "another string",
               ),
               "prisonOffender" to mapOf(
                 "locationDescription" to "desc",
@@ -562,8 +562,8 @@ class GeneratePdfServiceConsiderRecallTest(
                     "releaseDate" to "2023-09-01T09:40:29.810Z",
                     "releasingPrison" to "string",
                     "licenceExpiryDate" to "2023-09-01T09:40:29.810Z",
-                  )
-                )
+                  ),
+                ),
               ),
               "bookRecallToPpud" to mapOf(
                 "decisionDateTime" to "2023-09-01T09:40:29.810Z",
@@ -641,7 +641,7 @@ class GeneratePdfServiceConsiderRecallTest(
                 "failedMessage" to "string",
                 "uploaded" to arrayListOf(
                   "string1", "string2",
-                )
+                ),
               ),
               "isOver18" to true,
               "isUnder18" to false,
@@ -665,8 +665,16 @@ class GeneratePdfServiceConsiderRecallTest(
         writeAndThenReadPdf(testInput).use {
           val page = it.getPage(2)
           val text = PdfTextExtractor.getTextFromPage(page)
-          assertThat(text).contains("Manage Prison Offender Manager Cases")
-          assertThat(text).contains("NOMS number G9979UV")
+          assertThat(text).contains("Consider a Recall")
+          assertThat(text).contains("CRN X098092")
+          assertThat(text).contains("hacking the monitor")
+          val thirdPage = it.getPage(3)
+          val thirdPageText = PdfTextExtractor.getTextFromPage(thirdPage)
+          assertThat(thirdPageText).contains("Custody status")
+          assertThat(thirdPageText).contains("If we transmit the interface")
+          val lastPage = it.getPage(12)
+          val lastPageText = PdfTextExtractor.getTextFromPage(lastPage)
+          assertThat(lastPageText).contains("Booking momento")
         }
       }
     }
