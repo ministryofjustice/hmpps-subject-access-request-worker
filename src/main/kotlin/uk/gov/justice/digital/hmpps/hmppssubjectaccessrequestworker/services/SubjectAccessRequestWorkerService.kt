@@ -90,7 +90,12 @@ class SubjectAccessRequestWorkerService(
     val dpsServiceList = getSubjectAccessRequestDataService.execute(selectedServices, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo)
 
     log.info("Fetching subject name")
-    val subjectName = getSubjectName(chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId)
+    var subjectName: String
+    try {
+      subjectName = getSubjectName(chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId)
+    } catch (exception: Exception) {
+      subjectName = "No subject name found"
+    }
 
     log.info("Extracted report")
 
