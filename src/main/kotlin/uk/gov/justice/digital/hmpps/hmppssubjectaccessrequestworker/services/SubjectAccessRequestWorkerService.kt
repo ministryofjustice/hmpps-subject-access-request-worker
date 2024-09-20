@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways.PrisonApiGateway
@@ -93,7 +94,7 @@ class SubjectAccessRequestWorkerService(
     var subjectName: String
     try {
       subjectName = getSubjectName(chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId)
-    } catch (exception: Exception) {
+    } catch (exception: WebClientResponseException.NotFound) {
       subjectName = "No subject name found"
     }
 
