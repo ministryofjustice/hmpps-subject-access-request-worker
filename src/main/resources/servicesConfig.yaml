@@ -20,7 +20,7 @@ dpsServices:
   - name: offender-management-allocation-manager
     orderPosition: 7
     businessName: Manage Prison Offender Manager Cases
-  - name: hmpps-book-a-secure-move-api
+  - name: hmpps-book-secure-move-api
     orderPosition: 8
     businessName: Book a Secure Move
   - name: hmpps-education-and-work-plan-api
