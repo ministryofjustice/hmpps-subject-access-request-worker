@@ -7,7 +7,7 @@ dpsServices:
     businessName: Offender Case Notes
   - name: court-case-service
     orderPosition: 3
-    businessName: Court Case Service
+    businessName: Prepare a Case for Sentence
   - name: hmpps-restricted-patients-api
     orderPosition: 4
     businessName: Restricted Patients
@@ -23,9 +23,9 @@ dpsServices:
   - name: hmpps-book-a-secure-move-api
     orderPosition: 8
     businessName: Book a Secure Move
-  - name: hmpps-incident-reporting-api
+  - name: hmpps-education-and-work-plan-api
     orderPosition: 9
-    businessName: Incident Reporting
+    businessName: Personal Learning Plan
   - name: hmpps-non-associations-api
     orderPosition: 10
     businessName: Non-associations
@@ -40,7 +40,7 @@ dpsServices:
     businessName: Categorisation Tool
   - name: make-recall-decision-api
     orderPosition: 14
-    businessName: Make a Recall Decision
+    businessName: Consider a Recall
   - name: hmpps-hdc-api
     orderPosition: 15
     businessName: Home Detention Curfew
@@ -52,7 +52,7 @@ dpsServices:
     businessName: Use of Force
   - name: hmpps-activities-management-api
     orderPosition: 18
-    businessName: Manage Activities
+    businessName: Manage Activities and Appointments
   - name: hmpps-interventions-service
     orderPosition: 19
     businessName: Refer and Monitor an Intervention
