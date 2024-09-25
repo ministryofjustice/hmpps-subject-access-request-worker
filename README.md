@@ -61,11 +61,14 @@ To automatically update project dependencies, run:
 ./gradlew useLatestVersions
 ```
 
-
 To run Ktlint check:
 ```
 ./gradlew ktlintCheck
 ```
+
+## Roles
+The worker has the roles ROLE_SAR_DATA_ACCESS, ROLE_DOCUMENT_TYPE_SAR, ROLE_PROBATION_API__SUBJECT_ACCESS_REQUEST__DETAIL, ROLE_VIEW_PRISONER_DATA and ROLE_DOCUMENT_WRITER
+
 ## Service Alerting
 
 ### Sentry
