@@ -18,7 +18,7 @@ generic-service:
     limits:
       memory: 5Gi
     requests:
-      memory: 512Mi
+      memory: 4Gi
 
   # Environment variables to load into the deployment
   env:
