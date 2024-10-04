@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 import java.util.Optional
 
@@ -14,7 +15,7 @@ class GenericHmppsApiGateway(
   @Autowired val hmppsAuthGateway: HmppsAuthGateway,
   val telemetryClient: TelemetryClient,
 ) {
-  fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null): Map<*, *>? {
+  fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null, subjectAccessRequest: SubjectAccessRequest? = null): Map<*, *>? {
     val clientToken = hmppsAuthGateway.getClientToken()
     val webClient: WebClient = WebClient
       .builder()
@@ -22,6 +23,14 @@ class GenericHmppsApiGateway(
       .baseUrl(serviceUrl)
       .build()
     val stopWatch = StopWatch.createStarted()
+    telemetryClient.trackEvent(
+      "ServiceDataRequestStarted",
+      mapOf(
+        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+        "UUID" to subjectAccessRequest?.id.toString(),
+        "serviceURL" to serviceUrl.toString(),
+      ),
+    )
     val response = webClient
       .get()
       .uri { builder ->
@@ -39,11 +48,24 @@ class GenericHmppsApiGateway(
     stopWatch.stop()
     if (response != null) {
       telemetryClient.trackEvent(
-        "ServiceResponse",
+        "ServiceDataRequestComplete",
         mapOf(
-          "url" to serviceUrl,
-          "responseTime" to stopWatch.time.toString(),
+          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+          "UUID" to subjectAccessRequest?.id.toString(),
+          "serviceURL" to serviceUrl.toString(),
+          "eventTime" to stopWatch.time.toString(),
           "responseSize" to response.size.toString(),
+        ),
+      )
+    } else {
+      telemetryClient.trackEvent(
+        "ServiceDataRequestFailed",
+        mapOf(
+          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+          "UUID" to subjectAccessRequest?.id.toString(),
+          "serviceURL" to serviceUrl.toString(),
+          "eventTime" to stopWatch.time.toString(),
+          "responseSize" to "0",
         ),
       )
     }

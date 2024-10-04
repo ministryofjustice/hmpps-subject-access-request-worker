@@ -74,6 +74,7 @@ class GeneratePdfServiceTest(
           "",
           LocalDate.of(1999, 12, 30),
           LocalDate.of(2010, 12, 30),
+          null,
           mockStream,
         )
 
