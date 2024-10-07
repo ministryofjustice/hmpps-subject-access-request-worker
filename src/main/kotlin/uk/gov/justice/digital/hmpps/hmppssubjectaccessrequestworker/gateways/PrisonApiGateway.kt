@@ -28,8 +28,10 @@ class PrisonApiGateway(
         .block()
 
       val details = JSONParser(response).parseObject()
-      "${details.get("lastName").toString().uppercase()}, ${details.get("firstName").toString()?.lowercase()
-        ?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+      "${details.get("lastName").toString().uppercase()}, ${
+        details.get("firstName").toString().lowercase()
+          .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+      }"
     } catch (exception: WebClientRequestException) {
       throw RuntimeException("Connection to ${exception.uri.authority} failed.")
     } catch (exception: WebClientResponseException.ServiceUnavailable) {

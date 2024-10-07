@@ -138,7 +138,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     Mockito.`when`(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
     Mockito.`when`(mockSarGateway.claim(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     Mockito.`when`(mockSarGateway.complete(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
-    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+    Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
       .thenReturn(mockDpsServices)
     Mockito.`when`(mockGeneratePdfService.createPdfStream())
       .thenReturn(mockStream)
@@ -155,6 +155,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         subjectName = "TEST, Name",
         dateFrom = dateFromFormatted,
         dateTo = dateToFormatted,
+        subjectAccessRequest = sampleSAR,
       ),
     )
       .thenReturn(mockStream)
@@ -192,7 +193,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
         .thenReturn(mockDpsServices)
       Mockito.`when`(mockGeneratePdfService.createPdfStream())
         .thenReturn(mockStream)
@@ -209,13 +210,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
+          subjectAccessRequest = sampleSAR,
         ),
       )
         .thenReturn(mockStream)
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted)
+      verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR)
     }
 
     @Test
@@ -229,7 +231,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
         .thenThrow(RuntimeException())
       Mockito.`when`(configOrderHelper.extractServicesConfig(any())).thenReturn(
         ServiceConfig(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null))),
@@ -253,7 +255,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
         .thenReturn(mockDpsServices)
       Mockito.`when`(mockGeneratePdfService.createPdfStream())
         .thenReturn(mockStream)
@@ -270,6 +272,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
+          subjectAccessRequest = sampleSAR,
         ),
       )
         .thenReturn(mockStream)
@@ -278,7 +281,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any())
+      verify(mockGetSubjectAccessRequestDataService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any(), any())
     }
 
     @Test
@@ -292,7 +295,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
         .thenReturn(mockDpsServices)
       Mockito.`when`(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
       Mockito.`when`(mockGeneratePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
@@ -307,13 +310,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
+          subjectAccessRequest = sampleSAR,
         ),
       ).thenReturn(mockStream)
       Mockito.`when`(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("")
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any(), any(), any(), any())
+      verify(mockGeneratePdfService, Mockito.times(1)).execute(any(), eq(null), any(), any(), any(), any(), any(), any(), any())
     }
 
     @Test
@@ -327,7 +331,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       Mockito.`when`(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted))
+      Mockito.`when`(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
         .thenReturn(mockDpsServices)
       Mockito.`when`(mockGeneratePdfService.createPdfStream())
         .thenReturn(mockStream)
@@ -344,6 +348,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           dateTo = dateToFormatted,
           dateFrom = dateFromFormatted,
           sarCaseReferenceNumber = "1234abc",
+          subjectAccessRequest = sampleSAR,
         ),
       )
         .thenReturn(mockStream)

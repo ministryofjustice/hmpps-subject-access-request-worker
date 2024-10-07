@@ -20,11 +20,15 @@ import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
+import com.microsoft.applicationinsights.TelemetryClient
+import org.apache.commons.lang3.time.StopWatch
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.DateConversionHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils.ProcessDataHelper
@@ -43,6 +47,7 @@ class GeneratePdfService {
   companion object {
     var dateConversionHelper = DateConversionHelper()
     var templateRenderService = TemplateRenderService()
+    var telemetryClient = TelemetryClient()
   }
 
   fun execute(
@@ -53,6 +58,7 @@ class GeneratePdfService {
     subjectName: String,
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
+    subjectAccessRequest: SubjectAccessRequest? = null,
     pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
@@ -62,6 +68,13 @@ class GeneratePdfService {
     val document = Document(pdfDocument)
 
     log.info("Started writing to PDF")
+    telemetryClient.trackEvent(
+      "PDFContentGenerationStarted",
+      mapOf(
+        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+        "UUID" to subjectAccessRequest?.id.toString(),
+      ),
+    )
     addInternalContentsPage(pdfDocument, document, services)
     addExternalCoverPage(
       pdfDocument,
@@ -83,9 +96,17 @@ class GeneratePdfService {
       ),
     )
     document.setMargins(50F, 35F, 70F, 35F)
-    addData(pdfDocument, document, services)
+    addData(pdfDocument, document, services, subjectAccessRequest)
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
+
+    telemetryClient.trackEvent(
+      "PDFContentGenerationComplete",
+      mapOf(
+        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+        "UUID" to subjectAccessRequest?.id.toString(),
+      ),
+    )
 
     log.info("Finished writing report")
     document.close()
@@ -110,8 +131,24 @@ class GeneratePdfService {
     val merger = PdfMerger(fullDocument)
     val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
     val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
+
+    telemetryClient.trackEvent(
+      "PDFMergingStarted",
+      mapOf(
+        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+        "UUID" to subjectAccessRequest?.id.toString(),
+      ),
+    )
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
+    telemetryClient.trackEvent(
+      "PDFMergingComplete",
+      mapOf(
+        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+        "UUID" to subjectAccessRequest?.id.toString(),
+      ),
+    )
+
     cover.close()
     mainContent.close()
     fullDocument.close()
@@ -139,10 +176,20 @@ class GeneratePdfService {
     document.add(endPageText)
   }
 
-  fun addData(pdfDocument: PdfDocument, document: Document, services: List<DpsService>) {
+  fun addData(pdfDocument: PdfDocument, document: Document, services: List<DpsService>, subjectAccessRequest: SubjectAccessRequest? = null) {
     services.forEach { service ->
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       log.info("Compiling data from ${service.businessName ?: service.name}")
+
+      var stopWatch = StopWatch.createStarted()
+      telemetryClient.trackEvent(
+        "PDFServiceContentGenerationStarted",
+        mapOf(
+          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+          "UUID" to subjectAccessRequest?.id.toString(),
+          "service" to service.name.toString(),
+        ),
+      )
 
       if (service.content != "No Data Held") {
         val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
@@ -159,6 +206,17 @@ class GeneratePdfService {
         // No template rendered, fallback to old YAML layout
         addYamlLayout(document, service)
       }
+
+      stopWatch.stop()
+      telemetryClient.trackEvent(
+        "PDFServiceContentGenerationComplete",
+        mapOf(
+          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+          "UUID" to subjectAccessRequest?.id.toString(),
+          "service" to service.name.toString(),
+          "eventTime" to stopWatch.time.toString(),
+        ),
+      )
     }
     log.info("Added data to PDF")
   }
