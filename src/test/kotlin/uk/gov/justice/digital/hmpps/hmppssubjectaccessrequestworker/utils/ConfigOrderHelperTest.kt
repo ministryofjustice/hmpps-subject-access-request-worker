@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.utils
 
-import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -14,7 +13,7 @@ class ConfigOrderHelperTest {
   inner class ExtractServicesConfig {
 
     @Test
-    fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() = runTest {
+    fun `extractServicesConfig reads config from a yaml file and creates a list of service details`() {
       val testServiceDetails = configOrderHelper.extractServicesConfig("services-config-test.yaml")
 
       Assertions.assertThat(testServiceDetails).isInstanceOf(ServiceConfig::class.java)
@@ -25,7 +24,7 @@ class ConfigOrderHelperTest {
     @Nested
     inner class GetDpsServices {
       @Test
-      fun `getDpsServices returns a list of DPS service objects`() = runTest {
+      fun `getDpsServices returns a list of DPS service objects`() {
         val testServicesMap = mapOf(
           "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
           "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",

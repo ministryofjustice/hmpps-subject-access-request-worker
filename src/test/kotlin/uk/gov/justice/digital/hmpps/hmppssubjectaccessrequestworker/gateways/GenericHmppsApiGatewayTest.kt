@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.gateways
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.internal.verification.VerificationModeFactory
 import org.mockito.kotlin.verify
@@ -20,9 +21,11 @@ import uk.gov.justice.digital.hmpps.hmppssubjectaccessrequestworker.mockservers.
   initializers = [ConfigDataApplicationContextInitializer::class],
   classes = [(GenericHmppsApiGateway::class)],
 )
+
 class GenericHmppsApiGatewayTest(
   genericHmppsApiGateway: GenericHmppsApiGateway,
-  @MockBean val mockHmppsAuthGateway: HmppsAuthGateway,
+  @MockBean
+  val mockHmppsAuthGateway: HmppsAuthGateway,
 ) : DescribeSpec(
   {
     val complexityOfNeedMockServer = ComplexityOfNeedMockServer()
