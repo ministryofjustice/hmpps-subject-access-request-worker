@@ -1,0 +1,35 @@
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import org.springframework.core.io.ClassPathResource
+import org.springframework.stereotype.Component
+import org.yaml.snakeyaml.LoaderOptions
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfig
+
+@Component
+class ConfigOrderHelper {
+
+  fun extractServicesConfig(configFilename: String): ServiceConfig? {
+    val loaderOptions = LoaderOptions()
+    loaderOptions.codePointLimit = 1024 * 1024 * 1024
+    val yamlFactory = YAMLFactory.builder()
+      .loaderOptions(loaderOptions)
+      .build()
+    val mapper = ObjectMapper(yamlFactory)
+
+    val resource = ClassPathResource(configFilename)
+    val serviceConfigObject = mapper.readValue(resource.inputStream, ServiceConfig::class.java)
+
+    return serviceConfigObject
+  }
+
+  fun getDpsServices(servicesMap: Map<String, String>): List<DpsService> {
+    val dpsServices = mutableListOf<DpsService>()
+    servicesMap.forEach { (key, value) ->
+      dpsServices.add(DpsService(url = value, name = key))
+    }
+    return dpsServices
+  }
+}
