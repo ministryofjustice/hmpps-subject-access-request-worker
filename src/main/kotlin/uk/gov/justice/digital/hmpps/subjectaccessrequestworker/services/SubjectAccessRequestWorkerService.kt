@@ -20,7 +20,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.UUID
 
 const val POLL_DELAY: Long = 10000
 
