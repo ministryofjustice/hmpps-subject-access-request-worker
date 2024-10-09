@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
 import java.text.ParsePosition
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 import kotlin.collections.ArrayList
 
 class DateConversionHelper {

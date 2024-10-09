@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.HmppsSubjectAccessRequestWorkerExceptionHandler
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.UUID
 
 @Component
 class DocumentStorageGateway(
