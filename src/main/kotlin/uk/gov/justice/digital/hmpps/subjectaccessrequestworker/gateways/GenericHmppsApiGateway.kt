@@ -15,7 +15,14 @@ class GenericHmppsApiGateway(
   @Autowired val hmppsAuthGateway: HmppsAuthGateway,
   val telemetryClient: TelemetryClient,
 ) {
-  fun getSarData(serviceUrl: String, prn: String? = null, crn: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null, subjectAccessRequest: SubjectAccessRequest? = null): Map<*, *>? {
+  fun getSarData(
+    serviceUrl: String,
+    prn: String? = null,
+    crn: String? = null,
+    dateFrom: LocalDate? = null,
+    dateTo: LocalDate? = null,
+    subjectAccessRequest: SubjectAccessRequest? = null,
+  ): Map<*, *>? {
     val clientToken = hmppsAuthGateway.getClientToken()
     val webClient: WebClient = WebClient
       .builder()
@@ -47,20 +54,20 @@ class GenericHmppsApiGateway(
         .toEntity(Map::class.java)
         .block()
     } catch (e: Exception) {
-        telemetryClient.trackEvent(
-          "ServiceDataRequestException",
-          mapOf(
-            "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-            "UUID" to subjectAccessRequest?.id.toString(),
-            "serviceURL" to serviceUrl.toString(),
-            "eventTime" to stopWatch.time.toString(),
-            "responseSize" to "0",
-            "responseStatus" to "Exception",
-            "errorMessage" to e.message.toString()
-          ),
-        )
-        throw e
-      }
+      telemetryClient.trackEvent(
+        "ServiceDataRequestException",
+        mapOf(
+          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
+          "UUID" to subjectAccessRequest?.id.toString(),
+          "serviceURL" to serviceUrl.toString(),
+          "eventTime" to stopWatch.time.toString(),
+          "responseSize" to "0",
+          "responseStatus" to "Exception",
+          "errorMessage" to e.message.toString(),
+        ),
+      )
+      throw e
+    }
     stopWatch.stop()
 
     val responseStatus = responseEntity?.statusCode?.value()?.toString() ?: "Unknown"
