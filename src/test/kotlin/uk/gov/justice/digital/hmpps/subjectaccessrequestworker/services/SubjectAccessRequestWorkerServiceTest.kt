@@ -11,7 +11,12 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatusCode
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClient
@@ -40,7 +45,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val dateTo = "02/01/2024"
   private val dateToFormatted = LocalDate.parse(dateTo, formatter)
   private val requestTime = LocalDateTime.now()
-  private val documentGateway:  DocumentStorageGateway  = mock()
+  private val documentGateway: DocumentStorageGateway = mock()
   private val sampleSAR = SubjectAccessRequest(
     id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
     status = Status.Pending,
@@ -58,17 +63,37 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   val selectedDpsServices =
     mutableListOf(
-      DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
-      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(
+        name = "fake-hmpps-prisoner-search",
+        url = "https://fake-prisoner-search.prison.service.justice.gov.uk",
+        businessName = null,
+        orderPosition = null,
+      ),
+      DpsService(
+        name = "fake-hmpps-prisoner-search-indexer",
+        url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
+        businessName = null,
+        orderPosition = null,
+      ),
     )
   val serviceConfigObject = ServiceConfig(
     dpsServices =
     mutableListOf(
-      DpsService(name = "fake-hmpps-prisoner-search", url = null, businessName = "HMPPS Prisoner Search", orderPosition = 1),
-      DpsService(name = "fake-hmpps-prisoner-search-indexer", url = null, businessName = "HMPPS Prisoner Indexer", orderPosition = 2),
+      DpsService(
+        name = "fake-hmpps-prisoner-search",
+        url = null,
+        businessName = "HMPPS Prisoner Search",
+        orderPosition = 1,
+      ),
+      DpsService(
+        name = "fake-hmpps-prisoner-search-indexer",
+        url = null,
+        businessName = "HMPPS Prisoner Indexer",
+        orderPosition = 2,
+      ),
     ),
   )
-  private val mockSarGateway:SubjectAccessRequestGateway = mock()
+  private val mockSarGateway: SubjectAccessRequestGateway = mock()
   private val mockGetSubjectAccessRequestDataService: GetSubjectAccessRequestDataService = mock()
   private val mockPrisonApiGateway: PrisonApiGateway = mock()
   private val mockProbationApiGateway: ProbationApiGateway = mock()
@@ -79,11 +104,21 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val mockWriter: PdfWriter = mock()
   private val mockWebClient: WebClient = mock()
 
-  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(mockSarGateway, mockGetSubjectAccessRequestDataService, documentGateway, mockGeneratePdfService, mockPrisonApiGateway, mockProbationApiGateway, configOrderHelper, "http://localhost:8080", telemetryClient)
+  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(
+    mockSarGateway,
+    mockGetSubjectAccessRequestDataService,
+    documentGateway,
+    mockGeneratePdfService,
+    mockPrisonApiGateway,
+    mockProbationApiGateway,
+    configOrderHelper,
+    "http://localhost:8080",
+    telemetryClient,
+  )
 
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
-    val responseSpecMock: WebClient.ResponseSpec  = mock()
+    val responseSpecMock: WebClient.ResponseSpec = mock()
     whenever(responseSpecMock.bodyToMono(Array<SubjectAccessRequest>::class.java))
       .thenReturn(Mono.just(arrayOf(sampleSAR)))
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
@@ -120,7 +155,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
     whenever(mockSarGateway.claim(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     whenever(mockSarGateway.complete(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
-    whenever(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
+    whenever(
+      mockGetSubjectAccessRequestDataService.execute(
+        selectedDpsServices,
+        null,
+        "1",
+        dateFromFormatted,
+        dateToFormatted,
+        sampleSAR,
+      ),
+    )
       .thenReturn(mockDpsServices)
     whenever(mockGeneratePdfService.createPdfStream())
       .thenReturn(mockStream)
@@ -175,7 +219,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      whenever(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
+      whenever(
+        mockGetSubjectAccessRequestDataService.execute(
+          selectedDpsServices,
+          null,
+          "1",
+          dateFromFormatted,
+          dateToFormatted,
+          sampleSAR,
+        ),
+      )
         .thenReturn(mockDpsServices)
       whenever(mockGeneratePdfService.createPdfStream())
         .thenReturn(mockStream)
@@ -199,7 +252,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, times(1)).execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR)
+      verify(mockGetSubjectAccessRequestDataService, times(1)).execute(
+        services = selectedDpsServices,
+        null,
+        "1",
+        dateFromFormatted,
+        dateToFormatted,
+        sampleSAR,
+      )
     }
 
     @Test
@@ -213,10 +273,28 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      whenever(mockGetSubjectAccessRequestDataService.execute(services = selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
+      whenever(
+        mockGetSubjectAccessRequestDataService.execute(
+          services = selectedDpsServices,
+          null,
+          "1",
+          dateFromFormatted,
+          dateToFormatted,
+          sampleSAR,
+        ),
+      )
         .thenThrow(RuntimeException())
       whenever(configOrderHelper.extractServicesConfig(any())).thenReturn(
-        ServiceConfig(mutableListOf(DpsService(name = "test-dps-service-2", businessName = "Test DPS Service 2", orderPosition = 1, url = null))),
+        ServiceConfig(
+          mutableListOf(
+            DpsService(
+              name = "test-dps-service-2",
+              businessName = "Test DPS Service 2",
+              orderPosition = 1,
+              url = null,
+            ),
+          ),
+        ),
       )
 
       val exception = shouldThrow<RuntimeException> {
@@ -237,7 +315,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      whenever(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
+      whenever(
+        mockGetSubjectAccessRequestDataService.execute(
+          selectedDpsServices,
+          null,
+          "1",
+          dateFromFormatted,
+          dateToFormatted,
+          sampleSAR,
+        ),
+      )
         .thenReturn(mockDpsServices)
       whenever(mockGeneratePdfService.createPdfStream())
         .thenReturn(mockStream)
@@ -277,7 +364,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      whenever(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
+      whenever(
+        mockGetSubjectAccessRequestDataService.execute(
+          selectedDpsServices,
+          null,
+          "1",
+          dateFromFormatted,
+          dateToFormatted,
+          sampleSAR,
+        ),
+      )
         .thenReturn(mockDpsServices)
       whenever(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
       whenever(mockGeneratePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
@@ -295,7 +391,12 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           subjectAccessRequest = sampleSAR,
         ),
       ).thenReturn(mockStream)
-      whenever(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)).thenReturn("")
+      whenever(
+        documentGateway.storeDocument(
+          UUID.fromString("11111111-1111-1111-1111-111111111111"),
+          mockStream,
+        ),
+      ).thenReturn("")
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
@@ -313,7 +414,16 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-      whenever(mockGetSubjectAccessRequestDataService.execute(selectedDpsServices, null, "1", dateFromFormatted, dateToFormatted, sampleSAR))
+      whenever(
+        mockGetSubjectAccessRequestDataService.execute(
+          selectedDpsServices,
+          null,
+          "1",
+          dateFromFormatted,
+          dateToFormatted,
+          sampleSAR,
+        ),
+      )
         .thenReturn(mockDpsServices)
       whenever(mockGeneratePdfService.createPdfStream())
         .thenReturn(mockStream)
@@ -339,7 +449,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(documentGateway, times(1)).storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream)
+      verify(documentGateway, times(1)).storeDocument(
+        UUID.fromString("11111111-1111-1111-1111-111111111111"),
+        mockStream,
+      )
     }
   }
 
@@ -378,8 +491,18 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     )
 
     private val selectedDpsServices = mutableListOf(
-      DpsService(name = "test-dps-service-2", url = "https://test-dps-service-2.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
-      DpsService(name = "test-dps-service-1", url = "https://test-dps-service-1.prison.service.justice.gov.uk", businessName = null, orderPosition = null),
+      DpsService(
+        name = "test-dps-service-2",
+        url = "https://test-dps-service-2.prison.service.justice.gov.uk",
+        businessName = null,
+        orderPosition = null,
+      ),
+      DpsService(
+        name = "test-dps-service-1",
+        url = "https://test-dps-service-1.prison.service.justice.gov.uk",
+        businessName = null,
+        orderPosition = null,
+      ),
     )
 
     private val serviceConfigObject = ServiceConfig(
