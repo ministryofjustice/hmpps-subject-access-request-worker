@@ -47,9 +47,12 @@ class SubjectAccessRequestWorkerService(
   }
 
   suspend fun doPoll() {
+    var chosenSAR: SubjectAccessRequest? = null
+    val stopWatch: StopWatch = StopWatch.create()
+
     try {
       val webClient = sarGateway.getClient(sarUrl)
-      val chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
+      chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
       val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
       if (patchResponseCode == HttpStatusCode.valueOf(200)) {
         log.info("Report claimed with ID " + chosenSAR.id + " (Case Reference " + chosenSAR.sarCaseReferenceNumber + ")")
@@ -62,7 +65,7 @@ class SubjectAccessRequestWorkerService(
           ),
         )
 
-        val stopWatch = StopWatch.createStarted()
+        stopWatch.start()
         doReport(chosenSAR)
         sarGateway.complete(webClient, chosenSAR)
         stopWatch.stop()
@@ -77,6 +80,17 @@ class SubjectAccessRequestWorkerService(
       }
     } catch (exception: Exception) {
       log.error(exception.message)
+
+      telemetryClient.trackEvent(
+        "ReportFailedWithError",
+        mapOf(
+          "sarId" to (chosenSAR?.sarCaseReferenceNumber ?: ""),
+          "UUID" to chosenSAR?.id.toString(),
+          "error" to (exception.message ?: ""),
+          "totalTimeElapsed" to stopWatch.time.toString(),
+        ),
+      )
+
       exception.printStackTrace()
       Sentry.captureException(exception)
     }
