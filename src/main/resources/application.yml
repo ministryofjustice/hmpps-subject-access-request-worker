@@ -48,6 +48,11 @@ management:
       cache:
         time-to-live: 2000ms
 
+web-client:
+  configuration:
+    max-retries: 2
+    back-off: 60
+
 services:
   prison-api:
     base-url: http://localhost:4001

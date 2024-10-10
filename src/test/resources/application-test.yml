@@ -5,6 +5,11 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
+web-client:
+  configuration:
+    max-retries: 2
+    back-off: 1
+
 services:
   hmpps-auth:
     base-url: http://localhost:3000
