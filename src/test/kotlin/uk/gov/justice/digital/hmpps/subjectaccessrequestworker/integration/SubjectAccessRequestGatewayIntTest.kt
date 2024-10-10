@@ -11,6 +11,9 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
+import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
+import org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.SubjectAccessRequestApiExtension
@@ -55,8 +58,8 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get unclaimed requests fails on first attempt but is successful on retry`() {
-    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsOnFirstAttempt(AUTH_TOKEN)
+  fun `get unclaimed requests fails with 5xx status on first attempt but is successful on retry`() {
+    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsOnFirstAttemptWithStatus(500, AUTH_TOKEN)
 
     val result: Array<SubjectAccessRequest>? = sarGateway.getUnclaimed(webClient)
 
@@ -65,14 +68,43 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get unclaimed requests throws exception when the initial request and retries fail`() {
-    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsAllAttempts(AUTH_TOKEN)
+  fun `get unclaimed requests throws exception when all requests and retries fail with 5xx status`() {
+    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWithStatus(500, AUTH_TOKEN)
 
-    val ex = assertThrows<Exception> { sarGateway.getUnclaimed(webClient)  }
+    val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
 
-    println(ex.javaClass.simpleName)
-
+    assertThat(error).isInstanceOf(InternalServerError::class.java)
     subjectAccessRequestApiMock.verify(3, getRequestedFor(urlPathEqualTo("/api/subjectAccessRequests")))
+  }
+
+  @Test
+  fun `get unclaimed requests does not retry on 401 status error`() {
+    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWithStatus(401, AUTH_TOKEN)
+
+    val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+
+    assertThat(error).isInstanceOf(Unauthorized::class.java)
+    subjectAccessRequestApiMock.verify(1, getRequestedFor(urlPathEqualTo("/api/subjectAccessRequests")))
+  }
+
+  @Test
+  fun `get unclaimed requests does not retry on 403 status error`() {
+    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWithStatus(403, AUTH_TOKEN)
+
+    val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+
+    assertThat(error).isInstanceOf(Forbidden::class.java)
+    subjectAccessRequestApiMock.verify(1, getRequestedFor(urlPathEqualTo("/api/subjectAccessRequests")))
+  }
+
+  @Test
+  fun `get unclaimed requests throws exception when initial request errors with 5xx status and retry fails 4xx status`() {
+    subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWith500ThenFailsWith401ThenSucceeds(AUTH_TOKEN)
+
+    val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+
+    assertThat(error).isInstanceOf(Unauthorized::class.java)
+    subjectAccessRequestApiMock.verify(2, getRequestedFor(urlPathEqualTo("/api/subjectAccessRequests")))
   }
 
   fun assertSarResponse(actual: Array<SubjectAccessRequest>?) {

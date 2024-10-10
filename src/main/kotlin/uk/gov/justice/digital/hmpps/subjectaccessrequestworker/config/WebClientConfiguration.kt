@@ -6,10 +6,10 @@ import java.time.Duration
 
 @Configuration
 class WebClientConfiguration(
-  @Value("\${web-client.configuration.max-retries}")val maxRetries: Long,
-  @Value("\${web-client.configuration.back-off}")val backOff: Long,
+  @Value("\${web-client.configuration.max-retries:0}")val maxRetries: Long,
+  @Value("\${web-client.configuration.back-off:PT10S}")val backOff: String,
 ) {
-  fun backOffInSeconds() = Duration.ofSeconds(backOff)
+  fun getBackoffDuration() = Duration.parse(backOff)
 
   override fun toString(): String {
     return "WebClientConfiguration(maxRetries=$maxRetries, backOff=$backOff)"

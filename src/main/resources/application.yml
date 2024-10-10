@@ -51,7 +51,7 @@ management:
 web-client:
   configuration:
     max-retries: 2
-    back-off: 60
+    back-off: PT1M
 
 services:
   prison-api:

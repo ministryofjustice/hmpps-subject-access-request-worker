@@ -8,7 +8,7 @@ management.endpoint:
 web-client:
   configuration:
     max-retries: 2
-    back-off: 1
+    back-off: PT1S
 
 services:
   hmpps-auth:

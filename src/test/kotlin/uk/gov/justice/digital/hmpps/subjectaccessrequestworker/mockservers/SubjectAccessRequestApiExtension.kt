@@ -95,7 +95,34 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
     )
   }
 
-  fun stubGetUnclaimedRequestsFailsOnFirstAttempt(token: String) {
+  fun stubGetUnclaimedRequestsFailsOnFirstAttemptWithStatus(status: Int, token: String) {
+    stubFor(
+      get("/api/subjectAccessRequests?unclaimed=true")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fails on first attempt")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(status)
+            .withBody(GENERIC_ERROR_BODY),
+        ).willSetStateTo("first-request-fails-with-500"),
+    )
+
+    stubFor(
+      get("/api/subjectAccessRequests?unclaimed=true")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fails on first attempt")
+        .whenScenarioStateIs("first-request-fails-with-500")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody(UNCLAIMED_SAR_BODY),
+        ),
+    )
+  }
+
+  fun stubGetUnclaimedRequestsFailsWith500ThenFailsWith401ThenSucceeds(token: String) {
     stubFor(
       get("/api/subjectAccessRequests?unclaimed=true")
         .withHeader("Authorization", matching("Bearer $token"))
@@ -116,20 +143,33 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
+            .withStatus(401)
+            .withBody(GENERIC_ERROR_BODY),
+        ).willSetStateTo("second-request-fails-with-401"),
+    )
+
+    stubFor(
+      get("/api/subjectAccessRequests?unclaimed=true")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fails on first attempt")
+        .whenScenarioStateIs("second-request-fails-with-401")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
             .withStatus(200)
             .withBody(UNCLAIMED_SAR_BODY),
         ),
     )
   }
 
-  fun stubGetUnclaimedRequestsFailsAllAttempts(token: String) {
+  fun stubGetUnclaimedRequestsFailsWithStatus(status: Int, token: String) {
     stubFor(
       get("/api/subjectAccessRequests?unclaimed=true")
         .withHeader("Authorization", matching("Bearer $token"))
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
-            .withStatus(500)
+            .withStatus(status)
             .withBody(GENERIC_ERROR_BODY),
         )
     )

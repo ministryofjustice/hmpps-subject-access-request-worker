@@ -41,9 +41,9 @@ class SubjectAccessRequestGateway(
       .bodyToMono(Array<SubjectAccessRequest>::class.java)
       .retryWhen(
         Retry
-          .backoff(webClientConfig.maxRetries, webClientConfig.backOffInSeconds())
+          .backoff(webClientConfig.maxRetries, webClientConfig.getBackoffDuration())
           .filter { error -> isRetryableError(error).also {
-            log.info("request failed with error: ${error.message} will attempt retry? $it")
+            log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: ${webClientConfig.getBackoffDuration()}")
           }}
           .onRetryExhaustedThrow { _, signal ->
             log.info("request retry attempts (${signal.totalRetriesInARow()}) exhausted, cause: ${signal.failure().message} ")
