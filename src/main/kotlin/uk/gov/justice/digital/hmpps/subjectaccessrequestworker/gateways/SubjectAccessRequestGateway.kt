@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -12,12 +10,11 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import java.time.Duration
 
 @Service
 class SubjectAccessRequestGateway(
   val hmppsAuthGateway: HmppsAuthGateway,
-  val webClientConfig: WebClientConfiguration
+  val webClientConfig: WebClientConfiguration,
 ) {
 
   companion object {
@@ -42,13 +39,15 @@ class SubjectAccessRequestGateway(
       .retryWhen(
         Retry
           .backoff(webClientConfig.maxRetries, webClientConfig.getBackoffDuration())
-          .filter { error -> isRetryableError(error).also {
-            log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: ${webClientConfig.getBackoffDuration()}")
-          }}
+          .filter { error ->
+            isRetryableError(error).also {
+              log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: ${webClientConfig.getBackoffDuration()}")
+            }
+          }
           .onRetryExhaustedThrow { _, signal ->
             log.info("request retry attempts (${signal.totalRetriesInARow()}) exhausted, cause: ${signal.failure().message} ")
             signal.failure()
-          }
+          },
       ).block()
   }
 

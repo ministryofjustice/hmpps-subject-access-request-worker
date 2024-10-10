@@ -127,5 +127,4 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     assertThat(sarRequest.objectUrl).isNull()
     assertThat(sarRequest.lastDownloaded).isNull()
   }
-
 }

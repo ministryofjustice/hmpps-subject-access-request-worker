@@ -171,8 +171,7 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
             .withHeader("Content-Type", "application/json")
             .withStatus(status)
             .withBody(GENERIC_ERROR_BODY),
-        )
+        ),
     )
   }
-
 }
