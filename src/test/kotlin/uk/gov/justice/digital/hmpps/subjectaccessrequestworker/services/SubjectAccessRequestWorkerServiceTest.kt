@@ -24,6 +24,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.PrisonApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.ProbationApiGateway
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
@@ -153,7 +154,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
     whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
-    whenever(mockSarGateway.claim(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     whenever(mockSarGateway.complete(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     whenever(
       mockGetSubjectAccessRequestDataService.execute(
@@ -198,7 +198,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   fun `startPolling doesn't call complete if claim patch fails`() = runTest {
     whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
-    whenever(mockSarGateway.claim(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(400))
+    whenever(mockSarGateway.claim(mockWebClient, sampleSAR)).thenThrow(SubjectAccessRequestException("failed to claim SAR"))
 
     subjectAccessRequestWorkerService.doPoll()
 

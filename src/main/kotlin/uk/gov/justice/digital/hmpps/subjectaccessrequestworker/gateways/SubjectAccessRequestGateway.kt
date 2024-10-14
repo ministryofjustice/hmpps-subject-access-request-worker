@@ -7,15 +7,17 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.Duration
+import kotlin.jvm.Throws
 
 @Service
 class SubjectAccessRequestGateway(
   val hmppsAuthGateway: HmppsAuthGateway,
-  val webClientConfig: WebClientConfiguration,
+  webClientConfig: WebClientConfiguration,
 ) {
 
   private val backoff: Duration = webClientConfig.getBackoffDuration()
@@ -56,14 +58,43 @@ class SubjectAccessRequestGateway(
       ).block()
   }
 
-  fun claim(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {
+  /**
+   * Claims a subject access request. Will attempt retry on 5xx status errors, will not attempt retry on 4xx errors.
+   */
+  @Throws(SubjectAccessRequestException::class)
+  fun claim(client: WebClient, subjectAccessRequest: SubjectAccessRequest): Unit {
     val token = this.getClientTokenFromHmppsAuth()
-    val patchResponse = client
+
+    client
       .patch()
-      .uri("/api/subjectAccessRequests/${chosenSAR.id}/claim")
+      .uri("/api/subjectAccessRequests/${subjectAccessRequest.id}/claim")
       .header("Authorization", "Bearer $token")
       .retrieve()
-    return patchResponse.toBodilessEntity().block()?.statusCode
+      .onStatus(
+        { code: HttpStatusCode -> code.is4xxClientError },
+        { response ->
+          Mono.error(
+            SubjectAccessRequestException.claimRequestFailedException(
+              subjectAccessRequest.id,
+              response.statusCode()
+            ),
+          )
+        },
+      )
+      .toBodilessEntity()
+      .retryWhen(
+        Retry
+          .backoff(maxRetries, backoff)
+          .filter { error -> error is WebClientResponseException && error.statusCode.is5xxServerError }
+          .onRetryExhaustedThrow { _, signal ->
+            SubjectAccessRequestException.claimRequestRetryExhaustedException(
+              subjectAccessRequest.id,
+              signal.failure(),
+              signal.totalRetries(),
+            )
+          },
+      )
+      .block()
   }
 
   fun complete(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {

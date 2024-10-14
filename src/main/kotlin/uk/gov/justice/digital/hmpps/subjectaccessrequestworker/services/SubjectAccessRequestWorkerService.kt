@@ -37,7 +37,10 @@ class SubjectAccessRequestWorkerService(
   private val telemetryClient: TelemetryClient,
 ) {
 
-  private val log = LoggerFactory.getLogger(this::class.java)
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+    const val TIME_ELAPSED_KEY = "totalTimeElapsed"
+  }
 
   suspend fun startPolling() {
     while (true) {
@@ -47,48 +50,29 @@ class SubjectAccessRequestWorkerService(
   }
 
   suspend fun doPoll() {
-    var chosenSAR: SubjectAccessRequest? = null
+    var subjectAccessRequest: SubjectAccessRequest? = null
     val stopWatch: StopWatch = StopWatch.create()
 
     try {
       val webClient = sarGateway.getClient(sarUrl)
-      chosenSAR = this.pollForNewSubjectAccessRequests(webClient)
-      val patchResponseCode = sarGateway.claim(webClient, chosenSAR)
-      if (patchResponseCode == HttpStatusCode.valueOf(200)) {
-        log.info("Report claimed with ID " + chosenSAR.id + " (Case Reference " + chosenSAR.sarCaseReferenceNumber + ")")
-        telemetryClient.trackEvent(
-          "NewReportClaimStarted",
-          mapOf(
-            "sarId" to chosenSAR.sarCaseReferenceNumber,
-            "UUID" to chosenSAR.id.toString(),
-            "totalTimeElapsed" to "0",
-          ),
-        )
+      subjectAccessRequest = pollForNewSubjectAccessRequests(webClient)
 
-        stopWatch.start()
-        doReport(chosenSAR)
-        sarGateway.complete(webClient, chosenSAR)
-        stopWatch.stop()
-        telemetryClient.trackEvent(
-          "NewReportClaimComplete",
-          mapOf(
-            "sarId" to chosenSAR.sarCaseReferenceNumber,
-            "UUID" to chosenSAR.id.toString(),
-            "totalTimeElapsed" to stopWatch.time.toString(),
-          ),
-        )
-      }
+      claimSubjectAccessRequest(webClient, subjectAccessRequest)
+
+      stopWatch.start()
+      doReport(subjectAccessRequest)
+      sarGateway.complete(webClient, subjectAccessRequest)
+      stopWatch.stop()
+      recordEvent("NewReportClaimComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+
     } catch (exception: Exception) {
-      log.error(exception.message)
+      log.error("subjectAccessRequest: ${subjectAccessRequest?.id} failed with error: ${exception.message}")
 
-      telemetryClient.trackEvent(
+      recordEvent(
         "ReportFailedWithError",
-        mapOf(
-          "sarId" to (chosenSAR?.sarCaseReferenceNumber ?: ""),
-          "UUID" to chosenSAR?.id.toString(),
-          "error" to (exception.message ?: ""),
-          "totalTimeElapsed" to stopWatch.time.toString(),
-        ),
+        subjectAccessRequest,
+        "error" to (exception.message ?: ""),
+        TIME_ELAPSED_KEY to stopWatch.time.toString(),
       )
 
       exception.printStackTrace()
@@ -100,121 +84,76 @@ class SubjectAccessRequestWorkerService(
     var response: Array<SubjectAccessRequest>? = emptyArray()
 
     while (response.isNullOrEmpty()) {
-      log.info("Polling in ${POLL_DELAY}ms")
+      log.info("polling in ${POLL_DELAY}ms")
       delay(POLL_DELAY)
       response = sarGateway.getUnclaimed(client)
     }
     return response.first()
   }
 
-  fun doReport(chosenSAR: SubjectAccessRequest) {
+  suspend fun claimSubjectAccessRequest(webClient: WebClient, subjectAccessRequest: SubjectAccessRequest) {
+    sarGateway.claim(webClient, subjectAccessRequest)
+    log.info("report claimed with ID ${subjectAccessRequest.id} (case reference ${subjectAccessRequest.sarCaseReferenceNumber})")
+    recordEvent("NewReportClaimStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
+  }
+
+  fun doReport(subjectAccessRequest: SubjectAccessRequest) {
     val stopWatch = StopWatch.createStarted()
-    telemetryClient.trackEvent(
-      "DoReportStarted",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-      ),
-    )
-    val selectedServices = getServiceDetails(chosenSAR)
+    recordEvent("DoReportStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
 
-    log.info("Creating report..")
-    telemetryClient.trackEvent(
-      "CollectingServiceDataStarted",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
+    val selectedServices = getServiceDetails(subjectAccessRequest)
+
+    log.info("${subjectAccessRequest.id} creating report..")
+    recordEvent("CollectingServiceDataStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+
+    val dpsServiceList = getSubjectAccessRequestDataService.execute(
+      selectedServices,
+      subjectAccessRequest.nomisId,
+      subjectAccessRequest.ndeliusCaseReferenceId,
+      subjectAccessRequest.dateFrom,
+      subjectAccessRequest.dateTo,
+      subjectAccessRequest,
     )
 
-    val dpsServiceList = getSubjectAccessRequestDataService.execute(selectedServices, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.dateFrom, chosenSAR.dateTo, chosenSAR)
+    recordEvent("CollectingServiceDataComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
 
-    telemetryClient.trackEvent(
-      "CollectingServiceDataComplete",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
+    log.info("${subjectAccessRequest.id} fetching subject name")
+    recordEvent("CollectingSubjectNameStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
 
-    log.info("Fetching subject name")
-    telemetryClient.trackEvent(
-      "CollectingSubjectNameStarted",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
     var subjectName: String
     try {
-      subjectName = getSubjectName(chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId)
+      subjectName = getSubjectName(subjectAccessRequest.nomisId, subjectAccessRequest.ndeliusCaseReferenceId)
     } catch (exception: WebClientResponseException.NotFound) {
       subjectName = "No subject name found"
     }
-    telemetryClient.trackEvent(
-      "CollectingSubjectNameComplete",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
+
+    recordEvent("CollectingSubjectNameComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+
+    log.info("${subjectAccessRequest.id} extracted report")
+    recordEvent("GeneratingPDFStreamStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+
+    val pdfStream = generatePdfService.execute(
+      dpsServiceList,
+      subjectAccessRequest.nomisId,
+      subjectAccessRequest.ndeliusCaseReferenceId,
+      subjectAccessRequest.sarCaseReferenceNumber,
+      subjectName,
+      subjectAccessRequest.dateFrom,
+      subjectAccessRequest.dateTo,
+      subjectAccessRequest,
     )
+    log.info("${subjectAccessRequest.id} created PDF")
 
-    log.info("Extracted report")
+    recordEvent("GeneratingPDFStreamComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
 
-    telemetryClient.trackEvent(
-      "GeneratingPDFStreamStarted",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
+    recordEvent("SavingFileStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
 
-    val pdfStream = generatePdfService.execute(dpsServiceList, chosenSAR.nomisId, chosenSAR.ndeliusCaseReferenceId, chosenSAR.sarCaseReferenceNumber, subjectName, chosenSAR.dateFrom, chosenSAR.dateTo, chosenSAR)
-    log.info("Created PDF")
+    val response = this.storeSubjectAccessRequestDocument(subjectAccessRequest.id, pdfStream)
+    log.info("${subjectAccessRequest.id} stored PDF$response")
 
-    telemetryClient.trackEvent(
-      "GeneratingPDFStreamComplete",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
+    recordEvent("SavingFileComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
 
-    telemetryClient.trackEvent(
-      "SavingFileStarted",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
-
-    val response = this.storeSubjectAccessRequestDocument(chosenSAR.id, pdfStream)
-    log.info("Stored PDF$response")
-
-    telemetryClient.trackEvent(
-      "SavingFileComplete",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
-
-    telemetryClient.trackEvent(
-      "DoReportComplete",
-      mapOf(
-        "sarId" to chosenSAR.sarCaseReferenceNumber,
-        "UUID" to chosenSAR.id.toString(),
-        "totalTimeElapsed" to stopWatch.time.toString(),
-      ),
-    )
+    recordEvent("DoReportComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
   }
 
   fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
@@ -268,4 +207,13 @@ class SubjectAccessRequestWorkerService(
     }
     throw RuntimeException("Prison and Probation IDs are both null")
   }
+
+  fun recordEvent(name: String, subjectAccessRequest: SubjectAccessRequest?, vararg kvpairs: Pair<String, String>) {
+    telemetryClient.trackEvent(name, mapOf(
+      "sarId" to (subjectAccessRequest?.sarCaseReferenceNumber ?: "unknown"),
+      "UUID" to subjectAccessRequest?.id.toString(),
+      *kvpairs,
+    ))
+  }
+
 }
