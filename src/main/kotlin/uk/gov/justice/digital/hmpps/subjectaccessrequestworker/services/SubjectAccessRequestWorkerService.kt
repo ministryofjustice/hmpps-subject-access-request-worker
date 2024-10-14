@@ -186,11 +186,13 @@ class SubjectAccessRequestWorkerService(
       ),
     )
 
+    var fileSize = pdfStream.size().toString()
     telemetryClient.trackEvent(
       "SavingFileStarted",
       mapOf(
         "sarId" to chosenSAR.sarCaseReferenceNumber,
         "UUID" to chosenSAR.id.toString(),
+        "fileSize" to fileSize,
         "totalTimeElapsed" to stopWatch.time.toString(),
       ),
     )
@@ -203,6 +205,7 @@ class SubjectAccessRequestWorkerService(
       mapOf(
         "sarId" to chosenSAR.sarCaseReferenceNumber,
         "UUID" to chosenSAR.id.toString(),
+        "fileSize" to fileSize,
         "totalTimeElapsed" to stopWatch.time.toString(),
       ),
     )

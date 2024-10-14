@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config
 
+import com.microsoft.applicationinsights.TelemetryClient
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
-class HmppsSubjectAccessRequestWorkerExceptionHandler {
+class HmppsSubjectAccessRequestWorkerExceptionHandler(
+  private val telemetryClient: TelemetryClient,
+) {
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> = ResponseEntity
     .status(BAD_REQUEST)
@@ -22,7 +25,10 @@ class HmppsSubjectAccessRequestWorkerExceptionHandler {
         userMessage = "Validation failure: ${e.message}",
         developerMessage = e.message,
       ),
-    ).also { log.info("Validation exception: {}", e.message) }
+    ).also {
+      trackTelemetryEvent("ValidationException", BAD_REQUEST.value().toString(), e.message ?: "No message")
+      log.info("Validation exception: {}", e.message)
+    }
 
   @ExceptionHandler(NoResourceFoundException::class)
   fun handleValidationException(e: NoResourceFoundException): ResponseEntity<ErrorResponse> = ResponseEntity
@@ -33,7 +39,10 @@ class HmppsSubjectAccessRequestWorkerExceptionHandler {
         userMessage = "Validation failure: ${e.message}",
         developerMessage = e.message,
       ),
-    ).also { log.info("Validation exception: {}", e.message) }
+    ).also {
+      trackTelemetryEvent("ValidationException", NOT_FOUND.value().toString(), e.message ?: "No message")
+      log.info("Validation exception: {}", e.message)
+    }
 
   @ExceptionHandler(Exception::class)
   fun handleException(e: Exception): ResponseEntity<ErrorResponse> = ResponseEntity
@@ -44,7 +53,14 @@ class HmppsSubjectAccessRequestWorkerExceptionHandler {
         userMessage = "Unexpected error: ${e.message}",
         developerMessage = e.message,
       ),
-    ).also { log.error("Unexpected exception", e) }
+    ).also {
+      trackTelemetryEvent("Unexpected error", INTERNAL_SERVER_ERROR.value().toString(), e.message ?: "No message")
+      log.error("Unexpected exception", e)
+    }
+
+  private fun trackTelemetryEvent(eventName: String, status: String, message: String) {
+    telemetryClient.trackEvent(eventName, mapOf("status" to status, "message" to message))
+  }
 
   private companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
