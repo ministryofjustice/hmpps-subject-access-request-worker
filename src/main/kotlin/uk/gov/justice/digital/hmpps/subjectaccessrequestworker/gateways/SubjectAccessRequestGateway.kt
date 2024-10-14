@@ -10,12 +10,16 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import java.time.Duration
 
 @Service
 class SubjectAccessRequestGateway(
   val hmppsAuthGateway: HmppsAuthGateway,
   val webClientConfig: WebClientConfiguration,
 ) {
+
+  private val backoff: Duration = webClientConfig.getBackoffDuration()
+  private val maxRetries: Long = webClientConfig.maxRetries
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -30,6 +34,7 @@ class SubjectAccessRequestGateway(
 
   fun getUnclaimed(client: WebClient): Array<SubjectAccessRequest>? {
     val token = this.getClientTokenFromHmppsAuth()
+
     return client
       .get()
       .uri("/api/subjectAccessRequests?unclaimed=true")
@@ -38,10 +43,10 @@ class SubjectAccessRequestGateway(
       .bodyToMono(Array<SubjectAccessRequest>::class.java)
       .retryWhen(
         Retry
-          .backoff(webClientConfig.maxRetries, webClientConfig.getBackoffDuration())
+          .backoff(maxRetries, backoff)
           .filter { error ->
             isRetryableError(error).also {
-              log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: ${webClientConfig.getBackoffDuration()}")
+              log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: ${backoff}")
             }
           }
           .onRetryExhaustedThrow { _, signal ->
