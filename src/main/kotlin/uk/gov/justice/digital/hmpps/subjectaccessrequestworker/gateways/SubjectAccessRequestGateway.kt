@@ -46,7 +46,7 @@ class SubjectAccessRequestGateway(
           .backoff(maxRetries, backoff)
           .filter { error ->
             isRetryableError(error).also {
-              log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: ${backoff}")
+              log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: $backoff")
             }
           }
           .onRetryExhaustedThrow { _, signal ->
