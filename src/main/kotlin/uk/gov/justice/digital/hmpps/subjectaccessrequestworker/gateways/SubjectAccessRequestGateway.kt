@@ -62,7 +62,7 @@ class SubjectAccessRequestGateway(
    * Claims a subject access request. Will attempt retry on 5xx status errors, will not attempt retry on 4xx errors.
    */
   @Throws(SubjectAccessRequestException::class)
-  fun claim(client: WebClient, subjectAccessRequest: SubjectAccessRequest): Unit {
+  fun claim(client: WebClient, subjectAccessRequest: SubjectAccessRequest) {
     val token = this.getClientTokenFromHmppsAuth()
 
     client
@@ -76,7 +76,7 @@ class SubjectAccessRequestGateway(
           Mono.error(
             SubjectAccessRequestException.claimRequestFailedException(
               subjectAccessRequest.id,
-              response.statusCode()
+              response.statusCode(),
             ),
           )
         },

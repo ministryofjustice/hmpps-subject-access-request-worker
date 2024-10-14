@@ -180,7 +180,7 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
 
   fun stubClaimSARReturnsStatus(status: Int, sarId: UUID, token: String) {
     stubFor(
-      patch("/api/subjectAccessRequests/${sarId}/claim")
+      patch("/api/subjectAccessRequests/$sarId/claim")
         .withHeader("Authorization", matching("Bearer $token"))
         .willReturn(
           aResponse()
@@ -196,7 +196,7 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
     token: String,
   ) {
     stubFor(
-      patch("/api/subjectAccessRequests/${sarId}/claim")
+      patch("/api/subjectAccessRequests/$sarId/claim")
         .withHeader("Authorization", matching("Bearer $token"))
         .inScenario("fails on first attempt")
         .willReturn(
@@ -207,7 +207,7 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
     )
 
     stubFor(
-      patch("/api/subjectAccessRequests/${sarId}/claim")
+      patch("/api/subjectAccessRequests/$sarId/claim")
         .withHeader("Authorization", matching("Bearer $token"))
         .inScenario("fails on first attempt")
         .willReturn(
@@ -217,5 +217,4 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
         ).whenScenarioStateIs("failed-first-request"),
     )
   }
-
 }

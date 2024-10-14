@@ -13,7 +13,6 @@ import org.mockito.Mock
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
@@ -195,7 +194,6 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     )
   }
 
-
   @Test
   fun `claim Subject Access Request is successful when initial request fails with 5xx and the retry succeeds`() {
     subjectAccessRequestApiMock.stubClaimSARErrorsWith5xxOnInitialRequestAndReturnsStatusOnRetry(
@@ -234,4 +232,3 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     )
   }
 }
-

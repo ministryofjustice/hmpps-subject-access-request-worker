@@ -7,7 +7,6 @@ import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -64,7 +63,6 @@ class SubjectAccessRequestWorkerService(
       sarGateway.complete(webClient, subjectAccessRequest)
       stopWatch.stop()
       recordEvent("NewReportClaimComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
-
     } catch (exception: Exception) {
       log.error("subjectAccessRequest: ${subjectAccessRequest?.id} failed with error: ${exception.message}")
 
@@ -209,11 +207,14 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun recordEvent(name: String, subjectAccessRequest: SubjectAccessRequest?, vararg kvpairs: Pair<String, String>) {
-    telemetryClient.trackEvent(name, mapOf(
-      "sarId" to (subjectAccessRequest?.sarCaseReferenceNumber ?: "unknown"),
-      "UUID" to subjectAccessRequest?.id.toString(),
-      *kvpairs,
-    ))
+    val id = subjectAccessRequest?.sarCaseReferenceNumber ?: "unknown"
+    telemetryClient.trackEvent(
+      name,
+      mapOf(
+        "sarId" to id,
+        "UUID" to subjectAccessRequest?.id.toString(),
+        *kvpairs,
+      ),
+    )
   }
-
 }
