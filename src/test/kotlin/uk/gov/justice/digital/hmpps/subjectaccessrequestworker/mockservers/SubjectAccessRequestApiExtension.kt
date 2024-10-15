@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.matching
+import com.github.tomakehurst.wiremock.client.WireMock.patch
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
 import org.slf4j.LoggerFactory
+import java.util.UUID
 
 class SubjectAccessRequestApiExtension :
   BeforeAllCallback,
@@ -30,13 +32,14 @@ class SubjectAccessRequestApiExtension :
   }
 
   override fun afterAll(p0: ExtensionContext?) {
-    log.info("stopping subjectAccessRequestApiMock: ${subjectAccessRequestApiMock.port()}")
+    log.info("stopping subjectAccessRequestApiMock")
     subjectAccessRequestApiMock.stop()
   }
 
   override fun beforeEach(p0: ExtensionContext?) {
     log.info("resetting subjectAccessRequestApiMock: ${subjectAccessRequestApiMock.port()}")
     subjectAccessRequestApiMock.resetRequests()
+    subjectAccessRequestApiMock.resetScenarios()
   }
 
   override fun postProcessTestInstance(testInstance: Any?, context: ExtensionContext?) {
@@ -172,6 +175,46 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
             .withStatus(status)
             .withBody(GENERIC_ERROR_BODY),
         ),
+    )
+  }
+
+  fun stubClaimSARReturnsStatus(status: Int, sarId: UUID, token: String) {
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/claim")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(status),
+        ),
+    )
+  }
+
+  fun stubClaimSARErrorsWith5xxOnInitialRequestAndReturnsStatusOnRetry(
+    retryResponseStatus: Int,
+    sarId: UUID,
+    token: String,
+  ) {
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/claim")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fails on first attempt")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(500),
+        ).willSetStateTo("failed-first-request"),
+    )
+
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/claim")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fails on first attempt")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(retryResponseStatus),
+        ).whenScenarioStateIs("failed-first-request"),
     )
   }
 }
