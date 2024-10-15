@@ -97,10 +97,15 @@ class SubjectAccessRequestGateway(
       .block()
   }
 
-  fun complete(client: WebClient, chosenSAR: SubjectAccessRequest): HttpStatusCode? {
+  fun complete(client: WebClient, subjectAccessRequest: SubjectAccessRequest): HttpStatusCode? {
     val token = this.getClientTokenFromHmppsAuth()
-    val patchResponse = client.patch().uri("/api/subjectAccessRequests/" + chosenSAR.id.toString() + "/complete").header("Authorization", "Bearer $token").retrieve()
-    return patchResponse.toBodilessEntity().block()?.statusCode
+    return client
+      .patch()
+      .uri("/api/subjectAccessRequests/${subjectAccessRequest.id}/complete")
+      .header("Authorization", "Bearer $token")
+      .retrieve()
+      .toBodilessEntity()
+      .block()?.statusCode
   }
 
   private fun isRetryableError(t: Throwable): Boolean {
