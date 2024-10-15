@@ -219,13 +219,13 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
 
   fun stubCompleteSubjectAccessRequest(responseStatus: Int, sarId: UUID, token: String) {
     stubFor(
-        patch("/api/subjectAccessRequests/$sarId/complete")
-            .withHeader("Authorization", matching("Bearer $token"))
-            .willReturn(
-                aResponse()
-                    .withHeader("Content-Type", "application/json")
-                    .withStatus(responseStatus),
-            ),
+      patch("/api/subjectAccessRequests/$sarId/complete")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(responseStatus),
+        ),
     )
   }
 
