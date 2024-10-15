@@ -9,16 +9,32 @@ class SubjectAccessRequestException : RuntimeException {
   constructor(message: String, cause: Throwable) : super(message, cause)
 
   companion object {
-    fun claimRequestFailedException(id: UUID, status: HttpStatusCode): SubjectAccessRequestException =
+    fun claimSubjectAccessRequestFailedException(id: UUID, status: HttpStatusCode) =
       SubjectAccessRequestException(
-        "subjectAccessRequest claim request $id failed with status code: $status",
+        "subjectAccessRequest claim request $id failed with non-retryable error, status code: $status",
       )
 
-    fun claimRequestRetryExhaustedException(
+    fun claimSubjectAccessRequestRetryExhaustedException(
       id: UUID,
       cause: Throwable,
       attempts: Long,
-    ): SubjectAccessRequestException =
-      SubjectAccessRequestException("claim request $id retry attempts ($attempts) exhausted", cause)
+    ) = SubjectAccessRequestException(
+      "claim subjectAccessRequest $id failed and retry attempts ($attempts) exhausted",
+      cause,
+    )
+
+    fun completeSubjectRequestRetryExhaustedException(
+      id: UUID,
+      cause: Throwable,
+      attempts: Long,
+    ) = SubjectAccessRequestException(
+      "complete subjectAccessRequest $id failed and retry attempts ($attempts) exhausted",
+      cause,
+    )
+
+    fun completeSubjectAccessRequestFailedException(id: UUID, status: HttpStatusCode) =
+      SubjectAccessRequestException(
+        "subjectAccessRequest complete request $id failed with non-retryable error, status code: $status",
+      )
   }
 }

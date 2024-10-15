@@ -10,9 +10,12 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.claimSubjectAccessRequestFailedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.claimSubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.completeSubjectAccessRequestFailedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.completeSubjectRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.Duration
-import kotlin.jvm.Throws
 
 @Service
 class SubjectAccessRequestGateway(
@@ -74,7 +77,7 @@ class SubjectAccessRequestGateway(
         { code: HttpStatusCode -> code.is4xxClientError },
         { response ->
           Mono.error(
-            SubjectAccessRequestException.claimRequestFailedException(
+            claimSubjectAccessRequestFailedException(
               subjectAccessRequest.id,
               response.statusCode(),
             ),
@@ -87,7 +90,7 @@ class SubjectAccessRequestGateway(
           .backoff(maxRetries, backoff)
           .filter { error -> error is WebClientResponseException && error.statusCode.is5xxServerError }
           .onRetryExhaustedThrow { _, signal ->
-            SubjectAccessRequestException.claimRequestRetryExhaustedException(
+            claimSubjectAccessRequestRetryExhaustedException(
               subjectAccessRequest.id,
               signal.failure(),
               signal.totalRetries(),
@@ -97,15 +100,39 @@ class SubjectAccessRequestGateway(
       .block()
   }
 
-  fun complete(client: WebClient, subjectAccessRequest: SubjectAccessRequest): HttpStatusCode? {
+  fun complete(client: WebClient, subjectAccessRequest: SubjectAccessRequest) {
     val token = this.getClientTokenFromHmppsAuth()
-    return client
+    val subjectAccessRequestId = subjectAccessRequest.id
+
+    client
       .patch()
-      .uri("/api/subjectAccessRequests/${subjectAccessRequest.id}/complete")
+      .uri("/api/subjectAccessRequests/$subjectAccessRequestId/complete")
       .header("Authorization", "Bearer $token")
       .retrieve()
+      .onStatus(
+        { status -> status.is4xxClientError },
+        { response ->
+          Mono.error(
+            completeSubjectAccessRequestFailedException(
+              subjectAccessRequestId,
+              response.statusCode(),
+            ),
+          )
+        },
+      )
       .toBodilessEntity()
-      .block()?.statusCode
+      .retryWhen(
+        Retry.backoff(maxRetries, backoff)
+          .filter { error -> isRetryableError(error) }
+          .onRetryExhaustedThrow { _, signal ->
+            completeSubjectRequestRetryExhaustedException(
+              subjectAccessRequestId,
+              signal.failure(),
+              signal.totalRetries(),
+            )
+          },
+      )
+      .block()
   }
 
   private fun isRetryableError(t: Throwable): Boolean {

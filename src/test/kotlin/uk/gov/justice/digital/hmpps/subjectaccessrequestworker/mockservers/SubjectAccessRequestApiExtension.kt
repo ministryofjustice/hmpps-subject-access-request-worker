@@ -229,6 +229,31 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
     )
   }
 
+  fun stubCompleteSubjectAccessRequestFailsWith5xxOnFirstRequestSucceedsOnRetry(sarId: UUID, token: String) {
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/complete")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fail-on-first-request")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(500),
+        ).willSetStateTo("failed-first-request"),
+    )
+
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/complete")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fail-on-first-request")
+        .whenScenarioStateIs("failed-first-request")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200),
+        ),
+    )
+  }
+
   fun verifyGetUnclaimedSubjectAccessRequestsIsCalled(times: Int, token: String) {
     verify(
       times,

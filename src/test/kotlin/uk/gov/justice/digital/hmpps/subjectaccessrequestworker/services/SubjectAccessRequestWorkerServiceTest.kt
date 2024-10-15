@@ -17,7 +17,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.http.HttpStatusCode
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -154,7 +153,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
     whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
-    whenever(mockSarGateway.complete(mockWebClient, sampleSAR)).thenReturn(HttpStatusCode.valueOf(200))
     whenever(
       mockGetSubjectAccessRequestDataService.execute(
         selectedDpsServices,
