@@ -142,14 +142,15 @@ class SubjectAccessRequestWorkerService(
     )
     log.info("${subjectAccessRequest.id} created PDF")
 
-    recordEvent("GeneratingPDFStreamComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    var fileSize = pdfStream.size().toString()
+    recordEvent("GeneratingPDFStreamComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
 
-    recordEvent("SavingFileStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    recordEvent("SavingFileStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
 
     val response = this.storeSubjectAccessRequestDocument(subjectAccessRequest.id, pdfStream)
     log.info("${subjectAccessRequest.id} stored PDF$response")
 
-    recordEvent("SavingFileComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    recordEvent("SavingFileComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize, "response" to (response?.toString() ?: "null"))
 
     recordEvent("DoReportComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
   }
