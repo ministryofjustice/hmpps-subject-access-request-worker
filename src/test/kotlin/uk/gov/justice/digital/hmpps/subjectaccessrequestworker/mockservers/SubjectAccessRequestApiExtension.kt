@@ -2,16 +2,19 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.matching
 import com.github.tomakehurst.wiremock.client.WireMock.patch
+import com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
-import org.slf4j.LoggerFactory
 import java.util.UUID
 
 class SubjectAccessRequestApiExtension :
@@ -23,21 +26,17 @@ class SubjectAccessRequestApiExtension :
   companion object {
     @JvmField
     val subjectAccessRequestApiMock = SubjectAccessRequestApiMockServer()
-    val log = LoggerFactory.getLogger(this::class.java)
   }
 
   override fun beforeAll(p0: ExtensionContext?) {
     subjectAccessRequestApiMock.start()
-    log.info("started subjectAccessRequestApiMock: ${subjectAccessRequestApiMock.port()}")
   }
 
   override fun afterAll(p0: ExtensionContext?) {
-    log.info("stopping subjectAccessRequestApiMock")
     subjectAccessRequestApiMock.stop()
   }
 
   override fun beforeEach(p0: ExtensionContext?) {
-    log.info("resetting subjectAccessRequestApiMock: ${subjectAccessRequestApiMock.port()}")
     subjectAccessRequestApiMock.resetRequests()
     subjectAccessRequestApiMock.resetScenarios()
   }
@@ -47,7 +46,7 @@ class SubjectAccessRequestApiExtension :
       val field = testInstance?.javaClass?.getField("sarApiMockServer")
       field?.set(testInstance, subjectAccessRequestApiMock)
     } catch (e: NoSuchFieldException) {
-      log.error(e.message)
+      e.printStackTrace()
     }
   }
 }
@@ -215,6 +214,67 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
             .withHeader("Content-Type", "application/json")
             .withStatus(retryResponseStatus),
         ).whenScenarioStateIs("failed-first-request"),
+    )
+  }
+
+  fun stubCompleteSubjectAccessRequest(responseStatus: Int, sarId: UUID, token: String) {
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/complete")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(responseStatus),
+        ),
+    )
+  }
+
+  fun stubCompleteSubjectAccessRequestFailsWith5xxOnFirstRequestSucceedsOnRetry(sarId: UUID, token: String) {
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/complete")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fail-on-first-request")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(500),
+        ).willSetStateTo("failed-first-request"),
+    )
+
+    stubFor(
+      patch("/api/subjectAccessRequests/$sarId/complete")
+        .withHeader("Authorization", matching("Bearer $token"))
+        .inScenario("fail-on-first-request")
+        .whenScenarioStateIs("failed-first-request")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200),
+        ),
+    )
+  }
+
+  fun verifyGetUnclaimedSubjectAccessRequestsIsCalled(times: Int, token: String) {
+    verify(
+      times,
+      getRequestedFor(urlPathEqualTo("/api/subjectAccessRequests"))
+        .withHeader("Authorization", equalTo("Bearer $token")),
+    )
+  }
+
+  fun verifyClaimSubjectAccessRequestIsCalled(times: Int, sarId: UUID, token: String) {
+    verify(
+      times,
+      patchRequestedFor(urlPathEqualTo("/api/subjectAccessRequests/$sarId/claim"))
+        .withHeader("Authorization", equalTo("Bearer $token")),
+    )
+  }
+
+  fun verifyCompleteSubjectAccessRequestIsCalled(times: Int, sarId: UUID, token: String) {
+    verify(
+      times,
+      patchRequestedFor(urlPathEqualTo("/api/subjectAccessRequests/$sarId/complete"))
+        .withHeader("Authorization", equalTo("Bearer $token")),
     )
   }
 }
