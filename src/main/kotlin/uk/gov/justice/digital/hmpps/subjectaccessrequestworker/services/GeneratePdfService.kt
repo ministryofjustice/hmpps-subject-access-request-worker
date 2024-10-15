@@ -25,7 +25,7 @@ import org.apache.commons.lang3.time.StopWatch
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -68,13 +68,7 @@ class GeneratePdfService {
     val document = Document(pdfDocument)
 
     log.info("Started writing to PDF")
-    telemetryClient.trackEvent(
-      "PDFContentGenerationStarted",
-      mapOf(
-        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-        "UUID" to subjectAccessRequest?.id.toString(),
-      ),
-    )
+    telemetryClient.trackSarEvent("PDFContentGenerationStarted", subjectAccessRequest, "numServices" to services.size.toString())
     addInternalContentsPage(pdfDocument, document, services)
     addExternalCoverPage(
       pdfDocument,
@@ -100,13 +94,7 @@ class GeneratePdfService {
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
 
-    telemetryClient.trackEvent(
-      "PDFContentGenerationComplete",
-      mapOf(
-        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-        "UUID" to subjectAccessRequest?.id.toString(),
-      ),
-    )
+    telemetryClient.trackSarEvent("PDFContentGenerationComplete", subjectAccessRequest, "numPages" to numPages.toString())
 
     log.info("Finished writing report")
     document.close()
@@ -132,22 +120,10 @@ class GeneratePdfService {
     val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
     val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
 
-    telemetryClient.trackEvent(
-      "PDFMergingStarted",
-      mapOf(
-        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-        "UUID" to subjectAccessRequest?.id.toString(),
-      ),
-    )
+    telemetryClient.trackSarEvent("PDFMergingStarted", subjectAccessRequest)
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
-    telemetryClient.trackEvent(
-      "PDFMergingComplete",
-      mapOf(
-        "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-        "UUID" to subjectAccessRequest?.id.toString(),
-      ),
-    )
+    telemetryClient.trackSarEvent("PDFMergingComplete", subjectAccessRequest, "numPages" to fullDocument.numberOfPages.toString())
 
     cover.close()
     mainContent.close()
@@ -182,13 +158,10 @@ class GeneratePdfService {
       log.info("Compiling data from ${service.businessName ?: service.name}")
 
       var stopWatch = StopWatch.createStarted()
-      telemetryClient.trackEvent(
+      telemetryClient.trackSarEvent(
         "PDFServiceContentGenerationStarted",
-        mapOf(
-          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-          "UUID" to subjectAccessRequest?.id.toString(),
-          "service" to service.name.toString(),
-        ),
+        subjectAccessRequest,
+        "service" to (service.name ?: "unknown"),
       )
 
       if (service.content != "No Data Held") {
@@ -208,14 +181,12 @@ class GeneratePdfService {
       }
 
       stopWatch.stop()
-      telemetryClient.trackEvent(
+      telemetryClient.trackSarEvent(
         "PDFServiceContentGenerationComplete",
-        mapOf(
-          "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
-          "UUID" to subjectAccessRequest?.id.toString(),
-          "service" to service.name.toString(),
-          "eventTime" to stopWatch.time.toString(),
-        ),
+        subjectAccessRequest,
+        "service" to (service.name ?: "unknown"),
+        "eventTime" to stopWatch.time.toString(),
+        "numPages" to pdfDocument.numberOfPages.toString(),
       )
     }
     log.info("Added data to PDF")
