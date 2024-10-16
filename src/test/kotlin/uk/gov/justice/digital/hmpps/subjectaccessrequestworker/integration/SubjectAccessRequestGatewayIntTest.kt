@@ -11,11 +11,14 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
+import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
-import org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
+import org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLAIM_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.COMPLETE_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.SubjectAccessRequestApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.SubjectAccessRequestApiExtension.Companion.subjectAccessRequestApiMock
@@ -82,9 +85,13 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     fun `get unclaimed requests throws exception when all requests and retries fail with 5xx status`() {
       subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWithStatus(500, AUTH_TOKEN)
 
-      val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+      val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+        sarGateway.getUnclaimed(webClient)
+      }
 
-      assertThat(error).isInstanceOf(InternalServerError::class.java)
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=null, event=GET_UNCLAIMED_REQUESTS")
+      assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
+
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 3, token = AUTH_TOKEN)
     }
 
@@ -92,9 +99,10 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     fun `get unclaimed requests does not retry on 401 status error`() {
       subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWithStatus(401, AUTH_TOKEN)
 
-      val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+      val actual = assertThrows<FatalSubjectAccessRequestException> { sarGateway.getUnclaimed(webClient) }
 
-      assertThat(error).isInstanceOf(Unauthorized::class.java)
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=null, event=GET_UNCLAIMED_REQUESTS, httpStatus=401 UNAUTHORIZED")
+
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 1, token = AUTH_TOKEN)
     }
 
@@ -102,9 +110,9 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     fun `get unclaimed requests does not retry on 403 status error`() {
       subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWithStatus(403, AUTH_TOKEN)
 
-      val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+      val error = assertThrows<FatalSubjectAccessRequestException> { sarGateway.getUnclaimed(webClient) }
 
-      assertThat(error).isInstanceOf(Forbidden::class.java)
+      assertThat(error.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=null, event=GET_UNCLAIMED_REQUESTS, httpStatus=403 FORBIDDEN")
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 1, token = AUTH_TOKEN)
     }
 
@@ -112,10 +120,26 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     fun `get unclaimed requests throws exception when initial request errors with 5xx status and retry fails 4xx status`() {
       subjectAccessRequestApiMock.stubGetUnclaimedRequestsFailsWith500ThenFailsWith401ThenSucceeds(AUTH_TOKEN)
 
-      val error = assertThrows<Exception> { sarGateway.getUnclaimed(webClient) }
+      val error = assertThrows<FatalSubjectAccessRequestException> { sarGateway.getUnclaimed(webClient) }
 
-      assertThat(error).isInstanceOf(Unauthorized::class.java)
+      assertThat(error.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=null, event=GET_UNCLAIMED_REQUESTS, httpStatus=401 UNAUTHORIZED")
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 2, token = AUTH_TOKEN)
+    }
+
+    @Test
+    fun `get unclaimed throws the expected exception when the webclient gets a connection refused error`() {
+      // Intentionally misconfigure the web client to trigger a connection refused error.
+      val borkedWebClient = WebClient.builder()
+        .baseUrl("http://localhost:${subjectAccessRequestApiMock.port() + 1}")
+        .build()
+
+      val error = assertThrows<SubjectAccessRequestRetryExhaustedException> { sarGateway.getUnclaimed(borkedWebClient) }
+
+      assertThat(error.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=null, event=GET_UNCLAIMED_REQUESTS")
+      assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
+      assertThat(error.cause!!.message).contains("Connection refused")
+
+      subjectAccessRequestApiMock.verifyZeroInteractions()
     }
 
     private fun assertGetUnclaimedSubjectAccessRequestsResponse(actual: Array<SubjectAccessRequest>?) {
@@ -157,15 +181,15 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `claim Subject Access Request throws SubjectAccessRequestException when request fails with status 400`() {
+    fun `claim Subject Access Request throws FatalSubjectAccessRequestException when request fails with status 400`() {
       subjectAccessRequestApiMock.stubClaimSARReturnsStatus(400, subjectAccessRequestId, AUTH_TOKEN)
 
-      val actual = assertThrows<SubjectAccessRequestException> {
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
         sarGateway.claim(webClient, sarRequestMock)
       }
 
-      assertThat(actual).isNotNull()
-      assertThat(actual.message).isEqualTo("subjectAccessRequest claim request $subjectAccessRequestId failed with non-retryable error, status code: 400 BAD_REQUEST")
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=$subjectAccessRequestId, event=$CLAIM_REQUEST, httpStatus=400 BAD_REQUEST")
+      assertThat(actual.cause).isNull()
 
       subjectAccessRequestApiMock.verifyClaimSubjectAccessRequestIsCalled(
         times = 1,
@@ -178,12 +202,12 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     fun `claim Subject Access Request throws SubjectAccessRequestException when request and retries fail with 5xx status error`() {
       subjectAccessRequestApiMock.stubClaimSARReturnsStatus(500, subjectAccessRequestId, AUTH_TOKEN)
 
-      val actual = assertThrows<SubjectAccessRequestException> {
+      val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
         sarGateway.claim(webClient, sarRequestMock)
       }
 
       assertThat(actual).isNotNull()
-      assertThat(actual.message).isEqualTo("claim subjectAccessRequest $subjectAccessRequestId failed and retry attempts (2) exhausted")
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$CLAIM_REQUEST")
       assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
 
       subjectAccessRequestApiMock.verifyClaimSubjectAccessRequestIsCalled(
@@ -211,19 +235,18 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `claim Subject Access Request throws SubjectAccessRequestException does not retry on 4xx status error`() {
+    fun `claim Subject Access Request throws FatalSubjectAccessRequestException does not retry on 4xx status error`() {
       subjectAccessRequestApiMock.stubClaimSARErrorsWith5xxOnInitialRequestAndReturnsStatusOnRetry(
         retryResponseStatus = 400,
         subjectAccessRequestId,
         AUTH_TOKEN,
       )
 
-      val actual = assertThrows<SubjectAccessRequestException> {
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
         sarGateway.claim(webClient, sarRequestMock)
       }
 
-      assertThat(actual).isNotNull()
-      assertThat(actual.message).isEqualTo("subjectAccessRequest claim request $subjectAccessRequestId failed with non-retryable error, status code: 400 BAD_REQUEST")
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=$subjectAccessRequestId, event=$CLAIM_REQUEST, httpStatus=400 BAD_REQUEST")
       assertThat(actual.cause).isNull()
 
       subjectAccessRequestApiMock.verifyClaimSubjectAccessRequestIsCalled(
@@ -231,6 +254,24 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarId = subjectAccessRequestId,
         token = AUTH_TOKEN,
       )
+    }
+
+    @Test
+    fun `claim request throws the expected exception when the webclient gets a connection refused error`() {
+      // Intentionally misconfigure the web client to trigger a connection refused error.
+      val borkedWebClient = WebClient.builder()
+        .baseUrl("http://localhost:${subjectAccessRequestApiMock.port() + 1}")
+        .build()
+
+      val error = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+        sarGateway.claim(borkedWebClient, sarRequestMock)
+      }
+
+      assertThat(error.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$CLAIM_REQUEST")
+      assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
+      assertThat(error.cause!!.message).contains("Connection refused")
+
+      subjectAccessRequestApiMock.verifyZeroInteractions()
     }
   }
 
@@ -262,13 +303,12 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         token = AUTH_TOKEN,
       )
 
-      val actual = assertThrows<SubjectAccessRequestException> {
+      val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
         sarGateway.complete(webClient, sarRequestMock)
       }
 
-      assertThat(actual).isNotNull()
-      assertThat(actual).isInstanceOf(SubjectAccessRequestException::class.java)
-      assertThat(actual.message).isEqualTo("complete subjectAccessRequest $subjectAccessRequestId failed and retry attempts (2) exhausted")
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$COMPLETE_REQUEST")
+      assertThat(actual.cause).isInstanceOf(ServiceUnavailable::class.java)
 
       subjectAccessRequestApiMock.verifyCompleteSubjectAccessRequestIsCalled(
         times = 3,
@@ -278,20 +318,19 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `complete subject access request throws SubjectAccessRequestException and does not retry on 4xx status`() {
+    fun `complete subject access request throws FatalSubjectAccessRequestException and does not retry on 4xx status`() {
       subjectAccessRequestApiMock.stubCompleteSubjectAccessRequest(
         responseStatus = 401,
         sarId = subjectAccessRequestId,
         token = AUTH_TOKEN,
       )
 
-      val actual = assertThrows<SubjectAccessRequestException> {
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
         sarGateway.complete(webClient, sarRequestMock)
       }
 
-      assertThat(actual).isNotNull()
-      assertThat(actual).isInstanceOf(SubjectAccessRequestException::class.java)
-      assertThat(actual.message).isEqualTo("subjectAccessRequest complete request $subjectAccessRequestId failed with non-retryable error, status code: 401 UNAUTHORIZED")
+      assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=$subjectAccessRequestId, event=$COMPLETE_REQUEST, httpStatus=401 UNAUTHORIZED")
+      assertThat(actual.cause).isNull()
 
       subjectAccessRequestApiMock.verifyCompleteSubjectAccessRequestIsCalled(
         times = 1,
@@ -314,6 +353,24 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarId = subjectAccessRequestId,
         token = AUTH_TOKEN,
       )
+    }
+
+    @Test
+    fun `complete request throws the expected exception when the webclient gets a connection refused error`() {
+      // Intentionally misconfigure the web client to trigger a connection refused error.
+      val borkedWebClient = WebClient.builder()
+        .baseUrl("http://localhost:${subjectAccessRequestApiMock.port() + 1}")
+        .build()
+
+      val error = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+        sarGateway.complete(borkedWebClient, sarRequestMock)
+      }
+
+      assertThat(error.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=${COMPLETE_REQUEST}")
+      assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
+      assertThat(error.cause!!.message).contains("Connection refused")
+
+      subjectAccessRequestApiMock.verifyZeroInteractions()
     }
   }
 }
