@@ -64,7 +64,7 @@ class SubjectAccessRequestWorkerService(
       stopWatch.stop()
       telemetryClient.trackSarEvent("NewReportClaimComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
     } catch (exception: Exception) {
-      log.error("subjectAccessRequest: ${subjectAccessRequest?.id} failed with error: ${exception.message}")
+      log.error("subjectAccessRequest: ${subjectAccessRequest?.id} failed with error: ${exception.message}", exception)
 
       telemetryClient.trackSarEvent(
         "ReportFailedWithError",
