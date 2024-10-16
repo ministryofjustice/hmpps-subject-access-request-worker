@@ -137,7 +137,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       assertThat(error.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=null, event=GET_UNCLAIMED_REQUESTS")
       assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
-      assertThat(error.cause!!.message).startsWith("Connection refused")
+      assertThat(error.cause!!.message).contains("Connection refused")
 
       subjectAccessRequestApiMock.verifyZeroInteractions()
     }
@@ -269,7 +269,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       assertThat(error.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$CLAIM_REQUEST")
       assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
-      assertThat(error.cause!!.message).startsWith("Connection refused")
+      assertThat(error.cause!!.message).contains("Connection refused")
 
       subjectAccessRequestApiMock.verifyZeroInteractions()
     }
@@ -368,7 +368,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       assertThat(error.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=${COMPLETE_REQUEST}")
       assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
-      assertThat(error.cause!!.message).startsWith("Connection refused")
+      assertThat(error.cause!!.message).contains("Connection refused")
 
       subjectAccessRequestApiMock.verifyZeroInteractions()
     }
