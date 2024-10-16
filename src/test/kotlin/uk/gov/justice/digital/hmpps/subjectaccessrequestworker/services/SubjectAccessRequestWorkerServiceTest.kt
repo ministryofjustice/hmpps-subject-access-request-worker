@@ -20,10 +20,10 @@ import org.mockito.kotlin.whenever
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.DocumentStorageGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.PrisonApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.ProbationApiGateway
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService

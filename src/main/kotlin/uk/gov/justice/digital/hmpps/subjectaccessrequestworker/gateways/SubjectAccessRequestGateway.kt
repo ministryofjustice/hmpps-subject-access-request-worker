@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -10,10 +8,12 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.claimSubjectAccessRequestFailedException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.claimSubjectAccessRequestRetryExhaustedException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.completeSubjectAccessRequestFailedException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestException.Companion.completeSubjectRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLAIM_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.COMPLETE_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_UNCLAIMED_REQUESTS
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.Duration
 
@@ -26,13 +26,10 @@ class SubjectAccessRequestGateway(
   private val backoff: Duration = webClientConfig.getBackoffDuration()
   private val maxRetries: Long = webClientConfig.maxRetries
 
-  companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
-
   fun getClient(url: String): WebClient {
     return WebClient.create(url) // TODO what other config does this need?
   }
+
   fun getClientTokenFromHmppsAuth(): String {
     return hmppsAuthGateway.getClientToken()
   }
@@ -45,18 +42,24 @@ class SubjectAccessRequestGateway(
       .uri("/api/subjectAccessRequests?unclaimed=true")
       .header("Authorization", "Bearer $token")
       .retrieve()
+      .onStatus(
+        { status -> status.is4xxClientError },
+        { response ->
+          Mono.error(FatalSubjectAccessRequestException(GET_UNCLAIMED_REQUESTS, null, response.statusCode()))
+        },
+      )
       .bodyToMono(Array<SubjectAccessRequest>::class.java)
       .retryWhen(
         Retry
           .backoff(maxRetries, backoff)
-          .filter { error ->
-            isRetryableError(error).also {
-              log.info("request failed with error: ${error.message} will attempt retry? $it, back-off: $backoff")
-            }
-          }
+          .filter { error -> isRetryableError(error) }
           .onRetryExhaustedThrow { _, signal ->
-            log.info("request retry attempts (${signal.totalRetriesInARow()}) exhausted, cause: ${signal.failure().message} ")
-            signal.failure()
+            SubjectAccessRequestRetryExhaustedException(
+              GET_UNCLAIMED_REQUESTS,
+              null,
+              signal.failure(),
+              signal.totalRetries(),
+            )
           },
       ).block()
   }
@@ -67,20 +70,18 @@ class SubjectAccessRequestGateway(
   @Throws(SubjectAccessRequestException::class)
   fun claim(client: WebClient, subjectAccessRequest: SubjectAccessRequest) {
     val token = this.getClientTokenFromHmppsAuth()
+    val subjectAccessRequestId = subjectAccessRequest.id
 
     client
       .patch()
-      .uri("/api/subjectAccessRequests/${subjectAccessRequest.id}/claim")
+      .uri("/api/subjectAccessRequests/$subjectAccessRequestId/claim")
       .header("Authorization", "Bearer $token")
       .retrieve()
       .onStatus(
         { code: HttpStatusCode -> code.is4xxClientError },
         { response ->
           Mono.error(
-            claimSubjectAccessRequestFailedException(
-              subjectAccessRequest.id,
-              response.statusCode(),
-            ),
+            FatalSubjectAccessRequestException(CLAIM_REQUEST, subjectAccessRequestId, response.statusCode()),
           )
         },
       )
@@ -88,16 +89,16 @@ class SubjectAccessRequestGateway(
       .retryWhen(
         Retry
           .backoff(maxRetries, backoff)
-          .filter { error -> error is WebClientResponseException && error.statusCode.is5xxServerError }
+          .filter { error -> isRetryableError(error) }
           .onRetryExhaustedThrow { _, signal ->
-            claimSubjectAccessRequestRetryExhaustedException(
-              subjectAccessRequest.id,
+            SubjectAccessRequestRetryExhaustedException(
+              CLAIM_REQUEST,
+              subjectAccessRequestId,
               signal.failure(),
               signal.totalRetries(),
             )
           },
-      )
-      .block()
+      ).block()
   }
 
   fun complete(client: WebClient, subjectAccessRequest: SubjectAccessRequest) {
@@ -113,10 +114,7 @@ class SubjectAccessRequestGateway(
         { status -> status.is4xxClientError },
         { response ->
           Mono.error(
-            completeSubjectAccessRequestFailedException(
-              subjectAccessRequestId,
-              response.statusCode(),
-            ),
+            FatalSubjectAccessRequestException(COMPLETE_REQUEST, subjectAccessRequestId, response.statusCode()),
           )
         },
       )
@@ -125,23 +123,19 @@ class SubjectAccessRequestGateway(
         Retry.backoff(maxRetries, backoff)
           .filter { error -> isRetryableError(error) }
           .onRetryExhaustedThrow { _, signal ->
-            completeSubjectRequestRetryExhaustedException(
+            SubjectAccessRequestRetryExhaustedException(
+              COMPLETE_REQUEST,
               subjectAccessRequestId,
               signal.failure(),
               signal.totalRetries(),
             )
           },
-      )
-      .block()
+      ).block()
   }
 
-  private fun isRetryableError(t: Throwable): Boolean {
-    return when (t) {
-      is WebClientResponseException -> {
-        return t.statusCode.is5xxServerError
-      }
-      is WebClientRequestException -> true
-      else -> false
-    }
-  }
+  /**
+   * An error is "retryable" if it's a 5xx error or a client request error. 4xx client response errors are not retried.
+   */
+  private fun isRetryableError(error: Throwable): Boolean =
+    error is WebClientResponseException && error.statusCode.is5xxServerError || error is WebClientRequestException
 }

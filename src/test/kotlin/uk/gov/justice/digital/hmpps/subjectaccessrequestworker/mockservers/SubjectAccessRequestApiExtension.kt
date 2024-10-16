@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
@@ -45,9 +47,7 @@ class SubjectAccessRequestApiExtension :
     try {
       val field = testInstance?.javaClass?.getField("sarApiMockServer")
       field?.set(testInstance, subjectAccessRequestApiMock)
-    } catch (e: NoSuchFieldException) {
-      e.printStackTrace()
-    }
+    } catch (e: NoSuchFieldException) { }
   }
 }
 
@@ -276,5 +276,9 @@ class SubjectAccessRequestApiMockServer : WireMockServer(
       patchRequestedFor(urlPathEqualTo("/api/subjectAccessRequests/$sarId/complete"))
         .withHeader("Authorization", equalTo("Bearer $token")),
     )
+  }
+
+  fun verifyZeroInteractions() {
+    verify(0, anyRequestedFor(anyUrl()))
   }
 }
