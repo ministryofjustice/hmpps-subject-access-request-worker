@@ -4,13 +4,21 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.kotlin.any
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.web.reactive.function.client.WebClientRequestException
+import org.springframework.web.reactive.function.client.WebClientResponseException
+import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.GenericHmppsApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ComplexityOfNeedsApiExtension
@@ -94,22 +102,117 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
 
     verify(authGatewayMock, times(1)).getClientToken()
     complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
-    assertAppInsightsSuccessEvents()
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertAppInsightsRequestStartedEvent()
+    assertAppInsightsRequestCompleteEvent()
   }
 
-  fun assertAppInsightsSuccessEvents() {
-    verify(telemetryClientMock, times(2))
+  @Test
+  fun `get subject access request data errors getting client auth token`() {
+    whenever(authGatewayMock.getClientToken())
+      .thenThrow(RuntimeException::class.java)
+
+    assertThrows<RuntimeException> {
+      genericApiGateway.getSarData(
+        serviceUrl = serviceUrl,
+        prn = PRN,
+        crn = CRN,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
+        subjectAccessRequest = subjectAccessRequestMock,
+      )
+    }
+
+    complexityOfNeedsMockApi.verifyZeroInteractions()
+    verifyAppInsightsTrackEventIsNeverCalled()
+  }
+
+  @Test
+  fun `get subject access request data errors with 4xx error`() {
+    complexityOfNeedsMockApi.stubSubjectAccessRequestErrorResponse(400, subjectAccessRequestParams)
+
+    val actual = assertThrows<WebClientResponseException> {
+      genericApiGateway.getSarData(
+        serviceUrl = serviceUrl,
+        prn = PRN,
+        crn = CRN,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
+        subjectAccessRequest = subjectAccessRequestMock,
+      )
+    }
+
+    assertThat(actual).isInstanceOf(BadRequest::class.java)
+
+    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertAppInsightsRequestStartedEvent()
+    assertAppInsightsRequestExceptionEvent()
+  }
+
+  @Test
+  fun `get subject access request data errors with 5xx error`() {
+    complexityOfNeedsMockApi.stubSubjectAccessRequestErrorResponse(500, subjectAccessRequestParams)
+
+    val actual = assertThrows<WebClientResponseException> {
+      genericApiGateway.getSarData(
+        serviceUrl = serviceUrl,
+        prn = PRN,
+        crn = CRN,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
+        subjectAccessRequest = subjectAccessRequestMock,
+      )
+    }
+
+    assertThat(actual).isInstanceOf(InternalServerError::class.java)
+
+    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertAppInsightsRequestStartedEvent()
+    assertAppInsightsRequestExceptionEvent()
+  }
+
+  @Test
+  fun `get subject access request data returns status 200 with no body`() {
+    complexityOfNeedsMockApi.stubSubjectAccessRequestSuccessNoBody(subjectAccessRequestParams)
+
+    val actual =  genericApiGateway.getSarData(
+        serviceUrl = serviceUrl,
+        prn = PRN,
+        crn = CRN,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
+        subjectAccessRequest = subjectAccessRequestMock,
+      )
+
+    assertThat(actual).isNull()
+
+    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertAppInsightsRequestStartedEvent()
+    assertAppInsightsRequestNoDataEvent()
+  }
+
+  fun verifyAppInsightsTrackEventIsCalled(times: Int) {
+    verify(telemetryClientMock, times(times))
       .trackEvent(
         appInsightsEventNameCaptor.capture(),
         appInsightsPropertiesCaptor.capture(),
         appInsightsMetricsCaptor.capture(),
       )
+  }
 
-    assertThat(appInsightsEventNameCaptor.allValues).hasSize(2)
+  fun verifyAppInsightsTrackEventIsNeverCalled() {
+    verify(telemetryClientMock, never())
+      .trackEvent(any(), any(), any())
+  }
+
+  fun assertAppInsightsRequestStartedEvent() {
+    assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
     assertThat(appInsightsEventNameCaptor.allValues[0]).isEqualTo("ServiceDataRequestStarted")
-    assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestComplete")
 
-    assertThat(appInsightsPropertiesCaptor.allValues).hasSize(2)
+    assertThat(appInsightsPropertiesCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
     assertThat(appInsightsPropertiesCaptor.allValues[0]).containsExactlyInAnyOrderEntriesOf(
       mapOf(
         "sarId" to sarCaseReferenceNumber,
@@ -117,9 +220,32 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
         "serviceURL" to complexityOfNeedsMockApi.baseUrl(),
       ),
     )
+  }
 
-    val customProperties = appInsightsPropertiesCaptor.allValues[1]
-    assertThat(customProperties)
+  fun assertAppInsightsRequestCompleteEvent() {
+    assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
+    assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestComplete")
+
+    assertThat(appInsightsPropertiesCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
+    assertThat(appInsightsPropertiesCaptor.allValues[1])
+      .containsOnlyKeys("sarId", "UUID", "serviceURL", "eventTime", "responseSize", "responseStatus")
+  }
+
+  fun assertAppInsightsRequestExceptionEvent() {
+    assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
+    assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestException")
+
+    assertThat(appInsightsPropertiesCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
+    assertThat(appInsightsPropertiesCaptor.allValues[1])
+      .containsOnlyKeys("sarId", "UUID", "serviceURL", "eventTime", "responseSize", "responseStatus", "errorMessage")
+  }
+
+  fun assertAppInsightsRequestNoDataEvent() {
+    assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
+    assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestNoData")
+
+    assertThat(appInsightsPropertiesCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
+    assertThat(appInsightsPropertiesCaptor.allValues[1])
       .containsOnlyKeys("sarId", "UUID", "serviceURL", "eventTime", "responseSize", "responseStatus")
   }
 

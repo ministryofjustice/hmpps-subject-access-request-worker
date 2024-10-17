@@ -54,6 +54,18 @@ class ComplexityOfNeedsMockServer : WireMockServer(
   WireMockConfiguration.wireMockConfig().port(4100),
 ) {
 
+  companion object {
+    const val SAR_RESPONSE = """
+              {
+                "content": {
+                  "additionalProp1": {
+                    "field1": "value1"
+                  }
+                }
+              }
+    """
+  }
+
   fun verifyZeroInteractions() {
     verify(0, anyRequestedFor(anyUrl()))
   }
@@ -70,18 +82,46 @@ class ComplexityOfNeedsMockServer : WireMockServer(
         .withHeader("Authorization", equalTo("Bearer ${params.authToken}"))
         .willReturn(
           aResponse()
-            .withStatus(200).withHeader("Content-Type", "application/json")
-            .withBody(
-              """
-              {
-                "content": {
-                  "additionalProp1": {
-                    "field1": "value1"
-                  }
-                }
-              }
-              """.trimIndent(),
-            ),
+            .withStatus(200)
+            .withHeader("Content-Type", "application/json")
+            .withBody(SAR_RESPONSE),
+        ),
+    )
+  }
+
+  fun stubSubjectAccessRequestErrorResponse(status: Int, params: GetSubjectAccessRequestParams) {
+    complexityOfNeedsMockApi.stubFor(
+      get(
+        urlPathEqualTo("/subject-access-request"),
+      )
+        .withQueryParam("prn", equalTo(params.prn))
+        .withQueryParam("crn", equalTo(params.crn))
+        .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
+        .withQueryParam("toDate", equalTo(params.dateTo.toString()))
+        .withHeader("Authorization", equalTo("Bearer ${params.authToken}"))
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withHeader("Content-Type", "application/json")
+            .withBody(SAR_RESPONSE),
+        ),
+    )
+  }
+
+  fun stubSubjectAccessRequestSuccessNoBody(params: GetSubjectAccessRequestParams) {
+    complexityOfNeedsMockApi.stubFor(
+      get(
+        urlPathEqualTo("/subject-access-request"),
+      )
+        .withQueryParam("prn", equalTo(params.prn))
+        .withQueryParam("crn", equalTo(params.crn))
+        .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
+        .withQueryParam("toDate", equalTo(params.dateTo.toString()))
+        .withHeader("Authorization", equalTo("Bearer ${params.authToken}"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withHeader("Content-Type", "application/json")
         ),
     )
   }

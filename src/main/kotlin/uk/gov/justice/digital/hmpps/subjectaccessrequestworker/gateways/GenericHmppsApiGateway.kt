@@ -87,7 +87,7 @@ class GenericHmppsApiGateway(
       )
     } else {
       telemetryClient.trackEvent(
-        "ServiceDataRequestFailed",
+        "ServiceDataRequestNoData",
         mapOf(
           "sarId" to subjectAccessRequest?.sarCaseReferenceNumber.toString(),
           "UUID" to subjectAccessRequest?.id.toString(),
