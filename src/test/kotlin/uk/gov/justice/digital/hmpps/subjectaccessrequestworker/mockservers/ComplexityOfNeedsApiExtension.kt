@@ -50,7 +50,6 @@ class ComplexityOfNeedsApiExtension :
   }
 }
 
-
 class ComplexityOfNeedsMockServer : WireMockServer(
   WireMockConfiguration.wireMockConfig().port(4100),
 ) {
@@ -62,7 +61,7 @@ class ComplexityOfNeedsMockServer : WireMockServer(
   fun stubSubjectAccessRequestSuccessResponse(params: GetSubjectAccessRequestParams) {
     complexityOfNeedsMockApi.stubFor(
       get(
-        urlPathEqualTo("/subject-access-request"), // ?prn=validPrn&fromDate&toDate
+        urlPathEqualTo("/subject-access-request"),
       )
         .withQueryParam("prn", equalTo(params.prn))
         .withQueryParam("crn", equalTo(params.crn))
