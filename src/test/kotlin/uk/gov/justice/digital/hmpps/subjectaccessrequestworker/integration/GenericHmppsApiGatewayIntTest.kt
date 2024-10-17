@@ -14,9 +14,14 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SAR_DATA
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.GenericHmppsApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ComplexityOfNeedsApiExtension
@@ -28,6 +33,9 @@ import java.util.UUID
 
 @ExtendWith(ComplexityOfNeedsApiExtension::class)
 class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
+
+  @Autowired
+  private lateinit var webClientConfiguration: WebClientConfiguration
 
   @Mock
   private lateinit var authGatewayMock: HmppsAuthGateway
@@ -80,7 +88,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
     whenever(subjectAccessRequestMock.sarCaseReferenceNumber)
       .thenReturn(sarCaseReferenceNumber)
 
-    genericApiGateway = GenericHmppsApiGateway(authGatewayMock, telemetryClientMock)
+    genericApiGateway = GenericHmppsApiGateway(authGatewayMock, telemetryClientMock, webClientConfiguration)
   }
 
   @Test
@@ -126,10 +134,10 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get subject access request data errors with 4xx error`() {
+  fun `get subject access request data does not retry on 4xx error`() {
     complexityOfNeedsMockApi.stubSubjectAccessRequestErrorResponse(400, subjectAccessRequestParams)
 
-    val actual = assertThrows<WebClientResponseException> {
+    val actual = assertThrows<FatalSubjectAccessRequestException> {
       genericApiGateway.getSarData(
         serviceUrl = serviceUrl,
         prn = PRN,
@@ -140,7 +148,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual).isInstanceOf(BadRequest::class.java)
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=$subjectAccessRequestId, event=${GET_SAR_DATA}, uri=$serviceUrl/subject-access-request, httpStatus=400 BAD_REQUEST")
 
     complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
     verifyAppInsightsTrackEventIsCalled(2)
@@ -149,10 +157,10 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get subject access request data errors with 5xx error`() {
+  fun `get subject access request data errors with 5xx error on initial request and retry attempts`() {
     complexityOfNeedsMockApi.stubSubjectAccessRequestErrorResponse(500, subjectAccessRequestParams)
 
-    val actual = assertThrows<WebClientResponseException> {
+    val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
       genericApiGateway.getSarData(
         serviceUrl = serviceUrl,
         prn = PRN,
@@ -163,9 +171,94 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual).isInstanceOf(InternalServerError::class.java)
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$serviceUrl")
+    assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
 
-    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
+    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(3, subjectAccessRequestParams)
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertAppInsightsRequestStartedEvent()
+    assertAppInsightsRequestExceptionEvent()
+  }
+
+  @Test
+  fun `get subject access request data errors with 5xx on initial request and succeeds on retry`() {
+    complexityOfNeedsMockApi.stubSubjectAccessRequestErrorWith5xxOnInitialRequestSucceedOnRetry(
+      subjectAccessRequestParams,
+    )
+
+    val actual = genericApiGateway.getSarData(
+      serviceUrl = serviceUrl,
+      prn = PRN,
+      crn = CRN,
+      dateFrom = dateFrom,
+      dateTo = dateTo,
+      subjectAccessRequest = subjectAccessRequestMock,
+    )
+
+    assertSuccessResponseBody(actual)
+
+    verify(authGatewayMock, times(1)).getClientToken()
+    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(2, subjectAccessRequestParams)
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertAppInsightsRequestStartedEvent()
+    assertAppInsightsRequestCompleteEvent()
+  }
+
+  @Test
+  fun `get subject access request data retries on connection refused error`() {
+    val randomUrl = "http://localhost:12345"
+
+    val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+      genericApiGateway.getSarData(
+        serviceUrl = randomUrl,
+        prn = PRN,
+        crn = CRN,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
+        subjectAccessRequest = subjectAccessRequestMock,
+      )
+    }
+
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$randomUrl")
+    assertThat(actual.cause).isInstanceOf(WebClientRequestException::class.java)
+    assertThat(actual.cause!!.message).contains("Connection refused")
+
+    complexityOfNeedsMockApi.verifyZeroInteractions()
+    verifyAppInsightsTrackEventIsCalled(2)
+    assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
+    assertThat(appInsightsEventNameCaptor.allValues[0]).isEqualTo("ServiceDataRequestStarted")
+
+    assertThat(appInsightsPropertiesCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
+    assertThat(appInsightsPropertiesCaptor.allValues[0]).containsExactlyInAnyOrderEntriesOf(
+      mapOf(
+        "sarId" to sarCaseReferenceNumber,
+        "UUID" to subjectAccessRequestId.toString(),
+        "serviceURL" to randomUrl,
+      ),
+    )
+    assertAppInsightsRequestExceptionEvent()
+  }
+
+  @Test
+  fun `get subject access request error connection reset by peer`() {
+    complexityOfNeedsMockApi.stubSubjectAccessRequestFault(subjectAccessRequestParams)
+
+    val actual = assertThrows<SubjectAccessRequestException> {
+      genericApiGateway.getSarData(
+        serviceUrl = serviceUrl,
+        prn = PRN,
+        crn = CRN,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
+        subjectAccessRequest = subjectAccessRequestMock,
+      )
+    }
+
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$serviceUrl")
+    assertThat(actual.cause).isInstanceOf(WebClientRequestException::class.java)
+
+    verify(authGatewayMock, times(1)).getClientToken()
+    complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(3, subjectAccessRequestParams)
     verifyAppInsightsTrackEventIsCalled(2)
     assertAppInsightsRequestStartedEvent()
     assertAppInsightsRequestExceptionEvent()

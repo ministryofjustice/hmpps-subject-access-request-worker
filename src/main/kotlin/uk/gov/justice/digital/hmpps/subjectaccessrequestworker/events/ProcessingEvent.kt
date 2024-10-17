@@ -7,4 +7,5 @@ enum class ProcessingEvent {
   GET_UNCLAIMED_REQUESTS,
   CLAIM_REQUEST,
   COMPLETE_REQUEST,
+  GET_SAR_DATA,
 }

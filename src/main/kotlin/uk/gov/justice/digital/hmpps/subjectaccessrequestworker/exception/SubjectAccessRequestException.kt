@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import org.springframework.http.HttpStatusCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import java.net.URI
 import java.util.UUID
 
 open class SubjectAccessRequestException : RuntimeException {
@@ -12,14 +13,14 @@ open class SubjectAccessRequestException : RuntimeException {
     event: ProcessingEvent,
     subjectAccessRequestId: UUID?,
     message: String,
-  ) : super(MSG_FORMAT_NO_STATUS.format(message, subjectAccessRequestId, event.name))
+  ) : super("%s, id=%s, event=%s".format(message, subjectAccessRequestId, event.name))
 
   constructor(
     event: ProcessingEvent,
     subjectAccessRequestId: UUID?,
     message: String,
     cause: Throwable,
-  ) : super(MSG_FORMAT_NO_STATUS.format(message, subjectAccessRequestId, event.name), cause)
+  ) : super("%s, id=%s, event=%s".format(message, subjectAccessRequestId, event.name), cause)
 
   constructor(
     event: ProcessingEvent,
@@ -27,17 +28,53 @@ open class SubjectAccessRequestException : RuntimeException {
     httpStatusCode: HttpStatusCode,
     message: String,
     cause: Throwable,
-  ) : super(MSG_FORMAT_WITH_STATUS.format(message, subjectAccessRequestId, event.name, httpStatusCode), cause)
+  ) : super(
+    "%s, id=%s, event=%s, httpStatus=%s".format(message, subjectAccessRequestId, event.name, httpStatusCode),
+    cause,
+  )
 
   constructor(
     event: ProcessingEvent,
     subjectAccessRequestId: UUID?,
     httpStatusCode: HttpStatusCode,
     message: String,
-  ) : super(MSG_FORMAT_WITH_STATUS.format(message, subjectAccessRequestId, event.name, httpStatusCode))
+  ) : super("%s, id=%s, event=%s, httpStatus=%s".format(message, subjectAccessRequestId, event.name, httpStatusCode))
+
+  constructor(
+    event: ProcessingEvent,
+    subjectAccessRequestId: UUID?,
+    httpStatusCode: HttpStatusCode,
+    uri: URI,
+    message: String,
+  ) : super(
+    "%s, id=%s, event=%s, uri=%s, httpStatus=%s".format(
+      message,
+      subjectAccessRequestId,
+      event.name,
+      formatURI(uri),
+      httpStatusCode,
+    ),
+  )
+
+  constructor(
+    event: ProcessingEvent,
+    subjectAccessRequestId: UUID?,
+    uri: URI,
+    message: String,
+    cause: Throwable,
+  ) : super(
+    "%s, id=%s, event=%s, uri=%s".format(
+      message,
+      subjectAccessRequestId,
+      event.name,
+      formatURI(uri),
+    ),
+    cause,
+  )
 
   companion object {
-    const val MSG_FORMAT_NO_STATUS = "%s, id=%s, event=%s"
-    const val MSG_FORMAT_WITH_STATUS = "$MSG_FORMAT_NO_STATUS, httpStatus=%s"
+    fun formatURI(uri: URI): String {
+      return "${uri.scheme}://${uri.host}:${uri.port}${uri.path}"
+    }
   }
 }
