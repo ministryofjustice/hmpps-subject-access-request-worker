@@ -121,7 +121,7 @@ class ComplexityOfNeedsMockServer : WireMockServer(
         .willReturn(
           aResponse()
             .withStatus(200)
-            .withHeader("Content-Type", "application/json")
+            .withHeader("Content-Type", "application/json"),
         ),
     )
   }

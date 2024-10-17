@@ -14,11 +14,9 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.GenericHmppsApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ComplexityOfNeedsApiExtension
@@ -177,14 +175,14 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
   fun `get subject access request data returns status 200 with no body`() {
     complexityOfNeedsMockApi.stubSubjectAccessRequestSuccessNoBody(subjectAccessRequestParams)
 
-    val actual =  genericApiGateway.getSarData(
-        serviceUrl = serviceUrl,
-        prn = PRN,
-        crn = CRN,
-        dateFrom = dateFrom,
-        dateTo = dateTo,
-        subjectAccessRequest = subjectAccessRequestMock,
-      )
+    val actual = genericApiGateway.getSarData(
+      serviceUrl = serviceUrl,
+      prn = PRN,
+      crn = CRN,
+      dateFrom = dateFrom,
+      dateTo = dateTo,
+      subjectAccessRequest = subjectAccessRequestMock,
+    )
 
     assertThat(actual).isNull()
 
