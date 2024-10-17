@@ -12,11 +12,25 @@ import java.time.LocalDate
 class GetSubjectAccessRequestDataService(@Autowired val genericHmppsApiGateway: GenericHmppsApiGateway) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  fun execute(services: List<DpsService>, nomisId: String? = null, ndeliusId: String? = null, dateFrom: LocalDate? = null, dateTo: LocalDate? = null, subjectAccessRequest: SubjectAccessRequest? = null): List<DpsService> {
+  fun execute(
+    services: List<DpsService>,
+    nomisId: String? = null,
+    ndeliusId: String? = null,
+    dateFrom: LocalDate? = null,
+    dateTo: LocalDate? = null,
+    subjectAccessRequest: SubjectAccessRequest? = null,
+  ): List<DpsService> {
     val orderedServices = this.order(services)
 
     orderedServices.forEach {
-      val response: Map<*, *>? = genericHmppsApiGateway.getSarData(it.url!!, nomisId, ndeliusId, dateFrom, dateTo, subjectAccessRequest)
+      val response: Map<*, *>? = genericHmppsApiGateway.getSarData(
+        it.url!!,
+        nomisId,
+        ndeliusId,
+        dateFrom,
+        dateTo,
+        subjectAccessRequest,
+      )
       if (response != null && response.containsKey("content")) {
         it.content = response["content"]
       } else {
