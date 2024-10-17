@@ -1,16 +1,14 @@
 <h1>Incentives</h1>
 {{#.}}
-    <h2>Incentive - ID {{ optionalValue id}}</h2>
+    <h2>Incentive</h2>
     <br>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Booking ID</td>
             <td class="data-column-25">Prisoner Number</td>
             <td class="data-column-30">Next review date</td>
             <td class="data-column-20">Review type</td>
         </tr>
         <tr>
-            <td>{{ optionalValue bookingId }}</td>
             <td>{{ optionalValue prisonerNumber }}</td>
             <td>{{ optionalValue (formatDate nextReviewDate)}}</td>
             <td>{{ optionalValue reviewType }}</td>
@@ -21,13 +19,11 @@
             <td class="data-column-25">Prison ID</td>
             <td class="data-column-25">Location ID</td>
             <td class="data-column-30">Review time</td>
-            <td class="data-column-20">Reviewed by</td>
         </tr>
         <tr>
             <td>{{ optionalValue prisonId }}</td>
             <td>{{ optionalValue locationId }}</td>
             <td>{{ optionalValue (formatDate reviewTime) }}</td>
-            <td>{{ optionalValue reviewedBy }}</td>
         </tr>
     </table>
     <table class="data-table">

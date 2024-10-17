@@ -5,15 +5,11 @@
         <h3>Licence</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">ID</td>
                 <td class="data-column-25">Prison number</td>
-                <td class="data-column-25">Booking ID</td>
-                <td class="data-column-25"></td>
+                <td class="data-column-75"></td>
             </tr>
             <tr>
-                <td>{{ optionalValue id }}</td>
                 <td>{{ optionalValue prisonNumber }}</td>
-                <td>{{ optionalValue bookingId }}</td>
                 <td></td>
             </tr>
         </table>
@@ -119,16 +115,16 @@
         <h3>Licence version</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">ID</td>
                 <td class="data-column-25">Prison number</td>
-                <td class="data-column-25">Booking ID</td>
                 <td class="data-column-25">Timestamp</td>
+                <td class="data-column-25"></td>
+                <td class="data-column-25"></td>
             </tr>
             <tr>
-                <td>{{ optionalValue id }}</td>
                 <td>{{ optionalValue prisonNumber }}</td>
-                <td>{{ optionalValue bookingId }}</td>
                 <td>{{ optionalValue (formatDate timestamp) }}</td>
+                <td></td>
+                <td></td>
             </tr>
         </table>
         <table class="data-table">
@@ -515,25 +511,5 @@
 
         {{/licence}}
     {{/licenceVersions}}
-
     <br>
-    <br>
-    <h2>Audit events</h2>
-    {{#auditEvents}}
-        <h3>Audit event</h3>
-        <br>
-        <table class="summary-list">
-            <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
-            <tr><td>Timestamp</td><td>{{ optionalValue (formatDate timestamp) }}</td></tr>
-            <tr><td>User</td><td>{{ optionalValue user }}</td></tr>
-            <tr><td>Action</td><td>{{ optionalValue action }}</td></tr>
-        {{#details}}
-            <tr><td>Path</td><td>{{ optionalValue path }}</td></tr>
-            <tr><td>Booking ID</td><td>{{ optionalValue bookingId }}</td></tr>
-        {{#userInput}}
-            <tr><td>User input required</td><td>{{ optionalValue required }}</td></tr>
-        {{/userInput}}
-        {{/details}}
-        </table>
-    {{/auditEvents}}
 {{/.}}

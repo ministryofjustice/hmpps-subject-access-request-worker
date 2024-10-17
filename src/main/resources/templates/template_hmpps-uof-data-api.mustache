@@ -1,6 +1,6 @@
 <h1>Use of force</h1>
 {{#.}}
-    <h2>Incident of use of force - ID {{ optionalValue id }}</h2>
+    <h2>Incident of use of force</h2>
     <br>
     <table class="data-table">
         <tr>
@@ -18,16 +18,16 @@
     </table>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Sequence number</td>
             <td class="data-column-25">Deleted</td>
             <td class="data-column-25">Incident date</td>
             <td class="data-column-25">Date submitted</td>
+            <td class="data-column-25"></td>
         </tr>
         <tr>
-            <td>{{ optionalValue sequenceNo }}</td>
             <td>{{ optionalValue (formatDate deleted) }}</td>
             <td>{{ optionalValue (formatDate incidentDate)}}</td>
             <td>{{ optionalValue (formatDate submittedDate) }}</td>
+            <td></td>
         </tr>
     </table>
     <table class="data-table">
@@ -35,13 +35,13 @@
             <td class="data-column-25">Status</td>
             <td class="data-column-25">Agency ID</td>
             <td class="data-column-25">Reporter name</td>
-            <td class="data-column-25">User ID</td>
+            <td class="data-column-25"></td>
         </tr>
         <tr>
             <td>{{ optionalValue status }}</td>
             <td>{{ optionalValue agencyId }}</td>
             <td>{{ optionalValue reporterName }}</td>
-            <td>{{ optionalValue userId }}</td>
+            <td></td>
         </tr>
     </table>
 
@@ -277,8 +277,6 @@
             <tr><td></td></tr><tr><td>{{{ optionalValue statement }}}</td></tr>
         </table>
         <table class="summary-list">
-            <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
-            <tr><td>Report ID</td><td>{{ optionalValue reportId }}</td></tr>
             <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
             <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
             <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
@@ -286,14 +284,11 @@
             <tr><td>Next reminder date</td><td>{{ optionalValue (formatDate nextReminderDate) }}</td></tr>
             <tr><td>Overdue date</td><td>{{ optionalValue (formatDate overdueDate) }}</td></tr>
             <tr><td>Removal requested date</td><td>{{ optionalValue (formatDate removalRequestedDate) }}</td></tr>
-            <tr><td>User ID</td><td>{{ optionalValue userId }}</td></tr>
             <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
-            <tr><td>Email</td><td>{{ optionalValue email }}</td></tr>
             <tr><td>Statement status</td><td>{{ optionalValue statementStatus }}</td></tr>
             <tr><td>Last training month</td><td>{{ optionalValue lastTrainingMonth }}</td></tr>
             <tr><td>Last training year</td><td>{{ optionalValue lastTrainingYear }}</td></tr>
             <tr><td>Job start year</td><td>{{ optionalValue jobStartYear }}</td></tr>
-            <tr><td>Staff ID</td><td>{{ optionalValue staffId }}</td></tr>
             <tr><td>In progress</td><td>{{ optionalValue inProgress }}</td></tr>
             <tr><td>Removal requested reason</td><td>{{ optionalValue removalRequestedReason }}</td></tr>
         </table>
