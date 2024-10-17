@@ -4,8 +4,6 @@
     <table class="summary-list">
         <tr><td>Charge number</td><td>{{ optionalValue chargeNumber }}</td></tr>
         <tr><td>Prisoner number</td><td>{{ optionalValue prisonerNumber }}</td></tr>
-        <tr><td>Gender</td><td>{{ optionalValue gender }}</td></tr>
-        <tr><td>Youth offender</td><td>{{ optionalValue isYouthOffender }}</td></tr>
     </table>
 
     <br>
@@ -44,7 +42,6 @@
                 <table class="summary-list">
                     <tr><td>Paragraph number</td><td>{{ optionalValue paragraphNumber }}</td></tr>
                     <tr><td>Description</td><td>{{ optionalValue paragraphDescription }}</td></tr>
-                    <tr><td>Nomis code</td><td>{{ optionalValue nomisCode }}</td></tr>
                     <tr><td>With others Nomis code</td><td>{{ optionalValue withOthersNomisCode }}</td></tr>
                 </table>
             {{/offenceRule}}
@@ -76,10 +73,8 @@
     <br>
     <h3>Creation details</h3>
         <table class="summary-list">
-            <tr><td>Created by</td><td>{{ optionalValue createdByUserId }}</td></tr>
             <tr><td>Created on</td><td>{{ optionalValue (formatDate createdDateTime) }}</td></tr>
             <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
-            <tr><td>Reviewed by</td><td>{{ optionalValue reviewedByUserId }}</td></tr>
             <tr><td>Status reason</td><td>{{ optionalValue statusReason }}</td></tr>
             <tr><td>Status details</td><td>{{ optionalValue statusDetails }}</td></tr>
         </table>
@@ -89,14 +84,12 @@
     <table class="data-table">
         <tr>
             <td class="data-column-30">Code</td>
-            <td class="data-column-50">Details</td>
-            <td class="data-column-20">Reporter</td>
+            <td class="data-column-70">Details</td>
         </tr>
         {{#damages}}
             <tr>
                 <td>{{ optionalValue code }}</td>
                 <td>{{ optionalValue details }}</td>
-                <td>{{ optionalValue reporter }}</td>
             </tr>
         {{/damages}}
     </table>
@@ -144,7 +137,6 @@
     {{#hearings}}
         <table class="summary-list">
             <tr><td>Date and time of hearing</td><td>{{ optionalValue (formatDate dateTimeOfHearing) }}</td></tr>
-            <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
             <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
             <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
             <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>

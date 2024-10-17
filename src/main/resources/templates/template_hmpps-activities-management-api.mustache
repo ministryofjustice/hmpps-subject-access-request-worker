@@ -10,19 +10,17 @@
     <h2>Allocations</h2>
     {{#allocations}}
         <br>
-        <h3>Allocation - ID {{ optionalValue allocationId }}</h3>
+        <h3>Allocation</h3>
     <table class="data-table">
         <tr>
             <td class="data-column-25">Prison Code</td>
             <td class="data-column-25">Prisoner Status</td>
-            <td class="data-column-30">Activity summary</td>
-            <td class="data-column-20">Activity ID</td>
+            <td class="data-column-50">Activity summary</td>
         </tr>
             <tr>
                 <td>{{ optionalValue prisonCode }}</td>
                 <td>{{ optionalValue prisonerStatus }}</td>
                 <td>{{ optionalValue activitySummary }}</td>
-                <td>{{ optionalValue activityId }}</td>
             </tr>
     </table>
     <table class="data-table">
@@ -104,7 +102,7 @@
     <h2>Appointments</h2>
     {{#appointments}}
         <br>
-        <h3>Appointment - ID {{ optionalValue appointmentId }}</h3>
+        <h3>Appointment</h3>
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Prison Code</td>
