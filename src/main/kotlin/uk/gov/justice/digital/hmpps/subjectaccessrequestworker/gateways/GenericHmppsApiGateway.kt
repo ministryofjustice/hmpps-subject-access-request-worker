@@ -41,7 +41,7 @@ class GenericHmppsApiGateway(
   companion object {
     private const val SAR_API_PATH = "/subject-access-request"
     private const val RETRY_ERR_LOG_FMT =
-      "get subject access data request failed with error, url:%s, id=%s attempting retry"
+      "get subject access data request failed with error, url:%s, id=%s attempting retry after backoff: %s"
     private const val PRN_PARAM = "prn"
     private const val CRN_PARAM = "crn"
     private const val FROM_DATE_PARAM = "fromDate"
@@ -112,6 +112,39 @@ class GenericHmppsApiGateway(
       customRetrySpec(subjectAccessRequest, serviceUrl),
     ).block()
 
+  private fun handle4xxStatus(subjectAccessRequest: SubjectAccessRequest?) = { response: ClientResponse ->
+    Mono.error<SubjectAccessRequestException>(
+      FatalSubjectAccessRequestException(
+        GET_SAR_DATA,
+        subjectAccessRequest?.id,
+        response.request().uri,
+        response.statusCode(),
+      ),
+    )
+  }
+
+  private fun customRetrySpec(subjectAccessRequest: SubjectAccessRequest?, serviceUrl: String) = Retry
+    .backoff(maxRetries, backOff)
+    .filter { err -> isRetryableError(err) }
+    .doBeforeRetry { signal ->
+      LOG.error(RETRY_ERR_LOG_FMT.format(serviceUrl, subjectAccessRequest?.id, backOff), signal.failure())
+    }
+    .onRetryExhaustedThrow { _, signal ->
+      SubjectAccessRequestRetryExhaustedException(
+        GET_SAR_DATA,
+        subjectAccessRequest?.id,
+        URI(serviceUrl),
+        signal.failure(),
+        signal.totalRetries(),
+      )
+    }
+
+  /**
+   * An error is "retryable" if it's a 5xx error or a client request error. 4xx client response errors are not retried.
+   */
+  private fun isRetryableError(error: Throwable): Boolean =
+    error is WebClientResponseException && error.statusCode.is5xxServerError || error is WebClientRequestException
+
   fun TelemetryClient.dataRequestStarted(subjectAccessRequest: SubjectAccessRequest?, serviceUrl: String) {
     telemetryClient.trackSarEvent(
       "ServiceDataRequestStarted",
@@ -169,37 +202,4 @@ class GenericHmppsApiGateway(
       "responseStatus" to responseStatus,
     )
   }
-
-  private fun handle4xxStatus(subjectAccessRequest: SubjectAccessRequest?) = { response: ClientResponse ->
-    Mono.error<SubjectAccessRequestException>(
-      FatalSubjectAccessRequestException(
-        GET_SAR_DATA,
-        subjectAccessRequest?.id,
-        response.request().uri,
-        response.statusCode(),
-      ),
-    )
-  }
-
-  private fun customRetrySpec(subjectAccessRequest: SubjectAccessRequest?, serviceUrl: String) = Retry
-    .backoff(maxRetries, backOff)
-    .filter { err -> isRetryableError(err) }
-    .doBeforeRetry { signal ->
-      LOG.error(RETRY_ERR_LOG_FMT.format(serviceUrl, subjectAccessRequest?.id), signal.failure())
-    }
-    .onRetryExhaustedThrow { _, signal ->
-      SubjectAccessRequestRetryExhaustedException(
-        GET_SAR_DATA,
-        subjectAccessRequest?.id,
-        URI(serviceUrl),
-        signal.failure(),
-        signal.totalRetries(),
-      )
-    }
-
-  /**
-   * An error is "retryable" if it's a 5xx error or a client request error. 4xx client response errors are not retried.
-   */
-  private fun isRetryableError(error: Throwable): Boolean =
-    error is WebClientResponseException && error.statusCode.is5xxServerError || error is WebClientRequestException
 }
