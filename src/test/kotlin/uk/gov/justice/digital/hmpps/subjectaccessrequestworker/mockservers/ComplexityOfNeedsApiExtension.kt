@@ -9,12 +9,12 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.http.Fault
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ComplexityOfNeedsApiExtension.Companion.complexityOfNeedsMockApi
 import java.time.LocalDate
 
 class ComplexityOfNeedsApiExtension :
@@ -71,10 +71,8 @@ class ComplexityOfNeedsMockServer : WireMockServer(
   }
 
   fun stubSubjectAccessRequestSuccessResponse(params: GetSubjectAccessRequestParams) {
-    complexityOfNeedsMockApi.stubFor(
-      get(
-        urlPathEqualTo("/subject-access-request"),
-      )
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request"))
         .withQueryParam("prn", equalTo(params.prn))
         .withQueryParam("crn", equalTo(params.crn))
         .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
@@ -90,10 +88,8 @@ class ComplexityOfNeedsMockServer : WireMockServer(
   }
 
   fun stubSubjectAccessRequestErrorResponse(status: Int, params: GetSubjectAccessRequestParams) {
-    complexityOfNeedsMockApi.stubFor(
-      get(
-        urlPathEqualTo("/subject-access-request"),
-      )
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request"))
         .withQueryParam("prn", equalTo(params.prn))
         .withQueryParam("crn", equalTo(params.crn))
         .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
@@ -108,11 +104,43 @@ class ComplexityOfNeedsMockServer : WireMockServer(
     )
   }
 
+  fun stubSubjectAccessRequestErrorWith5xxOnInitialRequestSucceedOnRetry(params: GetSubjectAccessRequestParams) {
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request"))
+        .withQueryParam("prn", equalTo(params.prn))
+        .withQueryParam("crn", equalTo(params.crn))
+        .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
+        .withQueryParam("toDate", equalTo(params.dateTo.toString()))
+        .withHeader("Authorization", equalTo("Bearer ${params.authToken}"))
+        .inScenario("fail-on-initial-request")
+        .willReturn(
+          aResponse()
+            .withStatus(500)
+            .withHeader("Content-Type", "application/json"),
+        ).willSetStateTo("failed-initial-request"),
+    )
+
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request"))
+        .inScenario("fail-on-initial-request")
+        .whenScenarioStateIs("failed-initial-request")
+        .withQueryParam("prn", equalTo(params.prn))
+        .withQueryParam("crn", equalTo(params.crn))
+        .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
+        .withQueryParam("toDate", equalTo(params.dateTo.toString()))
+        .withHeader("Authorization", equalTo("Bearer ${params.authToken}"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withHeader("Content-Type", "application/json")
+            .withBody(SAR_RESPONSE),
+        ),
+    )
+  }
+
   fun stubSubjectAccessRequestSuccessNoBody(params: GetSubjectAccessRequestParams) {
-    complexityOfNeedsMockApi.stubFor(
-      get(
-        urlPathEqualTo("/subject-access-request"),
-      )
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request"))
         .withQueryParam("prn", equalTo(params.prn))
         .withQueryParam("crn", equalTo(params.crn))
         .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
@@ -122,6 +150,21 @@ class ComplexityOfNeedsMockServer : WireMockServer(
           aResponse()
             .withStatus(200)
             .withHeader("Content-Type", "application/json"),
+        ),
+    )
+  }
+
+  fun stubSubjectAccessRequestFault(params: GetSubjectAccessRequestParams) {
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request"))
+        .withQueryParam("prn", equalTo(params.prn))
+        .withQueryParam("crn", equalTo(params.crn))
+        .withQueryParam("fromDate", equalTo(params.dateFrom.toString()))
+        .withQueryParam("toDate", equalTo(params.dateTo.toString()))
+        .withHeader("Authorization", equalTo("Bearer ${params.authToken}"))
+        .willReturn(
+          aResponse()
+            .withFault(Fault.CONNECTION_RESET_BY_PEER),
         ),
     )
   }
