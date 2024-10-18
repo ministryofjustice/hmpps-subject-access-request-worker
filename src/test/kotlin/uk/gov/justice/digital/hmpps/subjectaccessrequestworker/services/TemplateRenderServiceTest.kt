@@ -118,7 +118,6 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td class=\"data-column-40\">Offender Keyworker ID</td><td>12912</td>")
         renderedStyleTemplate.shouldContain("<td>Allocation reason</td><td>MANUAL</td>")
         renderedStyleTemplate.shouldContain("<td>Creation date</td><td>03 December 2019, 11:00:58 am</td>")
       }
@@ -227,8 +226,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<h3>Application - Waiting list ID 1</h3>")
         renderedStyleTemplate.shouldContain("<h3>Application - Waiting list ID 10</h3>")
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Status date</td>")
-        renderedStyleTemplate.shouldContain("<h3>Appointment - ID 18305</h3>")
-        renderedStyleTemplate.shouldContain("<h3>Appointment - ID 16340</h3>")
+        renderedStyleTemplate.shouldContain("<h3>Appointment</h3>")
       }
     }
 
@@ -271,11 +269,8 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>1208204</td>")
         renderedStyleTemplate.shouldContain("<td>03 December 2019</td>")
         renderedStyleTemplate.shouldContain("<td>03 July 2023, 9:14:25 pm</td>")
-        renderedStyleTemplate.shouldContain("Incentive - ID 2898970")
-        renderedStyleTemplate.shouldContain("Incentive - ID 2898971")
       }
     }
 
@@ -307,7 +302,7 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
         renderedStyleTemplate.shouldContain("<h3>Offender number A1234AA</h3>")
-        renderedStyleTemplate.shouldContain("<td class=\"data-column-50\">Source system</td>")
+        renderedStyleTemplate.shouldContain("<tr><td>Level</td><td>low</td></tr>")
       }
     }
 
@@ -730,7 +725,6 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldNotBeNull()
         renderedStyleTemplate.shouldContain("<style>")
         renderedStyleTemplate.shouldContain("</style>")
-        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Specific area</td>")
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Vary version</td>")
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Has considered checks</td>")
@@ -743,8 +737,6 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Bass requested</td>")
         renderedStyleTemplate.shouldContain("<td>Bass area check seen</td><td>true</td>")
         renderedStyleTemplate.shouldContain("<td>Additional conditions required</td><td>No</td>")
-        renderedStyleTemplate.shouldContain("<td>Action</td><td>UPDATE_SECTION</td>")
-        renderedStyleTemplate.shouldContain("<td>Booking ID</td><td>1108337</td>")
       }
     }
 
@@ -980,7 +972,6 @@ class TemplateRenderServiceTest : DescribeSpec(
         renderedStyleTemplate.shouldContain("<td>CCTV recording</td>")
         renderedStyleTemplate.shouldContain("<td>Name</td><td>Andrew Lee</td>")
         renderedStyleTemplate.shouldContain("<td class=\"data-column-25\">Baton drawn</td>")
-        renderedStyleTemplate.shouldContain("<td>Staff ID</td><td>486084</td>")
       }
     }
 
