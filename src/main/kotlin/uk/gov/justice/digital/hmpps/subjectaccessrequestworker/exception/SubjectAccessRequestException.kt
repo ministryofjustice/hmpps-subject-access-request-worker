@@ -1,80 +1,52 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
-import org.springframework.http.HttpStatusCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import java.net.URI
 import java.util.UUID
 
-open class SubjectAccessRequestException : RuntimeException {
+open class SubjectAccessRequestException(
+  message: String,
+  cause: Throwable? = null,
+  private val event: ProcessingEvent?,
+  private val subjectAccessRequestId: UUID? = null,
+  private val params: Map<String, *>? = null,
+) : RuntimeException(message, cause) {
 
-  constructor(message: String) : super(message)
+  constructor(message: String): this(message, null, null, null)
 
-  constructor(
-    event: ProcessingEvent,
-    subjectAccessRequestId: UUID?,
-    message: String,
-  ) : super("%s, id=%s, event=%s".format(message, subjectAccessRequestId, event.name))
+  override val message: String?
+    get() {
+      val formattedParams = params?.entries?.joinToString(", ") { entry ->
+        val second = if (entry.value is URI) {
+          formatURI(entry.value as URI)
+        } else {
+          entry.value.toString()
+        }
+        "${entry.key}=${second}"
+      }
 
-  constructor(
-    event: ProcessingEvent,
-    subjectAccessRequestId: UUID?,
-    message: String,
-    cause: Throwable,
-  ) : super("%s, id=%s, event=%s".format(message, subjectAccessRequestId, event.name), cause)
+      if (formattedParams.isNullOrEmpty()) {
+        return "${super.message}, event=$event, id=$subjectAccessRequestId"
+      }
 
-  constructor(
-    event: ProcessingEvent,
-    subjectAccessRequestId: UUID?,
-    httpStatusCode: HttpStatusCode,
-    message: String,
-    cause: Throwable,
-  ) : super(
-    "%s, id=%s, event=%s, httpStatus=%s".format(message, subjectAccessRequestId, event.name, httpStatusCode),
-    cause,
-  )
-
-  constructor(
-    event: ProcessingEvent,
-    subjectAccessRequestId: UUID?,
-    httpStatusCode: HttpStatusCode,
-    message: String,
-  ) : super("%s, id=%s, event=%s, httpStatus=%s".format(message, subjectAccessRequestId, event.name, httpStatusCode))
-
-  constructor(
-    event: ProcessingEvent,
-    subjectAccessRequestId: UUID?,
-    httpStatusCode: HttpStatusCode,
-    uri: URI,
-    message: String,
-  ) : super(
-    "%s, id=%s, event=%s, uri=%s, httpStatus=%s".format(
-      message,
-      subjectAccessRequestId,
-      event.name,
-      formatURI(uri),
-      httpStatusCode,
-    ),
-  )
-
-  constructor(
-    event: ProcessingEvent,
-    subjectAccessRequestId: UUID?,
-    uri: URI,
-    message: String,
-    cause: Throwable,
-  ) : super(
-    "%s, id=%s, event=%s, uri=%s".format(
-      message,
-      subjectAccessRequestId,
-      event.name,
-      formatURI(uri),
-    ),
-    cause,
-  )
-
-  companion object {
-    fun formatURI(uri: URI): String {
-      return "${uri.scheme}://${uri.host}:${uri.port}${uri.path}"
+      return "${super.message}, event=$event, id=$subjectAccessRequestId, $formattedParams"
     }
+
+  private fun formatURI(uri: URI): String {
+    return "${uri.scheme}://${uri.host}:${uri.port}${uri.path}"
   }
+
+}
+
+fun main(args: Array<String>) {
+  throw SubjectAccessRequestException(
+    "something happened",
+    RuntimeException("boom"),
+    ProcessingEvent.GET_SAR_DATA,
+    UUID.randomUUID(),
+    mapOf(
+      "status" to 401,
+      "url" to URI("http://localhost:8080/abc/123?a=b&c=d"),
+    ),
+  )
 }

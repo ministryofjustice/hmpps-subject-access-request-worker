@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
@@ -18,9 +19,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import java.net.URI
 import java.time.LocalDate
 import java.util.Optional
+import java.util.function.Predicate
 
 @Component
 class GenericHmppsApiGateway(
@@ -104,7 +105,7 @@ class GenericHmppsApiGateway(
     .header("Authorization", "Bearer $clientToken")
     .retrieve()
     .onStatus(
-      { status -> status.is4xxClientError },
+      is4xxStatus(),
       handle4xxStatus(subjectAccessRequest),
     )
     .toEntity(Map::class.java)
@@ -112,13 +113,19 @@ class GenericHmppsApiGateway(
       customRetrySpec(subjectAccessRequest, serviceUrl),
     ).block()
 
+  private fun is4xxStatus(): Predicate<HttpStatusCode> =
+    Predicate<HttpStatusCode> { code: HttpStatusCode -> code.is4xxClientError }
+
   private fun handle4xxStatus(subjectAccessRequest: SubjectAccessRequest?) = { response: ClientResponse ->
     Mono.error<SubjectAccessRequestException>(
       FatalSubjectAccessRequestException(
-        GET_SAR_DATA,
-        subjectAccessRequest?.id,
-        response.request().uri,
-        response.statusCode(),
+        message = "client 4xx response status",
+        event = GET_SAR_DATA,
+        subjectAccessRequestId = subjectAccessRequest?.id,
+        params = mapOf(
+          "uri" to response.request().uri,
+          "httpStatus" to response.statusCode(),
+        ),
       ),
     )
   }
@@ -131,11 +138,13 @@ class GenericHmppsApiGateway(
     }
     .onRetryExhaustedThrow { _, signal ->
       SubjectAccessRequestRetryExhaustedException(
-        GET_SAR_DATA,
-        subjectAccessRequest?.id,
-        URI(serviceUrl),
-        signal.failure(),
-        signal.totalRetries(),
+        retryAttempts = signal.totalRetries(),
+        cause = signal.failure(),
+        event = GET_SAR_DATA,
+        subjectAccessRequestId = subjectAccessRequest?.id,
+        params = mapOf(
+          "uri" to serviceUrl,
+        ),
       )
     }
 
