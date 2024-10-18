@@ -148,7 +148,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=$subjectAccessRequestId, event=${GET_SAR_DATA}, uri=$serviceUrl/subject-access-request, httpStatus=400 BAD_REQUEST")
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error: client 4xx response status, event=${GET_SAR_DATA}, id=$subjectAccessRequestId, uri=$serviceUrl/subject-access-request, httpStatus=400 BAD_REQUEST")
 
     complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
     verifyAppInsightsTrackEventIsCalled(2)
@@ -171,7 +171,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$serviceUrl")
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, event=$GET_SAR_DATA, id=$subjectAccessRequestId, uri=$serviceUrl")
     assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
 
     complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(3, subjectAccessRequestParams)
@@ -219,7 +219,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$randomUrl")
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, event=$GET_SAR_DATA, id=$subjectAccessRequestId, uri=$randomUrl")
     assertThat(actual.cause).isInstanceOf(WebClientRequestException::class.java)
     assertThat(actual.cause!!.message).contains("Connection refused")
 
@@ -254,7 +254,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$serviceUrl")
+    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, event=$GET_SAR_DATA, id=$subjectAccessRequestId, uri=$serviceUrl")
     assertThat(actual.cause).isInstanceOf(WebClientRequestException::class.java)
 
     verify(authGatewayMock, times(1)).getClientToken()
