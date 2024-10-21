@@ -15,6 +15,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
@@ -115,10 +116,12 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
 
   @Test
   fun `get subject access request data errors getting client auth token`() {
-    whenever(authGatewayMock.getClientToken())
-      .thenThrow(RuntimeException::class.java)
+    val error = RuntimeException("client auth token error")
 
-    assertThrows<RuntimeException> {
+    whenever(authGatewayMock.getClientToken())
+      .thenThrow(error)
+
+    val actual = assertThrows<SubjectAccessRequestException> {
       genericApiGateway.getSarData(
         serviceUrl = serviceUrl,
         prn = PRN,
@@ -128,6 +131,16 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
         subjectAccessRequest = subjectAccessRequestMock,
       )
     }
+
+    assertExpectedErrorMessage(
+      actual = actual,
+      prefix = "failed to obtain client auth token,",
+      "event" to GET_SAR_DATA,
+      "id" to subjectAccessRequestId,
+      "serviceUrl" to serviceUrl,
+    )
+
+    assertThat(actual.cause).isEqualTo(error)
 
     complexityOfNeedsMockApi.verifyZeroInteractions()
     verifyAppInsightsTrackEventIsNeverCalled()
@@ -148,7 +161,14 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed with non-retryable error, id=$subjectAccessRequestId, event=${GET_SAR_DATA}, uri=$serviceUrl/subject-access-request, httpStatus=400 BAD_REQUEST")
+    assertExpectedErrorMessage(
+      actual = actual,
+      prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
+      "event" to GET_SAR_DATA,
+      "id" to subjectAccessRequestId,
+      "uri" to "$serviceUrl/subject-access-request",
+      "httpStatus" to HttpStatus.BAD_REQUEST,
+    )
 
     complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(1, subjectAccessRequestParams)
     verifyAppInsightsTrackEventIsCalled(2)
@@ -171,7 +191,14 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$serviceUrl")
+    assertExpectedErrorMessage(
+      actual = actual,
+      prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
+      "event" to GET_SAR_DATA,
+      "id" to subjectAccessRequestId,
+      "uri" to serviceUrl,
+    )
+
     assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
 
     complexityOfNeedsMockApi.verifyGetSubjectAccessRequestSuccessIsCalled(3, subjectAccessRequestParams)
@@ -219,7 +246,13 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$randomUrl")
+    assertExpectedErrorMessage(
+      actual = actual,
+      prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
+      "event" to GET_SAR_DATA,
+      "id" to subjectAccessRequestId,
+      "uri" to randomUrl,
+    )
     assertThat(actual.cause).isInstanceOf(WebClientRequestException::class.java)
     assertThat(actual.cause!!.message).contains("Connection refused")
 
@@ -254,7 +287,13 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
     }
 
-    assertThat(actual.message).isEqualTo("subjectAccessRequest failed and max retry attempts (2) exhausted, id=$subjectAccessRequestId, event=$GET_SAR_DATA, uri=$serviceUrl")
+    assertExpectedErrorMessage(
+      actual = actual,
+      prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
+      "event" to GET_SAR_DATA,
+      "id" to subjectAccessRequestId,
+      "uri" to serviceUrl,
+    )
     assertThat(actual.cause).isInstanceOf(WebClientRequestException::class.java)
 
     verify(authGatewayMock, times(1)).getClientToken()
@@ -294,12 +333,12 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       )
   }
 
-  fun verifyAppInsightsTrackEventIsNeverCalled() {
+  private fun verifyAppInsightsTrackEventIsNeverCalled() {
     verify(telemetryClientMock, never())
       .trackEvent(any(), any(), any())
   }
 
-  fun assertAppInsightsRequestStartedEvent() {
+  private fun assertAppInsightsRequestStartedEvent() {
     assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
     assertThat(appInsightsEventNameCaptor.allValues[0]).isEqualTo("ServiceDataRequestStarted")
 
@@ -313,7 +352,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
     )
   }
 
-  fun assertAppInsightsRequestCompleteEvent() {
+  private fun assertAppInsightsRequestCompleteEvent() {
     assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
     assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestComplete")
 
@@ -322,7 +361,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       .containsOnlyKeys("sarId", "UUID", "serviceURL", "eventTime", "responseSize", "responseStatus")
   }
 
-  fun assertAppInsightsRequestExceptionEvent() {
+  private fun assertAppInsightsRequestExceptionEvent() {
     assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
     assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestException")
 
@@ -331,7 +370,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       .containsOnlyKeys("sarId", "UUID", "serviceURL", "eventTime", "responseSize", "responseStatus", "errorMessage")
   }
 
-  fun assertAppInsightsRequestNoDataEvent() {
+  private fun assertAppInsightsRequestNoDataEvent() {
     assertThat(appInsightsEventNameCaptor.allValues).hasSizeGreaterThanOrEqualTo(2)
     assertThat(appInsightsEventNameCaptor.allValues[1]).isEqualTo("ServiceDataRequestNoData")
 
@@ -340,7 +379,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       .containsOnlyKeys("sarId", "UUID", "serviceURL", "eventTime", "responseSize", "responseStatus")
   }
 
-  fun assertSuccessResponseBody(actual: Map<*, *>?) {
+  private fun assertSuccessResponseBody(actual: Map<*, *>?) {
     assertThat(actual).isNotNull
     assertThat(actual).isInstanceOf(Map::class.java)
 
@@ -352,5 +391,13 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
 
     val additionalProp1 = content["additionalProp1"] as Map<*, *>
     assertThat(additionalProp1["field1"]).isEqualTo("value1")
+  }
+
+  private fun assertExpectedErrorMessage(actual: Throwable, prefix: String, vararg params: Pair<String, *>) {
+    val formattedParams = params.joinToString(", ") { entry ->
+      "${entry.first}=${entry.second}"
+    }
+    val expected = "$prefix $formattedParams"
+    assertThat(actual.message).isEqualTo(expected)
   }
 }
