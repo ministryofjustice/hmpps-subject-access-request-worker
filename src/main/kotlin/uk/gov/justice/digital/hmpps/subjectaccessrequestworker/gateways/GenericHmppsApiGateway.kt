@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 import java.util.Optional
+import java.util.UUID
 import java.util.function.Predicate
 
 @Component
@@ -59,7 +60,7 @@ class GenericHmppsApiGateway(
     dateTo: LocalDate? = null,
     subjectAccessRequest: SubjectAccessRequest? = null,
   ): Map<*, *>? {
-    val clientToken = authGateway.getClientToken()
+    val clientToken = getAuthToken(subjectAccessRequest?.id, serviceUrl)
 
     val stopWatch = StopWatch.createStarted()
     telemetryClient.dataRequestStarted(subjectAccessRequest, serviceUrl)
@@ -153,6 +154,20 @@ class GenericHmppsApiGateway(
    */
   private fun isRetryableError(error: Throwable): Boolean =
     error is WebClientResponseException && error.statusCode.is5xxServerError || error is WebClientRequestException
+
+  fun getAuthToken(subjectAccessRequestId: UUID?, serviceUrl: String): String {
+    try {
+      return authGateway.getClientToken()
+    } catch (ex: Exception) {
+      throw SubjectAccessRequestException(
+        message = "failed to obtain client auth token",
+        cause = ex,
+        event = GET_SAR_DATA,
+        subjectAccessRequestId = subjectAccessRequestId,
+        mapOf("serviceUrl" to serviceUrl),
+      )
+    }
+  }
 
   fun TelemetryClient.dataRequestStarted(subjectAccessRequest: SubjectAccessRequest?, serviceUrl: String) {
     telemetryClient.trackSarEvent(

@@ -12,19 +12,11 @@ open class SubjectAccessRequestException(
   private val params: Map<String, *>? = null,
 ) : RuntimeException(message, cause) {
 
-  constructor(message: String): this(message, null, null, null)
+  constructor(message: String) : this(message, null, null, null)
 
   override val message: String?
     get() {
-      val formattedParams = params?.entries?.joinToString(", ") { entry ->
-        val second = if (entry.value is URI) {
-          formatURI(entry.value as URI)
-        } else {
-          entry.value.toString()
-        }
-        "${entry.key}=${second}"
-      }
-
+      val formattedParams = params?.toFormattedString()
       if (formattedParams.isNullOrEmpty()) {
         return "${super.message}, event=$event, id=$subjectAccessRequestId"
       }
@@ -32,10 +24,16 @@ open class SubjectAccessRequestException(
       return "${super.message}, event=$event, id=$subjectAccessRequestId, $formattedParams"
     }
 
-  private fun formatURI(uri: URI): String {
-    return "${uri.scheme}://${uri.host}:${uri.port}${uri.path}"
+  private fun Map<String, *>.toFormattedString() = this.entries.joinToString(", ") { entry ->
+    val value = entry.value
+    val second = if (value is URI) {
+      // Return URI without the query string
+      "${value.scheme}://${value.host}:${value.port}${value.path}"
+    } else {
+      entry.value.toString()
+    }
+    "${entry.key}=$second"
   }
-
 }
 
 fun main(args: Array<String>) {

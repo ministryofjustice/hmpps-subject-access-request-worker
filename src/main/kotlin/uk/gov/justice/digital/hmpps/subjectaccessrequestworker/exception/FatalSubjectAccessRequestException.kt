@@ -15,7 +15,11 @@ class FatalSubjectAccessRequestException(
   subjectAccessRequestId: UUID? = null,
   params: Map<String, *>? = null,
 ) : SubjectAccessRequestException(
-  FATAL_ERROR_MESSAGE_PREFIX.format(message), cause, event, subjectAccessRequestId, params,
+  FATAL_ERROR_MESSAGE_PREFIX.format(message),
+  cause,
+  event,
+  subjectAccessRequestId,
+  params,
 ) {
 
   constructor(
