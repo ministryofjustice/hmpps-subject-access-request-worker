@@ -35,16 +35,3 @@ open class SubjectAccessRequestException(
     "${entry.key}=$second"
   }
 }
-
-fun main(args: Array<String>) {
-  throw SubjectAccessRequestException(
-    "something happened",
-    RuntimeException("boom"),
-    ProcessingEvent.GET_SAR_DATA,
-    UUID.randomUUID(),
-    mapOf(
-      "status" to 401,
-      "url" to URI("http://localhost:8080/abc/123?a=b&c=d"),
-    ),
-  )
-}
