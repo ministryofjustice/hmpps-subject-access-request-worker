@@ -2203,6 +2203,26 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Prisoner categorisation")
       }
 
+      it("renders for G1 Service") {
+        val testServiceData: Map<Any, Any> = mapOf(
+          "data" to "Data is held",
+        )
+
+        val testResponseObject = listOf(DpsService(name = "manage-soc-cases-api", content = testServiceData))
+        val writer = PdfWriter(FileOutputStream("dummy-manage-soc-cases-api-template.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+
+        mockDocument.close()
+        val reader = PdfDocument(PdfReader("dummy-manage-soc-cases-api-template.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+
+        Assertions.assertThat(text).contains("Data is held")
+      }
+
       it("converts data to YAML format in the event of no template") {
         val testInput = mapOf(
           "testDateText" to "Test",
