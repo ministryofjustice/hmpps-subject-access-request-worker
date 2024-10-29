@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SAR_DATA
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
@@ -29,6 +28,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Compl
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ComplexityOfNeedsApiExtension.Companion.complexityOfNeedsMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ComplexityOfNeedsMockServer.GetSubjectAccessRequestParams
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.time.LocalDate
 import java.util.UUID
 
@@ -36,7 +36,7 @@ import java.util.UUID
 class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
 
   @Autowired
-  private lateinit var webClientConfiguration: WebClientConfiguration
+  private lateinit var webClientRetriesSpec: WebClientRetriesSpec
 
   @Mock
   private lateinit var authGatewayMock: HmppsAuthGateway
@@ -89,7 +89,11 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
     whenever(subjectAccessRequestMock.sarCaseReferenceNumber)
       .thenReturn(sarCaseReferenceNumber)
 
-    genericApiGateway = GenericHmppsApiGateway(authGatewayMock, telemetryClientMock, webClientConfiguration)
+    genericApiGateway = GenericHmppsApiGateway(
+      authGatewayMock,
+      telemetryClientMock,
+      webClientRetriesSpec,
+    )
   }
 
   @Test
