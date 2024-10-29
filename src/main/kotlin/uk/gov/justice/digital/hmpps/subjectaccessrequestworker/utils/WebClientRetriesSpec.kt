@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
-
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
@@ -29,8 +28,11 @@ class WebClientRetriesSpec(webClientConfiguration: WebClientConfiguration) {
     private val LOG = LoggerFactory.getLogger(WebClientRetriesSpec::class.java)
   }
 
-  fun retry5xxAndClientRequestErrors(event: ProcessingEvent, subjectAccessRequestId: UUID?, params: Map<String, Any>?):
-    RetryBackoffSpec {
+  fun retry5xxAndClientRequestErrors(
+    event: ProcessingEvent,
+    subjectAccessRequestId: UUID?,
+    params: Map<String, Any>?,
+  ): RetryBackoffSpec {
     return Retry
       .backoff(maxRetries, backOff)
       .filter { err -> is5xxOrClientRequestError(err) }
@@ -78,5 +80,4 @@ class WebClientRetriesSpec(webClientConfiguration: WebClientConfiguration) {
   private fun Map<String, Any>.formatted(): String {
     return "${this.entries.joinToString(",") { "${it.key}=${it.value}" }}"
   }
-
 }
