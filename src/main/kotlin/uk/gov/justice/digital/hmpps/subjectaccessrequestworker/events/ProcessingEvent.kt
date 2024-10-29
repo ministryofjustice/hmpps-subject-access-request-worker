@@ -8,4 +8,5 @@ enum class ProcessingEvent {
   CLAIM_REQUEST,
   COMPLETE_REQUEST,
   GET_SAR_DATA,
+  STORE_DOCUMENT,
 }
