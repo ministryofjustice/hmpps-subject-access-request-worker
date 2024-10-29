@@ -16,13 +16,13 @@ generic-service:
 
   resources:
     limits:
-      memory: 5Gi
+      memory: 3Gi
     requests:
-      memory: 4Gi
+      memory: 2Gi
 
   # Environment variables to load into the deployment
   env:
-    JAVA_OPTS: "-Xmx8g"
+    JAVA_OPTS: "-Xmx2g"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "logstash"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
