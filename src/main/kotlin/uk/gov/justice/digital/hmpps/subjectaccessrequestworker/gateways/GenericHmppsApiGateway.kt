@@ -2,33 +2,23 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways
 
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.time.StopWatch
-import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientRequestException
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import reactor.core.publisher.Mono
-import reactor.util.retry.Retry
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SAR_DATA
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.time.LocalDate
 import java.util.Optional
 import java.util.UUID
-import java.util.function.Predicate
 
 @Component
 class GenericHmppsApiGateway(
   val authGateway: HmppsAuthGateway,
   val telemetryClient: TelemetryClient,
-  webClientConfig: WebClientConfiguration,
+  val webClientRetriesSpec: WebClientRetriesSpec,
 ) {
 
   private val webClient = WebClient
@@ -37,19 +27,12 @@ class GenericHmppsApiGateway(
       configurer.defaultCodecs().maxInMemorySize(100 * 1024 * 1024)
     }.build()
 
-  private val maxRetries = webClientConfig.maxRetries
-  private val backOff = webClientConfig.getBackoffDuration()
-
   companion object {
     private const val SAR_API_PATH = "/subject-access-request"
-    private const val RETRY_ERR_LOG_FMT =
-      "get subject access data request failed with error, url:%s, id=%s attempting retry after backoff: %s"
     private const val PRN_PARAM = "prn"
     private const val CRN_PARAM = "crn"
     private const val FROM_DATE_PARAM = "fromDate"
     private const val TO_DATE_PARAM = "toDate"
-
-    private val LOG = LoggerFactory.getLogger(this::class.java)
   }
 
   fun getSarData(
@@ -106,54 +89,22 @@ class GenericHmppsApiGateway(
     .header("Authorization", "Bearer $clientToken")
     .retrieve()
     .onStatus(
-      is4xxStatus(),
-      handle4xxStatus(subjectAccessRequest),
+      webClientRetriesSpec.is4xxStatus(),
+      webClientRetriesSpec.throw4xxStatusFatalError(
+        GET_SAR_DATA,
+        subjectAccessRequest?.id,
+      ),
     )
     .toEntity(Map::class.java)
     .retryWhen(
-      customRetrySpec(subjectAccessRequest, serviceUrl),
-    ).block()
-
-  private fun is4xxStatus(): Predicate<HttpStatusCode> =
-    Predicate<HttpStatusCode> { code: HttpStatusCode -> code.is4xxClientError }
-
-  private fun handle4xxStatus(subjectAccessRequest: SubjectAccessRequest?) = { response: ClientResponse ->
-    Mono.error<SubjectAccessRequestException>(
-      FatalSubjectAccessRequestException(
-        message = "client 4xx response status",
-        event = GET_SAR_DATA,
-        subjectAccessRequestId = subjectAccessRequest?.id,
-        params = mapOf(
-          "uri" to response.request().uri,
-          "httpStatus" to response.statusCode(),
-        ),
-      ),
-    )
-  }
-
-  private fun customRetrySpec(subjectAccessRequest: SubjectAccessRequest?, serviceUrl: String) = Retry
-    .backoff(maxRetries, backOff)
-    .filter { err -> isRetryableError(err) }
-    .doBeforeRetry { signal ->
-      LOG.error(RETRY_ERR_LOG_FMT.format(serviceUrl, subjectAccessRequest?.id, backOff), signal.failure())
-    }
-    .onRetryExhaustedThrow { _, signal ->
-      SubjectAccessRequestRetryExhaustedException(
-        retryAttempts = signal.totalRetries(),
-        cause = signal.failure(),
-        event = GET_SAR_DATA,
-        subjectAccessRequestId = subjectAccessRequest?.id,
-        params = mapOf(
+      webClientRetriesSpec.retry5xxAndClientRequestErrors(
+        GET_SAR_DATA,
+        subjectAccessRequest?.id,
+        mapOf(
           "uri" to serviceUrl,
         ),
-      )
-    }
-
-  /**
-   * An error is "retryable" if it's a 5xx error or a client request error. 4xx client response errors are not retried.
-   */
-  private fun isRetryableError(error: Throwable): Boolean =
-    error is WebClientResponseException && error.statusCode.is5xxServerError || error is WebClientRequestException
+      ),
+    ).block()
 
   fun getAuthToken(subjectAccessRequestId: UUID?, serviceUrl: String): String {
     try {
