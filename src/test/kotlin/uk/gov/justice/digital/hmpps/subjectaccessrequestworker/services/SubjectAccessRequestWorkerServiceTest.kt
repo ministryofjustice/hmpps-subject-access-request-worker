@@ -20,10 +20,10 @@ import org.mockito.kotlin.whenever
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.DocumentStorageGateway
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.PrisonApiGateway
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.ProbationApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
@@ -45,7 +45,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val dateTo = "02/01/2024"
   private val dateToFormatted = LocalDate.parse(dateTo, formatter)
   private val requestTime = LocalDateTime.now()
-  private val documentGateway: DocumentStorageGateway = mock()
+  private val documentStorageClient: DocumentStorageClient = mock()
   private val sampleSAR = SubjectAccessRequest(
     id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
     status = Status.Pending,
@@ -95,9 +95,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   )
   private val mockSarGateway: SubjectAccessRequestGateway = mock()
   private val mockGetSubjectAccessRequestDataService: GetSubjectAccessRequestDataService = mock()
-  private val mockPrisonApiGateway: PrisonApiGateway = mock()
-  private val mockProbationApiGateway: ProbationApiGateway = mock()
-  private val mockGeneratePdfService: GeneratePdfService = mock()
+  private val prisonApiClient: PrisonApiClient = mock()
+  private val probationApiClient: ProbationApiClient = mock()
+  private val generatePdfService: GeneratePdfService = mock()
   private val mockStream: ByteArrayOutputStream = mock()
   private val telemetryClient: TelemetryClient = mock()
   private val configOrderHelper: ConfigOrderHelper = mock()
@@ -107,10 +107,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(
     mockSarGateway,
     mockGetSubjectAccessRequestDataService,
-    documentGateway,
-    mockGeneratePdfService,
-    mockPrisonApiGateway,
-    mockProbationApiGateway,
+    documentStorageClient,
+    generatePdfService,
+    prisonApiClient,
+    probationApiClient,
     configOrderHelper,
     "http://localhost:8080",
     telemetryClient,
@@ -164,14 +164,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ),
     )
       .thenReturn(mockDpsServices)
-    whenever(mockGeneratePdfService.createPdfStream())
+    whenever(generatePdfService.createPdfStream())
       .thenReturn(mockStream)
-    whenever(mockGeneratePdfService.getPdfWriter(mockStream))
+    whenever(generatePdfService.getPdfWriter(mockStream))
       .thenReturn(mockWriter)
-    whenever(mockProbationApiGateway.getOffenderName("1"))
+    whenever(probationApiClient.getOffenderName("1"))
       .thenReturn("TEST, Name")
     whenever(
-      mockGeneratePdfService.execute(
+      generatePdfService.execute(
         services = mockDpsServices,
         nomisId = null,
         ndeliusCaseReferenceId = "1",
@@ -183,7 +183,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ),
     )
       .thenReturn(mockStream)
-    whenever(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
+    whenever(documentStorageClient.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
       .thenReturn("")
 
     subjectAccessRequestWorkerService.doPoll()
@@ -228,14 +228,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockDpsServices)
-      whenever(mockGeneratePdfService.createPdfStream())
+      whenever(generatePdfService.createPdfStream())
         .thenReturn(mockStream)
-      whenever(mockGeneratePdfService.getPdfWriter(mockStream))
+      whenever(generatePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
-      whenever(mockProbationApiGateway.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName("1"))
         .thenReturn("TEST, Name")
       whenever(
-        mockGeneratePdfService.execute(
+        generatePdfService.execute(
           services = mockDpsServices,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
@@ -324,14 +324,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockDpsServices)
-      whenever(mockGeneratePdfService.createPdfStream())
+      whenever(generatePdfService.createPdfStream())
         .thenReturn(mockStream)
-      whenever(mockGeneratePdfService.getPdfWriter(mockStream))
+      whenever(generatePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
-      whenever(mockProbationApiGateway.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName("1"))
         .thenReturn("TEST, Name")
       whenever(
-        mockGeneratePdfService.execute(
+        generatePdfService.execute(
           services = mockDpsServices,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
@@ -343,7 +343,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockStream)
-      whenever(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
+      whenever(documentStorageClient.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
         .thenReturn("")
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
@@ -373,12 +373,12 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockDpsServices)
-      whenever(mockGeneratePdfService.createPdfStream()).thenReturn(mockStream)
-      whenever(mockGeneratePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
-      whenever(mockProbationApiGateway.getOffenderName("1"))
+      whenever(generatePdfService.createPdfStream()).thenReturn(mockStream)
+      whenever(generatePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
+      whenever(probationApiClient.getOffenderName("1"))
         .thenReturn("TEST, Name")
       whenever(
-        mockGeneratePdfService.execute(
+        generatePdfService.execute(
           services = mockDpsServices,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
@@ -390,7 +390,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(mockStream)
       whenever(
-        documentGateway.storeDocument(
+        documentStorageClient.storeDocument(
           UUID.fromString("11111111-1111-1111-1111-111111111111"),
           mockStream,
         ),
@@ -398,7 +398,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(mockGeneratePdfService, times(1)).execute(any(), eq(null), any(), any(), any(), any(), any(), any(), any())
+      verify(generatePdfService, times(1)).execute(any(), eq(null), any(), any(), any(), any(), any(), any(), any())
     }
 
     @Test
@@ -423,14 +423,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockDpsServices)
-      whenever(mockGeneratePdfService.createPdfStream())
+      whenever(generatePdfService.createPdfStream())
         .thenReturn(mockStream)
-      whenever(mockGeneratePdfService.getPdfWriter(mockStream))
+      whenever(generatePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
-      whenever(mockProbationApiGateway.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName("1"))
         .thenReturn("TEST, Name")
       whenever(
-        mockGeneratePdfService.execute(
+        generatePdfService.execute(
           services = mockDpsServices,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
@@ -442,12 +442,12 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockStream)
-      whenever(documentGateway.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
+      whenever(documentStorageClient.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
         .thenReturn("")
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
-      verify(documentGateway, times(1)).storeDocument(
+      verify(documentStorageClient, times(1)).storeDocument(
         UUID.fromString("11111111-1111-1111-1111-111111111111"),
         mockStream,
       )

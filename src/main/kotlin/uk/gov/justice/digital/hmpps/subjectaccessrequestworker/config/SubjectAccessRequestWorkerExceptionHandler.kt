@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
-class HmppsSubjectAccessRequestWorkerExceptionHandler(
+class SubjectAccessRequestWorkerExceptionHandler(
   private val telemetryClient: TelemetryClient,
 ) {
   @ExceptionHandler(ValidationException::class)

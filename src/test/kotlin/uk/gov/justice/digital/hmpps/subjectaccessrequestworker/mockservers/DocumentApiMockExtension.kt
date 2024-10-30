@@ -7,55 +7,35 @@ import com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.binaryEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.api.extension.TestInstancePostProcessor
 
-class DocumentApiMockExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback, TestInstancePostProcessor {
-
-  companion object {
-    @JvmField
-    val documentApiMock = DocumentApiMockServer()
-  }
-
-  override fun beforeAll(p0: ExtensionContext?) {
-    documentApiMock.start()
-  }
-
-  override fun afterAll(p0: ExtensionContext?) {
-    documentApiMock.stop()
-  }
-
-  override fun beforeEach(p0: ExtensionContext?) {
-    documentApiMock.resetRequests()
-    documentApiMock.resetScenarios()
-  }
-
-  override fun postProcessTestInstance(testInstance: Any?, context: ExtensionContext?) {
-    try {
-      val field = testInstance?.javaClass?.getField("documentApiMock")
-      field?.set(testInstance, documentApiMock)
-    } catch (e: NoSuchFieldException) {
-    }
-  }
-}
-
-class DocumentApiMockServer : WireMockServer(WireMockConfiguration.wireMockConfig().port(4040)) {
+class DocumentApiMockServer : WireMockServer(8084) {
 
   companion object {
     const val SERVICE_NAME_HEADER = "DPS-Subject-Access-Requests"
   }
 
-  fun stubUploadFileSuccess(subjectAccessRequestId: String, authToken: String, expectedFileContent: ByteArray) {
+  fun stubHealthPing(status: Int) {
+    stubFor(
+      get("/health/ping").willReturn(
+        aResponse()
+          .withHeader("Content-Type", "application/json")
+          .withBody("""{"status":"${if (status == 200) "UP" else "DOWN"}"}""")
+          .withStatus(status),
+      ),
+    )
+  }
+
+  fun stubUploadFileSuccess(subjectAccessRequestId: String, expectedFileContent: ByteArray) {
     stubFor(
       post(urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"))
-        .withHeader("Authorization", equalTo("Bearer $authToken"))
         .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
         .withMultipartRequestBody(
           aMultipart()
@@ -71,18 +51,16 @@ class DocumentApiMockServer : WireMockServer(WireMockConfiguration.wireMockConfi
     )
   }
 
-  fun verifyStoreDocumentIsCalled(times: Int, subjectAccessRequestId: String, authToken: String) {
+  fun verifyStoreDocumentIsCalled(times: Int, subjectAccessRequestId: String) {
     verify(
       times,
       postRequestedFor(urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"))
-        .withHeader("Authorization", equalTo("Bearer $authToken"))
         .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER)),
     )
   }
 
   fun stubUploadFileFailsWithStatus(
     subjectAccessRequestId: String,
-    authToken: String,
     expectedFileContent: ByteArray,
     status: Int,
   ) {
@@ -90,7 +68,6 @@ class DocumentApiMockServer : WireMockServer(WireMockConfiguration.wireMockConfi
       post(
         urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"),
       )
-        .withHeader("Authorization", equalTo("Bearer $authToken"))
         .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
         .withMultipartRequestBody(
           aMultipart()
@@ -142,4 +119,15 @@ class DocumentApiMockServer : WireMockServer(WireMockConfiguration.wireMockConfi
   fun verifyNeverCalled() {
     verify(0, anyRequestedFor(anyUrl()))
   }
+}
+
+class DocumentApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+  companion object {
+    @JvmField
+    val documentApi = DocumentApiMockServer()
+  }
+
+  override fun beforeAll(context: ExtensionContext): Unit = documentApi.start()
+  override fun beforeEach(context: ExtensionContext): Unit = documentApi.resetAll()
+  override fun afterAll(context: ExtensionContext): Unit = documentApi.stop()
 }

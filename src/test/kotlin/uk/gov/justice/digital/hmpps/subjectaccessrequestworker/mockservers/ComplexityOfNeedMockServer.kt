@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.github.tomakehurst.wiremock.client.WireMock.matching
 
 class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
@@ -15,7 +14,6 @@ class ComplexityOfNeedMockServer : WireMockServer(WIREMOCK_PORT) {
   fun stubGetSubjectAccessRequestData() {
     stubFor(
       get(sarEndpoint)
-        .withHeader("Authorization", matching("Bearer ${HmppsAuthMockServer.TOKEN}"))
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")

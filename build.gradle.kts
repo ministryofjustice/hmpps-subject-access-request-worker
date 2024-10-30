@@ -1,6 +1,6 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.6"
-  kotlin("plugin.spring") version "2.0.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.8"
+  kotlin("plugin.spring") version "2.0.21"
 }
 
 configurations {
@@ -20,14 +20,17 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.4.0")
   implementation("org.apache.commons:commons-lang3:3.17.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2")
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.14.0")
-  implementation("io.sentry:sentry-logback:7.14.0")
-  testImplementation("org.wiremock:wiremock-standalone:3.9.1")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.16.0")
+  implementation("io.sentry:sentry-logback:7.16.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.8")
+
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.0.8")
+  testImplementation("org.wiremock:wiremock-standalone:3.9.2")
   testImplementation("io.kotest:kotest-assertions-json-jvm:5.9.1")
   testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
   testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-  testImplementation("io.mockk:mockk:1.13.12")
+  testImplementation("io.mockk:mockk:1.13.13")
 }
 
 kotlin {

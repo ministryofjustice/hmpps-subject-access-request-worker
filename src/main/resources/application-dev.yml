@@ -1,20 +1,29 @@
-services:
-  hmpps-auth:
-    base-url: https://sign-in-dev.hmpps.service.justice.gov.uk
-    username: ${SYSTEM_CLIENT_ID}
-    password: ${SYSTEM_CLIENT_SECRET}
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sar-db
+    username: admin
+    password: admin_password
 
-  prison-api:
-    base-url: https://prison-api-dev.prison.service.justice.gov.uk
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${hmpps-auth.url}/.well-known/jwks.json
 
-  probation-api:
-    base-url: https://subject-access-requests-and-delius-dev.hmpps.service.justice.gov.uk
+      client:
+        provider:
+          hmpps-auth:
+            token-uri: ${hmpps-auth.url}/oauth/token
 
-  sar-api:
-    base-url: https://subject-access-request-api-dev.hmpps.service.justice.gov.uk
+        registration:
+          sar-client:
+            provider: hmpps-auth
+            client-id: "hmpps-subject-access-request"
+            client-secret: "clientsecret"
+            authorization-grant-type: client_credentials
+            scope: read
 
-  document-storage:
-    base-url: https://document-api-dev.hmpps.service.justice.gov.uk
-
-  env:
-    SENTRY_ENV: dev
+hmpps-auth:
+  url: http://localhost:9090/auth
+  client-id: "hmpps-subject-access-request"
+  client-secret: "clientsecret"

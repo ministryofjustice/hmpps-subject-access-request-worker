@@ -10,20 +10,16 @@ web-client:
     max-retries: 2
     back-off: PT1S
 
-services:
-  hmpps-auth:
-    base-url: http://localhost:3000
-    username: mock-username
-    password: mock-password
 
-  prison-api:
-    base-url: http://localhost:4001
-
-  ndelius-api:
-    base-url: http://localhost:4002
-
-  document-storage:
-    base-url: http://localhost:4040
-
-  sar-api:
-    base-url: http://localhost:8080
+hmpps-auth:
+  url: "http://localhost:9090/auth"
+  client-id: "hmpps-subject-access-request"
+  client-secret: "clientsecret"
+prison-api:
+  url: "http://localhost:8079"
+probation-api:
+  url: "http://localhost:4002"
+document-storage:
+  url: "http://localhost:8084"
+sar-api:
+  url: "http://localhost:8092"

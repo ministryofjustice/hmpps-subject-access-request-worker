@@ -2,27 +2,86 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.http.HttpHeader
+import com.github.tomakehurst.wiremock.http.HttpHeaders
+import org.junit.jupiter.api.extension.AfterAllCallback
+import org.junit.jupiter.api.extension.BeforeAllCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+
+class HmppsAuthApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+  companion object {
+    @JvmField
+    val hmppsAuth = HmppsAuthMockServer()
+  }
+
+  override fun beforeAll(context: ExtensionContext) {
+    hmppsAuth.start()
+  }
+
+  override fun beforeEach(context: ExtensionContext) {
+    hmppsAuth.resetRequests()
+  }
+
+  override fun afterAll(context: ExtensionContext) {
+    hmppsAuth.stop()
+  }
+}
 
 class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
-    val TOKEN = "mock-bearer-token"
-    private const val WIREMOCK_PORT = 3000
+    private const val WIREMOCK_PORT = 9090
   }
 
-  private val authUrl = "/auth/oauth/token?grant_type=client_credentials"
+  fun stubGrantToken() {
+    stubFor(
+      post(urlEqualTo("/auth/oauth/token"))
+        .willReturn(
+          aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(
+              """
+                {
+                  "token_type": "bearer",
+                  "access_token": "ABCDE",
+                  "expires_in": ${LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC)}
+                }
+              """.trimIndent(),
+            ),
+        ),
+    )
+  }
 
+  fun stubHealthPing(status: Int) {
+    stubFor(
+      get("/auth/health/ping").willReturn(
+        aResponse()
+          .withHeader("Content-Type", "application/json")
+          .withBody(if (status == 200) """{"status":"UP"}""" else """{"status":"DOWN"}""")
+          .withStatus(status),
+      ),
+    )
+  }
   fun stubGetOAuthToken(client: String, clientSecret: String) {
     stubFor(
-      WireMock.post(authUrl)
+      post("/auth/oauth/token?grant_type=client_credentials")
         .withBasicAuth(client, clientSecret)
         .willReturn(
-          WireMock.aResponse()
+          aResponse()
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
             .withBody(
               """
-                { 
-                  "access_token": "$TOKEN"
+                {
+                  "token_type": "bearer",
+                  "access_token": "ABCDE",
+                  "expires_in": ${LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC)}
                 }
               """.trimIndent(),
             ),
@@ -32,7 +91,7 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
 
   fun stubServiceUnavailableForGetOAuthToken() {
     stubFor(
-      WireMock.post(authUrl)
+      post("/auth/oauth/token?grant_type=client_credentials")
         .willReturn(
           WireMock.serviceUnavailable(),
         ),
@@ -41,7 +100,7 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
 
   fun stubUnauthorizedForGetOAAuthToken() {
     stubFor(
-      WireMock.post(authUrl)
+      post("/auth/oauth/token?grant_type=client_credentials")
         .willReturn(
           WireMock.unauthorized(),
         ),

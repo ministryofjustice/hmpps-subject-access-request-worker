@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.DocumentStorageGateway
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.PrisonApiGateway
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.ProbationApiGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -27,12 +27,12 @@ const val POLL_DELAY: Long = 10000
 class SubjectAccessRequestWorkerService(
   @Autowired val sarGateway: SubjectAccessRequestGateway,
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
-  @Autowired val documentStorageGateway: DocumentStorageGateway,
+  @Autowired val documentStorageClient: DocumentStorageClient,
   @Autowired val generatePdfService: GeneratePdfService,
-  @Autowired val prisonApiGateway: PrisonApiGateway,
-  @Autowired val probationApiGateway: ProbationApiGateway,
+  @Autowired val prisonApiClient: PrisonApiClient,
+  @Autowired val probationApiClient: ProbationApiClient,
   @Autowired val configOrderHelper: ConfigOrderHelper,
-  @Value("\${services.sar-api.base-url}") private val sarUrl: String,
+  @Value("\${sar-api.url}") private val sarUrl: String,
   private val telemetryClient: TelemetryClient,
 ) {
 
@@ -156,7 +156,7 @@ class SubjectAccessRequestWorkerService(
   }
 
   fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
-    val response = documentStorageGateway.storeDocument(sarId, docBody)
+    val response = documentStorageClient.storeDocument(sarId, docBody)
     return response
   }
 
@@ -199,10 +199,10 @@ class SubjectAccessRequestWorkerService(
 
   fun getSubjectName(prisonId: String?, probationId: String?): String {
     if (prisonId !== null) {
-      return prisonApiGateway.getOffenderName(prisonId)
+      return prisonApiClient.getOffenderName(prisonId)
     }
     if (probationId !== null) {
-      return probationApiGateway.getOffenderName(probationId)
+      return probationApiClient.getOffenderName(probationId)
     }
     throw RuntimeException("Prison and Probation IDs are both null")
   }
