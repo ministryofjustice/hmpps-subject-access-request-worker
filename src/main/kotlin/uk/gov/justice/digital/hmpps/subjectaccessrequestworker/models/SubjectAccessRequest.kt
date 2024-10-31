@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models
 
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -13,11 +9,8 @@ enum class Status {
   Completed,
 }
 
-@Entity
 data class SubjectAccessRequest(
-  @Id
   val id: UUID = UUID.randomUUID(),
-  @Enumerated(EnumType.STRING)
   val status: Status = Status.Pending,
   val dateFrom: LocalDate? = null,
   val dateTo: LocalDate? = null,
