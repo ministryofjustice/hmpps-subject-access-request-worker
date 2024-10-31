@@ -11,19 +11,6 @@ class ProbationApiClient(
   private val probationApiWebClient: WebClient,
 ) {
 
-//  fun getOffenderName(personOnProbationId: String): PersonOnProbationDetails? = probationApiWebClient
-//    .get()
-//    .uri("/probation-case/$personOnProbationId")
-//    .retrieve()
-//    .bodyToMono(PersonOnProbationDetails::class.java)
-//    .block()
-//
-//  @JsonIgnoreProperties(ignoreUnknown = true)
-//  data class PersonOnProbationDetails(
-//    val forename: String,
-//    val surname: String,
-//  )
-
   fun getOffenderName(subjectId: String): String {
     return try {
       val response = probationApiWebClient

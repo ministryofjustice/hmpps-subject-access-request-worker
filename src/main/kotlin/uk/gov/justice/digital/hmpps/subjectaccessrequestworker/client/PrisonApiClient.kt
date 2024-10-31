@@ -12,19 +12,6 @@ class PrisonApiClient(
   private val prisonApiWebClient: WebClient,
 ) {
 
-//  fun getOffenderName(offenderId: String): PrisonerDetails? = prisonApiWebClient
-//    .get()
-//    .uri("/api/offenders/$offenderId")
-//    .retrieve()
-//    .bodyToMono(PrisonerDetails::class.java)
-//    .block()
-//
-//  @JsonIgnoreProperties(ignoreUnknown = true)
-//  data class PrisonerDetails(
-//    val firstName: String,
-//    val lastName: String,
-//  )
-
   fun getOffenderName(subjectId: String): String {
     return try {
       val response = prisonApiWebClient
