@@ -1,27 +1,21 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.util.Locale
 
-@Component
-class ProbationApiGateway(
-  @Autowired val hmppsAuthGateway: HmppsAuthGateway,
-  @Value("\${services.probation-api.base-url}") probationApiUrl: String,
+@Service
+class ProbationApiClient(
+  private val probationApiWebClient: WebClient,
 ) {
-  private val webClient: WebClient = WebClient.builder().baseUrl(probationApiUrl).build()
 
   fun getOffenderName(subjectId: String): String {
     return try {
-      val token = hmppsAuthGateway.getClientToken()
-      val response = webClient
+      val response = probationApiWebClient
         .get()
         .uri("/probation-case/$subjectId")
-        .header("Authorization", "Bearer $token")
         .retrieve()
         .bodyToMono(Map::class.java)
         .block()

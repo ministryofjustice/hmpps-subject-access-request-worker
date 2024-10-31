@@ -3,19 +3,27 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.github.tomakehurst.wiremock.client.WireMock.matching
+import org.junit.jupiter.api.extension.AfterAllCallback
+import org.junit.jupiter.api.extension.BeforeAllCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
 
-class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
-  companion object {
-    private const val WIREMOCK_PORT = 4001
+class PrisonApiMockServer : WireMockServer(8079) {
+
+  fun stubHealthPing(status: Int) {
+    stubFor(
+      get("/health/ping").willReturn(
+        aResponse()
+          .withHeader("Content-Type", "application/json")
+          .withBody("""{"status":"${if (status == 200) "UP" else "DOWN"}"}""")
+          .withStatus(status),
+      ),
+    )
   }
-
-  private val offenderIdPath = "/api/offenders/A9999AA"
 
   fun stubGetOffenderDetails() {
     stubFor(
-      get(offenderIdPath)
-        .withHeader("Authorization", matching("Bearer ${HmppsAuthMockServer.TOKEN}"))
+      get("/api/offenders/A9999AA")
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
@@ -23,13 +31,24 @@ class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
             .withBody(
               """
               {
-                "firstName": "FirstName",
-                "middleName": "MiddleName",
-                "lastName": "LastName"
+                "firstName": "JOE",
+                "middleName": "Jack",
+                "lastName": "Reacher"
               }
               """.trimIndent(),
             ),
         ),
     )
   }
+}
+
+class PrisonApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+  companion object {
+    @JvmField
+    val prisonApi = PrisonApiMockServer()
+  }
+
+  override fun beforeAll(context: ExtensionContext): Unit = prisonApi.start()
+  override fun beforeEach(context: ExtensionContext): Unit = prisonApi.resetAll()
+  override fun afterAll(context: ExtensionContext): Unit = prisonApi.stop()
 }

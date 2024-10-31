@@ -13,6 +13,25 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${hmpps-auth.url}/.well-known/jwks.json
+
+      client:
+        provider:
+          hmpps-auth:
+            token-uri: ${hmpps-auth.url}/oauth/token
+
+        registration:
+          sar-client:
+            provider: hmpps-auth
+            client-id: ${system.client.id}
+            client-secret: ${system.client.secret}
+            authorization-grant-type: client_credentials
+            scope: read
+
 server:
   port: 8081
   servlet:
@@ -50,18 +69,19 @@ web-client:
     max-retries: 2
     back-off: PT1M
 
-services:
-  prison-api:
-    base-url: http://localhost:4001
+hmpps-auth:
+  url: http://localhost:9090/auth
+  client-id: ${SYSTEM_CLIENT_ID}
+  client-secret: ${SYSTEM_CLIENT_SECRET}
+document-storage:
+  url: http://localhost:8084
+prison-api:
+  url: http://localhost:8079
+probation-api:
+  url: http://localhost:4002
+sar-api:
+  url: http://localhost:8080
 
-  probation-api:
-    base-url: http://localhost:4002
-
-  sar-api:
-    base-url: http://hmpps-subject-access-request
-
-  document-storage:
-    base-url: http://localhost:4040
 
 sentry:
   traces-sample-rate: "0.05"

@@ -10,20 +10,20 @@ import java.util.Base64
 
 @Component
 class HmppsAuthGateway(
-  @Value("\${services.hmpps-auth.base-url}") hmppsAuthUrl: String,
-  @Value("\${services.hmpps-auth.username}") var username: String,
-  @Value("\${services.hmpps-auth.password}") var password: String,
+  @Value("\${hmpps-auth.url}") hmppsAuthUrl: String,
+  @Value("\${hmpps-auth.client-id}") var clientId: String,
+  @Value("\${hmpps-auth.client-secret}") var clientSecret: String,
 ) {
   private val webClient: WebClient = WebClient.builder().baseUrl(hmppsAuthUrl).build()
 
   fun getClientToken(): String {
-    val encodedCredentials = Base64.getEncoder().encodeToString("$username:$password".toByteArray())
+    val encodedCredentials = Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())
     val basicAuthCredentials = "Basic $encodedCredentials"
 
     return try {
       val response = webClient
         .post()
-        .uri("/auth/oauth/token?grant_type=client_credentials")
+        .uri("/oauth/token?grant_type=client_credentials")
         .header("Authorization", basicAuthCredentials)
         .retrieve()
         .bodyToMono(String::class.java)
