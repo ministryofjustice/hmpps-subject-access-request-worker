@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.github.jknack.handlebars.Handlebars
 import com.github.mustachejava.DefaultMustacheFactory
-import org.hibernate.annotations.Cache
-import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
 import java.io.StringReader
@@ -18,7 +16,6 @@ class TemplateRenderService {
     return file.readText()
   }
 
-  @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
   fun getStyleTemplate(): String {
     val file = this::class.java
       .getResource("/templates/main_stylesheet.mustache")

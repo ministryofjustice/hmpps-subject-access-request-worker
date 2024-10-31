@@ -22,7 +22,7 @@ import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.time.StopWatch
-import org.hibernate.query.sqm.tree.SqmNode.log
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
@@ -45,6 +45,7 @@ const val DATA_LINE_SPACING = 16f
 @Service
 class GeneratePdfService {
   companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
     var dateConversionHelper = DateConversionHelper()
     var templateRenderService = TemplateRenderService()
     var telemetryClient = TelemetryClient()

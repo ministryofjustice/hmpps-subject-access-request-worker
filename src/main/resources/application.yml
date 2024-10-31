@@ -7,9 +7,6 @@ spring:
     name: hmpps-subject-access-request-worker
   codec:
     max-in-memory-size: 100MB
-  autoconfigure:
-    exclude:
-    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
