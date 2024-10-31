@@ -9,6 +9,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -39,7 +41,14 @@ abstract class BasePdfServiceTest {
     customSetup()
   }
 
-  abstract fun customSetup()
+  /**
+   * Override for to register custom setup
+   */
+  open protected fun customSetup() {}
+
+  fun writeIt(pdfStream: ByteArrayOutputStream) {
+    Files.write(Paths.get("/Users/david.llewellyn/development/test4.pdf"), pdfStream.toByteArray())
+  }
 
   protected fun generatorPdfForServices(services: List<DpsService>): ByteArrayOutputStream {
     return pdfService.execute(
@@ -71,38 +80,13 @@ abstract class BasePdfServiceTest {
 
   protected fun assertPageOneContainsExpectedContent(pdfDocument: PdfDocument, expectedServices: List<String>) {
     val page1 = pdfDocument.getPageText(1)
-    page1.assertContainsTextOnce(
-      "SUBJECT ACCESS REQUEST REPORT",
-      "subject incorrect",
-    )
-
-    page1.assertContainsTextOnce(
-      "Name: $subjectName",
-      "subject name incorrect",
-    )
-
-    page1.assertContainsTextOnce(
-      "NOMIS ID: $nomisId",
-      "nomis incorrect",
-    )
-
-    page1.assertContainsTextOnce(
-      "SAR Case Reference Number: $sarCaseRefId",
-      "SAR case reference incorrect",
-    )
-    page1.assertContainsTextOnce(
-      "Report date range: ${startDate.sarFormat()} - ${endDate.sarFormat()}",
-      "report date range incorrect",
-    )
-    page1.assertContainsTextOnce(
-      "Report generation date: ${LocalDate.now().sarFormat()}",
-      "report generation date incorrect",
-    )
-
-    page1.assertContainsTextOnce(
-      "Services: ${expectedServices.joinToString("\n")}",
-      "services list incorrect",
-    )
+    page1.assertContainsTextOnce("SUBJECT ACCESS REQUEST REPORT")
+    page1.assertContainsTextOnce("Name: $subjectName")
+    page1.assertContainsTextOnce("NOMIS ID: $nomisId")
+    page1.assertContainsTextOnce("SAR Case Reference Number: $sarCaseRefId")
+    page1.assertContainsTextOnce("Report date range: ${startDate.sarFormat()} - ${endDate.sarFormat()}")
+    page1.assertContainsTextOnce("Report generation date: ${LocalDate.now().sarFormat()}")
+    page1.assertContainsTextOnce("Services: ${expectedServices.joinToString("\n")}")
   }
 
   fun PdfDocument.getPageText(pageNumber: Int): PageText =
@@ -110,16 +94,22 @@ abstract class BasePdfServiceTest {
 
   data class PageText(val text: String, val pageNumber: Int) {
 
-    fun assertContainsPattern(pattern: String, errorMessage: String) {
+    fun assertContainsPattern(pattern: String) {
       assertThat(this.text)
-        .withFailMessage("Page $pageNumber: $errorMessage")
+        .withFailMessage("Page $pageNumber: expected content matching pattern \"$pattern\" but no match found")
         .containsPattern(Pattern.compile(pattern))
     }
 
-    fun assertContainsTextOnce(value: String, errorMessage: String) {
+    fun assertContainsTextOnce(value: String) {
       assertThat(this.text)
-        .withFailMessage("Page $pageNumber: $errorMessage")
+        .withFailMessage("Page $pageNumber: expected \"$value\" but no match found")
         .containsOnlyOnce(value)
+    }
+
+    fun assertDoesNotContainsText(value: String) {
+      assertThat(this.text)
+        .withFailMessage("Page $pageNumber: expected \"$value\" but no match found")
+        .doesNotContain(value)
     }
   }
 
