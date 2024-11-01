@@ -31,7 +31,7 @@ class WebClientRetriesSpec(webClientConfiguration: WebClientConfiguration) {
   fun retry5xxAndClientRequestErrors(
     event: ProcessingEvent,
     subjectAccessRequestId: UUID?,
-    params: Map<String, Any>?,
+    params: Map<String, Any>? = null,
   ): RetryBackoffSpec {
     return Retry
       .backoff(maxRetries, backOff)

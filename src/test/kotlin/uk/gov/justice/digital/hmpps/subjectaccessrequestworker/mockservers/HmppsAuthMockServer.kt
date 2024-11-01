@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
@@ -39,6 +41,10 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 9090
   }
 
+  fun verifyCalledOnce() {
+    verify(1, anyRequestedFor(anyUrl()))
+  }
+
   fun stubGrantToken() {
     stubFor(
       post(urlEqualTo("/auth/oauth/token"))
@@ -50,10 +56,37 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
                 {
                   "token_type": "bearer",
                   "access_token": "ABCDE",
-                  "expires_in": ${LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC)}
+                  "expires_in": ${LocalDateTime.now().plusMinutes(5).toEpochSecond(ZoneOffset.UTC)}
                 }
               """.trimIndent(),
             ),
+        ),
+    )
+  }
+
+  fun stubUnauthorizedGrantToken() {
+    stubFor(
+      post(urlEqualTo("/auth/oauth/token"))
+        .willReturn(
+          WireMock.unauthorized(),
+        ),
+    )
+  }
+
+  fun stubForbiddenGrantToken() {
+    stubFor(
+      post(urlEqualTo("/auth/oauth/token"))
+        .willReturn(
+          WireMock.forbidden(),
+        ),
+    )
+  }
+
+  fun stubServerErrorGrantToken() {
+    stubFor(
+      post(urlEqualTo("/auth/oauth/token"))
+        .willReturn(
+          WireMock.serverError(),
         ),
     )
   }
@@ -68,6 +101,7 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
       ),
     )
   }
+
   fun stubGetOAuthToken(client: String, clientSecret: String) {
     stubFor(
       post("/auth/oauth/token?grant_type=client_credentials")
