@@ -94,6 +94,63 @@ class DocumentApiMockServer : WireMockServer(8084) {
     )
   }
 
+  fun stubUploadFileFailsWithStatusThenSucceedsOnRetry(
+    subjectAccessRequestId: String,
+    expectedFileContent: ByteArray,
+    status: Int,
+  ) {
+    stubFor(
+      post(
+        urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"),
+      ).inScenario("fail first request")
+        .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("report.pdf")
+            .withBody(
+              binaryEqualTo(expectedFileContent),
+            ),
+        ).willSetStateTo("failed-first-request")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(status)
+            .withBody(
+              """
+            {
+              "status": $status,
+              "errorCode": 10001,
+              "userMessage": "something went wrong",
+              "developerMessage": "something went wrong",
+              "moreInfo": "its broken"
+            }
+              """.trimIndent(),
+            ),
+        ),
+    )
+
+    stubFor(
+      post(
+        urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"),
+      ).inScenario("fail first request")
+        .whenScenarioStateIs("failed-first-request")
+        .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("report.pdf")
+            .withBody(
+              binaryEqualTo(expectedFileContent),
+            ),
+        )
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody(documentUploadSuccessResponseJson(subjectAccessRequestId)),
+        ),
+    )
+  }
+
   fun documentUploadSuccessResponseJson(subjectAccessRequestId: String) = """
     {
       "documentUuid": "$subjectAccessRequestId",
