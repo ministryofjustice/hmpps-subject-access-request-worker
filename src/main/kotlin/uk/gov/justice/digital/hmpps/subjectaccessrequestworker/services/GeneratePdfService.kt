@@ -166,13 +166,44 @@ class GeneratePdfService {
       )
 
       if (service.content != "No Data Held") {
+        var stopWatch = StopWatch.createStarted()
         val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
+        telemetryClient.trackSarEvent(
+          "HTMLServiceContentGenerated",
+          subjectAccessRequest,
+          "service" to (service.name ?: "unknown"),
+          "htmlStringSize" to renderedTemplate?.length.toString(),
+        )
         if (renderedTemplate !== null && renderedTemplate !== "") {
+          telemetryClient.trackSarEvent(
+            "ConvertingHTMLContentToElements",
+            subjectAccessRequest,
+            "eventTime" to stopWatch.time.toString(),
+            "service" to (service.name ?: "unknown"),
+            "htmlStringSize" to renderedTemplate?.length.toString(),
+          )
           // Template found - render using the data
           val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
+          telemetryClient.trackSarEvent(
+            "CopyingElementsToDocument",
+            subjectAccessRequest,
+            "eventTime" to stopWatch.time.toString(),
+            "service" to (service.name ?: "unknown"),
+            "htmlStringSize" to renderedTemplate?.length.toString(),
+            "elements" to htmlElement.size.toString(),
+          )
           for (element in htmlElement) {
             document.add(element as IBlockElement)
           }
+          log.info("Template rendered - copying complete")
+          telemetryClient.trackSarEvent(
+            "CopyingElementsToDocumentComplete",
+            subjectAccessRequest,
+            "eventTime" to stopWatch.time.toString(),
+            "service" to (service.name ?: "unknown"),
+            "htmlStringSize" to renderedTemplate?.length.toString(),
+            "elements" to htmlElement.size.toString(),
+          )
         } else {
           addYamlLayout(document, service)
         }
