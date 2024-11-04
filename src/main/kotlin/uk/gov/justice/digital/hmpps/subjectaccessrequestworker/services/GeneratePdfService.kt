@@ -158,7 +158,11 @@ class GeneratePdfService {
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       log.info("Compiling data from ${service.businessName ?: service.name}")
 
-      var stopWatch = StopWatch.createStarted()
+      val stopWatch = StopWatch.createStarted()
+      val templatingStopWatch = StopWatch.create()
+      val convertingStopWatch = StopWatch.create()
+      val appendingStopWatch = StopWatch.create()
+
       telemetryClient.trackSarEvent(
         "PDFServiceContentGenerationStarted",
         subjectAccessRequest,
@@ -166,40 +170,42 @@ class GeneratePdfService {
       )
 
       if (service.content != "No Data Held") {
-        var stopWatch = StopWatch.createStarted()
+        templatingStopWatch.start()
         val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
+        templatingStopWatch.stop()
+
         telemetryClient.trackSarEvent(
           "HTMLServiceContentGenerated",
           subjectAccessRequest,
+          "eventTime" to templatingStopWatch.formatTime(),
           "service" to (service.name ?: "unknown"),
           "htmlStringSize" to renderedTemplate?.length.toString(),
         )
         if (renderedTemplate !== null && renderedTemplate !== "") {
-          telemetryClient.trackSarEvent(
-            "ConvertingHTMLContentToElements",
-            subjectAccessRequest,
-            "eventTime" to stopWatch.time.toString(),
-            "service" to (service.name ?: "unknown"),
-            "htmlStringSize" to renderedTemplate?.length.toString(),
-          )
-          // Template found - render using the data
+          convertingStopWatch.start()
           val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
+          convertingStopWatch.stop()
+
           telemetryClient.trackSarEvent(
-            "CopyingElementsToDocument",
+            "HTMLServiceContentConvertedToITextElements",
             subjectAccessRequest,
-            "eventTime" to stopWatch.time.toString(),
+            "eventTime" to convertingStopWatch.formatTime(),
             "service" to (service.name ?: "unknown"),
             "htmlStringSize" to renderedTemplate?.length.toString(),
             "elements" to htmlElement.size.toString(),
           )
+
+          appendingStopWatch.start()
           for (element in htmlElement) {
             document.add(element as IBlockElement)
           }
+          appendingStopWatch.stop()
+
           log.info("Template rendered - copying complete")
           telemetryClient.trackSarEvent(
-            "CopyingElementsToDocumentComplete",
+            "ServiceContentITextElementsAppendedToPDF",
             subjectAccessRequest,
-            "eventTime" to stopWatch.time.toString(),
+            "eventTime" to appendingStopWatch.formatTime(),
             "service" to (service.name ?: "unknown"),
             "htmlStringSize" to renderedTemplate?.length.toString(),
             "elements" to htmlElement.size.toString(),
@@ -217,8 +223,11 @@ class GeneratePdfService {
         "PDFServiceContentGenerationComplete",
         subjectAccessRequest,
         "service" to (service.name ?: "unknown"),
-        "eventTime" to stopWatch.time.toString(),
         "numPages" to pdfDocument.numberOfPages.toString(),
+        "totalTime" to stopWatch.formatTime(),
+        "templatingTime" to templatingStopWatch.formatTime(),
+        "convertingTime" to convertingStopWatch.formatTime(),
+        "appendingTime" to appendingStopWatch.formatTime(),
       )
     }
     log.info("Added data to PDF")
