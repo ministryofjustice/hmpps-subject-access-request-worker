@@ -1,0 +1,16 @@
+<h1>Launchpad</h1>
+    <br>
+    <h3>Applications</h3>
+    {{#.}}
+        <table class="summary-list">
+            <tr><td>Application</td><td>{{ optionalValue name }}</td></tr>
+            <tr><td>First log-in date</td><td>{{ optionalValue (formatDate firstLogInDate) }}</td></tr>
+            <tr><td>Last log-in date</td><td>{{ optionalValue (formatDate lastLogInDate) }}</td></tr>
+            <tr><td>Permissions</td><td><ul>
+                {{#permissionsGranted}}
+                    <li>{{ optionalValue humanReadable }}</li>
+                {{/permissionsGranted}}
+            </ul></td></tr>
+        </table>
+        <br />
+    {{/.}}
