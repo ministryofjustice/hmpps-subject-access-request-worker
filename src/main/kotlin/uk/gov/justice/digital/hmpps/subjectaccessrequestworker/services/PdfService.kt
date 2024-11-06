@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.events.PdfDocumentEvent.END_PAGE
@@ -21,13 +18,11 @@ import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
-import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ReportParameters
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.HeadingHelper
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ProcessDataHelper
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -41,8 +36,9 @@ class PdfService {
     private val log = LoggerFactory.getLogger(this::class.java)
     private var dateConversionHelper = DateConversionHelper()
     private var templateRenderService = TemplateRenderService()
+    private var yamlFormatter = YamlFormatter()
     private var telemetryClient = TelemetryClient()
-    private val helveticaFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
+    private val reportDateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
 
     private const val BULLET_POINT = "\u2022"
     private const val NO_BREAK_SPACE = "\u00a0"
@@ -61,39 +57,11 @@ class PdfService {
     return mergeBodyAndCoverDocuments(body, cover)
   }
 
-  private fun mergeBodyAndCoverDocuments(
-    body: PdfOutputStreamWrapper,
-    cover: PdfOutputStreamWrapper,
-  ): ByteArrayOutputStream {
-    try {
-      val fullDocumentBaos = ByteArrayOutputStream()
-
-      createPdfDocument(fullDocumentBaos).use { fullPdfDocument ->
-        val merger = PdfMerger(fullPdfDocument)
-
-        PdfReader(cover.toInputStream()).use { coverReader ->
-          PdfDocument(coverReader).use { coverDoc ->
-            merger.merge(coverDoc, 1, 1)
-          }
-        }
-
-        PdfReader(body.toInputStream()).use { bodyReader ->
-          PdfDocument(bodyReader).use { bodyDoc ->
-            merger.merge(bodyDoc, 1, (bodyDoc.numberOfPages))
-          }
-        }
-      }
-      return fullDocumentBaos
-    } finally {
-      body.baos.close()
-      cover.baos.close()
-    }
-  }
-
   /**
    * Generates a Subject Access Request PDF report document minus the front page.
    */
   private fun generateReportBodyPdf(params: ReportParameters): PdfOutputStreamWrapper {
+    // Don't auto close here it will be read from when we build the full document.
     val baos = ByteArrayOutputStream()
 
     return createPdfDocument(baos).use { pdfDocument ->
@@ -127,6 +95,7 @@ class PdfService {
    * Generate the front cover of the Subject Access Request report.
    */
   private fun generateReportCoverPdf(params: ReportParameters, numberOfPages: Int): PdfOutputStreamWrapper {
+    // Don't auto close here it will be read from when we build the full document.
     val baos = ByteArrayOutputStream()
     return createPdfDocument(baos).use { pdfDocument ->
       Document(pdfDocument).use { document ->
@@ -142,6 +111,35 @@ class PdfService {
         )
       }
       PdfOutputStreamWrapper(baos, numberOfPages)
+    }
+  }
+
+  private fun mergeBodyAndCoverDocuments(
+    body: PdfOutputStreamWrapper,
+    cover: PdfOutputStreamWrapper,
+  ): ByteArrayOutputStream {
+    try {
+      val fullDocumentBaos = ByteArrayOutputStream()
+
+      createPdfDocument(fullDocumentBaos).use { fullPdfDocument ->
+        val merger = PdfMerger(fullPdfDocument)
+
+        PdfReader(cover.toInputStream()).use { coverReader ->
+          PdfDocument(coverReader).use { coverDoc ->
+            merger.merge(coverDoc, 1, 1)
+          }
+        }
+
+        PdfReader(body.toInputStream()).use { bodyReader ->
+          PdfDocument(bodyReader).use { bodyDoc ->
+            merger.merge(bodyDoc, 1, (bodyDoc.numberOfPages))
+          }
+        }
+      }
+      return fullDocumentBaos
+    } finally {
+      body.baos.close()
+      cover.baos.close()
     }
   }
 
@@ -181,10 +179,12 @@ class PdfService {
     )
   }
 
-
   private fun Document.addInternalContentsPage(services: List<DpsService>) {
-    val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
-    val contentsPageText = Paragraph().setFont(font).setFontSize(16f).setTextAlignment(TextAlignment.CENTER)
+    val contentsPageText = Paragraph()
+      .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
+      .setFontSize(16f)
+      .setTextAlignment(TextAlignment.CENTER)
+
     contentsPageText.add(Text("\n\n\n"))
     contentsPageText.add(Text("CONTENTS\n"))
     this.add(contentsPageText)
@@ -276,11 +276,11 @@ class PdfService {
         .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
         .setFontSize(DATA_HEADER_FONT_SIZE),
     )
-    val processedData = preProcessData(service.content)
+    val serviceDataAsYaml = yamlFormatter.renderAsBasicYaml(service.content)
     this.add(
       Paragraph()
         .setFixedLeading(DATA_LINE_SPACING)
-        .add(renderAsBasicYaml(serviceData = processedData))
+        .add(serviceDataAsYaml)
         .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
         .setFontSize(DATA_FONT_SIZE),
     )
@@ -297,7 +297,7 @@ class PdfService {
     numberOfPages: Int,
   ) {
     val coverPageText = Paragraph()
-      .setFont(helveticaFont)
+      .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
       .setFontSize(16f)
       .setTextAlignment(TextAlignment.CENTER)
 
@@ -339,13 +339,11 @@ class PdfService {
         .setTextAlignment(TextAlignment.CENTER)
         .setFontSize(16f),
     )
-
     this.add(
       Paragraph("\nINTERNAL ONLY")
         .setTextAlignment(TextAlignment.CENTER)
         .setFontSize(16f),
     )
-
     this.add(
       Paragraph("\nOFFICIAL-SENSITIVE")
         .setTextAlignment(TextAlignment.CENTER)
@@ -353,72 +351,12 @@ class PdfService {
     )
   }
 
-  fun reportGenerationDate() = LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+  private fun reportGenerationDate() = LocalDate.now().format(reportDateFormat)
 
-  fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
-    val formattedDateTo = dateTo!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
-    val formattedDateFrom: String
-    if (dateFrom != null) {
-      formattedDateFrom = dateFrom.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
-    } else {
-      formattedDateFrom = "Start of record"
-    }
+  private fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
+    val formattedDateTo = dateTo!!.format(reportDateFormat)
+    val formattedDateFrom = dateFrom?.format(reportDateFormat) ?: "Start of record"
     return "Report date range: $formattedDateFrom - $formattedDateTo"
-  }
-
-  fun renderAsBasicYaml(serviceData: Any?): Text {
-    val loaderOptions = LoaderOptions()
-    loaderOptions.codePointLimit = 1024 * 1024 * 1024 // Max YAML size 1 GB - can be increased
-    val yamlFactory = YAMLFactory.builder()
-      .loaderOptions(loaderOptions)
-      .build()
-    val contentText =
-      YAMLMapper(yamlFactory.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)).writeValueAsString(
-        serviceData,
-      )
-    val text = Text(contentText)
-    text.setNextRenderer(CodeRenderer(text))
-    return text
-  }
-
-  fun preProcessData(input: Any?): Any? {
-    if (input is Map<*, *>) {
-      // If it's a map, process the key
-      val returnMap = mutableMapOf<String, Any?>()
-      val inputKeys = input.keys
-      inputKeys.forEach { key ->
-        returnMap[processKey(key.toString())] = preProcessData(input[key])
-      }
-      return returnMap
-    }
-
-    if (input is ArrayList<*> && input.isNotEmpty()) {
-      val returnArray = arrayListOf<Any?>()
-      input.forEach { value -> returnArray.add(preProcessData(value)) }
-      return returnArray
-    }
-
-    return processValue(input)
-  }
-
-
-  fun processKey(key: String): String {
-    return ProcessDataHelper.camelToSentence(key)
-  }
-
-  fun processValue(input: Any?): Any? {
-    // Handle null values
-    if (input is ArrayList<*> && input.isEmpty() || input == null || input == "null") {
-      return "No data held"
-    }
-    // Handle dates/times
-    if (input is String) {
-      var processedValue = input
-      processedValue = GeneratePdfService.dateConversionHelper.convertDates(processedValue)
-      return processedValue
-    }
-
-    return input
   }
 
   private data class PdfOutputStreamWrapper(val baos: ByteArrayOutputStream, val numberOfPages: Int) {
