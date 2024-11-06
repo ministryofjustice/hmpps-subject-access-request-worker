@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ReportParameters
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.HeadingHelper
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ProcessDataHelper
@@ -35,7 +35,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class PdfServiceV2 {
+class PdfService {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -52,31 +52,12 @@ class PdfServiceV2 {
     private const val LEFT_MARGIN = 35F
   }
 
-  fun generateSubjectAccessRequestPDF(
-    services: List<DpsService>,
-    nomisId: String?,
-    ndeliusCaseReferenceId: String?,
-    sarCaseReferenceNumber: String,
-    subjectName: String,
-    dateFrom: LocalDate? = null,
-    dateTo: LocalDate? = null,
-    subjectAccessRequest: SubjectAccessRequest,
-  ): ByteArrayOutputStream {
-
-    val reportParams = ReportParameters(
-      services,
-      nomisId,
-      ndeliusCaseReferenceId,
-      sarCaseReferenceNumber,
-      subjectName,
-      dateFrom,
-      dateTo,
-      subjectAccessRequest,
-    )
-
+  /**
+   * Generate a Subject Access Request report PDF document from the parameters provided
+   */
+  fun generateSubjectAccessRequestPDF(reportParams: ReportParameters): ByteArrayOutputStream {
     val body = generateReportBodyPdf(reportParams)
     val cover = generateReportCoverPdf(reportParams, body.numberOfPages)
-
     return mergeBodyAndCoverDocuments(body, cover)
   }
 
@@ -271,7 +252,6 @@ class PdfServiceV2 {
   }
 
   fun Document.addRearPage(numberOfPages: Int) {
-    println("ADDING ENDPAGE?")
     this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
@@ -446,15 +426,4 @@ class PdfServiceV2 {
       return ByteArrayInputStream(baos.toByteArray())
     }
   }
-
-  internal data class ReportParameters(
-    val services: List<DpsService>,
-    val nomisId: String?,
-    val ndeliusCaseReferenceId: String?,
-    val sarCaseReferenceNumber: String,
-    val subjectName: String,
-    val dateFrom: LocalDate? = null,
-    val dateTo: LocalDate? = null,
-    val subjectAccessRequest: SubjectAccessRequest,
-  )
 }
