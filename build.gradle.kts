@@ -24,7 +24,6 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.8")
   implementation("commons-io:commons-io:2.17.0")
 
-
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.0.8")
   testImplementation("org.wiremock:wiremock-standalone:3.9.2")
   testImplementation("io.kotest:kotest-assertions-json-jvm:5.9.1")
@@ -34,7 +33,6 @@ dependencies {
   testImplementation("io.mockk:mockk:1.13.13")
   testImplementation("org.jsoup:jsoup:1.18.1")
   testImplementation("com.google.code.gson:gson:2.11.0")
-
 }
 
 kotlin {

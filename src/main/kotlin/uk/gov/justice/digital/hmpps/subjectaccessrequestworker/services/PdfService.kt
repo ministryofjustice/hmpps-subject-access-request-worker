@@ -209,7 +209,13 @@ class PdfService {
 
   private fun Document.addCustomHeaderHandler(subjectLineId: String, subjectName: String) {
     this.pdfDocument.addEventHandler(
-      END_PAGE, CustomHeaderEventHandler(this.pdfDocument, this, subjectLineId, subjectName),
+      END_PAGE,
+      CustomHeaderEventHandler(
+        this.pdfDocument,
+        this,
+        subjectLineId,
+        subjectName,
+      ),
     )
   }
 
