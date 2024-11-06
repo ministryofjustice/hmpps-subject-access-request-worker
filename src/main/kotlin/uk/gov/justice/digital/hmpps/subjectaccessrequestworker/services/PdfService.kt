@@ -64,56 +64,54 @@ class PdfService {
     // Don't auto close here it will be read from when we build the full document.
     val baos = ByteArrayOutputStream()
 
-    return createPdfDocument(baos).use { pdfDocument ->
-      val numberOfPages: Int
+    return Document(createPdfDocument(baos)).use { document ->
+      document.addInternalContentsPage(params.services)
+      document.addExternalCoverPage(
+        params.subjectName,
+        params.nomisId,
+        params.ndeliusCaseReferenceId,
+        params.sarCaseReferenceNumber,
+      )
+      document.addCustomHeaderHandler(
+        getSubjectIdLine(params.nomisId, params.ndeliusCaseReferenceId),
+        params.subjectName,
+      )
+      document.setMargins(TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN)
+      document.addSubjectAccessRequestServiceData(params.services)
 
-      Document(pdfDocument).use { document ->
-        document.addInternalContentsPage(params.services)
-        document.addExternalCoverPage(
-          params.subjectName,
-          params.nomisId,
-          params.ndeliusCaseReferenceId,
-          params.sarCaseReferenceNumber,
-        )
-        document.addCustomHeaderHandler(
-          getSubjectIdLine(params.nomisId, params.ndeliusCaseReferenceId),
-          params.subjectName,
-        )
-        document.setMargins(TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN)
-        document.addSubjectAccessRequestServiceData(params.services)
-
-        numberOfPages = document.pdfDocument.numberOfPages
-        val numberOfPageIncludingCovers = numberOfPages + 2
-        document.addRearPage(numberOfPageIncludingCovers)
-      }
+      val numberOfPages: Int = document.pdfDocument.numberOfPages
+      val numberOfPageIncludingCovers = numberOfPages + 2
+      document.addRearPage(numberOfPageIncludingCovers)
 
       PdfOutputStreamWrapper(baos, numberOfPages)
     }
   }
 
   /**
-   * Generate the front cover of the Subject Access Request report.
+   * Generate the front cover of the Subject Access Request report. The cover requires page count but this isn't known
+   * until after we've generated the body document hence creating 2 separate documents and then merging them together.
    */
   private fun generateReportCoverPdf(params: ReportParameters, numberOfPages: Int): PdfOutputStreamWrapper {
     // Don't auto close here it will be read from when we build the full document.
     val baos = ByteArrayOutputStream()
-    return createPdfDocument(baos).use { pdfDocument ->
-      Document(pdfDocument).use { document ->
-        document.addInternalCoverPage(
-          params.subjectName,
-          params.nomisId,
-          params.ndeliusCaseReferenceId,
-          params.sarCaseReferenceNumber,
-          params.dateFrom,
-          params.dateTo,
-          params.services,
-          numberOfPages,
-        )
-      }
+    return Document(createPdfDocument(baos)).use { document ->
+      document.addInternalCoverPage(
+        params.subjectName,
+        params.nomisId,
+        params.ndeliusCaseReferenceId,
+        params.sarCaseReferenceNumber,
+        params.dateFrom,
+        params.dateTo,
+        params.services,
+        numberOfPages,
+      )
       PdfOutputStreamWrapper(baos, numberOfPages)
     }
   }
 
+  /**
+   * Merge the cover and body into a single document.
+   */
   private fun mergeBodyAndCoverDocuments(
     body: PdfOutputStreamWrapper,
     cover: PdfOutputStreamWrapper,
@@ -124,16 +122,12 @@ class PdfService {
       createPdfDocument(fullDocumentBaos).use { fullPdfDocument ->
         val merger = PdfMerger(fullPdfDocument)
 
-        PdfReader(cover.toInputStream()).use { coverReader ->
-          PdfDocument(coverReader).use { coverDoc ->
-            merger.merge(coverDoc, 1, 1)
-          }
+        PdfDocument(PdfReader(cover.toInputStream())).use { coverDoc ->
+          merger.merge(coverDoc, 1, 1)
         }
 
-        PdfReader(body.toInputStream()).use { bodyReader ->
-          PdfDocument(bodyReader).use { bodyDoc ->
-            merger.merge(bodyDoc, 1, (bodyDoc.numberOfPages))
-          }
+        PdfDocument(PdfReader(body.toInputStream())).use { bodyDoc ->
+          merger.merge(bodyDoc, 1, (bodyDoc.numberOfPages))
         }
       }
       return fullDocumentBaos
@@ -143,7 +137,7 @@ class PdfService {
     }
   }
 
-  fun createPdfDocument(outputStream: OutputStream): PdfDocument = PdfDocument(PdfWriter(outputStream))
+  private fun createPdfDocument(outputStream: OutputStream): PdfDocument = PdfDocument(PdfWriter(outputStream))
 
   private fun Document.addExternalCoverPage(
     subjectName: String,

@@ -7,6 +7,7 @@ import com.itextpdf.layout.element.Text
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ProcessDataHelper
 
+// TODO - Extracted from the original PDF generator as is, need to revisit this to work out what its doing.
 class YamlFormatter {
 
   fun renderAsBasicYaml(rawData: Any?): Text {
@@ -45,7 +46,6 @@ class YamlFormatter {
 
     return processValue(input)
   }
-
 
   private fun processKey(key: String): String {
     return ProcessDataHelper.camelToSentence(key)
