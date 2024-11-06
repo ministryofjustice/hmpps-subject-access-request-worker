@@ -1,0 +1,50 @@
+{
+  "content": [
+    {
+      "chargeNumber": "1525576",
+      "prisonerNumber": "A1234AA",
+      "gender": "MALE",
+      "incidentDetails": {
+        "locationId": 26958,
+        "dateTimeOfIncident": "2023-04-06T15:20:00",
+        "dateTimeOfDiscovery": "2023-04-06T15:20:00",
+        "handoverDeadline": "2023-04-08T15:20:00"
+      },
+      "isYouthOffender": false,
+      "incidentRole": {},
+      "offenceDetails": {
+        "offenceCode": 18001,
+        "offenceRule": {
+          "paragraphNumber": "18",
+          "paragraphDescription": "Absents himself from any place he is required to be or is present at any place where he is not authorised to be",
+          "nomisCode": "51:18A",
+          "withOthersNomisCode": "51:25B"
+        },
+        "protectedCharacteristics": []
+      },
+      "incidentStatement": {
+        "statement": "This is a statement.\r\n\r\nThis is a test where the prisoner is in transit.",
+        "completed": true
+      },
+      "createdByUserId": "DFERN_TEST",
+      "createdDateTime": "2023-04-06T15:25:05.423548",
+      "status": "UNSCHEDULED",
+      "reviewedByUserId": "DFERN_TEST",
+      "statusReason": "",
+      "statusDetails": "",
+      "damages": [],
+      "evidence": [],
+      "witnesses": [],
+      "hearings": [],
+      "disIssueHistory": [],
+      "dateTimeOfFirstHearing": "2023-04-06T15:40:00",
+      "outcomes": [],
+      "punishments": [],
+      "punishmentComments": [],
+      "outcomeEnteredInNomis": false,
+      "originatingAgencyId": "MDI",
+      "linkedChargeNumbers": [],
+      "canActionFromHistory": false
+    }
+  ]
+}

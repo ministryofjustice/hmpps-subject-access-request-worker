@@ -1,0 +1,48 @@
+{
+  "content": [
+    {
+      "ShortTermAccommodation": {
+        "StatusUpdateDetails": [],
+        "Applications": [],
+        "DomainEventsMetadata": [],
+        "Assessments": [],
+        "StatusUpdates": [],
+        "ApplicationNotes": [],
+        "DomainEvents": []
+      }
+    },
+    {
+      "ApprovedPremises": {
+        "BookingExtensions": [],
+        "Applications": [],
+        "ApplicationTimeline": [],
+        "Appeals": [],
+        "AssessmentClarificationNotes": [],
+        "PlacementRequirementCriteria": [],
+        "DomainEventsMetadata": [],
+        "Assessments": [],
+        "Cancellations": [],
+        "PlacementRequirements": [],
+        "OfflineApplications": [],
+        "PlacementRequests": [],
+        "BookingNotMades": [],
+        "BedMoves": [],
+        "PlacementApplications": [],
+        "Bookings": [],
+        "DomainEvents": []
+      }
+    },
+    {
+      "TemporaryAccommodation": {
+        "BookingExtensions": [],
+        "Applications": [],
+        "AssessmentReferralHistoryNotes": [],
+        "Bookings": [],
+        "DomainEventsMetadata": [],
+        "Assessments": [],
+        "Cancellations": [],
+        "DomainEvents": []
+      }
+    }
+  ]
+}

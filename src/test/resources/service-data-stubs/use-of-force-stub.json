@@ -1,0 +1,269 @@
+{
+  "content": [
+    {
+      "id": 404,
+      "sequenceNo": 9,
+      "createdDate": "2022-07-11T21:34:34.41754",
+      "updatedDate": "2024-10-16T10:44:19.836698",
+      "incidentDate": "2022-07-10T02:21:00",
+      "submittedDate": "2022-07-11T21:35:43.352",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "ANDYLEE_ADM",
+      "reporterName": "Andrew Lee",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": true
+        },
+        "involvedStaff": [
+          {
+            "name": "Andrew Lee",
+            "exists": true,
+            "staffId": 486084,
+            "username": "ZANDYLEE_ADM",
+            "verified": false,
+            "activeCaseLoadId": "MDI"
+          }
+        ],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "Andrew Lee"
+            }
+          ],
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaUsed": true,
+          "pavaDrawn": true,
+          "restraint": true,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "restraintPositions": [
+            "ON_BACK"
+          ],
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": true
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_ANOTHER_PRISONER"
+          ]
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "dsdsd",
+          "prisonerInjuries": true,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": true,
+          "prisonerHospitalisation": false,
+          "staffNeedingMedicalAttention": [
+            {
+              "name": "ssd",
+              "hospitalisation": true
+            }
+          ]
+        }
+      },
+      "statements": [
+        {
+          "id": 524,
+          "reportId": 404,
+          "createdDate": "2022-07-11T21:35:43.353038",
+          "updatedDate": "2022-07-11T21:35:54.14297",
+          "submittedDate": "2022-07-11T21:35:54.14297",
+          "deleted": null,
+          "nextReminderDate": "2022-07-12T21:35:43.352",
+          "overdueDate": "2022-07-14T21:35:43.352",
+          "removalRequestedDate": null,
+          "userId": "ANDYLEE_ADM",
+          "name": "Andrew Lee",
+          "email": "andrew.lee@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 3,
+          "lastTrainingYear": 1999,
+          "jobStartYear": 1999,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "sddsfsdfsdg",
+          "statementAmendments": []
+        },
+        {
+          "id": 525,
+          "reportId": 404,
+          "createdDate": "2022-07-11T21:35:43.353038",
+          "updatedDate": "2022-07-14T21:40:09.407853",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2022-07-14T21:35:43.352",
+          "removalRequestedDate": null,
+          "userId": "ZANDYLEE_ADM",
+          "name": "Andrew Lee",
+          "email": null,
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 486084,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 398,
+      "sequenceNo": 8,
+      "createdDate": "2022-06-13T15:47:51.878774",
+      "updatedDate": "2024-10-16T10:44:19.723512",
+      "incidentDate": "2022-06-13T02:21:00",
+      "submittedDate": "2022-07-11T21:34:02.735",
+      "deleted": null,
+      "status": "COMPLETE",
+      "agencyId": "MDI",
+      "userId": "ANDYLEE_ADM",
+      "reporterName": "Andrew Lee",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "YES",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "dsd"
+            }
+          ],
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": true
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_A_MEMBER_OF_STAFF"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "NTRG",
+          "f213CompletedBy": "dsfdsfs",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "SEGREGATION_UNIT",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 523,
+          "reportId": 398,
+          "createdDate": "2022-07-11T21:34:02.736573",
+          "updatedDate": "2022-07-11T21:34:12.657365",
+          "submittedDate": "2022-07-11T21:34:12.657365",
+          "deleted": null,
+          "nextReminderDate": "2022-07-12T21:34:02.735",
+          "overdueDate": "2022-07-14T21:34:02.735",
+          "removalRequestedDate": null,
+          "userId": "ANDYLEE_ADM",
+          "name": "Andrew Lee",
+          "email": "andrew.lee@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 0,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "cdcdvdvc",
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 491,
+      "sequenceNo": 1,
+      "createdDate": "2024-05-03T11:05:56.253311",
+      "updatedDate": "2024-10-16T10:44:21.444166",
+      "incidentDate": "2024-06-10T12:00:00",
+      "submittedDate": null,
+      "deleted": null,
+      "status": "IN_PROGRESS",
+      "agencyId": "ASI",
+      "userId": "MATTYA",
+      "reporterName": "Matthew Alexander",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 402743,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "e51f1f25-4c63-4ea7-ad8d-69562e44b8cb"
+        },
+        "useOfForceDetails": {
+          "guidingHold": false,
+          "escortingHold": false,
+          "bodyWornCamera": "NO",
+          "weaponsObserved": "NO",
+          "handcuffsApplied": false,
+          "restraintPositions": "STANDING",
+          "positiveCommunication": false,
+          "pavaDrawnAgainstPrisoner": false,
+          "batonDrawnAgainstPrisoner": false,
+          "painInducingTechniquesUsed": "NONE",
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_ANOTHER_PRISONER"
+          ]
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "ee",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "OWN_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": []
+    }
+  ]
+}
