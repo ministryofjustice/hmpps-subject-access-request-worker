@@ -14,14 +14,15 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHel
 import java.io.FileOutputStream
 
 class GeneratePdfAccreditedProgrammesServiceTest {
-  private val templateHelpers: TemplateHelpers = mock()
+  private val templateHelpers = TemplateHelpers()
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
   @Test
   fun `generatePdfService renders for Accredited Programmes Service`() {
-    val serviceList = listOf(DpsService(name = "hmpps-accredited-programmes-api", content = accreditedProgrammesServiceData))
+    val serviceList =
+      listOf(DpsService(name = "hmpps-accredited-programmes-api", content = accreditedProgrammesServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-accredited-programmes-template.pdf")))
     val document = Document(pdfDocument)
 
@@ -44,7 +45,7 @@ class GeneratePdfAccreditedProgrammesServiceTest {
         "hasReviewedProgrammeHistory" to true,
         "additionalInformation" to "test",
         "submittedOn" to "2024-03-12T14:23:12.328775",
-        "referrerUsername" to "AELANGOVAN_ADM",
+        "referrerUsername" to "ADMINA_ADM",
         "courseName" to "Becoming New Me Plus",
         "audience" to "Sexual offence",
         "courseOrganisation" to "WTI",
@@ -56,7 +57,7 @@ class GeneratePdfAccreditedProgrammesServiceTest {
         "hasReviewedProgrammeHistory" to false,
         "additionalInformation" to null,
         "submittedOn" to null,
-        "referrerUsername" to "SMCALLISTER_GEN",
+        "referrerUsername" to "USERA_GEN",
         "courseName" to "Becoming New Me Plus",
         "audience" to "Intimate partner violence offence",
         "courseOrganisation" to "AYI",
@@ -73,9 +74,9 @@ class GeneratePdfAccreditedProgrammesServiceTest {
         "location" to null,
         "detail" to null,
         "courseName" to "Kaizen",
-        "createdByUser" to "ACOOMER_GEN",
+        "createdByUser" to "USERC_GEN",
         "createdDateTime" to "2024-07-12T14:57:42.431163",
-        "updatedByUser" to "ACOOMER_GEN",
+        "updatedByUser" to "USERC_GEN",
         "updatedDateTime" to "2024-07-12T14:58:38.597915",
       ),
       mapOf(
@@ -88,9 +89,9 @@ class GeneratePdfAccreditedProgrammesServiceTest {
         "location" to "Example",
         "detail" to "Example",
         "courseName" to "Enhanced Thinking Skills",
-        "createdByUser" to "AELANGOVAN_ADM",
+        "createdByUser" to "ADMINA_ADM",
         "createdDateTime" to "2024-07-12T14:57:42.431163",
-        "updatedByUser" to "AELANGOVAN_ADM",
+        "updatedByUser" to "ADMINA_ADM",
         "updatedDateTime" to "2024-07-12T14:58:38.597915",
       ),
     ),

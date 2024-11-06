@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHel
 import java.io.FileOutputStream
 
 class GeneratePdfComplexityOfNeedsServiceTest {
-  private val templateHelpers: TemplateHelpers = mock()
+  private val templateHelpers = TemplateHelpers()
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
