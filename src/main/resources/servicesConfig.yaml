@@ -59,3 +59,6 @@ dpsServices:
   - name: hmpps-resettlement-passport-api
     orderPosition: 20
     businessName: Prepare Someone for Release
+  - name: launchpad-auth
+    orderPosition: 21
+    businessName: Launchpad

@@ -2203,6 +2203,41 @@ class GeneratePdfServiceTest(
         Assertions.assertThat(text).contains("Prisoner categorisation")
       }
 
+      it("renders for Launchpad Auth Service") {
+        val testApplication = mapOf(
+          "id" to "6ccb67e3-5f05-4b73-a4d9-5a012541c424",
+          "name" to "Launchpad Homepage",
+          "firstLogInDate" to "2024-08-12T07:18:41Z",
+          "lastLogInDate" to "2024-08-12T07:18:41Z",
+          "permissionsGranted" to arrayListOf(
+            mapOf(
+              "humanReadable" to "Read basic information like your name",
+            ),
+            mapOf(
+              "humanReadable" to "Read the list of applications you use",
+            ),
+            mapOf(
+              "humanReadable" to "Remove access to applications you use",
+            ),
+            mapOf(
+              "humanReadable" to "Read prison information like the name of your prison",
+            ),
+          ),
+        )
+        val testInput = arrayListOf(testApplication, testApplication)
+        val testResponseObject = listOf(DpsService(name = "launchpad-auth", content = testInput))
+        val writer = PdfWriter(FileOutputStream("dummy-template-launchpad-auth.pdf"))
+        val mockPdfDocument = PdfDocument(writer)
+        val mockDocument = Document(mockPdfDocument)
+        generatePdfService.addData(mockPdfDocument, mockDocument, testResponseObject)
+        mockDocument.close()
+
+        val reader = PdfDocument(PdfReader("dummy-template-launchpad-auth.pdf"))
+        val page = reader.getPage(2)
+        val text = PdfTextExtractor.getTextFromPage(page)
+        Assertions.assertThat(text).contains("Launchpad")
+      }
+
       it("converts data to YAML format in the event of no template") {
         val testInput = mapOf(
           "testDateText" to "Test",
