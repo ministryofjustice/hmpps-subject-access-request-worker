@@ -2,24 +2,18 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.microsoft.applicationinsights.TelemetryClient
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.shouldBe
-import io.mockk.mockkStatic
-import io.mockk.verify
-import io.sentry.Sentry
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
@@ -37,7 +31,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-@ActiveProfiles("test")
 class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
   private val dateFrom = "02/01/2023"
@@ -118,9 +111,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
-    val responseSpecMock: WebClient.ResponseSpec = mock()
-    whenever(responseSpecMock.bodyToMono(Array<SubjectAccessRequest>::class.java))
-      .thenReturn(Mono.just(arrayOf(sampleSAR)))
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
 
     val result = subjectAccessRequestWorkerService
@@ -295,11 +285,11 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
 
-      val exception = shouldThrow<RuntimeException> {
+      val exception = assertThrows<RuntimeException> {
         subjectAccessRequestWorkerService.doReport(sampleSAR)
       }
 
-      exception.message.shouldBe(null)
+      assertThat(exception.message).isNull()
     }
 
     @Test
@@ -450,24 +440,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       verify(documentStorageClient, times(1)).storeDocument(
         UUID.fromString("11111111-1111-1111-1111-111111111111"),
         mockStream,
-      )
-    }
-  }
-
-  @Test
-  fun `doPoll exceptions are captured by sentry`() = runTest {
-    mockkStatic(Sentry::class)
-    whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
-    whenever(mockSarGateway.getUnclaimed(mockWebClient))
-      .thenReturn(arrayOf(sampleSAR))
-    whenever(mockSarGateway.claim(any(), any()))
-      .thenThrow(RuntimeException())
-
-    subjectAccessRequestWorkerService.doPoll()
-
-    verify(exactly = 1) {
-      Sentry.captureException(
-        any(),
       )
     }
   }

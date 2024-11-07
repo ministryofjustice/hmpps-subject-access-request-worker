@@ -43,12 +43,13 @@ const val DATA_FONT_SIZE = 12f
 const val DATA_LINE_SPACING = 16f
 
 @Service
-class GeneratePdfService {
+class GeneratePdfService(
+  var templateRenderService: TemplateRenderService,
+  var telemetryClient: TelemetryClient,
+) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     var dateConversionHelper = DateConversionHelper()
-    var templateRenderService = TemplateRenderService()
-    var telemetryClient = TelemetryClient()
   }
 
   fun execute(
@@ -191,7 +192,7 @@ class GeneratePdfService {
             subjectAccessRequest,
             "eventTime" to convertingStopWatch.formatTime(),
             "service" to (service.name ?: "unknown"),
-            "htmlStringSize" to renderedTemplate?.length.toString(),
+            "htmlStringSize" to renderedTemplate.length.toString(),
             "elements" to htmlElement.size.toString(),
           )
 
@@ -207,7 +208,7 @@ class GeneratePdfService {
             subjectAccessRequest,
             "eventTime" to appendingStopWatch.formatTime(),
             "service" to (service.name ?: "unknown"),
-            "htmlStringSize" to renderedTemplate?.length.toString(),
+            "htmlStringSize" to renderedTemplate.length.toString(),
             "elements" to htmlElement.size.toString(),
           )
         } else {

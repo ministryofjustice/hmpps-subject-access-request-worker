@@ -3,29 +3,18 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import com.github.jknack.handlebars.Handlebars
 import com.github.mustachejava.DefaultMustacheFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.StringReader
 import java.io.StringWriter
 
 @Service
-class TemplateRenderService {
-  fun getServiceTemplate(serviceName: String): String? {
-    val file = this::class.java
-      .getResource("/templates/template_$serviceName.mustache")
-      ?: return null
-    return file.readText()
-  }
-
-  fun getStyleTemplate(): String {
-    val file = this::class.java
-      .getResource("/templates/main_stylesheet.mustache")
-      ?.readText() ?: ""
-    return file
-  }
+class TemplateRenderService(
+  private val templateHelpers: TemplateHelpers,
+) {
 
   fun renderServiceTemplate(serviceName: String, serviceData: Any?): String? {
     val handlebars = Handlebars()
-    handlebars.registerHelpers(TemplateHelpers())
+    handlebars.registerHelpers(templateHelpers)
     val serviceTemplate = getServiceTemplate(serviceName) ?: return null
     val compiledServiceTemplate = handlebars.compileInline(serviceTemplate)
     val renderedServiceTemplate = compiledServiceTemplate.apply(serviceData)
@@ -33,9 +22,9 @@ class TemplateRenderService {
   }
 
   fun renderStyleTemplate(renderedServiceTemplate: String): String {
-    val mf = DefaultMustacheFactory()
+    val defaultMustacheFactory = DefaultMustacheFactory()
     val styleTemplate = getStyleTemplate()
-    val compiledStyleTemplate = mf.compile(StringReader(styleTemplate), "styleTemplate")
+    val compiledStyleTemplate = defaultMustacheFactory.compile(StringReader(styleTemplate), "styleTemplate")
     val renderedStyleTemplate = StringWriter()
     compiledStyleTemplate.execute(
       renderedStyleTemplate,
@@ -49,23 +38,18 @@ class TemplateRenderService {
     val renderedStyleTemplate = renderStyleTemplate(renderedServiceTemplate)
     return renderedStyleTemplate
   }
-}
 
-class TemplateHelpers {
-  fun formatDate(input: String?): String {
-    if (input == null) return ""
-    return DateConversionHelper().convertDates(input)
+  fun getServiceTemplate(serviceName: String): String? {
+    val file = this::class.java
+      .getResource("/templates/template_$serviceName.mustache")
+      ?: return null
+    return file.readText()
   }
 
-  fun optionalValue(input: Any?): Any {
-    if (input == null || input == "") return "No Data Held"
-    return input
-  }
-
-  fun getIndexPlusOne(elementIndex: Int?): Int? {
-    if (elementIndex != null) {
-      return elementIndex + 1
-    }
-    return null
+  fun getStyleTemplate(): String {
+    val file = this::class.java
+      .getResource("/templates/main_stylesheet.mustache")
+      ?.readText() ?: ""
+    return file
   }
 }

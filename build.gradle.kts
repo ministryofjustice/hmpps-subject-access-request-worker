@@ -25,11 +25,7 @@ dependencies {
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.0.8")
   testImplementation("org.wiremock:wiremock-standalone:3.9.2")
-  testImplementation("io.kotest:kotest-assertions-json-jvm:5.9.1")
-  testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
-  testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
-  testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-  testImplementation("io.mockk:mockk:1.13.13")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }
 
 kotlin {
