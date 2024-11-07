@@ -1,8 +1,10 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
 
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 
-data class ReportParameters(
+data class PdfParameters(
   val services: List<DpsService>,
   val nomisId: String?,
   val ndeliusCaseReferenceId: String?,

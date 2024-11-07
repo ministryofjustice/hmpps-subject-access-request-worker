@@ -8,7 +8,7 @@
         "hasReviewedProgrammeHistory": false,
         "additionalInformation": null,
         "submittedOn": null,
-        "referrerUsername": "KALLEN_GEN_EXTERNAL",
+        "referrerUsername": "X_GEN_EXTERNAL",
         "courseName": "Becoming New Me Plus",
         "audience": "Sexual offence",
         "courseOrganisation": "WTI"
@@ -20,7 +20,7 @@
         "hasReviewedProgrammeHistory": false,
         "additionalInformation": null,
         "submittedOn": null,
-        "referrerUsername": "KALLEN_GEN_EXTERNAL",
+        "referrerUsername": "X_GEN_EXTERNAL",
         "courseName": "Becoming New Me Plus",
         "audience": "Sexual offence",
         "courseOrganisation": "WTI"
@@ -32,7 +32,7 @@
         "hasReviewedProgrammeHistory": false,
         "additionalInformation": null,
         "submittedOn": null,
-        "referrerUsername": "KALLEN_GEN_EXTERNAL",
+        "referrerUsername": "X_GEN_EXTERNAL",
         "courseName": "Becoming New Me Plus",
         "audience": "Sexual offence",
         "courseOrganisation": "WTI"
@@ -44,7 +44,7 @@
         "hasReviewedProgrammeHistory": false,
         "additionalInformation": null,
         "submittedOn": null,
-        "referrerUsername": "FDEATH_GEN",
+        "referrerUsername": "Y_GEN",
         "courseName": "Kaizen",
         "audience": "Sexual offence",
         "courseOrganisation": "WTI"
@@ -56,7 +56,7 @@
         "hasReviewedProgrammeHistory": true,
         "additionalInformation": "nothing",
         "submittedOn": "2024-09-17T12:15:42.684341",
-        "referrerUsername": "APHALNIKAR_GEN",
+        "referrerUsername": "XYZ_GEN",
         "courseName": "Living as New Me",
         "audience": "All offences",
         "courseOrganisation": "WTI"
@@ -73,9 +73,9 @@
         "location": null,
         "detail": null,
         "courseName": "Becoming New Me Plus",
-        "createdByUser": "FDEATH_GEN",
+        "createdByUser": "Y_GEN",
         "createdDateTime": "2024-08-01T12:45:38.075045",
-        "updatedByUser": "FDEATH_GEN",
+        "updatedByUser": "Y_GEN",
         "updatedDateTime": "2024-08-01T12:46:05.180123"
       },
       {
@@ -88,7 +88,7 @@
         "location": null,
         "detail": null,
         "courseName": "Becoming New Me Plus",
-        "createdByUser": "KALLEN_GEN_EXTERNAL",
+        "createdByUser": "X_GEN_EXTERNAL",
         "createdDateTime": "2024-10-07T15:28:18.941386",
         "updatedByUser": null,
         "updatedDateTime": null

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
 
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.io.font.constants.StandardFonts
@@ -11,17 +11,21 @@ import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.IElement
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
+import io.micrometer.common.util.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ReportParameters
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.TemplateRenderService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.YamlFormatter
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.HeadingHelper
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -30,14 +34,15 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class PdfService {
+@Service
+class PdfService(
+  val templateRenderService: TemplateRenderService,
+  val yamlFormatter: YamlFormatter,
+  val telemetryClient: TelemetryClient,
+) {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-    private var dateConversionHelper = DateConversionHelper()
-    private var templateRenderService = TemplateRenderService()
-    private var yamlFormatter = YamlFormatter()
-    private var telemetryClient = TelemetryClient()
     private val reportDateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
 
     private const val BULLET_POINT = "\u2022"
@@ -46,21 +51,37 @@ class PdfService {
     private const val RIGHT_MARGIN = 35F
     private const val BOTTOM_MARGIN = 70F
     private const val LEFT_MARGIN = 35F
+    private const val DATA_HEADER_FONT_SIZE = 16f
+    private const val DATA_FONT_SIZE = 12f
+    private const val DATA_LINE_SPACING = 16f
   }
 
   /**
    * Generate a Subject Access Request report PDF document from the parameters provided
    */
-  fun generateSubjectAccessRequestPDF(reportParams: ReportParameters): ByteArrayOutputStream {
-    val body = generateReportBodyPdf(reportParams)
-    val cover = generateReportCoverPdf(reportParams, body.numberOfPages)
-    return mergeBodyAndCoverDocuments(body, cover)
+  fun generateSubjectAccessRequestPDF(params: PdfParameters): CreatePdfResult {
+    telemetryClient.trackSarEvent(
+      "PDFContentGenerationStarted",
+      params.subjectAccessRequest,
+      "numServices" to params.services.size.toString(),
+    )
+
+    val body = generateReportBodyPdf(params)
+    val cover = generateReportCoverPdf(params, body.numberOfPages)
+
+    return mergeBodyAndCoverDocuments(body, cover).also {
+      telemetryClient.trackSarEvent(
+        "PDFContentGenerationComplete",
+        params.subjectAccessRequest,
+        "numPages" to "${it.numberOfPages}",
+      )
+    }
   }
 
   /**
    * Generates a Subject Access Request PDF report document minus the front page.
    */
-  private fun generateReportBodyPdf(params: ReportParameters): PdfOutputStreamWrapper {
+  private fun generateReportBodyPdf(params: PdfParameters): PdfOutputStreamWrapper {
     // Don't auto close here it will be read from when we build the full document.
     val baos = ByteArrayOutputStream()
 
@@ -77,7 +98,7 @@ class PdfService {
         params.subjectName,
       )
       document.setMargins(TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, LEFT_MARGIN)
-      document.addSubjectAccessRequestServiceData(params.services)
+      document.addSubjectAccessRequestServiceData(params)
 
       val numberOfPages: Int = document.pdfDocument.numberOfPages
       val numberOfPageIncludingCovers = numberOfPages + 2
@@ -91,7 +112,7 @@ class PdfService {
    * Generate the front cover of the Subject Access Request report. The cover requires page count but this isn't known
    * until after we've generated the body document hence creating 2 separate documents and then merging them together.
    */
-  private fun generateReportCoverPdf(params: ReportParameters, numberOfPages: Int): PdfOutputStreamWrapper {
+  private fun generateReportCoverPdf(params: PdfParameters, numberOfPages: Int): PdfOutputStreamWrapper {
     // Don't auto close here it will be read from when we build the full document.
     val baos = ByteArrayOutputStream()
     return Document(createPdfDocument(baos)).use { document ->
@@ -115,7 +136,7 @@ class PdfService {
   private fun mergeBodyAndCoverDocuments(
     body: PdfOutputStreamWrapper,
     cover: PdfOutputStreamWrapper,
-  ): ByteArrayOutputStream {
+  ): CreatePdfResult {
     try {
       val fullDocumentBaos = ByteArrayOutputStream()
 
@@ -130,7 +151,7 @@ class PdfService {
           merger.merge(bodyDoc, 1, (bodyDoc.numberOfPages))
         }
       }
-      return fullDocumentBaos
+      return CreatePdfResult(fullDocumentBaos, body.numberOfPages)
     } finally {
       body.baos.close()
       cover.baos.close()
@@ -219,24 +240,43 @@ class PdfService {
     )
   }
 
-  private fun Document.addSubjectAccessRequestServiceData(services: List<DpsService>) {
-    services.forEach { service ->
+  private fun Document.addSubjectAccessRequestServiceData(params: PdfParameters) {
+    params.services.forEach { service ->
+      log.info("Compiling data from ${service.businessName ?: service.name}")
+
       this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       val stopWatch = StopWatch.createStarted()
+      telemetryClient.trackSarEvent(
+        "PDFServiceContentGenerationStarted",
+        params.subjectAccessRequest,
+        "service" to (service.name ?: "unknown"),
+      )
 
       if (service.content != "No Data Held") {
-        val renderedTemplate = templateRenderService.renderTemplate(
+        val htmlString = templateRenderService.renderTemplate(
           serviceName = service.name!!,
           serviceData = service.content,
         )
+        telemetryClient.trackSarEvent(
+          "HTMLServiceContentGenerated",
+          params.subjectAccessRequest,
+          "service" to service.name,
+          "htmlStringSize" to htmlString?.length.toString(),
+        )
 
-        if (renderedTemplate !== null && renderedTemplate !== "") {
-          // Template found - render using the data
-          val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
-
-          for (element in htmlElement) {
+        if (StringUtils.isNotEmpty(htmlString)) {
+          val elements = convertHtmlToElements(params, stopWatch, service.name, htmlString!!)
+          for (element in elements) {
             this.add(element as IBlockElement)
           }
+          telemetryClient.trackSarEvent(
+            "CopyingElementsToDocumentComplete",
+            params.subjectAccessRequest,
+            "eventTime" to stopWatch.time.toString(),
+            "service" to service.name,
+            "htmlStringSize" to htmlString.length.toString(),
+            "elements" to elements.size.toString(),
+          )
           log.info("Template rendered - copying complete")
         } else {
           this.addRawServiceDataWithYamlLayout(service)
@@ -247,8 +287,41 @@ class PdfService {
       }
 
       stopWatch.stop()
+      telemetryClient.trackSarEvent(
+        "PDFServiceContentGenerationComplete",
+        params.subjectAccessRequest,
+        "service" to service.name!!,
+        "eventTime" to stopWatch.time.toString(),
+        "numPages" to pdfDocument.numberOfPages.toString(),
+      )
     }
     log.info("Added data to PDF")
+  }
+
+  private fun convertHtmlToElements(
+    params: PdfParameters,
+    stopWatch: StopWatch,
+    service: String,
+    htmlString: String,
+  ): List<IElement> {
+    telemetryClient.trackSarEvent(
+      "ConvertingHTMLContentToElements",
+      params.subjectAccessRequest,
+      "eventTime" to stopWatch.time.toString(),
+      "service" to service,
+      "htmlStringSize" to htmlString?.length.toString(),
+    )
+
+    return HtmlConverter.convertToElements(htmlString).also {
+      telemetryClient.trackSarEvent(
+        "CopyingElementsToDocument",
+        params.subjectAccessRequest,
+        "eventTime" to stopWatch.time.toString(),
+        "service" to service,
+        "htmlStringSize" to htmlString?.length.toString(),
+        "elements" to it.size.toString(),
+      )
+    }
   }
 
   fun Document.addRearPage(numberOfPages: Int) {
@@ -359,6 +432,9 @@ class PdfService {
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
+  /**
+   * Simple POJO holding the output stream and the page count of the generated document.
+   */
   private data class PdfOutputStreamWrapper(val baos: ByteArrayOutputStream, val numberOfPages: Int) {
     fun toInputStream(): ByteArrayInputStream {
       return ByteArrayInputStream(baos.toByteArray())

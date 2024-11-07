@@ -26,10 +26,10 @@
         "statement": "This is a statement.\r\n\r\nThis is a test where the prisoner is in transit.",
         "completed": true
       },
-      "createdByUserId": "DFERN_TEST",
+      "createdByUserId": "SSKINNER_TEST",
       "createdDateTime": "2023-04-06T15:25:05.423548",
       "status": "UNSCHEDULED",
-      "reviewedByUserId": "DFERN_TEST",
+      "reviewedByUserId": "SSKINNER_TEST",
       "statusReason": "",
       "statusDetails": "",
       "damages": [],

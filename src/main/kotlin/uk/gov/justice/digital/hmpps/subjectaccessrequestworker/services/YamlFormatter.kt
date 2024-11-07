@@ -4,10 +4,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.layout.element.Text
+import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ProcessDataHelper
 
-// TODO - Extracted from the original PDF generator as is, need to revisit this to work out what its doing.
+// TODO - Extracted directly from the original PDF generator as is, need to revisit this to work out what its doing.
+@Service
 class YamlFormatter {
 
   fun renderAsBasicYaml(rawData: Any?): Text {
