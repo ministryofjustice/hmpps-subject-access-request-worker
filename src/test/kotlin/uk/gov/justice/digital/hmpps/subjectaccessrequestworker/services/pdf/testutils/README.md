@@ -1,6 +1,6 @@
 # TemplateTestingUtil
 
-TemplateTestingUtil is a test util class for manually generation of SAR PDFs using stubbed data without submitting a 
+TemplateTestingUtil is a test util class for manually generating of SAR PDFs using stubbed data without submitting a 
 request to the SAR api - useful for local dev and testing or templates.
 
 1) Update the configuration file: `src/test/resources/pdf/testutil/config/pdf-util-config.json`

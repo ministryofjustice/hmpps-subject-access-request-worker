@@ -1,5 +1,5 @@
 {
-  "outputDir": "/Users/david.llewellyn/Desktop",
+  "outputDir": "<DIRECTORY_PATH_TO_OUTPUT_FILE>",
   "services": [
     {
       "name": "hmpps-book-secure-move-api"

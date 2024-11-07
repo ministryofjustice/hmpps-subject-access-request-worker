@@ -88,5 +88,4 @@ class TemplateTestingUtil {
       return Gson().fromJson(stub, Map::class.java)
     }
   }
-
 }
