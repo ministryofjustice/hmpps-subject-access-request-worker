@@ -1,0 +1,8 @@
+{
+  "outputDir": "/Users/david.llewellyn/Desktop",
+  "services": [
+    {
+      "name": "hmpps-book-secure-move-api"
+    }
+  ]
+}
