@@ -112,7 +112,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
         "event" to "GET_UNCLAIMED_REQUESTS",
         "id" to null,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests",
+        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
         "httpStatus" to HttpStatus.UNAUTHORIZED,
       )
 
@@ -130,7 +130,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
         "event" to "GET_UNCLAIMED_REQUESTS",
         "id" to null,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests",
+        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
         "httpStatus" to HttpStatus.FORBIDDEN,
       )
 
@@ -148,7 +148,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
         "event" to "GET_UNCLAIMED_REQUESTS",
         "id" to null,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests",
+        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
         "httpStatus" to HttpStatus.UNAUTHORIZED,
       )
 
@@ -453,13 +453,5 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       subjectAccessRequestApiMock.verifyZeroInteractions()
     }
-  }
-
-  private fun assertExpectedErrorMessage(actual: Throwable, prefix: String, vararg params: Pair<String, *>) {
-    val formattedParams = params.joinToString(", ") { entry ->
-      "${entry.first}=${entry.second}"
-    }
-    val expected = "$prefix $formattedParams"
-    assertThat(actual.message).isEqualTo(expected)
   }
 }

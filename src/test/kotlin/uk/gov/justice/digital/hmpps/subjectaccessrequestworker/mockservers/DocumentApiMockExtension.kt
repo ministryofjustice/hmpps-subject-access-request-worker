@@ -156,7 +156,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
       "documentUuid": "$subjectAccessRequestId",
       "documentType": "Subject Access Request",
       "documentFilename": "Subject Access Request - $subjectAccessRequestId",
-      "filename": ""Subject Access Request - $subjectAccessRequestId.pdf",
+      "filename": "Subject Access Request - $subjectAccessRequestId.pdf",
       "fileExtension": "pdf",
       "fileSize": 1,
       "fileHash": "1",

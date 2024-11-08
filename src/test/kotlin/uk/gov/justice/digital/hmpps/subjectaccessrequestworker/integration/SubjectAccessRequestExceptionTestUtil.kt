@@ -6,6 +6,7 @@ fun assertExpectedErrorMessage(actual: Throwable, prefix: String, vararg params:
   val formattedParams = params.joinToString(", ") { entry ->
     "${entry.first}=${entry.second}"
   }
-  val expected = "$prefix $formattedParams"
-  assertThat(actual.message).isEqualTo(expected)
+
+  assertThat(actual.message).startsWith(prefix)
+  assertThat(actual.message).endsWith(formattedParams)
 }

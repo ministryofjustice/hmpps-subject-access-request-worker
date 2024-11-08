@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Compl
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @ExtendWith(ComplexityOfNeedsApiExtension::class)
@@ -170,7 +171,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
       prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
       "event" to GET_SAR_DATA,
       "id" to subjectAccessRequestId,
-      "uri" to "$serviceUrl/subject-access-request",
+      "uri" to expectedUrl(dateFrom, dateTo),
       "httpStatus" to HttpStatus.BAD_REQUEST,
     )
 
@@ -181,7 +182,7 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get subject access request data errors with 5xx error on initial request and retry attempts`() {
+  fun `get subject access request data errors with 5xx error on all request attempts`() {
     complexityOfNeedsMockApi.stubSubjectAccessRequestErrorResponse(500, subjectAccessRequestParams)
 
     val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
@@ -397,11 +398,8 @@ class GenericHmppsApiGatewayIntTest : IntegrationTestBase() {
     assertThat(additionalProp1["field1"]).isEqualTo("value1")
   }
 
-  private fun assertExpectedErrorMessage(actual: Throwable, prefix: String, vararg params: Pair<String, *>) {
-    val formattedParams = params.joinToString(", ") { entry ->
-      "${entry.first}=${entry.second}"
-    }
-    val expected = "$prefix $formattedParams"
-    assertThat(actual.message).isEqualTo(expected)
+  private fun expectedUrl(fromDate: LocalDate, toDate: LocalDate): String {
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return "$serviceUrl/subject-access-request?prn=$PRN&crn=$CRN&fromDate=${dateFormatter.format(fromDate)}&toDate=${dateFormatter.format(toDate)}"
   }
 }

@@ -64,7 +64,13 @@ class SubjectAccessRequestWorkerService(
       stopWatch.stop()
       telemetryClient.trackSarEvent("NewReportClaimComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
     } catch (exception: Exception) {
-      log.error("subjectAccessRequest: ${subjectAccessRequest?.id} failed with error: ${exception.message}", exception)
+      val errorMessage = buildString {
+        append("subjectAccessRequest ")
+        subjectAccessRequest?.id?.let { append("id=$it" ) }
+        subjectAccessRequest?.sarCaseReferenceNumber?.let { append("sarCaseReferenceNumber=$it" ) }
+        append("failed with error: ${exception.message}")
+      }
+      log.error(errorMessage, exception)
 
       telemetryClient.trackSarEvent(
         "ReportFailedWithError",
