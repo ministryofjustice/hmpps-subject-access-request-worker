@@ -25,6 +25,6 @@ open class SubjectAccessRequestException(
     }
 
   private fun Map<String, *>.toFormattedString() = this.entries.joinToString(", ") { entry ->
-    "${entry.key}=${entry.value.toString()}"
+    "${entry.key}=${entry.value}"
   }
 }

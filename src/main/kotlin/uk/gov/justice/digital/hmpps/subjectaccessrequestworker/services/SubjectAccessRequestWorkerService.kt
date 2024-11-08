@@ -66,8 +66,8 @@ class SubjectAccessRequestWorkerService(
     } catch (exception: Exception) {
       val errorMessage = buildString {
         append("subjectAccessRequest ")
-        subjectAccessRequest?.id?.let { append("id=$it" ) }
-        subjectAccessRequest?.sarCaseReferenceNumber?.let { append("sarCaseReferenceNumber=$it" ) }
+        subjectAccessRequest?.id?.let { append("id=$it ") }
+        subjectAccessRequest?.sarCaseReferenceNumber?.let { append("sarCaseReferenceNumber=$it ") }
         append("failed with error: ${exception.message}")
       }
       log.error(errorMessage, exception)
