@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import java.net.URI
 import java.util.UUID
 
 open class SubjectAccessRequestException(
@@ -14,24 +13,18 @@ open class SubjectAccessRequestException(
 
   constructor(message: String) : this(message, null, null, null)
 
+  /**
+   * Return the exception message with additional details.
+   */
   override val message: String?
-    get() {
-      val formattedParams = params?.toFormattedString()
-      if (formattedParams.isNullOrEmpty()) {
-        return "${super.message}, event=$event, id=$subjectAccessRequestId"
-      }
-
-      return "${super.message}, event=$event, id=$subjectAccessRequestId, $formattedParams"
+    get() = buildString {
+      append(super.message)
+      cause?.message?.let { append(", cause=$it") }
+      append(", event=$event, id=$subjectAccessRequestId")
+      params?.toFormattedString()?.let { append(", $it") }
     }
 
   private fun Map<String, *>.toFormattedString() = this.entries.joinToString(", ") { entry ->
-    val value = entry.value
-    val second = if (value is URI) {
-      // Return URI without the query string
-      "${value.scheme}://${value.host}:${value.port}${value.path}"
-    } else {
-      entry.value.toString()
-    }
-    "${entry.key}=$second"
+    "${entry.key}=${entry.value}"
   }
 }

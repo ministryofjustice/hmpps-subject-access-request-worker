@@ -37,7 +37,7 @@ class WebClientRetriesSpec(webClientConfiguration: WebClientConfiguration) {
       .backoff(maxRetries, backOff)
       .filter { err -> is5xxOrClientRequestError(err) }
       .doBeforeRetry { signal ->
-        LOG.error("subject access request $event failed with error=${signal.failure()}, attempting retry after backoff: $backOff, ${params?.formatted()}")
+        LOG.error("subject access request $event, id=$subjectAccessRequestId failed with error=${signal.failure()}, attempting retry after backoff: $backOff, ${params?.formatted()}")
       }
       .onRetryExhaustedThrow { _, signal ->
         SubjectAccessRequestRetryExhaustedException(
@@ -78,6 +78,6 @@ class WebClientRetriesSpec(webClientConfiguration: WebClientConfiguration) {
     }
 
   private fun Map<String, Any>.formatted(): String {
-    return "${this.entries.joinToString(",") { "${it.key}=${it.value}" }}"
+    return this.entries.joinToString(",") { "${it.key}=${it.value}" }
   }
 }
