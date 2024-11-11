@@ -15,6 +15,9 @@ import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.fileHash
+import java.math.BigInteger
+import java.security.MessageDigest
 
 class DocumentApiMockServer : WireMockServer(8084) {
 
@@ -33,7 +36,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
     )
   }
 
-  fun stubUploadFileSuccess(subjectAccessRequestId: String, expectedFileContent: ByteArray) {
+  fun stubUploadFileSuccess(subjectAccessRequestId: String, fileSize: Int, expectedFileContent: ByteArray) {
     stubFor(
       post(urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"))
         .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
@@ -46,7 +49,13 @@ class DocumentApiMockServer : WireMockServer(8084) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
-            .withBody(documentUploadSuccessResponseJson(subjectAccessRequestId)),
+            .withBody(
+              documentUploadSuccessResponseJson(
+                subjectAccessRequestId,
+                fileSize,
+                expectedFileContent,
+              ),
+            ),
         ),
     )
   }
@@ -99,6 +108,13 @@ class DocumentApiMockServer : WireMockServer(8084) {
     expectedFileContent: ByteArray,
     status: Int,
   ) {
+    val fileSize = expectedFileContent.size
+    val fileHash = BigInteger(
+      1,
+      MessageDigest.getInstance("SHA-512")
+        .digest(expectedFileContent),
+    ).toString(16)
+
     stubFor(
       post(
         urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"),
@@ -146,20 +162,26 @@ class DocumentApiMockServer : WireMockServer(8084) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
-            .withBody(documentUploadSuccessResponseJson(subjectAccessRequestId)),
+            .withBody(
+              documentUploadSuccessResponseJson(
+                subjectAccessRequestId,
+                expectedFileContent.size,
+                expectedFileContent,
+              ),
+            ),
         ),
     )
   }
 
-  fun documentUploadSuccessResponseJson(subjectAccessRequestId: String) = """
+  fun documentUploadSuccessResponseJson(subjectAccessRequestId: String, fileSize: Int, fileContent: ByteArray) = """
     {
       "documentUuid": "$subjectAccessRequestId",
       "documentType": "Subject Access Request",
       "documentFilename": "Subject Access Request - $subjectAccessRequestId",
       "filename": "Subject Access Request - $subjectAccessRequestId.pdf",
       "fileExtension": "pdf",
-      "fileSize": 1,
-      "fileHash": "1",
+      "fileSize": $fileSize,
+      "fileHash": "${fileHash(fileContent)}",
       "mimeType": "pdf",
       "metadata": {
         "prisonCode": "KMI",

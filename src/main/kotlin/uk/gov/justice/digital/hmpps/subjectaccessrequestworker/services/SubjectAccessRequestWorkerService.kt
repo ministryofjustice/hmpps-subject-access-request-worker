@@ -18,8 +18,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectA
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ConfigOrderHelper
-import java.io.ByteArrayOutputStream
-import java.util.UUID
 
 const val POLL_DELAY: Long = 10000
 
@@ -153,17 +151,12 @@ class SubjectAccessRequestWorkerService(
 
     telemetryClient.trackSarEvent("SavingFileStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
 
-    val response = this.storeSubjectAccessRequestDocument(subjectAccessRequest.id, pdfStream)
-    log.info("${subjectAccessRequest.id} stored PDF$response")
+    val response = this.documentStorageClient.storeDocument(subjectAccessRequest, pdfStream)
+    log.info("${subjectAccessRequest.id} stored PDF ${response.documentUuid}")
 
     telemetryClient.trackSarEvent("SavingFileComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize, "response" to (response?.toString() ?: "null"))
 
     telemetryClient.trackSarEvent("DoReportComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
-  }
-
-  fun storeSubjectAccessRequestDocument(sarId: UUID, docBody: ByteArrayOutputStream): String? {
-    val response = documentStorageClient.storeDocument(sarId, docBody)
-    return response
   }
 
   fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
