@@ -109,6 +109,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     telemetryClient,
   )
 
+  private val postDocumentResponse = DocumentStorageClient.PostDocumentResponse(documentUuid = sampleSAR.id.toString())
+
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
@@ -171,10 +173,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         dateTo = dateToFormatted,
         subjectAccessRequest = sampleSAR,
       ),
-    )
-      .thenReturn(mockStream)
-    whenever(documentStorageClient.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
-      .thenReturn("")
+    ).thenReturn(mockStream)
+
+    whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+      .thenReturn(postDocumentResponse)
 
     subjectAccessRequestWorkerService.doPoll()
 
@@ -235,8 +237,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           sarCaseReferenceNumber = "1234abc",
           subjectAccessRequest = sampleSAR,
         ),
-      )
-        .thenReturn(mockStream)
+      ).thenReturn(mockStream)
+      whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+        .thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
@@ -333,8 +336,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockStream)
-      whenever(documentStorageClient.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
-        .thenReturn("")
+      whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+        .thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
@@ -381,10 +384,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ).thenReturn(mockStream)
       whenever(
         documentStorageClient.storeDocument(
-          UUID.fromString("11111111-1111-1111-1111-111111111111"),
+          sampleSAR,
           mockStream,
         ),
-      ).thenReturn("")
+      ).thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
@@ -432,13 +435,13 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       )
         .thenReturn(mockStream)
-      whenever(documentStorageClient.storeDocument(UUID.fromString("11111111-1111-1111-1111-111111111111"), mockStream))
-        .thenReturn("")
+      whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+        .thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.doReport(sampleSAR)
 
       verify(documentStorageClient, times(1)).storeDocument(
-        UUID.fromString("11111111-1111-1111-1111-111111111111"),
+        sampleSAR,
         mockStream,
       )
     }

@@ -1,13 +1,17 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.io.ByteArrayOutputStream
 import java.util.UUID
@@ -16,21 +20,57 @@ import java.util.UUID
 class DocumentStorageClient(
   private val documentStorageWebClient: WebClient,
   val webClientRetriesSpec: WebClientRetriesSpec,
+  val telemetryClient: TelemetryClient,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+    private const val UPLOAD_DOCUMENT_PATH = "/documents/SUBJECT_ACCESS_REQUEST_REPORT"
+    private const val SAR_FILENAME = "report.pdf"
+    private const val FILE_SIZE_VERIFY_ERROR_EVENT = "documentUploadFileSizeVerificationError"
+    private const val FILE_SIZE_VERIFY_SUCCESS_EVENT = "documentUploadFileSizeVerificationSuccess"
   }
 
-  fun storeDocument(subjectAccessRequestId: UUID, docBody: ByteArrayOutputStream): String? {
-    log.info("Storing document with UUID $subjectAccessRequestId")
-    val contentsAsResource: ByteArrayResource = object : ByteArrayResource(docBody.toByteArray()) {
-      override fun getFilename(): String {
-        return "report.pdf"
-      }
-    }
+  fun storeDocument(subjectAccessRequest: SubjectAccessRequest, docBody: ByteArrayOutputStream): PostDocumentResponse {
+    log.info("Storing document with UUID ${subjectAccessRequest.id}")
+    val expectedSize = docBody.toByteArray().size
+    val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest.id, contentAsResource(docBody))
+    return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
+  }
 
+  private fun contentAsResource(docBody: ByteArrayOutputStream) = object : ByteArrayResource(docBody.toByteArray()) {
+    override fun getFilename(): String {
+      return SAR_FILENAME
+    }
+  }
+
+  private fun executeStoreDocumentRequest(
+    subjectAccessRequestId: UUID,
+    contentsAsResource: ByteArrayResource,
+  ): PostDocumentResponse? {
     try {
-      return executeStoreDocumentRequest(subjectAccessRequestId, contentsAsResource)
+      return documentStorageWebClient.post().uri("$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId")
+        .header("Service-Name", "DPS-Subject-Access-Requests")
+        .bodyValue(
+          MultipartBodyBuilder().apply {
+            part("file", contentsAsResource)
+            part("metadata", 1)
+          }.build(),
+        )
+        .retrieve()
+        .onStatus(
+          webClientRetriesSpec.is4xxStatus(),
+          webClientRetriesSpec.throw4xxStatusFatalError(STORE_DOCUMENT, subjectAccessRequestId),
+        )
+        .bodyToMono(PostDocumentResponse::class.java)
+        .retryWhen(
+          webClientRetriesSpec.retry5xxAndClientRequestErrors(
+            STORE_DOCUMENT,
+            subjectAccessRequestId,
+            params = mapOf(
+              "uri" to "$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId",
+            ),
+          ),
+        ).block()
     } catch (ex: ClientAuthorizationException) {
       /**
        * Authentication error occur before making the documentStore request so must be caught/handle separately.
@@ -47,32 +87,67 @@ class DocumentStorageClient(
     }
   }
 
-  private fun executeStoreDocumentRequest(
-    subjectAccessRequestId: UUID,
-    contentsAsResource: ByteArrayResource,
-  ): String? {
-    return documentStorageWebClient.post().uri("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId")
-      .header("Service-Name", "DPS-Subject-Access-Requests")
-      .bodyValue(
-        MultipartBodyBuilder().apply {
-          part("file", contentsAsResource)
-          part("metadata", 1)
-        }.build(),
+  private fun verifyUploadedFileSize(
+    postDocumentResponse: PostDocumentResponse?,
+    subjectAccessRequest: SubjectAccessRequest,
+    expectedFileSize: Int,
+  ): PostDocumentResponse {
+    if (postDocumentResponse == null) {
+      throw SubjectAccessRequestException(
+        message = "document store upload error: response body expected but was null",
+        cause = null,
+        event = STORE_DOCUMENT,
+        subjectAccessRequestId = subjectAccessRequest.id,
       )
-      .retrieve()
-      .onStatus(
-        webClientRetriesSpec.is4xxStatus(),
-        webClientRetriesSpec.throw4xxStatusFatalError(STORE_DOCUMENT, subjectAccessRequestId),
+    }
+
+    if (postDocumentResponse.fileSize != expectedFileSize) {
+      telemetryClient.trackSarEvent(
+        FILE_SIZE_VERIFY_ERROR_EVENT,
+        subjectAccessRequest,
+        "expectedFileSize" to expectedFileSize.toString(),
+        "actualFileSize" to postDocumentResponse.fileSize.toString(),
+        "documentUuid" to postDocumentResponse.documentUuid.toString(),
+        "documentFileHash" to postDocumentResponse.fileHash.toString(),
       )
-      .bodyToMono(String::class.java)
-      .retryWhen(
-        webClientRetriesSpec.retry5xxAndClientRequestErrors(
-          STORE_DOCUMENT,
-          subjectAccessRequestId,
-          params = mapOf(
-            "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-          ),
+
+      throw SubjectAccessRequestException(
+        message = "document store upload error: response file size did not match the expected file upload size",
+        cause = null,
+        event = STORE_DOCUMENT,
+        subjectAccessRequestId = subjectAccessRequest.id,
+        params = mapOf(
+          "expectedFileSize" to expectedFileSize,
+          "actualFileSize" to postDocumentResponse.fileSize,
+          "documentUuid" to postDocumentResponse.documentUuid,
+          "documentFileHash" to postDocumentResponse.fileHash,
         ),
-      ).block()
+      )
+    }
+
+    telemetryClient.trackSarEvent(
+      FILE_SIZE_VERIFY_SUCCESS_EVENT,
+      subjectAccessRequest,
+      "expectedFileSize" to expectedFileSize.toString(),
+      "actualFileSize" to postDocumentResponse.fileSize.toString(),
+      "documentUuid" to postDocumentResponse.documentUuid.toString(),
+      "documentFileHash" to postDocumentResponse.fileHash.toString(),
+    )
+    return postDocumentResponse
   }
+
+  data class PostDocumentResponse(
+    val documentUuid: String? = null,
+    val documentType: String? = null,
+    val documentFilename: String? = null,
+    val filename: String? = null,
+    val fileExtension: String? = null,
+    val fileSize: Int? = null,
+    val fileHash: String? = null,
+    val mimeType: String? = null,
+    val metadata: Map<String, Any>? = null,
+    val createdTime: String? = null,
+    val createdByServiceName: String? = null,
+    val createdByUsername: String? = null,
+  )
 }
