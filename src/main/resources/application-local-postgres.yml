@@ -6,7 +6,7 @@ spring:
   flyway:
     locations: classpath:db/migration/
     enabled: true
-    url: jdbc:postgresql://localhost:5432/sar-db?sslmode=prefer
+    url: jdbc:postgresql://localhost:5433/sar-db?sslmode=prefer
     user: admin
     password: admin_password
 

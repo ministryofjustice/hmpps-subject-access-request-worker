@@ -10,18 +10,21 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.FileOutputStream
 
 class GeneratePdfCreateAndVaryLicenceServiceTest {
-  private val templateHelpers = TemplateHelpers()
+  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
   @Test
   fun `generatePdfService renders for Create and Vary a License Service`() {
-    val serviceList = listOf(DpsService(name = "create-and-vary-a-licence-api", content = testCreateAndVaryLicenceServiceData))
+    val serviceList =
+      listOf(DpsService(name = "create-and-vary-a-licence-api", content = testCreateAndVaryLicenceServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-cvl-template.pdf")))
     val document = Document(pdfDocument)
     generatePdfService.addData(pdfDocument, document, serviceList)

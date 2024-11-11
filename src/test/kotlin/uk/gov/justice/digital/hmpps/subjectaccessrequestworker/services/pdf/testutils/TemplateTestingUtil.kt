@@ -3,9 +3,10 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.tes
 import com.microsoft.applicationinsights.TelemetryClient
 import com.nimbusds.jose.shaded.gson.Gson
 import com.nimbusds.jose.shaded.gson.GsonBuilder
-import org.mockito.Mockito.mock
+import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.GeneratePdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.TemplateRenderService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -23,7 +24,8 @@ fun main(args: Array<String>) {
 
 class TemplateTestingUtil {
 
-  private val templateHelpers = TemplateHelpers()
+  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val gson = GsonBuilder().setPrettyPrinting().create()

@@ -9,6 +9,7 @@ configurations {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.json:json:20240303")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
@@ -22,6 +23,11 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.16.0")
   implementation("io.sentry:sentry-logback:7.16.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.8")
+
+  runtimeOnly("org.flywaydb:flyway-core")
+  runtimeOnly("com.h2database:h2:2.3.232")
+  runtimeOnly("org.postgresql:postgresql:42.7.4")
+  runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.0.8")
   testImplementation("org.wiremock:wiremock-standalone:3.9.2")

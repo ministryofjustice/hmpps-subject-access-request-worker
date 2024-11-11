@@ -2,10 +2,15 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 
 class TemplateRenderServiceTest {
-  private val templateHelpers = TemplateHelpers()
+  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
 
   @Test
@@ -72,10 +77,13 @@ class TemplateRenderServiceTest {
 
   @Test
   fun `renderTemplate renders a template given an incentives template`() {
+    whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
+
     val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-incentives-api", testIncentivesServiceData)
 
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
+//    assertThat(renderedStyleTemplate).contains("Moorland (HMP & YOI)")
     assertThat(renderedStyleTemplate).contains("<td>03 December 2019</td>")
     assertThat(renderedStyleTemplate).contains("<td>03 July 2023, 9:14:25 pm</td>")
   }

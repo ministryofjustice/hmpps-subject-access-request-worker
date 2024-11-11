@@ -13,6 +13,19 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  flyway:
+    enabled: false
+
+  datasource:
+    url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=verify-full'
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   security:
     oauth2:
       resourceserver:
