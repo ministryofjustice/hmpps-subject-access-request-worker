@@ -292,7 +292,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `file upload document file size does not match expected`() {
+  fun `uploaded document file size does not match expected content size throw exception`() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val incorrectFileSize = expectedFileContent.toByteArray().size * 2
 
