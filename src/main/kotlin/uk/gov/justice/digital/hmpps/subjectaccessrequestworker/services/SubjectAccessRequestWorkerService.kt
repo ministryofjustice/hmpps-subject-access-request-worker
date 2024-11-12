@@ -14,10 +14,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentSt
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ConfigOrderHelper
+import java.io.ByteArrayOutputStream
 
 const val POLL_DELAY: Long = 10000
 
@@ -146,17 +148,46 @@ class SubjectAccessRequestWorkerService(
     )
     log.info("${subjectAccessRequest.id} created PDF")
 
-    var fileSize = pdfStream.size().toString()
+    val fileSize = pdfStream.size().toString()
     telemetryClient.trackSarEvent("GeneratingPDFStreamComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
 
     telemetryClient.trackSarEvent("SavingFileStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
-
-    val response = this.documentStorageClient.storeDocument(subjectAccessRequest, pdfStream)
-    log.info("${subjectAccessRequest.id} stored PDF ${response.documentUuid}")
-
-    telemetryClient.trackSarEvent("SavingFileComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize, "response" to (response?.toString() ?: "null"))
+    uploadToDocumentStore(stopWatch, subjectAccessRequest, pdfStream)
 
     telemetryClient.trackSarEvent("DoReportComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+  }
+
+  /**
+   * Attempt to upload the document to the DocumentStore. If a document with the specified ID already exists the subject
+   * access request no action will be taken. The "new" document will not be uploaded and the SAR request will complete
+   * quietly.
+   */
+  fun uploadToDocumentStore(
+    stopWatch: StopWatch,
+    subjectAccessRequest: SubjectAccessRequest,
+    pdfStream: ByteArrayOutputStream,
+  ) {
+    try {
+      val postDocumentResponse = this.documentStorageClient.storeDocument(subjectAccessRequest, pdfStream)
+      log.info("${subjectAccessRequest.id} successfully uploaded to document store documentUuid: ${postDocumentResponse.documentUuid}")
+
+      telemetryClient.trackSarEvent(
+        "SavingFileComplete",
+        subjectAccessRequest,
+        TIME_ELAPSED_KEY to stopWatch.time.toString(),
+        "fileSize" to postDocumentResponse.fileSize.toString(),
+        "documentUuid" to postDocumentResponse.documentUuid.toString(),
+      )
+    } catch (ex: SubjectAccessRequestDocumentStoreConflictException) {
+      log.info("document upload conflict: document id=${subjectAccessRequest.id} already exists in document store, no action will be taken")
+
+      telemetryClient.trackSarEvent(
+        "SavingFileConflictAlreadyExists",
+        subjectAccessRequest,
+        TIME_ELAPSED_KEY to stopWatch.time.toString(),
+        "outcome" to "no action required",
+      )
+    }
   }
 
   fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {

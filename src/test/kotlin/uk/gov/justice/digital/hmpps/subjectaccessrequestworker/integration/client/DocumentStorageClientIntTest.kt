@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
@@ -134,6 +135,35 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
       "id" to subjectAccessRequestId,
       "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
       "httpStatus" to HttpStatus.FORBIDDEN,
+    )
+
+    documentApi.verifyStoreDocumentIsCalled(
+      times = 1,
+      subjectAccessRequestId = subjectAccessRequestId.toString(),
+    )
+  }
+
+  @Test
+  fun `store document does not retry when fails with a 409 status`() {
+    val expectedFileContent = getFileBytes(FILE_CONTENT)
+
+    documentApi.stubUploadFileFailsWithStatus(
+      subjectAccessRequestId = subjectAccessRequestId.toString(),
+      expectedFileContent = FILE_CONTENT.toByteArray(),
+      status = 409,
+    )
+
+    val ex = assertThrows<SubjectAccessRequestDocumentStoreConflictException> {
+      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+    }
+
+    assertExpectedErrorMessage(
+      actual = ex,
+      prefix = "subject access request document store upload unsuccessful: document already exists",
+      "event" to STORE_DOCUMENT,
+      "id" to subjectAccessRequestId,
+      "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
+      "httpStatus" to HttpStatus.CONFLICT,
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -322,6 +352,33 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
       subjectAccessRequest,
       FILE_CONTENT.toByteArray(),
       incorrectFileSize,
+    )
+  }
+
+  @Test
+  fun `document store upload success invalid response body throws expected exception`() {
+    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val fileSize = expectedFileContent.toByteArray().size
+
+    documentApi.stubUploadFileReturnsInvalidResponseEntity(
+      subjectAccessRequestId.toString(),
+      FILE_CONTENT.toByteArray(),
+    )
+
+    val ex = assertThrows<SubjectAccessRequestException> {
+      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+    }
+
+    assertExpectedErrorMessage(
+      actual = ex,
+      prefix = "documentStoreClient unexpected error",
+      "event" to STORE_DOCUMENT,
+      "id" to subjectAccessRequestId,
+    )
+
+    documentApi.verifyStoreDocumentIsCalled(
+      times = 1,
+      subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
   }
 

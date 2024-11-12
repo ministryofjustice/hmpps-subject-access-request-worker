@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.io.ByteArrayOutputStream
-import java.util.UUID
 
 @Service
 class DocumentStorageClient(
@@ -33,7 +32,7 @@ class DocumentStorageClient(
   fun storeDocument(subjectAccessRequest: SubjectAccessRequest, docBody: ByteArrayOutputStream): PostDocumentResponse {
     log.info("Storing document with UUID ${subjectAccessRequest.id}")
     val expectedSize = docBody.toByteArray().size
-    val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest.id, contentAsResource(docBody))
+    val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, contentAsResource(docBody))
     return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
   }
 
@@ -44,9 +43,10 @@ class DocumentStorageClient(
   }
 
   private fun executeStoreDocumentRequest(
-    subjectAccessRequestId: UUID,
+    subjectAccessRequest: SubjectAccessRequest,
     contentsAsResource: ByteArrayResource,
   ): PostDocumentResponse? {
+    val subjectAccessRequestId = subjectAccessRequest.id
     try {
       return documentStorageWebClient.post().uri("$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId")
         .header("Service-Name", "DPS-Subject-Access-Requests")
@@ -58,14 +58,18 @@ class DocumentStorageClient(
         )
         .retrieve()
         .onStatus(
+          webClientRetriesSpec.is409Conflict(),
+          webClientRetriesSpec.throwDocumentApiConflictException(subjectAccessRequest),
+        )
+        .onStatus(
           webClientRetriesSpec.is4xxStatus(),
-          webClientRetriesSpec.throw4xxStatusFatalError(STORE_DOCUMENT, subjectAccessRequestId),
+          webClientRetriesSpec.throw4xxStatusFatalError(STORE_DOCUMENT, subjectAccessRequest),
         )
         .bodyToMono(PostDocumentResponse::class.java)
         .retryWhen(
           webClientRetriesSpec.retry5xxAndClientRequestErrors(
             STORE_DOCUMENT,
-            subjectAccessRequestId,
+            subjectAccessRequest,
             params = mapOf(
               "uri" to "$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId",
             ),
@@ -83,6 +87,18 @@ class DocumentStorageClient(
         params = mapOf(
           "cause" to ex.cause?.message,
         ),
+      )
+    } catch (ex: Exception) {
+      if (ex is SubjectAccessRequestException) {
+        // No action required, rethrow error
+        throw ex
+      }
+
+      throw SubjectAccessRequestException(
+        message = "documentStoreClient unexpected error",
+        cause = ex,
+        event = STORE_DOCUMENT,
+        subjectAccessRequestId = subjectAccessRequestId,
       )
     }
   }

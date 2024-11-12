@@ -68,6 +68,24 @@ class DocumentApiMockServer : WireMockServer(8084) {
     )
   }
 
+  fun stubUploadFileReturnsInvalidResponseEntity(subjectAccessRequestId: String, expectedFileContent: ByteArray) {
+    stubFor(
+      post(urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"))
+        .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("report.pdf")
+            .withBody(binaryEqualTo(expectedFileContent)),
+        )
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody("[17]"),
+        ),
+    )
+  }
+
   fun stubUploadFileFailsWithStatus(
     subjectAccessRequestId: String,
     expectedFileContent: ByteArray,
