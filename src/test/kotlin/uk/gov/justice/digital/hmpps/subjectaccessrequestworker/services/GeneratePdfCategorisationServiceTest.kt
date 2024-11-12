@@ -9,7 +9,9 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.FileOutputStream
@@ -23,6 +25,7 @@ class GeneratePdfCategorisationServiceTest {
 
   @Test
   fun `generatePdfService renders for Categorisation Service`() {
+    whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
     val serviceList = listOf(DpsService(name = "hmpps-offender-categorisation-api", content = categoryServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-categorisation-api-template.pdf")))
     val document = Document(pdfDocument)
@@ -34,6 +37,7 @@ class GeneratePdfCategorisationServiceTest {
     val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
 
     assertThat(text).contains("Prisoner categorisation")
+    assertThat(text).contains("Moorland (HMP & YOI)")
   }
 
   private val categoryServiceData: Map<Any, Any> = mapOf(

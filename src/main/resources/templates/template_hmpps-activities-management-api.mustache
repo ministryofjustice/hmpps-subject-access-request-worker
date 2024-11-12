@@ -27,7 +27,7 @@
                 <td class="data-column-50">Activity summary</td>
             </tr>
             <tr>
-                <td>{{ optionalValue prisonCode }}</td>
+                <td>{{ getPrisonName prisonCode }}</td>
                 <td>{{ optionalValue prisonerStatus }}</td>
                 <td>{{ optionalValue activitySummary }}</td>
             </tr>
@@ -78,7 +78,7 @@
                 <td class="data-column-20">Originator</td>
             </tr>
             <tr>
-                <td>{{ optionalValue prisonCode }}</td>
+                <td>{{ getPrisonName prisonCode }}</td>
                 <td>{{ optionalValue (formatDate createdDate) }}</td>
                 <td>{{ optionalValue (formatDate applicationDate) }}</td>
                 <td>{{ optionalValue originator }}</td>
@@ -117,7 +117,7 @@
             </tr>
 
             <tr>
-                <td>{{ optionalValue prisonCode }}</td>
+                <td>{{ getPrisonName prisonCode }}</td>
                 <td>{{ optionalValue (formatDate createdDate) }}</td>
                 <td>{{ optionalValue categoryCode }}</td>
                 <td>{{ optionalValue attended }}</td>

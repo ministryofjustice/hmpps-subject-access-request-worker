@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.Prison
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.FileOutputStream
 
-class GeneratePdfPersonalLearningPlanServiceTest {
+class GeneratePdfEducationAndWorkPlanServiceTest {
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
@@ -22,9 +22,9 @@ class GeneratePdfPersonalLearningPlanServiceTest {
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
   @Test
-  fun `generatePdfService renders for Personal Learning Plan Service`() {
+  fun `generatePdfService renders for Education and Work Plan Service`() {
     val serviceList =
-      listOf(DpsService(name = "hmpps-education-and-work-plan-api", content = personalLearningPlanServiceData))
+      listOf(DpsService(name = "hmpps-education-and-work-plan-api", content = educationAndWorkPlanServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-template-hmpps-education-and-work-plan-api.pdf")))
     val document = Document(pdfDocument)
     generatePdfService.addData(pdfDocument, document, serviceList)
@@ -36,7 +36,7 @@ class GeneratePdfPersonalLearningPlanServiceTest {
     assertThat(text).contains("Personal Learning Plan")
   }
 
-  private val personalLearningPlanServiceData: Any = mapOf(
+  private val educationAndWorkPlanServiceData: Any = mapOf(
     "induction" to mapOf(
       "reference" to "814ade0a-a3b2-46a3-862f-79211ba13f7b",
       "prisonNumber" to "A1234BC",
@@ -50,11 +50,11 @@ class GeneratePdfPersonalLearningPlanServiceTest {
         ),
         "affectAbilityToWorkOther" to "Test String",
         "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
       ),
@@ -67,9 +67,9 @@ class GeneratePdfPersonalLearningPlanServiceTest {
             "subject" to "Maths GCSE",
             "level" to "LEVEL_2",
             "grade" to "B",
-            "createdBy" to "asmith_gen",
+            "createdBy" to "auser_gen",
             "createdAt" to "2023-06-19T09:39:44Z",
-            "updatedBy" to "asmith_gen",
+            "updatedBy" to "auser_gen",
             "updatedAt" to "2023-06-19T09:39:44Z",
           ),
         ),
@@ -83,11 +83,11 @@ class GeneratePdfPersonalLearningPlanServiceTest {
         ),
         "trainingTypeOther" to "Test String",
         "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
       ),
@@ -103,12 +103,12 @@ class GeneratePdfPersonalLearningPlanServiceTest {
             "details" to "Some details here",
           ),
         ),
-        "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdBy" to "auser_gen",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
       ),
@@ -126,12 +126,12 @@ class GeneratePdfPersonalLearningPlanServiceTest {
             "trainingTypeOther" to "Test Training Interest",
           ),
         ),
-        "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdBy" to "auser_gen",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
       ),
@@ -149,12 +149,12 @@ class GeneratePdfPersonalLearningPlanServiceTest {
             "interestTypeOther" to "Test Personal Interest",
           ),
         ),
-        "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdBy" to "auser_gen",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
       ),
@@ -167,21 +167,21 @@ class GeneratePdfPersonalLearningPlanServiceTest {
             "role" to "Test Role",
           ),
         ),
-        "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdBy" to "auser_gen",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
       ),
-      "createdBy" to "asmith_gen",
-      "createdByDisplayName" to "Alex Smith",
+      "createdBy" to "auser_gen",
+      "createdByDisplayName" to "Alex User",
       "createdAt" to "2023-06-19T09:39:44Z",
       "createdAtPrison" to "BXI",
-      "updatedBy" to "asmith_gen",
-      "updatedByDisplayName" to "Alex Smith",
+      "updatedBy" to "auser_gen",
+      "updatedByDisplayName" to "Alex User",
       "updatedAt" to "2023-06-19T09:39:44Z",
       "updatedAtPrison" to "BXI",
     ),
@@ -206,12 +206,12 @@ class GeneratePdfPersonalLearningPlanServiceTest {
           ),
         ),
         "notes" to "Pay close attention to Peter's behaviour.",
-        "createdBy" to "asmith_gen",
-        "createdByDisplayName" to "Alex Smith",
+        "createdBy" to "auser_gen",
+        "createdByDisplayName" to "Alex User",
         "createdAt" to "2023-06-19T09:39:44Z",
         "createdAtPrison" to "BXI",
-        "updatedBy" to "asmith_gen",
-        "updatedByDisplayName" to "Alex Smith",
+        "updatedBy" to "auser_gen",
+        "updatedByDisplayName" to "Alex User",
         "updatedAt" to "2023-06-19T09:39:44Z",
         "updatedAtPrison" to "BXI",
         "archiveReason" to "PRISONER_NO_LONGER_WANTS_TO_WORK_TOWARDS_GOAL",

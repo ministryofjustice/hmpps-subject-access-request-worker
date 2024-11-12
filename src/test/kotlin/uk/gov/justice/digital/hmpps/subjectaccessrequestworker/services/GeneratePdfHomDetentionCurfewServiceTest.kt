@@ -138,7 +138,7 @@ class GeneratePdfHomDetentionCurfewServiceTest {
           "approval" to mapOf(
             "release" to mapOf(
               "decision" to "Yes",
-              "decisionMaker" to "Louise Norris",
+              "decisionMaker" to "Ann User",
               "reasonForDecision" to "",
             ),
           ),
