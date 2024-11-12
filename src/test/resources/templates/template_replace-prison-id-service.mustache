@@ -1,0 +1,69 @@
+<h1>Prisoner Generic</h1>
+
+<h2>Replace Prison ID</h2>
+
+{{#prisonId}}
+
+    <br>
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">helper value</td>
+            <td class="data-column-25">Prison ID</td>
+            <td class="data-column-25">helper value</td>
+            <td class="data-column-25">Prison Namw</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue prison_id_helper_value }}</td>
+            <td>{{ optionalValue prison_id }}</td>
+            <td>{{ optionalValue prison_name_helper_value }}</td>
+            <td>{{ getPrisonName prison_id }}</td>
+        </tr>
+    </table>
+
+{{/prisonId}}
+{{^prisonId}}
+    <p>No Data Held</p>
+{{/prisonId}}
+
+{{#secondPrisonId}}
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">helper value</td>
+            <td class="data-column-25">Prison ID</td>
+            <td class="data-column-25">helper value</td>
+            <td class="data-column-25">Prison Name</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue prison_id_helper_value }}</td>
+            <td>{{ optionalValue prison_id }}</td>
+            <td>{{ optionalValue prison_name_helper_value }}</td>
+            <td>{{ getPrisonName prison_id }}</td>
+        </tr>
+    </table>
+
+{{/secondPrisonId}}
+{{^secondPrisonId}}
+    <p>No Data Held</p>
+{{/secondPrisonId}}
+
+
+{{#thirdPrisonId}}
+    <table class="data-table">
+        <tr>
+            <td class="data-column-25">helper value</td>
+            <td class="data-column-25">Prison ID</td>
+            <td class="data-column-25">helper value</td>
+            <td class="data-column-25">Prison Name</td>
+        </tr>
+        <tr>
+            <td>{{ optionalValue prison_id_helper_value }}</td>
+            <td>{{ optionalValue prison_id }}</td>
+            <td>{{ optionalValue prison_name_helper_value }}</td>
+            <td>{{ getPrisonName prison_id }}</td>
+        </tr>
+    </table>
+
+{{/thirdPrisonId}}
+{{^thirdPrisonId}}
+    <p>No Data Held</p>
+{{/thirdPrisonId}}

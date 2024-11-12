@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 
 @Service
-class TemplateHelpers() {
+class TemplateHelpers(
+  private val prisonDetailsRepository: PrisonDetailsRepository,
+) {
   fun formatDate(input: String?): String {
     if (input == null) return ""
     return DateConversionHelper().convertDates(input)
@@ -19,5 +22,12 @@ class TemplateHelpers() {
       return elementIndex + 1
     }
     return null
+  }
+
+  fun getPrisonName(caseloadId: String): String {
+    if (caseloadId.isEmpty() || caseloadId == "") return "No Data Held"
+    val prisonDetails = prisonDetailsRepository.findByPrisonId(caseloadId)
+
+    return prisonDetails?.prisonName ?: caseloadId
   }
 }

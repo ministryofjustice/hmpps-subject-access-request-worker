@@ -10,18 +10,21 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.FileOutputStream
 
 class GeneratePdfPersonalLearningPlanServiceTest {
-  private val templateHelpers = TemplateHelpers()
+  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
   @Test
   fun `generatePdfService renders for Personal Learning Plan Service`() {
-    val serviceList = listOf(DpsService(name = "hmpps-education-and-work-plan-api", content = personalLearningPlanServiceData))
+    val serviceList =
+      listOf(DpsService(name = "hmpps-education-and-work-plan-api", content = personalLearningPlanServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-template-hmpps-education-and-work-plan-api.pdf")))
     val document = Document(pdfDocument)
     generatePdfService.addData(pdfDocument, document, serviceList)
