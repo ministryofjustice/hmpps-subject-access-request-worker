@@ -158,9 +158,8 @@ class SubjectAccessRequestWorkerService(
   }
 
   /**
-   * Attempt to upload the document to the DocumentStore. If a document with the specified ID already exists the subject
-   * access request no action will be taken. The "new" document will not be uploaded and the SAR request will complete
-   * quietly.
+   * Attempt to upload the document to the DocumentStore. If a document with the specified ID already exists no action
+   * will be taken. The "new" document will not be uploaded and the SAR request will marked complete.
    */
   fun uploadToDocumentStore(
     stopWatch: StopWatch,
