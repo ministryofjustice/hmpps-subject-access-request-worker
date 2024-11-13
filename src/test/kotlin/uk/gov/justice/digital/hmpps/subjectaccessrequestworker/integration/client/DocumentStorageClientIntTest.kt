@@ -6,6 +6,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.times
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,6 +57,20 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
       "Buddy you're a boy make a big noise, Playin' in the street gonna be a big man some day"
 
     private val objectMapper = ObjectMapper()
+
+    @JvmStatic
+    fun metadataFormats(): List<Any?> = listOf(
+      null,
+      "",
+      1,
+      listOf("A", "B", "C"),
+      mapOf("key" to "value"),
+      object {
+        val outerObject = object {
+          val innerObject = "wibble"
+        }
+      },
+    )
   }
 
   @BeforeEach
@@ -70,7 +86,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val fileSize = expectedFileContent.toByteArray().size
 
-    documentApi.stubUploadFileSuccess(subjectAccessRequestId.toString(), fileSize, FILE_CONTENT.toByteArray())
+    documentApi.stubUploadFileSuccess(subjectAccessRequestId.toString(), fileSize, FILE_CONTENT.toByteArray(), 1)
 
     val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
 
@@ -326,7 +342,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val incorrectFileSize = expectedFileContent.toByteArray().size * 2
 
-    documentApi.stubUploadFileSuccess(subjectAccessRequestId.toString(), incorrectFileSize, FILE_CONTENT.toByteArray())
+    documentApi.stubUploadFileSuccess(subjectAccessRequestId.toString(), incorrectFileSize, FILE_CONTENT.toByteArray(), 1)
 
     val ex = assertThrows<SubjectAccessRequestException> {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
@@ -358,7 +374,6 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
   @Test
   fun `document store upload success invalid response body throws expected exception`() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
-    val fileSize = expectedFileContent.toByteArray().size
 
     documentApi.stubUploadFileReturnsInvalidResponseEntity(
       subjectAccessRequestId.toString(),
@@ -382,6 +397,32 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     )
   }
 
+  @ParameterizedTest()
+  @MethodSource("metadataFormats")
+  fun `store document will successfully handle response metadata of different value types`(metadata: Any?) {
+    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val fileSize = expectedFileContent.toByteArray().size
+
+    documentApi.stubUploadFileSuccess(
+      subjectAccessRequestId = subjectAccessRequestId.toString(),
+      fileSize = fileSize,
+      expectedFileContent = FILE_CONTENT.toByteArray(),
+      metadata = metadata,
+    )
+
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+
+    val expectedResponse =
+      expectedSuccessResponseWithMetadata(content = FILE_CONTENT.toByteArray(), metadata = metadata)
+    assertThat(resp).isEqualTo(expectedResponse)
+
+    documentApi.verifyStoreDocumentIsCalled(
+      times = 1,
+      subjectAccessRequestId = subjectAccessRequestId.toString(),
+    )
+    verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, FILE_CONTENT.toByteArray())
+  }
+
   fun getFileBytes(input: String): ByteArrayOutputStream {
     val baos = ByteArrayOutputStream()
     IOUtils.copy(ByteArrayInputStream(input.toByteArray()), baos)
@@ -398,6 +439,22 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
         subjectAccessRequestId.toString(),
         fileSize ?: content.size,
         content,
+      ),
+      DocumentStorageClient.PostDocumentResponse::class.java,
+    )
+  }
+
+  fun expectedSuccessResponseWithMetadata(
+    fileSize: Int? = null,
+    content: ByteArray,
+    metadata: Any?,
+  ): DocumentStorageClient.PostDocumentResponse {
+    return objectMapper.readValue(
+      documentApi.documentUploadSuccessResponseJsonWithMetadata(
+        subjectAccessRequestId.toString(),
+        fileSize ?: content.size,
+        content,
+        metadata,
       ),
       DocumentStorageClient.PostDocumentResponse::class.java,
     )

@@ -11,10 +11,12 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
+import com.google.gson.Gson
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.fileHash
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -36,7 +38,12 @@ class DocumentApiMockServer : WireMockServer(8084) {
     )
   }
 
-  fun stubUploadFileSuccess(subjectAccessRequestId: String, fileSize: Int, expectedFileContent: ByteArray) {
+  fun stubUploadFileSuccess(
+    subjectAccessRequestId: String,
+    fileSize: Int,
+    expectedFileContent: ByteArray,
+    metadata: Any?,
+  ) {
     stubFor(
       post(urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"))
         .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
@@ -50,10 +57,11 @@ class DocumentApiMockServer : WireMockServer(8084) {
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
             .withBody(
-              documentUploadSuccessResponseJson(
+              documentUploadSuccessResponseJsonWithMetadata(
                 subjectAccessRequestId,
                 fileSize,
                 expectedFileContent,
+                metadata,
               ),
             ),
         ),
@@ -201,17 +209,34 @@ class DocumentApiMockServer : WireMockServer(8084) {
       "fileSize": $fileSize,
       "fileHash": "${fileHash(fileContent)}",
       "mimeType": "pdf",
-      "metadata": {
-        "prisonCode": "KMI",
-        "prisonNumber": "C345TDE",
-        "court": "Birmingham Magistrates",
-        "warrantDate": "2023-11-14"
-      },
+      "metadata": 1,
       "createdTime": "2024-10-29T16:15:58.590Z",
       "createdByServiceName": "$SERVICE_NAME_HEADER",
       "createdByUsername": "Robert Bobby"
     }
   """.trimIndent()
+
+  fun documentUploadSuccessResponseJsonWithMetadata(
+    subjectAccessRequestId: String,
+    fileSize: Int,
+    fileContent: ByteArray,
+    metadata: Any?,
+  ): String {
+    return Gson().toJson(DocumentStorageClient.PostDocumentResponse(
+      documentUuid = subjectAccessRequestId,
+      documentType = "Subject Access Request",
+      documentFilename = "Subject Access Request - $subjectAccessRequestId",
+      filename = "Subject Access Request - $subjectAccessRequestId.pdf",
+      fileExtension = "pdf",
+      fileSize = fileSize,
+      fileHash = fileHash(fileContent),
+      mimeType = "pdf",
+      metadata = metadata,
+      createdTime = "2024-10-29T16:15:58.590Z",
+      createdByServiceName = SERVICE_NAME_HEADER,
+      createdByUsername = "Robert Bobby"
+    ))
+  }
 
   fun verifyNeverCalled() {
     verify(0, anyRequestedFor(anyUrl()))
