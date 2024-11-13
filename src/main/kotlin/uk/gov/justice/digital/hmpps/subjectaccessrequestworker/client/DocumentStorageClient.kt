@@ -53,7 +53,6 @@ class DocumentStorageClient(
         .bodyValue(
           MultipartBodyBuilder().apply {
             part("file", contentsAsResource)
-            part("metadata", 1)
           }.build(),
         )
         .retrieve()
