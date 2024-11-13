@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiC
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -62,26 +63,46 @@ class SubjectAccessRequestWorkerService(
       doReport(subjectAccessRequest)
       sarGateway.complete(webClient, subjectAccessRequest)
       stopWatch.stop()
-      telemetryClient.trackSarEvent("NewReportClaimComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
-    } catch (exception: Exception) {
-      val errorMessage = buildString {
-        append("subjectAccessRequest ")
-        subjectAccessRequest?.id?.let { append("id=$it ") }
-        subjectAccessRequest?.sarCaseReferenceNumber?.let { append("sarCaseReferenceNumber=$it ") }
-        append("failed with error: ${exception.message}")
-      }
-      log.error(errorMessage, exception)
-
       telemetryClient.trackSarEvent(
-        "ReportFailedWithError",
+        "NewReportClaimComplete",
         subjectAccessRequest,
-        "error" to (exception.message ?: ""),
         TIME_ELAPSED_KEY to stopWatch.time.toString(),
       )
-
-      exception.printStackTrace()
-      Sentry.captureException(exception)
+    } catch (exception: Exception) {
+      handleError(stopWatch, subjectAccessRequest, exception)
     }
+  }
+
+  fun handleError(stopWatch: StopWatch, subjectAccessRequest: SubjectAccessRequest?, exception: Exception) {
+    val errorMessage = buildString {
+      append("subjectAccessRequest ")
+      subjectAccessRequest?.id?.let { append("id=$it ") }
+      subjectAccessRequest?.sarCaseReferenceNumber?.let { append("sarCaseReferenceNumber=$it ") }
+      append("failed with error: ${exception.message}")
+    }
+    log.error(errorMessage, exception)
+
+    telemetryClient.trackSarEvent(
+      "ReportFailedWithError",
+      subjectAccessRequest,
+      "error" to (exception.message ?: ""),
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
+
+    val sarException = if (exception is SubjectAccessRequestException) {
+      exception
+    } else {
+      SubjectAccessRequestException(
+        message = "subject access request threw unexpected error",
+        cause = exception,
+        event = null,
+        subjectAccessRequestId = subjectAccessRequest?.id,
+        mapOf(
+          "sarCaseReferenceNumber" to subjectAccessRequest?.sarCaseReferenceNumber,
+        ),
+      )
+    }
+    Sentry.captureException(sarException)
   }
 
   suspend fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest {
@@ -108,7 +129,11 @@ class SubjectAccessRequestWorkerService(
     val selectedServices = getServiceDetails(subjectAccessRequest)
 
     log.info("${subjectAccessRequest.id} creating report..")
-    telemetryClient.trackSarEvent("CollectingServiceDataStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    telemetryClient.trackSarEvent(
+      "CollectingServiceDataStarted",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
 
     val dpsServiceList = getSubjectAccessRequestDataService.execute(
       selectedServices,
@@ -119,10 +144,18 @@ class SubjectAccessRequestWorkerService(
       subjectAccessRequest,
     )
 
-    telemetryClient.trackSarEvent("CollectingServiceDataComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    telemetryClient.trackSarEvent(
+      "CollectingServiceDataComplete",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
 
     log.info("${subjectAccessRequest.id} fetching subject name")
-    telemetryClient.trackSarEvent("CollectingSubjectNameStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    telemetryClient.trackSarEvent(
+      "CollectingSubjectNameStarted",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
 
     var subjectName: String
     try {
@@ -131,10 +164,18 @@ class SubjectAccessRequestWorkerService(
       subjectName = "No subject name found"
     }
 
-    telemetryClient.trackSarEvent("CollectingSubjectNameComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    telemetryClient.trackSarEvent(
+      "CollectingSubjectNameComplete",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
 
     log.info("${subjectAccessRequest.id} extracted report")
-    telemetryClient.trackSarEvent("GeneratingPDFStreamStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    telemetryClient.trackSarEvent(
+      "GeneratingPDFStreamStarted",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
 
     val pdfStream = generatePdfService.execute(
       dpsServiceList,
@@ -149,12 +190,26 @@ class SubjectAccessRequestWorkerService(
     log.info("${subjectAccessRequest.id} created PDF")
 
     val fileSize = pdfStream.size().toString()
-    telemetryClient.trackSarEvent("GeneratingPDFStreamComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
+    telemetryClient.trackSarEvent(
+      "GeneratingPDFStreamComplete",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      "fileSize" to fileSize,
+    )
 
-    telemetryClient.trackSarEvent("SavingFileStarted", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString(), "fileSize" to fileSize)
+    telemetryClient.trackSarEvent(
+      "SavingFileStarted",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      "fileSize" to fileSize,
+    )
     uploadToDocumentStore(stopWatch, subjectAccessRequest, pdfStream)
 
-    telemetryClient.trackSarEvent("DoReportComplete", subjectAccessRequest, TIME_ELAPSED_KEY to stopWatch.time.toString())
+    telemetryClient.trackSarEvent(
+      "DoReportComplete",
+      subjectAccessRequest,
+      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+    )
   }
 
   /**

@@ -53,7 +53,6 @@ class DocumentStorageClient(
         .bodyValue(
           MultipartBodyBuilder().apply {
             part("file", contentsAsResource)
-            part("metadata", 1)
           }.build(),
         )
         .retrieve()
@@ -161,7 +160,7 @@ class DocumentStorageClient(
     val fileSize: Int? = null,
     val fileHash: String? = null,
     val mimeType: String? = null,
-    val metadata: Map<String, Any>? = null,
+    val metadata: Any? = null,
     val createdTime: String? = null,
     val createdByServiceName: String? = null,
     val createdByUsername: String? = null,
