@@ -92,14 +92,14 @@ class GenericHmppsApiGateway(
       webClientRetriesSpec.is4xxStatus(),
       webClientRetriesSpec.throw4xxStatusFatalError(
         GET_SAR_DATA,
-        subjectAccessRequest?.id,
+        subjectAccessRequest,
       ),
     )
     .toEntity(Map::class.java)
     .retryWhen(
       webClientRetriesSpec.retry5xxAndClientRequestErrors(
         GET_SAR_DATA,
-        subjectAccessRequest?.id,
+        subjectAccessRequest,
         mapOf(
           "uri" to serviceUrl,
         ),
