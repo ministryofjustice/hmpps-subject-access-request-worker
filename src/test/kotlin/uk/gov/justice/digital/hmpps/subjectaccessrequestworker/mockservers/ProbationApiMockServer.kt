@@ -1,8 +1,11 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -21,9 +24,9 @@ class ProbationApiMockServer : WireMockServer(4002) {
     )
   }
 
-  fun stubGetOffenderDetails() {
+  fun stubGetOffenderDetails(subjectId: String) {
     stubFor(
-      get("/probation-case/A999999")
+      get("/probation-case/$subjectId")
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
@@ -40,6 +43,17 @@ class ProbationApiMockServer : WireMockServer(4002) {
             ),
         ),
     )
+  }
+
+  fun stubResponseFor(subjectId: String, responseDefinitionBuilder: ResponseDefinitionBuilder) {
+    stubFor(
+      get("/probation-case/$subjectId")
+        .willReturn(responseDefinitionBuilder),
+    )
+  }
+
+  fun verifyGetOffenderDetailsCalled(times: Int = 1, subjectId: String) {
+    verify(times, getRequestedFor(urlPathEqualTo("/probation-case/$subjectId")))
   }
 }
 
