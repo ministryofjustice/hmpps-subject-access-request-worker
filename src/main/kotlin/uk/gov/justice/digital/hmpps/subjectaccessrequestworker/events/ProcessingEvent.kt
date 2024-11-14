@@ -9,4 +9,6 @@ enum class ProcessingEvent {
   COMPLETE_REQUEST,
   GET_SAR_DATA,
   STORE_DOCUMENT,
+  ACQUIRE_AUTH_TOKEN,
+  GET_OFFENDER_NAME,
 }

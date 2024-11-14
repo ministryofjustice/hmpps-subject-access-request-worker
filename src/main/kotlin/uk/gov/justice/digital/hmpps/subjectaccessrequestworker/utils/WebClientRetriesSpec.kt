@@ -78,10 +78,12 @@ class WebClientRetriesSpec(
     params: Map<String, Any>? = null,
   ) =
     { response: ClientResponse ->
-      val moddedParams = params?.toMutableMap() ?: mutableMapOf<String, Any>().also { map ->
-        map.putIfAbsent("uri", response.request().uri)
-        map.putIfAbsent("httpStatus", response.statusCode())
+      val moddedParams = buildMap<String, Any> {
+        params?.let { putAll(it) }
+        putIfAbsent("uri", response.request().uri)
+        putIfAbsent("httpStatus", response.statusCode())
       }
+
       telemetryClient.nonRetryableClientError(subjectAccessRequest, event, params)
 
       Mono.error<SubjectAccessRequestException>(

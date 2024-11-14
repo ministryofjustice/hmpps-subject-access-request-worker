@@ -4,13 +4,14 @@ import org.apache.tomcat.util.json.JSONParser
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import java.util.Base64
 
 @Component
 class HmppsAuthGateway(
-  @Value("\${hmpps-auth.url}") hmppsAuthUrl: String,
+  @Value("\${hmpps-auth.url}") val hmppsAuthUrl: String,
   @Value("\${hmpps-auth.client-id}") var clientId: String,
   @Value("\${hmpps-auth.client-secret}") var clientSecret: String,
 ) {
@@ -30,12 +31,34 @@ class HmppsAuthGateway(
         .block()
 
       JSONParser(response).parseObject()["access_token"].toString()
-    } catch (exception: WebClientRequestException) {
-      throw RuntimeException("Connection to ${exception.uri.authority} failed.")
-    } catch (exception: WebClientResponseException.ServiceUnavailable) {
-      throw RuntimeException("${exception.request?.uri?.authority} is unavailable.")
-    } catch (exception: WebClientResponseException.Unauthorized) {
-      throw RuntimeException("Invalid credentials used.")
+    } catch (ex: WebClientResponseException) {
+      throw subjectAccessRequestWebClientResponseEx(ex)
+    } catch (ex: Exception) {
+      throw subjectAccessRequestGeneralException(ex)
     }
   }
+
+  private fun subjectAccessRequestWebClientResponseEx(cause: WebClientResponseException): SubjectAccessRequestException =
+    SubjectAccessRequestException(
+      message = "authGateway get auth token WebclientResponseException",
+      cause = cause,
+      event = ACQUIRE_AUTH_TOKEN,
+      subjectAccessRequestId = null,
+      params = mapOf(
+        "authority" to cause.request?.uri?.authority,
+        "httpStatus" to cause.statusCode.value(),
+        "body" to cause.responseBodyAsString,
+      ),
+    )
+
+  private fun subjectAccessRequestGeneralException(cause: Exception) = SubjectAccessRequestException(
+    message = "authGateway get auth token unexpected error",
+    cause = cause,
+    event = ACQUIRE_AUTH_TOKEN,
+    subjectAccessRequestId = null,
+    params = mapOf(
+      "host" to hmppsAuthUrl,
+    ),
+  )
+
 }

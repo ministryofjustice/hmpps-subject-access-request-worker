@@ -160,7 +160,7 @@ class SubjectAccessRequestWorkerService(
 
     var subjectName: String
     try {
-      subjectName = getSubjectName(subjectAccessRequest.nomisId, subjectAccessRequest.ndeliusCaseReferenceId)
+      subjectName = getSubjectName(subjectAccessRequest, subjectAccessRequest.nomisId, subjectAccessRequest.ndeliusCaseReferenceId)
     } catch (exception: WebClientResponseException.NotFound) {
       subjectName = "No subject name found"
     }
@@ -282,9 +282,9 @@ class SubjectAccessRequestWorkerService(
     return selectedServices
   }
 
-  fun getSubjectName(prisonId: String?, probationId: String?): String {
+  fun getSubjectName(subjectAccessRequest: SubjectAccessRequest, prisonId: String?, probationId: String?): String {
     if (prisonId !== null) {
-      return prisonApiClient.getOffenderName(prisonId)
+      return prisonApiClient.getOffenderName(subjectAccessRequest, prisonId)
     }
     if (probationId !== null) {
       return probationApiClient.getOffenderName(probationId)

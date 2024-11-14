@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
@@ -64,30 +65,10 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
     )
   }
 
-  fun stubUnauthorizedGrantToken() {
+  fun stubGrantToken(responseDefinitionBuilder: ResponseDefinitionBuilder) {
     stubFor(
       post(urlEqualTo("/auth/oauth/token"))
-        .willReturn(
-          WireMock.unauthorized(),
-        ),
-    )
-  }
-
-  fun stubForbiddenGrantToken() {
-    stubFor(
-      post(urlEqualTo("/auth/oauth/token"))
-        .willReturn(
-          WireMock.forbidden(),
-        ),
-    )
-  }
-
-  fun stubServerErrorGrantToken() {
-    stubFor(
-      post(urlEqualTo("/auth/oauth/token"))
-        .willReturn(
-          WireMock.serverError(),
-        ),
+        .willReturn(responseDefinitionBuilder),
     )
   }
 

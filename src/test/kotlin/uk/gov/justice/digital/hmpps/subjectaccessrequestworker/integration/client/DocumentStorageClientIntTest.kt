@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -272,7 +273,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
 
   @Test
   fun `documentStorageClient fails to obtain auth token with UNAUTHORIZED`() {
-    hmppsAuth.stubUnauthorizedGrantToken()
+    hmppsAuth.stubGrantToken(WireMock.unauthorized())
 
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 
@@ -296,7 +297,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
 
   @Test
   fun `documentStorageClient fails to obtain auth token with FORBIDDEN`() {
-    hmppsAuth.stubForbiddenGrantToken()
+    hmppsAuth.stubGrantToken(WireMock.forbidden())
 
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 
@@ -320,7 +321,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
 
   @Test
   fun `documentStorageClient fails to obtain auth token with INTERNAL_SERVER_ERROR`() {
-    hmppsAuth.stubServerErrorGrantToken()
+    hmppsAuth.stubGrantToken(WireMock.serverError())
 
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 

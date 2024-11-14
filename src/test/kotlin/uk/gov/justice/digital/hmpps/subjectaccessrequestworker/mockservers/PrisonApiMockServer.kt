@@ -1,8 +1,13 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -21,9 +26,9 @@ class PrisonApiMockServer : WireMockServer(8079) {
     )
   }
 
-  fun stubGetOffenderDetails() {
+  fun stubGetOffenderDetails(subjectId: String) {
     stubFor(
-      get("/api/offenders/A9999AA")
+      get("/api/offenders/$subjectId")
         .willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
@@ -40,6 +45,23 @@ class PrisonApiMockServer : WireMockServer(8079) {
         ),
     )
   }
+
+  fun stubResponseFor(subjectId: String, response: ResponseDefinitionBuilder) {
+    stubFor(
+      get("/api/offenders/$subjectId")
+        .willReturn(response)
+    )
+  }
+
+  fun verifyApiNeverCalled() = verify(
+    0,
+    anyRequestedFor(anyUrl()),
+  )
+
+  fun verifyApiCalled(times: Int, subjectId: String) = verify(
+    times,
+    getRequestedFor(urlPathEqualTo("/api/offenders/$subjectId")),
+  )
 }
 
 class PrisonApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
