@@ -90,14 +90,14 @@ class PrisonApiClientIntTest : IntegrationTestBase() {
     hmppsAuth.stubGrantToken()
     prisonApi.stubResponseFor(SUBJECT_ID, ResponseDefinitionBuilder().withStatus(statusCode.value()))
 
-    val ex = assertThrows<FatalSubjectAccessRequestException> {
+    val exception = assertThrows<FatalSubjectAccessRequestException> {
       prisonApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
     }
 
     prisonApi.verifyApiCalled(1, SUBJECT_ID)
 
     assertExpectedErrorMessage(
-      actual = ex,
+      actual = exception,
       prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       "event" to ProcessingEvent.GET_OFFENDER_NAME,
       "id" to subjectAccessRequest.id,
@@ -113,14 +113,14 @@ class PrisonApiClientIntTest : IntegrationTestBase() {
     hmppsAuth.stubGrantToken()
     prisonApi.stubResponseFor(SUBJECT_ID, ResponseDefinitionBuilder().withStatus(statusCode.value()))
 
-    val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+    val exception = assertThrows<SubjectAccessRequestRetryExhaustedException> {
       prisonApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
     }
 
     prisonApi.verifyApiCalled(3, SUBJECT_ID)
 
     assertExpectedErrorMessage(
-      actual = ex,
+      actual = exception,
       prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
       "event" to ProcessingEvent.GET_OFFENDER_NAME,
       "id" to subjectAccessRequest.id,
@@ -137,14 +137,14 @@ class PrisonApiClientIntTest : IntegrationTestBase() {
         .withStatusMessage(authErrorResponse.statusMessage),
     )
 
-    val ex = assertThrows<FatalSubjectAccessRequestException> {
+    val exception = assertThrows<FatalSubjectAccessRequestException> {
       prisonApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
     }
 
     prisonApi.verifyApiNeverCalled()
 
     assertExpectedErrorMessage(
-      actual = ex,
+      actual = exception,
       prefix = "subjectAccessRequest failed with non-retryable error: prisonApiClient error authorization exception",
       "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
       "id" to subjectAccessRequest.id,
