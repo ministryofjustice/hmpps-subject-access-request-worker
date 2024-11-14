@@ -81,6 +81,7 @@ class SubjectAccessRequestWorkerService(
       append("failed with error: ${exception.message}")
     }
     log.error(errorMessage, exception)
+    exception.printStackTrace()
 
     telemetryClient.trackSarEvent(
       "ReportFailedWithError",

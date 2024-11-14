@@ -53,6 +53,13 @@ class DocumentStorageClient(
         .bodyValue(
           MultipartBodyBuilder().apply {
             part("file", contentsAsResource)
+            part(
+              "metadata",
+              listOf<Pair<String, Any?>>(
+                Pair("sarCaseReferenceNumber", subjectAccessRequest.sarCaseReferenceNumber),
+                Pair("requestedDate", subjectAccessRequest.requestDateTime.toString()),
+              ),
+            )
           }.build(),
         )
         .retrieve()
