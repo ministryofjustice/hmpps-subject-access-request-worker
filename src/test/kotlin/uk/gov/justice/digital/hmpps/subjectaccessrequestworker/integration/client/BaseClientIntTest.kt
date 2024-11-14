@@ -1,12 +1,10 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
-import org.junit.jupiter.api.TestInstance
 import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BaseClientIntTest: IntegrationTestBase() {
+class BaseClientIntTest : IntegrationTestBase() {
 
   companion object {
 

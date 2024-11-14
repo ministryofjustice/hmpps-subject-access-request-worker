@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +23,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedErrorMessage
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.fileHash
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
@@ -37,7 +35,7 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.util.UUID
 
-class DocumentStorageClientIntTest : IntegrationTestBase() {
+class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Autowired
   private lateinit var documentStorageClient: DocumentStorageClient
@@ -106,14 +104,15 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, FILE_CONTENT.toByteArray())
   }
 
-  @Test
-  fun `store document does not retry when fails with a 401 status`() {
+  @ParameterizedTest
+  @MethodSource("status4xxResponseStubs")
+  fun `store document does not retry when fails with a 4xx status`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
       expectedFileContent = FILE_CONTENT.toByteArray(),
-      status = 401,
+      status = stubErrorResponse.status.value(),
     )
 
     val ex = assertThrows<FatalSubjectAccessRequestException> {
@@ -126,37 +125,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
       "event" to STORE_DOCUMENT,
       "id" to subjectAccessRequestId,
       "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-      "httpStatus" to HttpStatus.UNAUTHORIZED,
-    )
-
-    documentApi.verifyStoreDocumentIsCalled(
-      times = 1,
-      subjectAccessRequestId = subjectAccessRequestId.toString(),
-    )
-  }
-
-  @Test
-  fun `store document does not retry when fails with a 403 status`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
-    hmppsAuth.stubGrantToken()
-
-    documentApi.stubUploadFileFailsWithStatus(
-      subjectAccessRequestId = subjectAccessRequestId.toString(),
-      expectedFileContent = FILE_CONTENT.toByteArray(),
-      status = 403,
-    )
-
-    val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
-    }
-
-    assertExpectedErrorMessage(
-      actual = ex,
-      prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-      "httpStatus" to HttpStatus.FORBIDDEN,
+      "httpStatus" to stubErrorResponse.status,
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -194,14 +163,15 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     )
   }
 
-  @Test
-  fun `store document retries on 5xx status`() {
+  @ParameterizedTest
+  @MethodSource("status5xxResponseStubs")
+  fun `store document retries on 5xx status`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId.toString(),
       expectedFileContent.toByteArray(),
-      500,
+      stubErrorResponse.status.value(),
     )
 
     val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
@@ -271,9 +241,10 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     documentApi.verifyNeverCalled()
   }
 
-  @Test
-  fun `documentStorageClient fails to obtain auth token with UNAUTHORIZED`() {
-    hmppsAuth.stubGrantToken(WireMock.unauthorized())
+  @ParameterizedTest
+  @MethodSource("authErrorResponseStubs")
+  fun `documentStorageClient fails to obtain auth token with`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
+    hmppsAuth.stubGrantToken(stubErrorResponse.getResponse())
 
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 
@@ -286,55 +257,7 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
       prefix = "subjectAccessRequest failed with non-retryable error: documentStoreClient error authorization exception,",
       "event" to STORE_DOCUMENT,
       "id" to subjectAccessRequestId,
-      "cause" to expectedClientAuthError(401, "Unauthorized"),
-    )
-
-    assertThat(ex.cause).isInstanceOf(ClientAuthorizationException::class.java)
-
-    hmppsAuth.verifyCalledOnce()
-    documentApi.verifyNeverCalled()
-  }
-
-  @Test
-  fun `documentStorageClient fails to obtain auth token with FORBIDDEN`() {
-    hmppsAuth.stubGrantToken(WireMock.forbidden())
-
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
-
-    val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
-    }
-
-    assertExpectedErrorMessage(
-      actual = ex,
-      prefix = "subjectAccessRequest failed with non-retryable error: documentStoreClient error authorization exception,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "cause" to expectedClientAuthError(403, "Forbidden"),
-    )
-
-    assertThat(ex.cause).isInstanceOf(ClientAuthorizationException::class.java)
-
-    hmppsAuth.verifyCalledOnce()
-    documentApi.verifyNeverCalled()
-  }
-
-  @Test
-  fun `documentStorageClient fails to obtain auth token with INTERNAL_SERVER_ERROR`() {
-    hmppsAuth.stubGrantToken(WireMock.serverError())
-
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
-
-    val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
-    }
-
-    assertExpectedErrorMessage(
-      actual = ex,
-      prefix = "subjectAccessRequest failed with non-retryable error: documentStoreClient error authorization exception,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "cause" to expectedClientAuthError(500, "Server Error"),
+      "cause" to expectedClientAuthError(stubErrorResponse.status.value(), stubErrorResponse.status.reasonPhrase),
     )
 
     assertThat(ex.cause).isInstanceOf(ClientAuthorizationException::class.java)

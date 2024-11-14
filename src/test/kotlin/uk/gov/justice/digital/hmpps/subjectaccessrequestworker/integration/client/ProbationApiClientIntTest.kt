@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.clie
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -21,7 +20,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Proba
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.util.UUID
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProbationApiClientIntTest : BaseClientIntTest() {
 
   @Autowired
