@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRe
 import wiremock.org.apache.commons.io.IOUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
 import java.util.UUID
 
 class DocumentStorageClientIntTest : IntegrationTestBase() {
@@ -64,6 +65,10 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
       "",
       1,
       listOf("A", "B", "C"),
+      listOf(
+        Pair("sarCaseReferenceNumber", "sarCaseReferenceNumber"),
+        Pair("requestedDate", LocalDateTime.now().toString()),
+      ),
       mapOf("key" to "value"),
       object {
         val outerObject = object {
@@ -342,7 +347,12 @@ class DocumentStorageClientIntTest : IntegrationTestBase() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val incorrectFileSize = expectedFileContent.toByteArray().size * 2
 
-    documentApi.stubUploadFileSuccess(subjectAccessRequestId.toString(), incorrectFileSize, FILE_CONTENT.toByteArray(), 1)
+    documentApi.stubUploadFileSuccess(
+      subjectAccessRequestId.toString(),
+      incorrectFileSize,
+      FILE_CONTENT.toByteArray(),
+      1,
+    )
 
     val ex = assertThrows<SubjectAccessRequestException> {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
