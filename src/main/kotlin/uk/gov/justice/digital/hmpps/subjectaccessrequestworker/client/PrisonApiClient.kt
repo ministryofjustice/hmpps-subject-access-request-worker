@@ -58,12 +58,6 @@ class PrisonApiClient(
           "cause" to ex.cause?.message,
         ),
       )
-    } catch (exception: WebClientRequestException) {
-      throw RuntimeException("Connection to ${exception.uri.authority} failed.")
-    } catch (exception: WebClientResponseException.ServiceUnavailable) {
-      throw RuntimeException("${exception.request?.uri?.authority} is unavailable.")
-    } catch (exception: WebClientResponseException.Unauthorized) {
-      throw RuntimeException("Invalid credentials used.")
     }
   }
 }
