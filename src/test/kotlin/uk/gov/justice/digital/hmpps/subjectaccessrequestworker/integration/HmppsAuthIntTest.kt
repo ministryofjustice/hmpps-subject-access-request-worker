@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
@@ -34,17 +36,33 @@ class HmppsAuthIntTest {
   fun `get token service unavailable`() {
     hmppsAuth.stubServiceUnavailableForGetOAuthToken()
 
-    val thrown = assertThrows<RuntimeException> { hmppsAuthGateway.getClientToken() }
+    val exception = assertThrows<SubjectAccessRequestException> { hmppsAuthGateway.getClientToken() }
 
-    assertThat(thrown.message).isEqualTo("localhost:9090 is unavailable.")
+    assertExpectedErrorMessage(
+      actual = exception,
+      prefix = "authGateway get auth token WebclientResponseException,",
+      "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      "id" to null,
+      "authority" to "localhost:${hmppsAuth.port()}",
+      "httpStatus" to 503,
+      "body" to "",
+    )
   }
 
   @Test
   fun `get throws an exception if credentials are invalid`() {
     hmppsAuth.stubUnauthorizedForGetOAAuthToken()
 
-    val thrown = assertThrows<RuntimeException> { hmppsAuthGateway.getClientToken() }
+    val exception = assertThrows<RuntimeException> { hmppsAuthGateway.getClientToken() }
 
-    assertThat(thrown.message).isEqualTo("Invalid credentials used.")
+    assertExpectedErrorMessage(
+      actual = exception,
+      prefix = "authGateway get auth token WebclientResponseException,",
+      "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      "id" to null,
+      "authority" to "localhost:${hmppsAuth.port()}",
+      "httpStatus" to 401,
+      "body" to "",
+    )
   }
 }
