@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 
-class BaseClientIntTest : IntegrationTestBase() {
+abstract class BaseClientIntTest : IntegrationTestBase() {
 
   companion object {
 
