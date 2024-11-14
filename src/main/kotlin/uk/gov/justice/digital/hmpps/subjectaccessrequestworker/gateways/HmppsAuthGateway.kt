@@ -60,5 +60,4 @@ class HmppsAuthGateway(
       "host" to hmppsAuthUrl,
     ),
   )
-
 }

@@ -49,7 +49,7 @@ class PrisonApiMockServer : WireMockServer(8079) {
   fun stubResponseFor(subjectId: String, response: ResponseDefinitionBuilder) {
     stubFor(
       get("/api/offenders/$subjectId")
-        .willReturn(response)
+        .willReturn(response),
     )
   }
 

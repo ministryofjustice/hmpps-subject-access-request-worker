@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
-import org.apache.commons.lang3.StringUtils
 import org.assertj.core.api.Assertions.assertThat
 import java.math.BigInteger
 import java.security.MessageDigest

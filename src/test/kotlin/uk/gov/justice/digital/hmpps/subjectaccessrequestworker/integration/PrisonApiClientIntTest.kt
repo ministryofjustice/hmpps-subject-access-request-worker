@@ -84,7 +84,6 @@ class PrisonApiClientIntTest : IntegrationTestBase() {
     assertThat(response).isEqualTo("REACHER, Joe")
   }
 
-
   @ParameterizedTest
   @MethodSource("status4xxResponseStubs")
   fun `should not retry on 4xx error`(statusCode: HttpStatus) {
