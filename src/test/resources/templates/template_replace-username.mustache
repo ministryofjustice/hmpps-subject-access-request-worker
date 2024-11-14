@@ -1,0 +1,59 @@
+<h1>User PDF</h1>
+{{#firstUsername}}
+    <h2>User Id swap to user last name - 1</h2>
+    <table class="summary-list">
+
+        <tr><td>helper vale</td><td>{{ optionalValue user_id_helper_value }}</td></tr>
+        <tr><td>Original User ID</td><td>{{ optionalValue user_id }}</td></tr>
+        <tr><td>helper value </td><td>{{ optionalValue user_name_helper_value }}</td></tr>
+        <tr><td>user last name </td><td>{{ getUserLastName user_id }}</td></tr>
+
+    </table>
+{{/firstUsername}}
+{{^firstUsername}}
+    <p>No Data Held</p>
+{{/firstUsername}}
+
+{{#secondUsername}}
+    <h2>User Id swap to user last name - 2</h2>
+    <table class="summary-list">
+
+        <tr><td>helper vale</td><td>{{ optionalValue user_id_helper_value }}</td></tr>
+        <tr><td>Original User ID</td><td>{{ optionalValue user_id }}</td></tr>
+        <tr><td>helper value </td><td>{{ optionalValue user_name_helper_value }}</td></tr>
+        <tr><td>user last name </td><td>{{ getUserLastName user_id }}</td></tr>
+
+    </table>
+{{/secondUsername}}
+{{^secondUsername}}
+    <p>No Data Held</p>
+{{/secondUsername}}
+{{#thirdUsername}}
+    <h2>User Id swap to user last name - 3</h2>
+    <table class="summary-list">
+
+        <tr><td>helper vale</td><td>{{ optionalValue user_id_helper_value }}</td></tr>
+        <tr><td>Original User ID</td><td>{{ optionalValue user_id }}</td></tr>
+        <tr><td>helper value </td><td>{{ optionalValue user_name_helper_value }}</td></tr>
+        <tr><td>user last name </td><td>{{ getUserLastName user_id }}</td></tr>
+
+    </table>
+{{/thirdUsername}}
+{{^thirdUsername}}
+    <p>No Data Held</p>
+{{/thirdUsername}}
+
+{{#forthUsername}}
+    <h2>User Id swap to user last name - 3</h2>
+    <table class="summary-list">
+
+        <tr><td>helper vale</td><td>{{ optionalValue user_id_helper_value }}</td></tr>
+        <tr><td>Original User ID</td><td>{{ optionalValue user_id }}</td></tr>
+        <tr><td>helper value </td><td>{{ optionalValue user_name_helper_value }}</td></tr>
+        <tr><td>user last name </td><td>{{ getUserLastName user_id }}</td></tr>
+
+    </table>
+{{/forthUsername}}
+{{^forthUsername}}
+    <p>No Data Held</p>
+{{/forthUsername}}

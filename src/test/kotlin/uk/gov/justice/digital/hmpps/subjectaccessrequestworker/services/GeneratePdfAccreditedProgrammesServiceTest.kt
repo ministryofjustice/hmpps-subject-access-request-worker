@@ -9,21 +9,31 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.FileOutputStream
 
 class GeneratePdfAccreditedProgrammesServiceTest {
 
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
+  private val userDetailsRepository: UserDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
   @Test
   fun `generatePdfService renders for Accredited Programmes Service`() {
+    whenever(userDetailsRepository.findByUsername("ADMINA_ADM")).thenReturn(UserDetail("ADMINA_ADM", "March-Phillips"))
+    whenever(userDetailsRepository.findByUsername("USERA_GEN")).thenReturn(UserDetail("USERA_GEN", "Appleyard"))
+    whenever(userDetailsRepository.findByUsername("USERC_GEN")).thenReturn(UserDetail("USERA_GEN", "Lassen"))
     val serviceList =
       listOf(DpsService(name = "hmpps-accredited-programmes-api", content = accreditedProgrammesServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-accredited-programmes-template.pdf")))
@@ -37,6 +47,15 @@ class GeneratePdfAccreditedProgrammesServiceTest {
 
     assertThat(text).contains("Accredited programmes")
     assertThat(text).contains("Referral")
+    assertThat(text).contains("Prisoner number")
+    assertThat(text).contains("March-Phillips")
+    assertThat(text).contains("Appleyard")
+    assertThat(text).contains("Lassen")
+
+    verify(userDetailsRepository, times(3)).findByUsername("ADMINA_ADM")
+    verify(userDetailsRepository, times(1)).findByUsername("USERA_GEN")
+    verify(userDetailsRepository, times(2)).findByUsername("USERC_GEN")
+    verifyNoInteractions(prisonDetailsRepository)
   }
 
   private val accreditedProgrammesServiceData: Map<Any, Any> = mapOf(

@@ -34,7 +34,7 @@
                 <td class="data-column-33">Prisoner number</td>
             </tr>
             <tr>
-                <td>{{ optionalValue referrerUsername}}</td>
+                <td>{{ getUserLastName referrerUsername}}</td>
                 <td>{{ optionalValue hasReviewedProgrammeHistory }}</td>
                 <td>{{ optionalValue prisonerNumber }}</td>
             </tr>
@@ -63,7 +63,7 @@
             <tr>
                 <td>{{ optionalValue courseName }}</td>
                 <td>{{ optionalValue (formatDate createdDateTime) }}</td>
-                <td>{{ optionalValue createdByUser}}</td>
+                <td>{{ getUserLastName createdByUser}}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -98,7 +98,7 @@
             </tr>
             <tr>
                 <td>{{ optionalValue prisonerNumber }}</td>
-                <td>{{ optionalValue updatedByUser}}</td>
+                <td>{{ getUserLastName updatedByUser}}</td>
                 <td>{{ optionalValue (formatDate updatedDateTime) }}</td>
             </tr>
         </table>

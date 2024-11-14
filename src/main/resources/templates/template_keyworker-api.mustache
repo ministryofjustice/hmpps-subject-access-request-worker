@@ -7,7 +7,7 @@
         <tr><td>Active</td><td>{{ optionalValue active }}</td></tr>
         <tr><td>Allocation reason</td><td>{{{ optionalValue allocationReason }}}</td></tr>
         <tr><td>Allocation type</td><td>{{ optionalValue allocationType }}</td></tr>
-        <tr><td>User ID</td><td>{{ optionalValue userId }}</td></tr>
+        <tr><td>User ID</td><td>{{ getUserLastName userId }}</td></tr>
         <tr><td>Prison ID</td><td>{{ getPrisonName prisonId }}</td></tr>
         <tr><td>Expiry date</td><td>{{ optionalValue (formatDate expiryDateTime) }}</td></tr>
         <tr><td>Deallocation reason</td><td>{{{ optionalValue deallocationReason }}}</td></tr>
