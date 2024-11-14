@@ -36,10 +36,10 @@ class HmppsAuthIntTest {
   fun `get token service unavailable`() {
     hmppsAuth.stubServiceUnavailableForGetOAuthToken()
 
-    val ex = assertThrows<SubjectAccessRequestException> { hmppsAuthGateway.getClientToken() }
+    val exception = assertThrows<SubjectAccessRequestException> { hmppsAuthGateway.getClientToken() }
 
     assertExpectedErrorMessage(
-      actual = ex,
+      actual = exception,
       prefix = "authGateway get auth token WebclientResponseException,",
       "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
       "id" to null,
@@ -53,10 +53,10 @@ class HmppsAuthIntTest {
   fun `get throws an exception if credentials are invalid`() {
     hmppsAuth.stubUnauthorizedForGetOAAuthToken()
 
-    val ex = assertThrows<RuntimeException> { hmppsAuthGateway.getClientToken() }
+    val exception = assertThrows<RuntimeException> { hmppsAuthGateway.getClientToken() }
 
     assertExpectedErrorMessage(
-      actual = ex,
+      actual = exception,
       prefix = "authGateway get auth token WebclientResponseException,",
       "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
       "id" to null,
