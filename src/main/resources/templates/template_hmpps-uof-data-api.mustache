@@ -23,7 +23,7 @@
         <tr>
             <td>{{ optionalValue status }}</td>
             <td>{{ optionalValue agencyId }}</td>
-            <td>{{ optionalValue reporterName }}</td>
+            <td>{{ getUserLastName userId }}</td>
             <td></td>
         </tr>
     </table>
@@ -267,7 +267,7 @@
             <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
             <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
             <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
-            <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
+            <tr><td>Name</td><td>{{ getUserLastName userId }}</td></tr>
             <tr><td>Statement status</td><td>{{ optionalValue statementStatus }}</td></tr>
         </table>
 
