@@ -4,27 +4,10 @@
     <br>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Offender no</td>
-            <td class="data-column-25">Booking ID</td>
-            <td class="data-column-25">Date created</td>
-            <td class="data-column-25">Date updated</td>
+            <td class="data-column-50">Incident date</td>
+            <td class="data-column-50">Date submitted</td>
         </tr>
         <tr>
-            <td>{{ optionalValue offenderNo }}</td>
-            <td>{{ optionalValue bookingId }}</td>
-            <td>{{ optionalValue (formatDate createdDate) }}</td>
-            <td>{{ optionalValue (formatDate updatedDate) }}</td>
-        </tr>
-    </table>
-    <table class="data-table">
-        <tr>
-            <td class="data-column-25">Deleted</td>
-            <td class="data-column-25">Incident date</td>
-            <td class="data-column-25">Date submitted</td>
-            <td class="data-column-25"></td>
-        </tr>
-        <tr>
-            <td>{{ optionalValue (formatDate deleted) }}</td>
             <td>{{ optionalValue (formatDate incidentDate)}}</td>
             <td>{{ optionalValue (formatDate submittedDate) }}</td>
             <td></td>
@@ -60,9 +43,9 @@
             </tr>
         <tr>
             <td>{{ optionalValue cctvRecording }}</td>
-            <td>{{ optionalValue baggedEvidence }}</td>
+            <td>{{ convertBoolean baggedEvidence }}</td>
             <td>{{ optionalValue bodyWornCamera }}</td>
-            <td>{{ optionalValue photographsTaken }}</td>
+            <td>{{ convertBoolean photographsTaken }}</td>
         </tr>
         </table>
             <br>
@@ -103,7 +86,7 @@
                      <td>{{ optionalValue name }}</td>
                      <td>{{ optionalValue email }}</td>
                      <td>{{ getUserLastName username }}</td>
-                     <td>{{ optionalValue verified }}</td>
+                     <td>{{ convertBoolean verified }}</td>
                      <td>{{ optionalValue activeCaseLoadId }}</td>
                  </tr>
              </table>
@@ -114,7 +97,7 @@
            {{#incidentDetails}}
            <table class="summary-list">
                <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
-               <tr><td>Planned use of force</td><td>{{ optionalValue plannedUseOfForce }}</td></tr>
+               <tr><td>Planned use of force</td><td>{{ convertBoolean plannedUseOfForce }}</td></tr>
                <tr><td>Authorised by</td><td>{{ optionalValue authorisedBy }}</td></tr>
                <tr><td>Witnesses</td><td><ul>{{#witnesses}}<li>{{ optionalValue name }}</li>{{/witnesses}}</ul></td>
                </tr>
@@ -134,31 +117,35 @@
                  <tr>
                      <td>{{ optionalValue bodyWornCamera }}</td>
                      <td>{{#bodyWornCameraNumbers}}{{ optionalValue cameraNum }}{{/bodyWornCameraNumbers}}</td>
-                     <td>{{ optionalValue handcuffsApplied }}</td>
+                     <td>{{ convertBoolean handcuffsApplied }}</td>
                  </tr>
              </table>
              <table class="data-table">
                  <tr>
                      <td class="data-column-25">Pava drawn</td>
-                     <td class="data-column-50">Pava drawn against prisoner</td>
                      <td class="data-column-25">Pava used</td>
+                     <td class="data-column-25"></td>
+                     <td class="data-column-25"></td>
                  </tr>
                  <tr>
-                     <td>{{ optionalValue pavaDrawn }}</td>
-                     <td>{{ optionalValue pavaDrawnAgainstPrisoner }}</td>
-                     <td>{{ optionalValue pavaUsed }}</td>
+                     <td>{{ convertBoolean pavaDrawn }}</td>
+                     <td>{{ convertBoolean pavaUsed }}</td>
+                     <td></td>
+                     <td></td>
                  </tr>
              </table>
              <table class="data-table">
                  <tr>
                      <td class="data-column-25">Baton drawn</td>
-                     <td class="data-column-50">Baton drawn against prisoner</td>
                      <td class="data-column-25">Baton used</td>
+                     <td class="data-column-25"></td>
+                     <td class="data-column-25"></td>
                  </tr>
                  <tr>
-                     <td>{{ optionalValue batonDrawn }}</td>
-                     <td>{{ optionalValue batonDrawnAgainstPrisoner }}</td>
-                     <td>{{ optionalValue batonUsed }}</td>
+                     <td>{{ convertBoolean batonDrawn }}</td>
+                     <td>{{ convertBoolean batonUsed }}</td>
+                     <td></td>
+                     <td></td>
                  </tr>
              </table>
              <table class="data-table">
@@ -168,9 +155,9 @@
                      <td class="data-column-25">Personal protection techniques</td>
                  </tr>
                  <tr>
-                     <td>{{ optionalValue painInducingTechniques }}</td>
+                     <td>{{ convertBoolean painInducingTechniques }}</td>
                      <td>{{ optionalValue painInducingTechniquesUsed }}</td>
-                     <td>{{ optionalValue personalProtectionTechniques }}</td>
+                     <td>{{ convertBoolean personalProtectionTechniques }}</td>
                  </tr>
              </table>
              <table class="data-table">
@@ -180,7 +167,7 @@
                      <td class="data-column-25">Weapon types</td>
                  </tr>
                  <tr>
-                     <td>{{ optionalValue positiveCommunication }}</td>
+                     <td>{{ convertBoolean positiveCommunication }}</td>
                      <td>{{ optionalValue weaponsObserved }}</td>
                      <td>{{#weaponTypes}}{{ optionalValue weaponType }}{{/weaponTypes}}</td>
                  </tr>
@@ -193,9 +180,9 @@
                      <td class="data-column-25">Restraint positions</td>
                  </tr>
                  <tr>
-                     <td>{{ optionalValue guidingHold }}</td>
-                     <td>{{ optionalValue escortingHold }}</td>
-                     <td>{{ optionalValue restraint }}</td>
+                     <td>{{ convertBoolean guidingHold }}</td>
+                     <td>{{ convertBoolean escortingHold }}</td>
+                     <td>{{ convertBoolean restraint }}</td>
                      <td>{{#restraintPositions}}<li>{{ optionalValue . }}</li>{{/restraintPositions}}</td>
                  </tr>
              </table>
@@ -225,8 +212,8 @@
                 <tr>
                     <td>{{ optionalValue relocationType }}</td>
                     <td>{{ optionalValue f213CompletedBy }}</td>
-                    <td>{{ optionalValue prisonerInjuries }}</td>
-                    <td>{{ optionalValue healthcareInvolved }}</td>
+                    <td>{{ convertBoolean prisonerInjuries }}</td>
+                    <td>{{ convertBoolean healthcareInvolved }}</td>
 
                 </tr>
             </table>
@@ -239,9 +226,9 @@
                 </tr>
                 <tr>
                     <td>{{ optionalValue healthcarePractionerName }}</td>
-                    <td>{{ optionalValue relocationCompliancy }}</td>
-                    <td>{{ optionalValue staffMedicalAttention }}</td>
-                    <td>{{ optionalValue prisonerHospitalisation }}</td>
+                    <td>{{ convertBoolean relocationCompliancy }}</td>
+                    <td>{{ convertBoolean staffMedicalAttention }}</td>
+                    <td>{{ convertBoolean prisonerHospitalisation }}</td>
                 </tr>
             </table>
             <table class="data-table">
@@ -253,19 +240,6 @@
                     <td>{{ optionalValue prisonerRelocation }}</td>
                     <td>{{ optionalValue userSpecifiedRelocationType }}</td>
                 </tr>
-            </table>
-
-            <br>
-            <h4>Staff needing medical attention</h4>
-            <br>
-            <table class="data-table">
-                <tr><td>Name</td><td>Hospitalisation</td></tr>
-                {{#staffNeedingMedicalAttention}}
-                    <tr>
-                        <td class="data-column-25">{{ optionalValue name }}</td>
-                        <td class="data-column-75">{{ optionalValue hospitalisation }}</td>
-                    </tr>
-                {{/staffNeedingMedicalAttention}}
             </table>
         {{/relocationAndInjuries}}
     {{/formResponse}}
@@ -289,7 +263,7 @@
             <tr><td>Last training month</td><td>{{ optionalValue lastTrainingMonth }}</td></tr>
             <tr><td>Last training year</td><td>{{ optionalValue lastTrainingYear }}</td></tr>
             <tr><td>Job start year</td><td>{{ optionalValue jobStartYear }}</td></tr>
-            <tr><td>In progress</td><td>{{ optionalValue inProgress }}</td></tr>
+            <tr><td>In progress</td><td>{{ convertBoolean inProgress }}</td></tr>
             <tr><td>Removal requested reason</td><td>{{ optionalValue removalRequestedReason }}</td></tr>
         </table>
 

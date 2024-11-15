@@ -145,7 +145,7 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Incident date</td>")
+    assertThat(renderedStyleTemplate).contains("<td class=\"data-column-50\">Incident date</td>")
     assertThat(renderedStyleTemplate).contains("<td>CCTV recording</td>")
     assertThat(renderedStyleTemplate).contains("<td>Name</td><td>Andrew Lee</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Baton drawn</td>")
