@@ -9,12 +9,11 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -30,9 +29,8 @@ class GeneratePdfUseOfForceServiceTest {
 
   @Test
   fun `generatePdfService renders for Use of Force Service`() {
-    whenever(userDetailsRepository.findByUsername("USERAL_ADM")).thenReturn(UserDetail("USERAL_ADM", "Reacher"))
-    whenever(userDetailsRepository.findByUsername("USERAZ_ADM")).thenReturn(UserDetail("USERAZ_ADM", "Dixon"))
-    whenever(userDetailsRepository.findByUsername("AND_USER")).thenReturn(UserDetail("AND_USER", "O'Donnell"))
+    whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
+    whenever(prisonDetailsRepository.findByPrisonId("ACI")).thenReturn(PrisonDetail("ACI", "Altcourse (HMP & YOI)"))
     val serviceList = listOf(DpsService(name = "hmpps-uof-data-api", content = useOfForceServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-uof-template.pdf")))
     val document = Document(pdfDocument)
@@ -42,12 +40,12 @@ class GeneratePdfUseOfForceServiceTest {
     val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
 
     assertThat(text).contains("Use of force")
-    assertThat(text).contains("Dixon")
-    assertThat(text).contains("O'Donnell")
+    assertThat(text).contains("Moorland (HMP & YOI)")
+    assertThat(text).contains("Altcourse (HMP & YOI)")
 
-    verify(userDetailsRepository, times(0)).findByUsername("USERAL_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("USERAZ_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("AND_USER")
+    verify(prisonDetailsRepository).findByPrisonId("MDI")
+    verify(prisonDetailsRepository).findByPrisonId("ACI")
+    verifyNoMoreInteractions(userDetailsRepository)
     verifyNoMoreInteractions(prisonDetailsRepository)
   }
 
@@ -106,7 +104,7 @@ class GeneratePdfUseOfForceServiceTest {
             "staffId" to 486084,
             "username" to "AND_USER",
             "verified" to true,
-            "activeCaseLoadId" to "MDI",
+            "activeCaseLoadId" to "ACI",
           ),
         ),
         "incidentDetails" to mapOf(

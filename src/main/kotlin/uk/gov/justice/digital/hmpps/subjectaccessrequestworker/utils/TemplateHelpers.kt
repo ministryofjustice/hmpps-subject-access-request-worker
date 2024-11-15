@@ -26,8 +26,8 @@ class TemplateHelpers(
     return null
   }
 
-  fun getPrisonName(caseloadId: String): String {
-    if (caseloadId.isEmpty() || caseloadId == "") return "No Data Held"
+  fun getPrisonName(caseloadId: String?): String {
+    if (caseloadId == null || caseloadId.isEmpty() || caseloadId == "") return "No Data Held"
     val prisonDetails = prisonDetailsRepository.findByPrisonId(caseloadId)
 
     return prisonDetails?.prisonName ?: caseloadId

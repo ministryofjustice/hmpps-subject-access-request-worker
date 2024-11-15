@@ -90,21 +90,14 @@
         <br>
         <h4>Involved staff</h4>
          {{#involvedStaff}}
-             <h5>Staff member - ID {{ optionalValue staffId }}</h5>
              <table class="data-table">
                  <tr>
-                     <td class="data-column-20">Name</td>
-                     <td class="data-column-25">Email</td>
-                     <td class="data-column-20">Username</td>
-                     <td class="data-column-15">Verified</td>
-                     <td class="data-column-20">Active caseload ID</td>
+                     <td class="data-column-50">Name</td>
+                     <td class="data-column-50">Prison name</td>
                  </tr>
                  <tr>
                      <td>{{ optionalValue name }}</td>
-                     <td>{{ optionalValue email }}</td>
-                     <td>{{ getUserLastName username }}</td>
-                     <td>{{ convertBoolean verified }}</td>
-                     <td>{{ optionalValue activeCaseLoadId }}</td>
+                     <td>{{ getPrisonName activeCaseLoadId }}</td>
                  </tr>
              </table>
          {{/involvedStaff}}
@@ -274,28 +267,17 @@
             <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
             <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
             <tr><td>Submitted date</td><td>{{ optionalValue (formatDate submittedDate) }}</td></tr>
-            <tr><td>Deleted</td><td>{{ optionalValue (formatDate deleted) }}</td></tr>
-            <tr><td>Next reminder date</td><td>{{ optionalValue (formatDate nextReminderDate) }}</td></tr>
-            <tr><td>Overdue date</td><td>{{ optionalValue (formatDate overdueDate) }}</td></tr>
-            <tr><td>Removal requested date</td><td>{{ optionalValue (formatDate removalRequestedDate) }}</td></tr>
             <tr><td>Name</td><td>{{ optionalValue name }}</td></tr>
             <tr><td>Statement status</td><td>{{ optionalValue statementStatus }}</td></tr>
-            <tr><td>Last training month</td><td>{{ optionalValue lastTrainingMonth }}</td></tr>
-            <tr><td>Last training year</td><td>{{ optionalValue lastTrainingYear }}</td></tr>
-            <tr><td>Job start year</td><td>{{ optionalValue jobStartYear }}</td></tr>
-            <tr><td>In progress</td><td>{{ convertBoolean inProgress }}</td></tr>
-            <tr><td>Removal requested reason</td><td>{{ optionalValue removalRequestedReason }}</td></tr>
         </table>
 
         <h4>Statement amendments</h4>
         <br>
         {{#statementAmendments}}
             <table class="summary-list">
-                <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
                 <tr><td>Statement ID</td><td>{{ optionalValue statementId }}</td></tr>
                 <tr><td>Additional comment</td><td>{{ optionalValue additionalComment }}</td></tr>
                 <tr><td>Date submitted</td><td>{{ optionalValue (formatDate dateSubmitted) }}</td></tr>
-                <tr><td>Deleted</td><td>{{ optionalValue (formatDate deleted) }}</td></tr>
             </table>
             <br>
         {{/statementAmendments}}
