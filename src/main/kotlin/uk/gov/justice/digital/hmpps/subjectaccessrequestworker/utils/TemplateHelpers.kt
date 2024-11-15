@@ -39,4 +39,11 @@ class TemplateHelpers(
 
     return userDetails?.lastName ?: userId
   }
+
+  fun convertBoolean(input: Any?): Any = when {
+    input is Boolean && input -> "Yes"
+    input is Boolean && !input -> "No"
+    input == null -> "No Data Held"
+    else -> input
+  }
 }

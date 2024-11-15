@@ -86,7 +86,6 @@ class GeneratePdfServiceTest {
       sarCaseReferenceNumber = "CaseReference",
       dateFrom = LocalDate.now(),
       dateTo = LocalDate.now(),
-      services = serviceList,
       numPages = numberOfPagesWithoutCoverpage,
     )
     coverPageDocument.close()
@@ -285,7 +284,6 @@ class GeneratePdfServiceTest {
       sarCaseReferenceNumber = "CaseReference",
       dateFrom = LocalDate.now(),
       dateTo = LocalDate.now(),
-      services = testDataFromServices,
       numPages = numPages,
     )
     coverPageDocument.close()

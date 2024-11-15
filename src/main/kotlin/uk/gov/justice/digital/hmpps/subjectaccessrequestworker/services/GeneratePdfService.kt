@@ -112,7 +112,6 @@ class GeneratePdfService(
       sarCaseReferenceNumber,
       dateFrom,
       dateTo,
-      services,
       numPages,
     )
     coverPageDocument.close()
@@ -275,7 +274,6 @@ class GeneratePdfService(
     sarCaseReferenceNumber: String,
     dateFrom: LocalDate?,
     dateTo: LocalDate?,
-    services: List<DpsService>,
     numPages: Int,
   ) {
     val font = PdfFontFactory.createFont(StandardFonts.HELVETICA)
@@ -298,7 +296,6 @@ class GeneratePdfService(
         }",
       ).setTextAlignment(TextAlignment.CENTER),
     )
-    document.add(Paragraph("${getServiceListLine(services)}\n").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
@@ -364,18 +361,6 @@ class GeneratePdfService(
       formattedDateFrom = "Start of record"
     }
     return "Report date range: $formattedDateFrom - $formattedDateTo"
-  }
-
-  fun getServiceListLine(services: List<DpsService>): String {
-    val serviceNamesList = mutableListOf<String>()
-    services.forEach { service ->
-      if (service.businessName != null) {
-        serviceNamesList.add(service.businessName!!)
-      } else {
-        serviceNamesList.add(service.name!!)
-      }
-    }
-    return "Services: ${serviceNamesList.joinToString(separator = ",")}"
   }
 
   fun preProcessData(input: Any?): Any? {

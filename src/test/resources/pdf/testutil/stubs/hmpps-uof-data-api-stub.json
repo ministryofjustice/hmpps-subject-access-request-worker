@@ -1,0 +1,1747 @@
+{
+  "content": [
+    {
+      "id": 180,
+      "sequenceNo": 2,
+      "createdDate": "2020-09-04T12:12:53.812536",
+      "updatedDate": "2021-03-30T11:31:16.854361",
+      "incidentDate": "2020-09-07T02:02:00",
+      "submittedDate": "2021-03-30T11:31:16.853",
+      "deleted": "2021-11-30T15:47:13.139",
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "USER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1048991,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 357591,
+          "plannedUseOfForce": false
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "FIGHT_BETWEEN_PRISONERS",
+            "REFUSAL_TO_LOCATE_TO_CELL"
+          ],
+          "primaryReason": "REFUSAL_TO_LOCATE_TO_CELL"
+        },
+        "relocationAndInjuries": {
+          "relocationType": "NTRG",
+          "f213CompletedBy": "sdfsdf",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "SEGREGATION_UNIT",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 323,
+          "reportId": 180,
+          "createdDate": "2021-03-30T11:31:16.854361",
+          "updatedDate": "2021-04-02T11:35:26.994553",
+          "submittedDate": null,
+          "deleted": "2021-11-30T15:47:13.139",
+          "nextReminderDate": null,
+          "overdueDate": "2021-04-02T11:31:16.853",
+          "removalRequestedDate": null,
+          "userId": "USER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 280,
+      "sequenceNo": 4,
+      "createdDate": "2021-04-08T09:22:22.27111",
+      "updatedDate": "2024-10-16T10:44:17.419671",
+      "incidentDate": "2021-04-07T02:03:00",
+      "submittedDate": "2021-04-08T09:23:51.165",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "USER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
+            "staffId": 485801,
+            "username": "TESTUSER",
+            "verified": true,
+            "activeCaseLoadId": "MDI"
+          },
+          {
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
+            "staffId": 486084,
+            "username": "TESTUSER_ADM",
+            "verified": true,
+            "activeCaseLoadId": "MDI"
+          }
+        ],
+        "incidentDetails": {
+          "locationId": 357592,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "d0763236-c073-4ef4-9592-419bf0cd72cb"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_A_MEMBER_OF_STAFF"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "VEHICLE",
+          "f213CompletedBy": "adcdas",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "CELLULAR_VEHICLE",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 334,
+          "reportId": 280,
+          "createdDate": "2021-04-08T09:23:51.165439",
+          "updatedDate": "2021-04-21T10:09:25.626246",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": "2021-04-09T09:23:51.165",
+          "overdueDate": "2021-04-11T09:23:51.165",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "REMOVAL_REQUESTED",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 486084,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 332,
+          "reportId": 280,
+          "createdDate": "2021-04-08T09:23:51.165439",
+          "updatedDate": "2021-04-11T09:25:19.951374",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-04-11T09:23:51.165",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 333,
+          "reportId": 280,
+          "createdDate": "2021-04-08T09:23:51.165439",
+          "updatedDate": "2021-04-11T09:25:20.194096",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-04-11T09:23:51.165",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER",
+          "name": "Test User",
+          "email": "test.user+test@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 357,
+      "sequenceNo": 8,
+      "createdDate": "2021-08-04T08:37:48.98133",
+      "updatedDate": "2021-08-04T08:38:49.733703",
+      "incidentDate": "2021-05-04T12:12:00",
+      "submittedDate": null,
+      "deleted": "2021-08-04T08:39:01.065",
+      "status": "IN_PROGRESS",
+      "agencyId": "BFI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 131409,
+          "plannedUseOfForce": false
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_BY_A_MEMBER_OF_PUBLIC"
+          ]
+        },
+        "relocationAndInjuries": {}
+      },
+      "statements": []
+    },
+    {
+      "id": 245,
+      "sequenceNo": 3,
+      "createdDate": "2021-03-04T08:38:16.615548",
+      "updatedDate": "2024-10-16T10:44:16.761518",
+      "incidentDate": "2021-03-03T21:12:00",
+      "submittedDate": "2021-03-30T11:14:13.055",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "YES",
+          "baggedEvidence": true,
+          "bodyWornCamera": "YES",
+          "photographsTaken": false,
+          "bodyWornCameraNumbers": [
+            {
+              "cameraNum": "dsdsd"
+            },
+            {
+              "cameraNum": "dsdsdsds"
+            }
+          ],
+          "evidenceTagAndDescription": [
+            {
+              "description": "asasasasasasasa",
+              "evidenceTagReference": "assaasasas"
+            }
+          ]
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "Test User"
+            },
+            {
+              "name": "Test User 2"
+            }
+          ],
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_A_MEMBER_OF_STAFF"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "OTHER",
+          "f213CompletedBy": "asdsadasd",
+          "prisonerInjuries": true,
+          "healthcareInvolved": true,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false,
+          "healthcarePractionerName": "dsdsd",
+          "userSpecifiedRelocationType": "fsf FGSDgf s gfsdgGG  gf ggrf"
+        }
+      },
+      "statements": [
+        {
+          "id": 319,
+          "reportId": 245,
+          "createdDate": "2021-03-30T11:14:13.055879",
+          "updatedDate": "2021-04-02T11:15:17.4759",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-04-02T11:14:13.055",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 287,
+      "sequenceNo": 5,
+      "createdDate": "2021-04-12T09:44:22.07438",
+      "updatedDate": "2024-10-16T10:44:17.593479",
+      "incidentDate": "2021-04-11T12:21:00",
+      "submittedDate": "2021-04-12T09:45:20.789",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User 2",
+            "email": "test.user.2@digital.justice.gov.uk",
+            "staffId": 486031,
+            "username": "TESTUSER2_ADM",
+            "verified": true,
+            "activeCaseLoadId": "WWI"
+          }
+        ],
+        "incidentDetails": {
+          "locationId": 357592,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "d0763236-c073-4ef4-9592-419bf0cd72cb"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_BY_A_MEMBER_OF_PUBLIC"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "FULL",
+          "f213CompletedBy": "dsdsd",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "SPECIAL_ACCOMMODATION",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 346,
+          "reportId": 287,
+          "createdDate": "2021-04-12T09:45:20.790774",
+          "updatedDate": "2021-04-12T09:45:39.80695",
+          "submittedDate": "2021-04-12T09:45:39.80695",
+          "deleted": null,
+          "nextReminderDate": "2021-04-13T09:45:20.789",
+          "overdueDate": "2021-04-15T09:45:20.789",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 4,
+          "lastTrainingYear": 2020,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "ffddsf f dfsdf sdfsdf sdfsd",
+          "statementAmendments": [
+            {
+              "id": 29,
+              "statementId": 346,
+              "dateSubmitted": "2021-04-13T10:54:20.468926",
+              "deleted": null,
+              "additionalComment": "dasfds  f fgsf gdf"
+            }
+          ]
+        },
+        {
+          "id": 347,
+          "reportId": 287,
+          "createdDate": "2021-04-12T09:45:20.790774",
+          "updatedDate": "2021-04-15T09:50:02.810166",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-04-15T09:45:20.789",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER2_ADM",
+          "name": "Test User 2",
+          "email": "test.user.2@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 486031,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 314,
+      "sequenceNo": 6,
+      "createdDate": "2021-04-27T12:07:24.199006",
+      "updatedDate": "2024-10-16T10:44:18.18576",
+      "incidentDate": "2021-04-19T02:21:00",
+      "submittedDate": "2021-04-27T12:08:11.728",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
+            "staffId": 486084,
+            "username": "TESTUSER_ADM",
+            "verified": true,
+            "activeCaseLoadId": "MDI"
+          }
+        ],
+        "incidentDetails": {
+          "locationId": 357592,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "d0763236-c073-4ef4-9592-419bf0cd72cb"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "PHYSICAL_THREAT"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "NTRG",
+          "f213CompletedBy": "dsd",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "SEGREGATION_UNIT",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 386,
+          "reportId": 314,
+          "createdDate": "2021-04-27T12:08:11.728774",
+          "updatedDate": "2021-04-27T12:11:48.543955",
+          "submittedDate": null,
+          "deleted": "2021-04-27T12:12:51.539",
+          "nextReminderDate": "2021-04-28T12:08:11.728",
+          "overdueDate": "2021-04-30T12:08:11.728",
+          "removalRequestedDate": "2021-04-27T12:11:48.543955",
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 486084,
+          "inProgress": false,
+          "removalRequestedReason": "I really wasnt here",
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 385,
+          "reportId": 314,
+          "createdDate": "2021-04-27T12:08:11.728774",
+          "updatedDate": "2021-04-30T12:10:20.920489",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-04-30T12:08:11.728",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 525,
+      "sequenceNo": 1,
+      "createdDate": "2024-10-22T16:45:24.683532",
+      "updatedDate": null,
+      "incidentDate": null,
+      "submittedDate": null,
+      "deleted": null,
+      "status": "IN_PROGRESS",
+      "agencyId": "TRN",
+      "userId": "TESTUSER3_GEN",
+      "reporterName": "Test User 3",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "involvedStaff": [
+          {
+            "name": "TESTUSER4",
+            "email": "test.user.4@digital.justice.gov.uk",
+            "staffId": 487506,
+            "lastName": "User 4",
+            "username": "TESTUSER4",
+            "verified": true,
+            "firstName": "Test",
+            "activeCaseLoadId": "ACI"
+          }
+        ]
+      },
+      "statements": []
+    },
+    {
+      "id": 437,
+      "sequenceNo": 10,
+      "createdDate": "2023-10-04T12:35:55.483962",
+      "updatedDate": null,
+      "incidentDate": null,
+      "submittedDate": null,
+      "deleted": null,
+      "status": "IN_PROGRESS",
+      "agencyId": "TRN",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "SELF_HARM"
+          ]
+        }
+      },
+      "statements": []
+    },
+    {
+      "id": 151,
+      "sequenceNo": 1,
+      "createdDate": "2020-06-19T15:10:05.429448",
+      "updatedDate": "2024-10-16T10:44:14.947587",
+      "incidentDate": "2020-06-19T15:09:00",
+      "submittedDate": "2020-06-22T08:54:45.917",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER5",
+      "reporterName": "Test User 5",
+      "offenderNo": "A1234AA",
+      "bookingId": 1048991,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "relocationAndInjuries": {
+          "relocationType": "FULL",
+          "f213CompletedBy": "sdsds",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 215,
+          "reportId": 151,
+          "createdDate": "2020-10-12T09:53:39.656832",
+          "updatedDate": null,
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2020-06-25T08:54:45.917",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER6_GEN",
+          "name": "Test User 6",
+          "email": "test.user.6@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485828,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 216,
+          "reportId": 151,
+          "createdDate": "2020-10-12T09:53:52.850163",
+          "updatedDate": null,
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2020-06-25T08:54:45.917",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER7_GEN",
+          "name": "Test User 7",
+          "email": "test.user.7@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485587,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 217,
+          "reportId": 151,
+          "createdDate": "2020-10-12T09:54:10.453646",
+          "updatedDate": null,
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2020-06-25T08:54:45.917",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER7_ADM",
+          "name": "Test User 7",
+          "email": "test.user.7@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485587,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 168,
+          "reportId": 151,
+          "createdDate": "2020-06-22T08:54:45.952031",
+          "updatedDate": "2020-07-09T11:56:00.578942",
+          "submittedDate": "2020-07-09T11:56:00.578942",
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2020-06-25T08:54:45.917",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER5",
+          "name": "Test User 5",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 4,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "sdasdsdsadasd",
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 238,
+      "sequenceNo": 1,
+      "createdDate": "2021-03-01T15:40:18.562887",
+      "updatedDate": "2021-03-02T11:33:12.974804",
+      "incidentDate": null,
+      "submittedDate": null,
+      "deleted": null,
+      "status": "IN_PROGRESS",
+      "agencyId": "MDI",
+      "userId": "TESTUSER8_GEN",
+      "reporterName": "Test User 8",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "useOfForceDetails": {
+          "pavaDrawn": true,
+          "batonDrawn": false,
+          "positiveCommunication": false
+        }
+      },
+      "statements": []
+    },
+    {
+      "id": 175,
+      "sequenceNo": 1,
+      "createdDate": "2020-08-04T20:47:52.64881",
+      "updatedDate": "2024-10-16T10:44:15.544091",
+      "incidentDate": "2020-08-04T20:47:00",
+      "submittedDate": "2020-08-04T20:48:23.345",
+      "deleted": null,
+      "status": "COMPLETE",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1048991,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 357592,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "d0763236-c073-4ef4-9592-419bf0cd72cb"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "relocationAndInjuries": {
+          "relocationType": "FULL",
+          "f213CompletedBy": "dsdsd",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "OWN_CELL",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 198,
+          "reportId": 175,
+          "createdDate": "2020-08-04T20:48:23.414212",
+          "updatedDate": "2020-08-04T20:49:03.753364",
+          "submittedDate": "2020-08-04T20:49:03.753364",
+          "deleted": null,
+          "nextReminderDate": "2020-08-05T20:48:23.345",
+          "overdueDate": "2020-08-01T20:48:23",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 1,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "sdsdsds",
+          "statementAmendments": [
+            {
+              "id": 22,
+              "statementId": 198,
+              "dateSubmitted": "2020-10-01T13:08:37.25919",
+              "deleted": null,
+              "additionalComment": "this is an additional comment"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 153,
+      "sequenceNo": 3,
+      "createdDate": "2020-06-22T09:43:32.743717",
+      "updatedDate": "2024-10-16T10:44:15.02748",
+      "incidentDate": "2020-06-22T09:43:00",
+      "submittedDate": "2020-07-09T11:54:10.919",
+      "deleted": null,
+      "status": "COMPLETE",
+      "agencyId": "AGI",
+      "userId": "TESTUSER5",
+      "reporterName": "Test User 5",
+      "offenderNo": "A1234AA",
+      "bookingId": 1048991,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": true,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false,
+          "evidenceTagAndDescription": [
+            {
+              "description": "sasasasas",
+              "evidenceTagReference": "sasa"
+            }
+          ]
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 20534,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "d493a009-02f5-4c9e-9963-ced5631a4265"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "sdsds",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 177,
+          "reportId": 153,
+          "createdDate": "2020-07-09T11:54:10.975859",
+          "updatedDate": "2020-07-09T11:54:34.963055",
+          "submittedDate": "2020-07-09T11:54:34.963055",
+          "deleted": null,
+          "nextReminderDate": "2020-07-10T11:54:10.919",
+          "overdueDate": "2020-07-12T11:54:10.919",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER5",
+          "name": "Test User 5",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 1,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "zxczcxc",
+          "statementAmendments": [
+            {
+              "id": 19,
+              "statementId": 177,
+              "dateSubmitted": "2020-07-09T11:55:01.265339",
+              "deleted": null,
+              "additionalComment": "sasasa"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 152,
+      "sequenceNo": 2,
+      "createdDate": "2020-06-22T09:11:24.016395",
+      "updatedDate": "2024-10-16T10:44:14.986549",
+      "incidentDate": "2020-06-22T09:11:00",
+      "submittedDate": "2020-06-22T09:11:50.144",
+      "deleted": null,
+      "status": "COMPLETE",
+      "agencyId": "MDI",
+      "userId": "TESTUSER5",
+      "reporterName": "Test User 5",
+      "offenderNo": "A1234AA",
+      "bookingId": 1048991,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "YES",
+          "baggedEvidence": false,
+          "bodyWornCamera": "YES",
+          "photographsTaken": false,
+          "bodyWornCameraNumbers": [
+            {
+              "cameraNum": "sdsds"
+            }
+          ]
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 27187,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "8ac39ebb-499d-4862-ae45-0b091253e89d"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "relocationAndInjuries": {
+          "relocationType": "SIDE",
+          "f213CompletedBy": "asds",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 169,
+          "reportId": 152,
+          "createdDate": "2020-06-22T09:11:50.177821",
+          "updatedDate": "2020-07-09T11:55:31.492583",
+          "submittedDate": "2020-07-09T11:55:31.492583",
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2020-06-25T09:11:50.144",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER5",
+          "name": "Test User 5",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 1,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "sasdsdsd",
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 327,
+      "sequenceNo": 7,
+      "createdDate": "2021-05-05T14:18:11.167358",
+      "updatedDate": "2024-10-16T10:44:18.448853",
+      "incidentDate": "2021-05-04T21:21:00",
+      "submittedDate": "2021-05-05T14:18:55.29",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User 7",
+            "email": "test.user.7@digital.justice.gov.uk",
+            "staffId": 485587,
+            "username": "TESTUSER7_GEN",
+            "verified": true,
+            "activeCaseLoadId": "MDI"
+          }
+        ],
+        "incidentDetails": {
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "FIGHT_BETWEEN_PRISONERS"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "FULL",
+          "f213CompletedBy": "bob",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "CELLULAR_VEHICLE",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 407,
+          "reportId": 327,
+          "createdDate": "2021-05-05T14:18:55.290489",
+          "updatedDate": "2021-05-05T14:21:00.634712",
+          "submittedDate": "2021-05-05T14:21:00.634712",
+          "deleted": null,
+          "nextReminderDate": "2021-05-06T14:18:55.29",
+          "overdueDate": "2021-05-08T14:18:55.29",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 2,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "xsfadfas",
+          "statementAmendments": []
+        },
+        {
+          "id": 408,
+          "reportId": 327,
+          "createdDate": "2021-05-05T14:18:55.290489",
+          "updatedDate": "2021-05-08T14:20:16.112776",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-05-08T14:18:55.29",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER7_GEN",
+          "name": "Test User 7",
+          "email": "test.user.7@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485587,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 328,
+      "sequenceNo": 1,
+      "createdDate": "2021-05-05T14:55:25.335555",
+      "updatedDate": "2024-10-16T10:44:18.474481",
+      "incidentDate": "2021-05-04T12:34:00",
+      "submittedDate": "2021-05-05T14:56:40.921",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER7_GEN",
+      "reporterName": "Test User 7",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User",
+            "email": "test.user+test@digital.justice.gov.uk",
+            "staffId": 485801,
+            "username": "TESTUSER",
+            "verified": true,
+            "activeCaseLoadId": "MDI"
+          }
+        ],
+        "incidentDetails": {
+          "locationId": 27187,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "8ac39ebb-499d-4862-ae45-0b091253e89d"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_ANOTHER_PRISONER"
+          ]
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "Fred Blogs",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "OWN_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 410,
+          "reportId": 328,
+          "createdDate": "2021-05-05T14:56:40.921441",
+          "updatedDate": "2021-05-08T15:00:21.798168",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-05-08T14:56:40.921",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER",
+          "name": "Test User",
+          "email": "test.user+test@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 409,
+          "reportId": 328,
+          "createdDate": "2021-05-05T14:56:40.921441",
+          "updatedDate": "2021-05-05T14:58:55.641127",
+          "submittedDate": "2021-05-05T14:58:55.641127",
+          "deleted": null,
+          "nextReminderDate": "2021-05-06T14:56:40.921",
+          "overdueDate": "2021-05-08T14:56:40.921",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER7_GEN",
+          "name": "Test User 7",
+          "email": "test.user.7@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 0,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2010,
+          "staffId": 485587,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "Your statement",
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 404,
+      "sequenceNo": 9,
+      "createdDate": "2022-07-11T21:34:34.41754",
+      "updatedDate": "2024-10-16T10:44:19.836698",
+      "incidentDate": "2022-07-10T02:21:00",
+      "submittedDate": "2022-07-11T21:35:43.352",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": true
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User",
+            "exists": true,
+            "staffId": 486084,
+            "username": "TESTUSER_ADM",
+            "verified": false,
+            "activeCaseLoadId": "MDI"
+          }
+        ],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "Test User"
+            }
+          ],
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaUsed": true,
+          "pavaDrawn": true,
+          "restraint": true,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "restraintPositions": [
+            "ON_BACK"
+          ],
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": true
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_ANOTHER_PRISONER"
+          ]
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "dsdsd",
+          "prisonerInjuries": true,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": true,
+          "prisonerHospitalisation": false,
+          "staffNeedingMedicalAttention": [
+            {
+              "name": "ssd",
+              "hospitalisation": true
+            }
+          ]
+        }
+      },
+      "statements": [
+        {
+          "id": 524,
+          "reportId": 404,
+          "createdDate": "2022-07-11T21:35:43.353038",
+          "updatedDate": "2022-07-11T21:35:54.14297",
+          "submittedDate": "2022-07-11T21:35:54.14297",
+          "deleted": null,
+          "nextReminderDate": "2022-07-12T21:35:43.352",
+          "overdueDate": "2022-07-14T21:35:43.352",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 3,
+          "lastTrainingYear": 1999,
+          "jobStartYear": 1999,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "sddsfsdfsdg",
+          "statementAmendments": []
+        },
+        {
+          "id": 525,
+          "reportId": 404,
+          "createdDate": "2022-07-11T21:35:43.353038",
+          "updatedDate": "2022-07-14T21:40:09.407853",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2022-07-14T21:35:43.352",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": null,
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 486084,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 398,
+      "sequenceNo": 8,
+      "createdDate": "2022-06-13T15:47:51.878774",
+      "updatedDate": "2024-10-16T10:44:19.723512",
+      "incidentDate": "2022-06-13T02:21:00",
+      "submittedDate": "2022-07-11T21:34:02.735",
+      "deleted": null,
+      "status": "COMPLETE",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "YES",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "dsd"
+            }
+          ],
+          "locationId": 357591,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": true
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_A_MEMBER_OF_STAFF"
+          ]
+        },
+        "relocationAndInjuries": {
+          "relocationType": "NTRG",
+          "f213CompletedBy": "dsfdsfs",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "SEGREGATION_UNIT",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 523,
+          "reportId": 398,
+          "createdDate": "2022-07-11T21:34:02.736573",
+          "updatedDate": "2022-07-11T21:34:12.657365",
+          "submittedDate": "2022-07-11T21:34:12.657365",
+          "deleted": null,
+          "nextReminderDate": "2022-07-12T21:34:02.735",
+          "overdueDate": "2022-07-14T21:34:02.735",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 0,
+          "lastTrainingYear": 2019,
+          "jobStartYear": 2019,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "cdcdvdvc",
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 491,
+      "sequenceNo": 1,
+      "createdDate": "2024-05-03T11:05:56.253311",
+      "updatedDate": "2024-10-16T10:44:21.444166",
+      "incidentDate": "2024-06-10T12:00:00",
+      "submittedDate": null,
+      "deleted": null,
+      "status": "IN_PROGRESS",
+      "agencyId": "ASI",
+      "userId": "TESTUSER9",
+      "reporterName": "Test User 9",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "locationId": 402743,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "e51f1f25-4c63-4ea7-ad8d-69562e44b8cb"
+        },
+        "useOfForceDetails": {
+          "guidingHold": false,
+          "escortingHold": false,
+          "bodyWornCamera": "NO",
+          "weaponsObserved": "NO",
+          "handcuffsApplied": false,
+          "restraintPositions": "STANDING",
+          "positiveCommunication": false,
+          "pavaDrawnAgainstPrisoner": false,
+          "batonDrawnAgainstPrisoner": false,
+          "painInducingTechniquesUsed": "NONE",
+          "personalProtectionTechniques": false
+        },
+        "reasonsForUseOfForce": {
+          "reasons": [
+            "ASSAULT_ON_ANOTHER_PRISONER"
+          ]
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "ee",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "OWN_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": []
+    },
+    {
+      "id": 227,
+      "sequenceNo": 1,
+      "createdDate": "2021-02-11T16:20:04.073688",
+      "updatedDate": "2024-10-16T10:44:16.387259",
+      "incidentDate": "2021-02-09T12:02:00",
+      "submittedDate": "2021-02-11T16:20:49.235",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [
+          {
+            "name": "Test User 7",
+            "email": "test.user.7@digital.justice.gov.uk",
+            "staffId": 485587,
+            "username": "TESTUSER7_GEN",
+            "verified": true
+          }
+        ],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "Test User"
+            }
+          ],
+          "locationId": 357592,
+          "plannedUseOfForce": false,
+          "incidentLocationId": "d0763236-c073-4ef4-9592-419bf0cd72cb"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": false,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": false
+        },
+        "relocationAndInjuries": {
+          "relocationType": "SIDE",
+          "f213CompletedBy": "dcsf",
+          "prisonerInjuries": false,
+          "healthcareInvolved": false,
+          "prisonerRelocation": "SPECIAL_ACCOMMODATION",
+          "relocationCompliancy": false,
+          "staffMedicalAttention": false,
+          "prisonerHospitalisation": false
+        }
+      },
+      "statements": [
+        {
+          "id": 262,
+          "reportId": 227,
+          "createdDate": "2021-02-11T16:20:49.235461",
+          "updatedDate": "2021-02-14T16:25:12.107779",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-02-14T16:20:49.235",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER7_GEN",
+          "name": "Test User 7",
+          "email": "test.user.7@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": null,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485587,
+          "inProgress": false,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        },
+        {
+          "id": 261,
+          "reportId": 227,
+          "createdDate": "2021-02-11T16:20:49.235461",
+          "updatedDate": "2021-02-11T16:21:25.387968",
+          "submittedDate": "2021-02-11T16:21:25.387968",
+          "deleted": null,
+          "nextReminderDate": "2021-02-12T16:20:49.235",
+          "overdueDate": "2021-02-14T16:20:49.235",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "SUBMITTED",
+          "lastTrainingMonth": 3,
+          "lastTrainingYear": 1999,
+          "jobStartYear": 2012,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": "sdccxvxc",
+          "statementAmendments": []
+        }
+      ]
+    },
+    {
+      "id": 243,
+      "sequenceNo": 2,
+      "createdDate": "2021-03-04T08:21:01.99418",
+      "updatedDate": "2024-10-16T10:44:16.722652",
+      "incidentDate": "2021-03-03T12:02:00",
+      "submittedDate": "2021-03-04T08:29:02.005",
+      "deleted": null,
+      "status": "SUBMITTED",
+      "agencyId": "MDI",
+      "userId": "TESTUSER_ADM",
+      "reporterName": "Test User",
+      "offenderNo": "A1234AA",
+      "bookingId": 1201102,
+      "formResponse": {
+        "evidence": {
+          "cctvRecording": "NO",
+          "baggedEvidence": false,
+          "bodyWornCamera": "NO",
+          "photographsTaken": false
+        },
+        "involvedStaff": [],
+        "incidentDetails": {
+          "witnesses": [
+            {
+              "name": "ssdsdd"
+            }
+          ],
+          "locationId": 357591,
+          "authorisedBy": "Admin User",
+          "plannedUseOfForce": true,
+          "incidentLocationId": "cac85758-380b-49fc-997f-94147e2553ac"
+        },
+        "useOfForceDetails": {
+          "pavaDrawn": false,
+          "restraint": false,
+          "batonDrawn": false,
+          "guidingHold": false,
+          "handcuffsApplied": false,
+          "positiveCommunication": true,
+          "painInducingTechniques": false,
+          "personalProtectionTechniques": true
+        },
+        "relocationAndInjuries": {
+          "f213CompletedBy": "sdadas",
+          "prisonerInjuries": false,
+          "healthcareInvolved": true,
+          "prisonerRelocation": "GATED_CELL",
+          "relocationCompliancy": true,
+          "staffMedicalAttention": true,
+          "prisonerHospitalisation": false,
+          "healthcarePractionerName": "dsffds",
+          "staffNeedingMedicalAttention": [
+            {
+              "name": "fdsfsdfs",
+              "hospitalisation": false
+            }
+          ]
+        }
+      },
+      "statements": [
+        {
+          "id": 292,
+          "reportId": 243,
+          "createdDate": "2021-03-04T08:29:02.005786",
+          "updatedDate": "2021-03-07T08:30:32.210544",
+          "submittedDate": null,
+          "deleted": null,
+          "nextReminderDate": null,
+          "overdueDate": "2021-03-07T08:29:02.005",
+          "removalRequestedDate": null,
+          "userId": "TESTUSER_ADM",
+          "name": "Test User",
+          "email": "test.user@digital.justice.gov.uk",
+          "statementStatus": "PENDING",
+          "lastTrainingMonth": 1,
+          "lastTrainingYear": null,
+          "jobStartYear": null,
+          "staffId": 485801,
+          "inProgress": true,
+          "removalRequestedReason": null,
+          "statement": null,
+          "statementAmendments": []
+        }
+      ]
+    }
+  ]
+}

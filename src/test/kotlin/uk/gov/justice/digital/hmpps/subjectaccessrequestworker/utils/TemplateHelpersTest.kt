@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
@@ -97,6 +99,38 @@ class TemplateHelpersTest {
     fun `getUserLastName returns No Data Held if null`() {
       val response = templateHelpers.getUserLastName("")
       assertThat(response).isEqualTo("No Data Held")
+    }
+  }
+
+  @Nested
+  inner class ConvertBooleanTest {
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "true           | Yes",
+        "false          | No",
+        "               | No Data Held",
+      ],
+      delimiterString = "|",
+    )
+    fun `convertBoolean returns yes or no value when boolean`(inputValue: Boolean?, expectedValue: String) {
+      val response = templateHelpers.convertBoolean(inputValue)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "Yes            | Yes",
+        "No             | No",
+        "               | No Data Held",
+        "something else | something else",
+      ],
+      delimiterString = "|",
+    )
+    fun `convertBoolean returns original value when not boolean`(inputValue: String?, expectedValue: String) {
+      val response = templateHelpers.convertBoolean(inputValue)
+      assertThat(response).isEqualTo(expectedValue)
     }
   }
 }
