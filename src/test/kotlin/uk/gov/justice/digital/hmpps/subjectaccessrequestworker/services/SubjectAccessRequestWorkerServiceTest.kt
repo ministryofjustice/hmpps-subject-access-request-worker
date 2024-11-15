@@ -160,7 +160,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       .thenReturn(mockStream)
     whenever(generatePdfService.getPdfWriter(mockStream))
       .thenReturn(mockWriter)
-    whenever(probationApiClient.getOffenderName("1"))
+    whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
       .thenReturn("TEST, Name")
     whenever(
       generatePdfService.execute(
@@ -224,7 +224,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockStream)
       whenever(generatePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
-      whenever(probationApiClient.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
         .thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
@@ -321,7 +321,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockStream)
       whenever(generatePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
-      whenever(probationApiClient.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
         .thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
@@ -368,7 +368,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockDpsServices)
       whenever(generatePdfService.createPdfStream()).thenReturn(mockStream)
       whenever(generatePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
-      whenever(probationApiClient.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
         .thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
@@ -420,7 +420,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         .thenReturn(mockStream)
       whenever(generatePdfService.getPdfWriter(mockStream))
         .thenReturn(mockWriter)
-      whenever(probationApiClient.getOffenderName("1"))
+      whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
         .thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(

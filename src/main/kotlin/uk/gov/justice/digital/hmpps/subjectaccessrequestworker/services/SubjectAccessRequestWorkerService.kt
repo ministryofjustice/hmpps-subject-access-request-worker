@@ -287,7 +287,7 @@ class SubjectAccessRequestWorkerService(
       return prisonApiClient.getOffenderName(subjectAccessRequest, prisonId)
     }
     if (probationId !== null) {
-      return probationApiClient.getOffenderName(probationId)
+      return probationApiClient.getOffenderName(subjectAccessRequest, probationId)
     }
     throw RuntimeException("Prison and Probation IDs are both null")
   }
