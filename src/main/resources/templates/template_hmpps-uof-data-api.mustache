@@ -55,7 +55,16 @@
                     <td class="data-column-75">Description</td>
                 </tr>
                 {{#evidenceTagAndDescription}}
-                <tr><td>{{ optionalValue evidenceTagReference }}</td><td>{{ optionalValue description }}</td></tr>
+                    <tr>
+                        <td>{{ optionalValue evidenceTagReference }}</td>
+                        <td>{{ optionalValue description }}</td>
+                    </tr>
+                {{/evidenceTagAndDescription}}
+                {{^evidenceTagAndDescription}}
+                    <tr>
+                        <td>No Data Held</td>
+                        <td>No Data Held</td>
+                    </tr>
                 {{/evidenceTagAndDescription}}
             </table>
 
@@ -68,7 +77,15 @@
                         <td>{{ optionalValue cameraNum }}</td>
                     </tr>
                 {{/bodyWornCameraNumbers}}
+                {{^bodyWornCameraNumbers}}
+                    <tr>
+                        <td>No Data Held</td>
+                    </tr>
+                {{/bodyWornCameraNumbers}}
             </table>
+        {{/evidence}}
+        {{^evidence}}
+            <p>No Data Held</p>
         {{/evidence}}
         <br>
         <h4>Involved staff</h4>
@@ -91,6 +108,9 @@
                  </tr>
              </table>
          {{/involvedStaff}}
+         {{^involvedStaff}}
+             <p>No Data Held</p>
+         {{/involvedStaff}}
 
         <h4>Incident details</h4>
         <br>
@@ -99,9 +119,14 @@
                <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
                <tr><td>Planned use of force</td><td>{{ convertBoolean plannedUseOfForce }}</td></tr>
                <tr><td>Authorised by</td><td>{{ optionalValue authorisedBy }}</td></tr>
-               <tr><td>Witnesses</td><td><ul>{{#witnesses}}<li>{{ optionalValue name }}</li>{{/witnesses}}</ul></td>
+               <tr>
+                   <td>Witnesses</td>
+                   <td><ul>{{#witnesses}}<li>{{ optionalValue name }}</li>{{/witnesses}}</ul>{{^witnesses}}No Data Held{{/witnesses}}</td>
                </tr>
            </table>
+           {{/incidentDetails}}
+           {{^incidentDetails}}
+               <p>No Data Held</p>
            {{/incidentDetails}}
 
         <br>
@@ -116,7 +141,7 @@
                  </tr>
                  <tr>
                      <td>{{ optionalValue bodyWornCamera }}</td>
-                     <td>{{#bodyWornCameraNumbers}}{{ optionalValue cameraNum }}{{/bodyWornCameraNumbers}}</td>
+                     <td>{{#bodyWornCameraNumbers}}{{ optionalValue cameraNum }}{{/bodyWornCameraNumbers}}{{^bodyWornCameraNumbers}}No Data Held{{/bodyWornCameraNumbers}}</td>
                      <td>{{ convertBoolean handcuffsApplied }}</td>
                  </tr>
              </table>
@@ -169,7 +194,7 @@
                  <tr>
                      <td>{{ convertBoolean positiveCommunication }}</td>
                      <td>{{ optionalValue weaponsObserved }}</td>
-                     <td>{{#weaponTypes}}{{ optionalValue weaponType }}{{/weaponTypes}}</td>
+                     <td>{{#weaponTypes}}{{ optionalValue weaponType }}{{/weaponTypes}}{{^weaponTypes}}No Data Held{{/weaponTypes}}</td>
                  </tr>
              </table>
              <table class="data-table">
@@ -183,9 +208,12 @@
                      <td>{{ convertBoolean guidingHold }}</td>
                      <td>{{ convertBoolean escortingHold }}</td>
                      <td>{{ convertBoolean restraint }}</td>
-                     <td>{{#restraintPositions}}<li>{{ optionalValue . }}</li>{{/restraintPositions}}</td>
+                     <td>{{#restraintPositions}}<li>{{ optionalValue . }}</li>{{/restraintPositions}}{{^restraintPositions}}No Data Held{{/restraintPositions}}</td>
                  </tr>
              </table>
+        {{/useOfForceDetails}}
+        {{^useOfForceDetails}}
+            <p>No Data Held</p>
         {{/useOfForceDetails}}
 
         <br>
@@ -196,6 +224,9 @@
                     <tr><td>Primary Reason</td><td>{{ optionalValue primaryReason }}</td></tr>
                     <tr><td>Reasons</td><td><ul>{{#reasons}}<li>{{ optionalValue . }}</li>{{/reasons}}</ul></td></tr>
             </table>
+        {{/reasonsForUseOfForce}}
+        {{^reasonsForUseOfForce}}
+            <p>No Data Held</p>
         {{/reasonsForUseOfForce}}
 
         <br>
@@ -242,13 +273,16 @@
                 </tr>
             </table>
         {{/relocationAndInjuries}}
+        {{^relocationAndInjuries}}
+            <p>No Data Held</p>
+        {{/relocationAndInjuries}}
     {{/formResponse}}
 
     <h2>Statements</h2>
     {{#statements}}
         <h4>Statement {{ optionalValue id }}</h4>
         <table class="data-table">
-            <tr><td></td></tr><tr><td>{{{ optionalValue statement }}}</td></tr>
+            <tr><td>Statement</td></tr><tr><td>{{{ optionalValue statement }}}</td></tr>
         </table>
         <table class="summary-list">
             <tr><td>Created date</td><td>{{ optionalValue (formatDate createdDate) }}</td></tr>
@@ -279,7 +313,13 @@
             </table>
             <br>
         {{/statementAmendments}}
+        {{^statementAmendments}}
+            <p>No Data Held</p>
+        {{/statementAmendments}}
         <br>
+    {{/statements}}
+    {{^statements}}
+        <p>No Data Held</p>
     {{/statements}}
     <h3>End of information for use of force incident {{ optionalValue id }}</h3>
 {{/.}}
