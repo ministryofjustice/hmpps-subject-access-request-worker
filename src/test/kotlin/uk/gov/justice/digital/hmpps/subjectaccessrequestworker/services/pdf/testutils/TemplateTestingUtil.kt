@@ -7,6 +7,7 @@ import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.GeneratePdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.TemplateRenderService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -25,7 +26,8 @@ fun main(args: Array<String>) {
 class TemplateTestingUtil {
 
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
+  private val userDetailsRepository: UserDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val gson = GsonBuilder().setPrettyPrinting().create()

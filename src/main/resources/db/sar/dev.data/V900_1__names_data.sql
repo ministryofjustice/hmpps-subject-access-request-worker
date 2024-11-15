@@ -1,0 +1,1 @@
+INSERT INTO user_detail (username, last_name) VALUES ('AZ123PO', 'Smith');

@@ -9,16 +9,22 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
+import wiremock.com.google.common.base.Verify.verify
 import java.io.FileOutputStream
 
 class GeneratePdfCategorisationServiceTest {
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
+  private val userDetailsRepository: UserDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
@@ -38,6 +44,9 @@ class GeneratePdfCategorisationServiceTest {
 
     assertThat(text).contains("Prisoner categorisation")
     assertThat(text).contains("Moorland (HMP & YOI)")
+
+    verify(prisonDetailsRepository, times(1)).findByPrisonId("MDI")
+    verifyNoMoreInteractions(prisonDetailsRepository)
   }
 
   private val categoryServiceData: Map<Any, Any> = mapOf(

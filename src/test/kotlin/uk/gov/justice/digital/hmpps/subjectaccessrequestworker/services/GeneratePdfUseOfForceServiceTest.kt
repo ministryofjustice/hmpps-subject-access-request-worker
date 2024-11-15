@@ -9,20 +9,30 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoMoreInteractions
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.FileOutputStream
 
 class GeneratePdfUseOfForceServiceTest {
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository)
+  private val userDetailsRepository: UserDetailsRepository = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
   private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
   @Test
   fun `generatePdfService renders for Use of Force Service`() {
+    whenever(userDetailsRepository.findByUsername("USERAL_ADM")).thenReturn(UserDetail("USERAL_ADM", "Reacher"))
+    whenever(userDetailsRepository.findByUsername("USERAZ_ADM")).thenReturn(UserDetail("USERAZ_ADM", "Dixon"))
+    whenever(userDetailsRepository.findByUsername("AND_USER")).thenReturn(UserDetail("AND_USER", "O'Donnell"))
     val serviceList = listOf(DpsService(name = "hmpps-uof-data-api", content = useOfForceServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-uof-template.pdf")))
     val document = Document(pdfDocument)
@@ -32,6 +42,13 @@ class GeneratePdfUseOfForceServiceTest {
     val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
 
     assertThat(text).contains("Use of force")
+    assertThat(text).contains("Dixon")
+    assertThat(text).contains("O'Donnell")
+
+    verify(userDetailsRepository, times(0)).findByUsername("USERAL_ADM")
+    verify(userDetailsRepository, times(1)).findByUsername("USERAZ_ADM")
+    verify(userDetailsRepository, times(1)).findByUsername("AND_USER")
+    verifyNoMoreInteractions(prisonDetailsRepository)
   }
 
   private val useOfForceServiceData: ArrayList<Any> = arrayListOf(
@@ -46,7 +63,7 @@ class GeneratePdfUseOfForceServiceTest {
       "status" to "SUBMITTED",
       "agencyId" to "MDI",
       "userId" to "USERAL_ADM",
-      "reporterName" to "Andrew Lee",
+      "reporterName" to "Andrew Reacher",
       "offenderNo" to "A1234AA",
       "bookingId" to 1048991,
       "formResponse" to mapOf(
