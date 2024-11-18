@@ -33,6 +33,9 @@ class GeneratePdfUseOfForceServiceTest {
   fun `generatePdfService renders for Use of Force Service`() {
     whenever(userDetailsRepository.findByUsername("USERAL_ADM")).thenReturn(UserDetail("USERAL_ADM", "Reacher"))
     whenever(userDetailsRepository.findByUsername("USERAZ_ADM")).thenReturn(UserDetail("USERAZ_ADM", "Dixon"))
+    whenever(userDetailsRepository.findByUsername("REPORTERUSER_ADM")).thenReturn(UserDetail("REPORTERUSER_ADM", "Smith"))
+    whenever(userDetailsRepository.findByUsername("STATEMENTUSER_ADM")).thenReturn(UserDetail("STATEMENTUSER_ADM", "Jones"))
+    whenever(userDetailsRepository.findByUsername("STATEMENTUSER2_ADM")).thenReturn(UserDetail("STATEMENTUSER2_ADM", "Walker"))
     whenever(userDetailsRepository.findByUsername("AND_USER")).thenReturn(UserDetail("AND_USER", "O'Donnell"))
     whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
     whenever(prisonDetailsRepository.findByPrisonId("ACI")).thenReturn(PrisonDetail("ACI", "Altcourse (HMP & YOI)"))
@@ -42,17 +45,25 @@ class GeneratePdfUseOfForceServiceTest {
     generatePdfService.addData(pdfDocument, document, serviceList)
     document.close()
     val reader = PdfDocument(PdfReader("dummy-uof-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
 
-    assertThat(text).contains("Use of force")
-    assertThat(text).contains("Dixon")
-    assertThat(text).contains("O'Donnell")
-    assertThat(text).contains("Moorland (HMP & YOI)")
-    assertThat(text).contains("Altcourse (HMP & YOI)")
+    val pageTwoText = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+    assertThat(pageTwoText).contains("Use of force")
+    assertThat(pageTwoText).contains("Dixon")
+    assertThat(pageTwoText).contains("O'Donnell")
+    assertThat(pageTwoText).contains("Smith")
+    assertThat(pageTwoText).contains("Moorland (HMP & YOI)")
+    assertThat(pageTwoText).contains("Altcourse (HMP & YOI)")
+
+    val pageFourText = PdfTextExtractor.getTextFromPage(reader.getPage(4))
+    assertThat(pageFourText).contains("Jones")
+    assertThat(pageFourText).contains("Walker")
 
     verify(userDetailsRepository, times(0)).findByUsername("USERAL_ADM")
     verify(userDetailsRepository, times(1)).findByUsername("USERAZ_ADM")
     verify(userDetailsRepository, times(1)).findByUsername("AND_USER")
+    verify(userDetailsRepository, times(1)).findByUsername("REPORTERUSER_ADM")
+    verify(userDetailsRepository, times(1)).findByUsername("STATEMENTUSER_ADM")
+    verify(userDetailsRepository, times(1)).findByUsername("STATEMENTUSER2_ADM")
     verify(prisonDetailsRepository).findByPrisonId("MDI")
     verify(prisonDetailsRepository).findByPrisonId("ACI")
     verifyNoMoreInteractions(userDetailsRepository)
@@ -70,7 +81,7 @@ class GeneratePdfUseOfForceServiceTest {
       "deleted" to "2021-11-30T15:47:13.139",
       "status" to "SUBMITTED",
       "agencyId" to "MDI",
-      "userId" to "USERAL_ADM",
+      "userId" to "REPORTERUSER_ADM",
       "reporterName" to "Andrew Reacher",
       "offenderNo" to "A1234AA",
       "bookingId" to 1048991,
@@ -209,7 +220,7 @@ class GeneratePdfUseOfForceServiceTest {
           "nextReminderDate" to "2021-04-09T09:23:51.165",
           "overdueDate" to "2021-04-11T09:23:51.165",
           "removalRequestedDate" to "2021-04-21T10:09:25.626246",
-          "userId" to "USERAZ_ADM",
+          "userId" to "STATEMENTUSER_ADM",
           "name" to "Andrew Userz",
           "email" to "andrew.userz@digital.justice.gov.uk",
           "statementStatus" to "REMOVAL_REQUESTED",
@@ -247,7 +258,7 @@ class GeneratePdfUseOfForceServiceTest {
           "nextReminderDate" to "2021-04-09T09:23:51.165",
           "overdueDate" to "2021-04-11T09:23:51.165",
           "removalRequestedDate" to "2021-04-21T10:09:25.626246",
-          "userId" to "USERAZ_ADM",
+          "userId" to "STATEMENTUSER2_ADM",
           "name" to "Andrew Userz",
           "email" to "andrew.userz@digital.justice.gov.uk",
           "statementStatus" to "REMOVAL_REQUESTED",

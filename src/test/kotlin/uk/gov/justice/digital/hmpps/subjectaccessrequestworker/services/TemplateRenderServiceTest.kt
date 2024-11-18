@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -140,6 +141,8 @@ class TemplateRenderServiceTest {
 
   @Test
   fun `renderTemplate renders a template given a Use of Force template`() {
+    whenever(userDetailsRepository.findByUsername("ZANDYLEE_ADM")).thenReturn(UserDetail("ZANDYLEE_ADM", "Lee"))
+
     val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-uof-data-api", testUseOfForceServiceData)
 
     assertThat(renderedStyleTemplate).isNotNull()
@@ -147,7 +150,7 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).contains("</style>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-50\">Incident date</td>")
     assertThat(renderedStyleTemplate).contains("<td>CCTV recording</td>")
-    assertThat(renderedStyleTemplate).contains("<td>Name</td><td>Andrew Lee</td>")
+    assertThat(renderedStyleTemplate).contains("<td>Name</td><td>Lee</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Baton drawn</td>")
   }
 
