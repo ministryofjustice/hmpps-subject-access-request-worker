@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.microsoft.applicationinsights.TelemetryClient
-import io.micrometer.common.util.StringUtils
 import io.sentry.Sentry
 import kotlinx.coroutines.delay
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

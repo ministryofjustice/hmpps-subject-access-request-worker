@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import io.micrometer.common.util.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.security.oauth2.client.ClientAuthorizationException
@@ -19,6 +19,13 @@ class PrisonApiClient(
   private val prisonApiWebClient: WebClient,
   private val webClientRetriesSpec: WebClientRetriesSpec,
 ) {
+
+  companion object {
+    private val emptyResponse = GetOffenderDetailsResponse(
+      lastName = "",
+      firstName = "",
+    )
+  }
 
   fun getOffenderName(subjectAccessRequest: SubjectAccessRequest, subjectId: String): String {
     return try {
@@ -49,10 +56,7 @@ class PrisonApiClient(
         // Return valid empty response when not found
         .onErrorReturn(
           SubjectNotFoundException::class.java,
-          GetOffenderDetailsResponse(
-            lastName = "",
-            firstName = "",
-          ),
+          emptyResponse,
         )
         .block()
 

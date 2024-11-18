@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import io.micrometer.common.util.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
@@ -19,6 +19,10 @@ class ProbationApiClient(
   private val probationApiWebClient: WebClient,
   private val webClientRetriesSpec: WebClientRetriesSpec,
 ) {
+
+  companion object {
+    private val emptyResponse = GetOffenderDetailsResponse(NameDetails(surname = "", forename = ""))
+  }
 
   fun getOffenderName(subjectAccessRequest: SubjectAccessRequest, subjectId: String): String {
     return try {
@@ -52,7 +56,7 @@ class ProbationApiClient(
         // Return valid empty response when not found
         .onErrorReturn(
           SubjectNotFoundException::class.java,
-          GetOffenderDetailsResponse(NameDetails(surname = "", forename = "")),
+          emptyResponse,
         )
         .block()
 
