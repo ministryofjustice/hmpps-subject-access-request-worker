@@ -13,7 +13,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedErrorMessage
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
@@ -31,6 +32,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
   private val subjectAccessRequest = SubjectAccessRequest(
     id = UUID.randomUUID(),
     sarCaseReferenceNumber = UUID.randomUUID().toString(),
+    contextId = UUID.randomUUID(),
   )
 
   companion object {
@@ -71,14 +73,16 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       subjectId = SUBJECT_ID,
     )
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestExceptionWithCauseNull(
       actual = exception,
-      prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
-      "event" to GET_OFFENDER_NAME,
-      "id" to subjectAccessRequest.id,
-      "subjectId" to SUBJECT_ID,
-      "uri" to "/probation-case/$SUBJECT_ID",
-      "httpStatus" to stubResponse.status,
+      expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+      expectedEvent = GET_OFFENDER_NAME,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "subjectId" to SUBJECT_ID,
+        "uri" to "/probation-case/$SUBJECT_ID",
+        "httpStatus" to stubResponse.status,
+      ),
     )
   }
 
@@ -97,12 +101,15 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       subjectId = SUBJECT_ID,
     )
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = exception,
-      prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-      "event" to GET_OFFENDER_NAME,
-      "id" to subjectAccessRequest.id,
-      "subjectId" to SUBJECT_ID,
+      expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+      expectedCause = stubResponse.expectedException,
+      expectedEvent = GET_OFFENDER_NAME,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "subjectId" to SUBJECT_ID,
+      ),
     )
   }
 
@@ -117,12 +124,15 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
 
     prisonApi.verifyApiNeverCalled()
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = exception,
-      prefix = "subjectAccessRequest failed with non-retryable error: probationApiClient error authorization exception",
-      "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
-      "id" to subjectAccessRequest.id,
-      "cause" to "$AUTH_ERROR_PREFIX ${stubResponse.status.value()} ${stubResponse.status.reasonPhrase}: [no body]",
+      expectedPrefix = "subjectAccessRequest failed with non-retryable error: probationApiClient error authorization exception",
+      expectedCause = stubResponse.expectedException,
+      expectedEvent = ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "cause" to "$AUTH_ERROR_PREFIX ${stubResponse.status.value()} ${stubResponse.status.reasonPhrase}: [no body]",
+      ),
     )
   }
 }

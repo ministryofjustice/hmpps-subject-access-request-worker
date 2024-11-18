@@ -89,10 +89,7 @@ class DocumentStorageClient(
         message = "documentStoreClient error authorization exception",
         cause = ex,
         event = STORE_DOCUMENT,
-        subjectAccessRequestId = subjectAccessRequestId,
-        params = mapOf(
-          "cause" to ex.cause?.message,
-        ),
+        subjectAccessRequest = subjectAccessRequest,
       )
     } catch (ex: Exception) {
       if (ex is SubjectAccessRequestException) {
@@ -104,7 +101,7 @@ class DocumentStorageClient(
         message = "documentStoreClient unexpected error",
         cause = ex,
         event = STORE_DOCUMENT,
-        subjectAccessRequestId = subjectAccessRequestId,
+        subjectAccessRequest = subjectAccessRequest,
       )
     }
   }
@@ -119,7 +116,7 @@ class DocumentStorageClient(
         message = "document store upload error: response body expected but was null",
         cause = null,
         event = STORE_DOCUMENT,
-        subjectAccessRequestId = subjectAccessRequest.id,
+        subjectAccessRequest = subjectAccessRequest,
       )
     }
 
@@ -137,7 +134,7 @@ class DocumentStorageClient(
         message = "document store upload error: response file size did not match the expected file upload size",
         cause = null,
         event = STORE_DOCUMENT,
-        subjectAccessRequestId = subjectAccessRequest.id,
+        subjectAccessRequest = subjectAccessRequest,
         params = mapOf(
           "expectedFileSize" to expectedFileSize,
           "actualFileSize" to postDocumentResponse.fileSize,

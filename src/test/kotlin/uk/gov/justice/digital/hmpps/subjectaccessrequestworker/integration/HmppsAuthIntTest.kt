@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
@@ -38,14 +39,17 @@ class HmppsAuthIntTest {
 
     val exception = assertThrows<SubjectAccessRequestException> { hmppsAuthGateway.getClientToken() }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = exception,
-      prefix = "authGateway get auth token WebclientResponseException,",
-      "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
-      "id" to null,
-      "authority" to "localhost:${hmppsAuth.port()}",
-      "httpStatus" to 503,
-      "body" to "",
+      expectedPrefix = "authGateway get auth token WebclientResponseException,",
+      expectedCause = WebClientResponseException.ServiceUnavailable::class.java,
+      expectedEvent = ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      expectedSubjectAccessRequest = null,
+      expectedParams = mapOf(
+        "authority" to "localhost:${hmppsAuth.port()}",
+        "httpStatus" to 503,
+        "body" to "",
+      ),
     )
   }
 
@@ -53,16 +57,19 @@ class HmppsAuthIntTest {
   fun `get throws an exception if credentials are invalid`() {
     hmppsAuth.stubUnauthorizedForGetOAAuthToken()
 
-    val exception = assertThrows<RuntimeException> { hmppsAuthGateway.getClientToken() }
+    val exception = assertThrows<SubjectAccessRequestException> { hmppsAuthGateway.getClientToken() }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = exception,
-      prefix = "authGateway get auth token WebclientResponseException,",
-      "event" to ProcessingEvent.ACQUIRE_AUTH_TOKEN,
-      "id" to null,
-      "authority" to "localhost:${hmppsAuth.port()}",
-      "httpStatus" to 401,
-      "body" to "",
+      expectedPrefix = "authGateway get auth token WebclientResponseException",
+      expectedCause = WebClientResponseException.Unauthorized::class.java,
+      expectedEvent = ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      expectedSubjectAccessRequest = null,
+      expectedParams = mapOf(
+        "authority" to "localhost:${hmppsAuth.port()}",
+        "httpStatus" to 401,
+        "body" to "",
+      ),
     )
   }
 }

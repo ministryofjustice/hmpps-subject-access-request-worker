@@ -1,15 +1,15 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 class SubjectAccessRequestDocumentStoreConflictException(
-  subjectAccessRequestId: UUID? = null,
+  subjectAccessRequest: SubjectAccessRequest? = null,
   params: Map<String, *>? = null,
 ) : SubjectAccessRequestException(
   "subject access request document store upload unsuccessful: document already exists",
   null,
   ProcessingEvent.STORE_DOCUMENT,
-  subjectAccessRequestId,
+  subjectAccessRequest,
   params,
 )

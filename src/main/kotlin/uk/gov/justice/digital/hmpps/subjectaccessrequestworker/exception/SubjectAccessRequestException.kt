@@ -1,14 +1,14 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 open class SubjectAccessRequestException(
   message: String,
   cause: Throwable? = null,
-  private val event: ProcessingEvent?,
-  private val subjectAccessRequestId: UUID? = null,
-  private val params: Map<String, *>? = null,
+  val event: ProcessingEvent?,
+  val subjectAccessRequest: SubjectAccessRequest? = null,
+  val params: Map<String, *>? = null,
 ) : RuntimeException(message, cause) {
 
   constructor(message: String) : this(message, null, null, null)
@@ -20,7 +20,7 @@ open class SubjectAccessRequestException(
     get() = buildString {
       append(super.message)
       cause?.message?.let { append(", cause=$it") }
-      append(", event=$event, id=$subjectAccessRequestId")
+      append(", event=$event, id=${subjectAccessRequest?.id}, contextId=${subjectAccessRequest?.contextId}")
       params?.toFormattedString()?.let { append(", $it") }
     }
 

@@ -24,4 +24,10 @@ data class SubjectAccessRequest(
   val claimAttempts: Int = 0,
   val objectUrl: String? = null,
   val lastDownloaded: LocalDateTime? = null,
+  /**
+   * ContextId is unique ID specifically for logging, providing a mechanism to identify all events from 1 thread of
+   * processing. If 2 workers are working on the same job it makes it possible to see which events belong together.
+   **/
+  @Transient
+  val contextId: UUID? = UUID.randomUUID(),
 )

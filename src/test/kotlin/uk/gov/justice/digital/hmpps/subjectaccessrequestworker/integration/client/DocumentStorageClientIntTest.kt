@@ -12,6 +12,7 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.core.codec.DecodingException
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
@@ -23,7 +24,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedErrorMessage
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.fileHash
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
@@ -47,7 +49,8 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
 
   private val subjectAccessRequestId = UUID.randomUUID()
-  private val subjectAccessRequest = SubjectAccessRequest(id = subjectAccessRequestId)
+  private val contextId = UUID.randomUUID()
+  private val subjectAccessRequest = SubjectAccessRequest(id = subjectAccessRequestId, contextId = contextId)
 
   @MockBean
   private lateinit var telemetryClient: TelemetryClient
@@ -106,7 +109,9 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @ParameterizedTest
   @MethodSource("status4xxResponseStubs")
-  fun `store document does not retry when fails with a 4xx status`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
+  fun `store document does not retry when fails with a 4xx status`(
+    stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse,
+  ) {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
 
     documentApi.stubUploadFileFailsWithStatus(
@@ -119,13 +124,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestExceptionWithCauseNull(
       actual = ex,
-      prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-      "httpStatus" to stubErrorResponse.status,
+      expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
+        "httpStatus" to stubErrorResponse.status,
+      ),
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -148,13 +155,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestExceptionWithCauseNull(
       actual = ex,
-      prefix = "subject access request document store upload unsuccessful: document already exists",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-      "httpStatus" to HttpStatus.CONFLICT,
+      expectedPrefix = "subject access request document store upload unsuccessful: document already exists",
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
+        "httpStatus" to HttpStatus.CONFLICT,
+      ),
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -178,12 +187,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = ex,
-      prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
+      expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+      expectedCause = stubErrorResponse.expectedException,
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
+      ),
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -227,12 +239,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = ex,
-      prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequest.id,
-      "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/${subjectAccessRequest.id}",
+      expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+      expectedCause = WebClientRequestException::class.java,
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
+      ),
     )
 
     assertThat(ex.cause).isInstanceOf(WebClientRequestException::class.java)
@@ -243,7 +258,9 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @ParameterizedTest
   @MethodSource("authErrorResponseStubs")
-  fun `documentStorageClient fails to obtain auth token with`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
+  fun `documentStorageClient fails to obtain auth token with`(
+    stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse,
+  ) {
     hmppsAuth.stubGrantToken(stubErrorResponse.getResponse())
 
     val expectedFileContent = getFileBytes(FILE_CONTENT)
@@ -252,15 +269,13 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = ex,
-      prefix = "subjectAccessRequest failed with non-retryable error: documentStoreClient error authorization exception,",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "cause" to expectedClientAuthError(stubErrorResponse.status.value(), stubErrorResponse.status.reasonPhrase),
+      expectedPrefix = "subjectAccessRequest failed with non-retryable error: documentStoreClient error authorization exception",
+      expectedCause = ClientAuthorizationException::class.java,
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
     )
-
-    assertThat(ex.cause).isInstanceOf(ClientAuthorizationException::class.java)
 
     hmppsAuth.verifyCalledOnce()
     documentApi.verifyNeverCalled()
@@ -282,15 +297,17 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestExceptionWithCauseNull(
       actual = ex,
-      prefix = "document store upload error: response file size did not match the expected file upload size",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
-      "expectedFileSize" to expectedFileContent.toByteArray().size,
-      "actualFileSize" to incorrectFileSize,
-      "documentUuid" to subjectAccessRequestId,
-      "documentFileHash" to fileHash(expectedFileContent.toByteArray()),
+      expectedPrefix = "document store upload error: response file size did not match the expected file upload size",
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = mapOf(
+        "expectedFileSize" to expectedFileContent.toByteArray().size,
+        "actualFileSize" to incorrectFileSize,
+        "documentUuid" to subjectAccessRequestId.toString(),
+        "documentFileHash" to fileHash(expectedFileContent.toByteArray()),
+      ),
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -318,11 +335,13 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
     }
 
-    assertExpectedErrorMessage(
+    assertExpectedSubjectAccessRequestException(
       actual = ex,
-      prefix = "documentStoreClient unexpected error",
-      "event" to STORE_DOCUMENT,
-      "id" to subjectAccessRequestId,
+      expectedCause = DecodingException::class.java,
+      expectedPrefix = "documentStoreClient unexpected error",
+      expectedEvent = STORE_DOCUMENT,
+      expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedParams = null,
     )
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -346,8 +365,10 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
     val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
 
-    val expectedResponse =
-      expectedSuccessResponseWithMetadata(content = FILE_CONTENT.toByteArray(), metadata = metadata)
+    val expectedResponse = expectedSuccessResponseWithMetadata(
+      content = FILE_CONTENT.toByteArray(),
+      metadata = metadata,
+    )
     assertThat(resp).isEqualTo(expectedResponse)
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -361,10 +382,6 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     val baos = ByteArrayOutputStream()
     IOUtils.copy(ByteArrayInputStream(input.toByteArray()), baos)
     return baos
-  }
-
-  fun expectedClientAuthError(status: Int, description: String): String {
-    return "[invalid_token_response] An error occurred while attempting to retrieve the OAuth 2.0 Access Token Response: $status $description: [no body]"
   }
 
   fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse {
@@ -398,6 +415,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     val props = mapOf(
       "sarId" to subjectAccessRequest.sarCaseReferenceNumber,
       "UUID" to subjectAccessRequest.id.toString(),
+      "contextId" to contextId.toString(),
       "expectedFileSize" to content.size.toString(),
       "actualFileSize" to content.size.toString(),
       "documentUuid" to subjectAccessRequest.id.toString(),
@@ -420,6 +438,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       "actualFileSize" to actualSize.toString(),
       "documentUuid" to subjectAccessRequest.id.toString(),
       "documentFileHash" to fileHash(content),
+      "contextId" to contextId.toString(),
     )
 
     verify(telemetryClient, times(1))
