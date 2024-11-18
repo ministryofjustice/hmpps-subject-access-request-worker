@@ -54,7 +54,7 @@ class ProbationApiClient(
         message = "probationApiClient error authorization exception",
         cause = ex,
         event = ACQUIRE_AUTH_TOKEN,
-        subjectAccessRequestId = subjectAccessRequest.id,
+        subjectAccessRequest = subjectAccessRequest,
         params = mapOf(
           "cause" to ex.cause?.message,
         ),

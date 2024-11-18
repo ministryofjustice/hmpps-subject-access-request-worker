@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 private const val ERROR_MESSAGE_PREFIX = "subjectAccessRequest failed and max retry attempts (%s) exhausted"
 
@@ -12,14 +12,20 @@ class SubjectAccessRequestRetryExhaustedException(
   retryAttempts: Long,
   cause: Throwable?,
   event: ProcessingEvent,
-  subjectAccessRequestId: UUID? = null,
+  subjectAccessRequest: SubjectAccessRequest? = null,
   params: Map<String, *>? = null,
-) : SubjectAccessRequestException(ERROR_MESSAGE_PREFIX.format(retryAttempts), cause, event, subjectAccessRequestId, params) {
+) : SubjectAccessRequestException(
+  ERROR_MESSAGE_PREFIX.format(retryAttempts),
+  cause,
+  event,
+  subjectAccessRequest,
+  params,
+) {
 
   constructor(
     retryAttempts: Long,
     event: ProcessingEvent,
-    subjectAccessRequestId: UUID? = null,
+    subjectAccessRequest: SubjectAccessRequest? = null,
     params: Map<String, *>? = null,
-  ) : this(retryAttempts, null, event, subjectAccessRequestId, params)
+  ) : this(retryAttempts, null, event, subjectAccessRequest, params)
 }

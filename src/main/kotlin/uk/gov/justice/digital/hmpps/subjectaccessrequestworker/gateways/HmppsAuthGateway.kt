@@ -43,7 +43,7 @@ class HmppsAuthGateway(
       message = "authGateway get auth token WebclientResponseException",
       cause = cause,
       event = ACQUIRE_AUTH_TOKEN,
-      subjectAccessRequestId = null,
+      subjectAccessRequest = null,
       params = mapOf(
         "authority" to cause.request?.uri?.authority,
         "httpStatus" to cause.statusCode.value(),
@@ -55,7 +55,7 @@ class HmppsAuthGateway(
     message = "authGateway get auth token unexpected error",
     cause = cause,
     event = ACQUIRE_AUTH_TOKEN,
-    subjectAccessRequestId = null,
+    subjectAccessRequest = null,
     params = mapOf(
       "host" to hmppsAuthUrl,
     ),

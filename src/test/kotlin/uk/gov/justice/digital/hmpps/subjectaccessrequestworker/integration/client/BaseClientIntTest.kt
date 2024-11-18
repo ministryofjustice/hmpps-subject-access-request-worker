@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.clie
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.springframework.http.HttpStatus
+import org.springframework.security.oauth2.client.ClientAuthorizationException
+import org.springframework.web.reactive.function.client.WebClientRequestException
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 
 abstract class BaseClientIntTest : IntegrationTestBase() {
@@ -13,31 +16,31 @@ abstract class BaseClientIntTest : IntegrationTestBase() {
 
     @JvmStatic
     fun status4xxResponseStubs(): List<StubErrorResponse> = listOf(
-      StubErrorResponse(HttpStatus.BAD_REQUEST),
-      StubErrorResponse(HttpStatus.UNAUTHORIZED),
-      StubErrorResponse(HttpStatus.FORBIDDEN),
-      StubErrorResponse(HttpStatus.NOT_FOUND),
+      StubErrorResponse(HttpStatus.BAD_REQUEST, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.UNAUTHORIZED, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.FORBIDDEN, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.NOT_FOUND, WebClientRequestException::class.java),
     )
 
     @JvmStatic
     fun status5xxResponseStubs(): List<StubErrorResponse> = listOf(
-      StubErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR),
-      StubErrorResponse(HttpStatus.BAD_GATEWAY),
-      StubErrorResponse(HttpStatus.SERVICE_UNAVAILABLE),
-      StubErrorResponse(HttpStatus.GATEWAY_TIMEOUT),
+      StubErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, WebClientResponseException.InternalServerError::class.java),
+      StubErrorResponse(HttpStatus.BAD_GATEWAY, WebClientResponseException.BadGateway::class.java),
+      StubErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, WebClientResponseException.ServiceUnavailable::class.java),
+      StubErrorResponse(HttpStatus.GATEWAY_TIMEOUT, WebClientResponseException.GatewayTimeout::class.java),
     )
 
     @JvmStatic
     fun authErrorResponseStubs(): List<StubErrorResponse> = listOf(
-      StubErrorResponse(HttpStatus.UNAUTHORIZED),
-      StubErrorResponse(HttpStatus.FORBIDDEN),
-      StubErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR),
-      StubErrorResponse(HttpStatus.BAD_GATEWAY),
-      StubErrorResponse(HttpStatus.SERVICE_UNAVAILABLE),
-      StubErrorResponse(HttpStatus.GATEWAY_TIMEOUT),
+      StubErrorResponse(HttpStatus.UNAUTHORIZED, ClientAuthorizationException::class.java),
+      StubErrorResponse(HttpStatus.FORBIDDEN, ClientAuthorizationException::class.java),
+      StubErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ClientAuthorizationException::class.java),
+      StubErrorResponse(HttpStatus.BAD_GATEWAY, ClientAuthorizationException::class.java),
+      StubErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, ClientAuthorizationException::class.java),
+      StubErrorResponse(HttpStatus.GATEWAY_TIMEOUT, ClientAuthorizationException::class.java),
     )
 
-    data class StubErrorResponse(val status: HttpStatus) {
+    data class StubErrorResponse(val status: HttpStatus, val expectedException: Class<out Throwable>) {
       fun getResponse(): ResponseDefinitionBuilder = ResponseDefinitionBuilder()
         .withStatus(status.value())
         .withStatusMessage(status.reasonPhrase)

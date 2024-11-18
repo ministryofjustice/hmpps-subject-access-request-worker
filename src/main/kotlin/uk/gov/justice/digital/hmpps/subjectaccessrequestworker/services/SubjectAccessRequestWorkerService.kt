@@ -97,7 +97,7 @@ class SubjectAccessRequestWorkerService(
         message = "subject access request threw unexpected error",
         cause = exception,
         event = null,
-        subjectAccessRequestId = subjectAccessRequest?.id,
+        subjectAccessRequest = subjectAccessRequest,
         mapOf(
           "sarCaseReferenceNumber" to subjectAccessRequest?.sarCaseReferenceNumber,
         ),

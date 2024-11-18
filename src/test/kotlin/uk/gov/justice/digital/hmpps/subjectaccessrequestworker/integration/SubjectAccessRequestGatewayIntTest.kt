@@ -16,6 +16,8 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
 import org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLAIM_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.COMPLETE_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_UNCLAIMED_REQUESTS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.HmppsAuthGateway
@@ -44,6 +46,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
   companion object {
     private const val AUTH_TOKEN = "ABC1234"
     private val subjectAccessRequestId = UUID.randomUUID()
+    private val contextId = UUID.randomUUID()
   }
 
   @BeforeEach
@@ -57,6 +60,9 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
     whenever(sarRequestMock.id)
       .thenReturn(subjectAccessRequestId)
+
+    whenever(sarRequestMock.contextId)
+      .thenReturn(contextId)
   }
 
   @Nested
@@ -89,11 +95,13 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.getUnclaimed(webClient)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestException(
         actual = actual,
-        prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-        "event" to "GET_UNCLAIMED_REQUESTS",
-        "id" to null,
+        expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+        expectedCause = InternalServerError::class.java,
+        expectedEvent = GET_UNCLAIMED_REQUESTS,
+        expectedSubjectAccessRequest = null,
+        expectedParams = null,
       )
 
       assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
@@ -107,13 +115,15 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       val actual = assertThrows<FatalSubjectAccessRequestException> { sarGateway.getUnclaimed(webClient) }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestExceptionWithCauseNull(
         actual = actual,
-        prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-        "event" to "GET_UNCLAIMED_REQUESTS",
-        "id" to null,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
-        "httpStatus" to HttpStatus.UNAUTHORIZED,
+        expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+        expectedEvent = GET_UNCLAIMED_REQUESTS,
+        expectedSubjectAccessRequest = null,
+        expectedParams = mapOf(
+          "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
+          "httpStatus" to HttpStatus.UNAUTHORIZED,
+        ),
       )
 
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 1, token = AUTH_TOKEN)
@@ -125,13 +135,15 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       val error = assertThrows<FatalSubjectAccessRequestException> { sarGateway.getUnclaimed(webClient) }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestExceptionWithCauseNull(
         actual = error,
-        prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-        "event" to "GET_UNCLAIMED_REQUESTS",
-        "id" to null,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
-        "httpStatus" to HttpStatus.FORBIDDEN,
+        expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+        expectedEvent = GET_UNCLAIMED_REQUESTS,
+        expectedSubjectAccessRequest = null,
+        expectedParams = mapOf(
+          "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
+          "httpStatus" to HttpStatus.FORBIDDEN,
+        ),
       )
 
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 1, token = AUTH_TOKEN)
@@ -143,13 +155,15 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       val error = assertThrows<FatalSubjectAccessRequestException> { sarGateway.getUnclaimed(webClient) }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestExceptionWithCauseNull(
         actual = error,
-        prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-        "event" to "GET_UNCLAIMED_REQUESTS",
-        "id" to null,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
-        "httpStatus" to HttpStatus.UNAUTHORIZED,
+        expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+        expectedEvent = GET_UNCLAIMED_REQUESTS,
+        expectedSubjectAccessRequest = null,
+        expectedParams = mapOf(
+          "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests?unclaimed=true",
+          "httpStatus" to HttpStatus.UNAUTHORIZED,
+        ),
       )
 
       subjectAccessRequestApiMock.verifyGetUnclaimedSubjectAccessRequestsIsCalled(times = 2, token = AUTH_TOKEN)
@@ -164,14 +178,14 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
 
       val error = assertThrows<SubjectAccessRequestRetryExhaustedException> { sarGateway.getUnclaimed(borkedWebClient) }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestException(
         actual = error,
-        prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-        "event" to "GET_UNCLAIMED_REQUESTS",
-        "id" to null,
+        expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+        expectedCause = WebClientRequestException::class.java,
+        expectedEvent = GET_UNCLAIMED_REQUESTS,
+        expectedSubjectAccessRequest = null,
+        expectedParams = null,
       )
-      assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
-      assertThat(error.cause!!.message).contains("Connection refused")
 
       subjectAccessRequestApiMock.verifyZeroInteractions()
     }
@@ -222,13 +236,15 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.claim(webClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestExceptionWithCauseNull(
         actual = actual,
-        prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-        "event" to "CLAIM_REQUEST",
-        "id" to subjectAccessRequestId,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests/$subjectAccessRequestId/claim",
-        "httpStatus" to HttpStatus.BAD_REQUEST,
+        expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+        expectedEvent = CLAIM_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = mapOf(
+          "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests/$subjectAccessRequestId/claim",
+          "httpStatus" to HttpStatus.BAD_REQUEST,
+        ),
       )
 
       assertThat(actual.cause).isNull()
@@ -248,14 +264,14 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.claim(webClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestException(
         actual = actual,
-        prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-        "event" to "CLAIM_REQUEST",
-        "id" to subjectAccessRequestId,
+        expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+        expectedCause = InternalServerError::class.java,
+        expectedEvent = CLAIM_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = null,
       )
-
-      assertThat(actual.cause).isInstanceOf(InternalServerError::class.java)
 
       subjectAccessRequestApiMock.verifyClaimSubjectAccessRequestIsCalled(
         times = 3,
@@ -293,13 +309,15 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.claim(webClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestExceptionWithCauseNull(
         actual = actual,
-        prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-        "event" to CLAIM_REQUEST,
-        "id" to subjectAccessRequestId,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests/$subjectAccessRequestId/claim",
-        "httpStatus" to HttpStatus.BAD_REQUEST,
+        expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+        expectedEvent = CLAIM_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = mapOf(
+          "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests/$subjectAccessRequestId/claim",
+          "httpStatus" to HttpStatus.BAD_REQUEST,
+        ),
       )
 
       assertThat(actual.cause).isNull()
@@ -322,15 +340,14 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.claim(borkedWebClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestException(
         actual = error,
-        prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-        "event" to "CLAIM_REQUEST",
-        "id" to subjectAccessRequestId,
+        expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+        expectedCause = WebClientRequestException::class.java,
+        expectedEvent = CLAIM_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = null,
       )
-
-      assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)
-      assertThat(error.cause!!.message).contains("Connection refused")
 
       subjectAccessRequestApiMock.verifyZeroInteractions()
     }
@@ -368,14 +385,14 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.complete(webClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestException(
         actual = actual,
-        prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-        "event" to "COMPLETE_REQUEST",
-        "id" to subjectAccessRequestId,
+        expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+        expectedCause = ServiceUnavailable::class.java,
+        expectedEvent = COMPLETE_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = null,
       )
-
-      assertThat(actual.cause).isInstanceOf(ServiceUnavailable::class.java)
 
       subjectAccessRequestApiMock.verifyCompleteSubjectAccessRequestIsCalled(
         times = 3,
@@ -396,16 +413,16 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.complete(webClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestExceptionWithCauseNull(
         actual = actual,
-        prefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status,",
-        "event" to "COMPLETE_REQUEST",
-        "id" to subjectAccessRequestId,
-        "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests/$subjectAccessRequestId/complete",
-        "httpStatus" to HttpStatus.UNAUTHORIZED,
+        expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
+        expectedEvent = COMPLETE_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = mapOf(
+          "uri" to "${subjectAccessRequestApiMock.baseUrl()}/api/subjectAccessRequests/$subjectAccessRequestId/complete",
+          "httpStatus" to HttpStatus.UNAUTHORIZED,
+        ),
       )
-
-      assertThat(actual.cause).isNull()
 
       subjectAccessRequestApiMock.verifyCompleteSubjectAccessRequestIsCalled(
         times = 1,
@@ -441,11 +458,13 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
         sarGateway.complete(borkedWebClient, sarRequestMock)
       }
 
-      assertExpectedErrorMessage(
+      assertExpectedSubjectAccessRequestException(
         actual = error,
-        prefix = "subjectAccessRequest failed and max retry attempts (2) exhausted,",
-        "event" to "COMPLETE_REQUEST",
-        "id" to subjectAccessRequestId,
+        expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
+        expectedCause = WebClientRequestException::class.java,
+        expectedEvent = COMPLETE_REQUEST,
+        expectedSubjectAccessRequest = sarRequestMock,
+        expectedParams = null,
       )
 
       assertThat(error.cause).isInstanceOf(WebClientRequestException::class.java)

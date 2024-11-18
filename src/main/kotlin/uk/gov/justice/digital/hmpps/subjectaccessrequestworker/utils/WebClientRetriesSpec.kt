@@ -41,7 +41,7 @@ class WebClientRetriesSpec(
 
   fun retry5xxAndClientRequestErrors(
     event: ProcessingEvent,
-    subjectAccessRequest: SubjectAccessRequest?,
+    subjectAccessRequest: SubjectAccessRequest? = null,
     params: Map<String, Any>? = null,
   ): RetryBackoffSpec {
     return Retry
@@ -60,7 +60,7 @@ class WebClientRetriesSpec(
           retryAttempts = signal.totalRetries(),
           cause = signal.failure(),
           event = event,
-          subjectAccessRequestId = subjectAccessRequest?.id,
+          subjectAccessRequest = subjectAccessRequest,
           params = params,
         )
       }
@@ -74,13 +74,13 @@ class WebClientRetriesSpec(
 
   fun throw4xxStatusFatalError(
     event: ProcessingEvent,
-    subjectAccessRequest: SubjectAccessRequest?,
+    subjectAccessRequest: SubjectAccessRequest? = null,
     params: Map<String, Any>? = null,
   ) =
     { response: ClientResponse ->
       val moddedParams = buildMap<String, Any> {
         params?.let { putAll(it) }
-        putIfAbsent("uri", response.request().uri)
+        putIfAbsent("uri", response.request().uri.toString())
         putIfAbsent("httpStatus", response.statusCode())
       }
 
@@ -90,7 +90,7 @@ class WebClientRetriesSpec(
         FatalSubjectAccessRequestException(
           message = "client 4xx response status",
           event = event,
-          subjectAccessRequestId = subjectAccessRequest?.id,
+          subjectAccessRequest = subjectAccessRequest,
           params = moddedParams,
         ),
       )
@@ -104,9 +104,9 @@ class WebClientRetriesSpec(
 
     Mono.error<SubjectAccessRequestException>(
       SubjectAccessRequestDocumentStoreConflictException(
-        subjectAccessRequestId = subjectAccessRequest.id,
+        subjectAccessRequest = subjectAccessRequest,
         mapOf(
-          "uri" to response.request().uri,
+          "uri" to response.request().uri.toString(),
           "httpStatus" to response.statusCode(),
         ),
       ),
