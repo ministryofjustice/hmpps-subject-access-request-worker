@@ -1,0 +1,373 @@
+{
+  "content": [
+    {
+      "chargeNumber": "MDI-000045",
+      "prisonerNumber": "A3863DZ",
+      "gender": "FEMALE",
+      "incidentDetails": {
+        "locationId": 357591,
+        "dateTimeOfIncident": "2024-01-29T09:00:00",
+        "dateTimeOfDiscovery": "2024-01-29T09:00:00",
+        "handoverDeadline": "2024-01-31T09:00:00"
+      },
+      "isYouthOffender": false,
+      "incidentRole": {},
+      "offenceDetails": {
+        "offenceCode": 5001,
+        "offenceRule": {
+          "paragraphNumber": "5",
+          "paragraphDescription": "Intentionally endangers the health or personal safety of others or, by her conduct, is reckless whether such health or personal safety is endangered",
+          "nomisCode": "51:5",
+          "withOthersNomisCode": "51:25Q"
+        },
+        "victimPrisonersNumber": "A3863DZ",
+        "protectedCharacteristics": []
+      },
+      "incidentStatement": {
+        "statement": "v ictim is suspect",
+        "completed": true
+      },
+      "createdByUserId": "USER_GEN",
+      "createdDateTime": "2024-01-29T10:22:00.568071",
+      "status": "SCHEDULED",
+      "reviewedByUserId": "USER_GEN",
+      "statusReason": "",
+      "statusDetails": "",
+      "damages": [],
+      "evidence": [],
+      "witnesses": [],
+      "hearings": [
+        {
+          "id": 1941419,
+          "locationId": 27187,
+          "dateTimeOfHearing": "2024-01-31T15:40:00",
+          "oicHearingType": "GOV_ADULT",
+          "outcome": {
+            "id": 1747082,
+            "adjudicator": "USER_GEN",
+            "code": "REFER_INAD",
+            "details": "12"
+          },
+          "agencyId": "MDI"
+        },
+        {
+          "id": 1941420,
+          "locationId": 27187,
+          "dateTimeOfHearing": "2024-01-31T22:40:00",
+          "oicHearingType": "INAD_ADULT",
+          "agencyId": "MDI"
+        }
+      ],
+      "disIssueHistory": [],
+      "dateTimeOfFirstHearing": "2024-01-31T15:40:00",
+      "outcomes": [
+        {
+          "hearing": {
+            "id": 1941419,
+            "locationId": 27187,
+            "dateTimeOfHearing": "2024-01-31T15:40:00",
+            "oicHearingType": "GOV_ADULT",
+            "outcome": {
+              "id": 1747082,
+              "adjudicator": "USER_GEN",
+              "code": "REFER_INAD",
+              "details": "12"
+            },
+            "agencyId": "MDI"
+          },
+          "outcome": {
+            "outcome": {
+              "id": 1206814,
+              "code": "REFER_INAD",
+              "details": "12",
+              "canRemove": true
+            },
+            "referralOutcome": {
+              "id": 1206815,
+              "code": "SCHEDULE_HEARING",
+              "canRemove": true
+            }
+          }
+        },
+        {
+          "hearing": {
+            "id": 1941420,
+            "locationId": 27187,
+            "dateTimeOfHearing": "2024-01-31T22:40:00",
+            "oicHearingType": "INAD_ADULT",
+            "agencyId": "MDI"
+          }
+        }
+      ],
+      "punishments": [],
+      "punishmentComments": [],
+      "outcomeEnteredInNomis": false,
+      "originatingAgencyId": "MDI",
+      "linkedChargeNumbers": [],
+      "canActionFromHistory": false
+    },
+    {
+      "chargeNumber": "MDI-000046",
+      "prisonerNumber": "A3863DZ",
+      "gender": "FEMALE",
+      "incidentDetails": {
+        "locationId": 27219,
+        "dateTimeOfIncident": "2024-01-29T09:00:00",
+        "dateTimeOfDiscovery": "2024-01-29T09:00:00",
+        "handoverDeadline": "2024-01-31T09:00:00"
+      },
+      "isYouthOffender": false,
+      "incidentRole": {},
+      "offenceDetails": {
+        "offenceCode": 5001,
+        "offenceRule": {
+          "paragraphNumber": "5",
+          "paragraphDescription": "Intentionally endangers the health or personal safety of others or, by her conduct, is reckless whether such health or personal safety is endangered",
+          "nomisCode": "51:5",
+          "withOthersNomisCode": "51:25Q"
+        },
+        "victimPrisonersNumber": "A3864DZ",
+        "protectedCharacteristics": []
+      },
+      "incidentStatement": {
+        "statement": "victim is not suspect",
+        "completed": true
+      },
+      "createdByUserId": "USER_GEN",
+      "createdDateTime": "2024-01-29T10:23:16.482204",
+      "status": "PROSECUTION",
+      "reviewedByUserId": "USER_GEN",
+      "statusReason": "",
+      "statusDetails": "",
+      "damages": [],
+      "evidence": [],
+      "witnesses": [],
+      "hearings": [
+        {
+          "id": 1941421,
+          "locationId": 27187,
+          "dateTimeOfHearing": "2024-02-01T14:35:00",
+          "oicHearingType": "GOV_ADULT",
+          "outcome": {
+            "id": 1747084,
+            "adjudicator": "USER_GEN",
+            "code": "REFER_POLICE",
+            "details": "n"
+          },
+          "agencyId": "MDI"
+        }
+      ],
+      "disIssueHistory": [],
+      "dateTimeOfFirstHearing": "2024-02-01T14:35:00",
+      "outcomes": [
+        {
+          "hearing": {
+            "id": 1941421,
+            "locationId": 27187,
+            "dateTimeOfHearing": "2024-02-01T14:35:00",
+            "oicHearingType": "GOV_ADULT",
+            "outcome": {
+              "id": 1747084,
+              "adjudicator": "USER_GEN",
+              "code": "REFER_POLICE",
+              "details": "n"
+            },
+            "agencyId": "MDI"
+          },
+          "outcome": {
+            "outcome": {
+              "id": 1206818,
+              "code": "REFER_POLICE",
+              "details": "n",
+              "canRemove": true
+            },
+            "referralOutcome": {
+              "id": 1206819,
+              "code": "PROSECUTION",
+              "canRemove": true
+            }
+          }
+        }
+      ],
+      "punishments": [],
+      "punishmentComments": [],
+      "outcomeEnteredInNomis": false,
+      "originatingAgencyId": "MDI",
+      "linkedChargeNumbers": [],
+      "canActionFromHistory": false
+    },
+    {
+      "chargeNumber": "MDI-000047",
+      "prisonerNumber": "A3863DZ",
+      "gender": "FEMALE",
+      "incidentDetails": {
+        "locationId": 26149,
+        "dateTimeOfIncident": "2024-01-29T09:00:00",
+        "dateTimeOfDiscovery": "2024-01-29T09:00:00",
+        "handoverDeadline": "2024-01-31T09:00:00"
+      },
+      "isYouthOffender": false,
+      "incidentRole": {},
+      "offenceDetails": {
+        "offenceCode": 18001,
+        "offenceRule": {
+          "paragraphNumber": "18",
+          "paragraphDescription": "Absents herself from any place she is required to be or is present at any place where she is not authorised to be",
+          "nomisCode": "51:18A",
+          "withOthersNomisCode": "51:25B"
+        },
+        "protectedCharacteristics": []
+      },
+      "incidentStatement": {
+        "statement": "no victim",
+        "completed": true
+      },
+      "createdByUserId": "USER_GEN",
+      "createdDateTime": "2024-01-29T10:49:28.722826",
+      "status": "ADJOURNED",
+      "reviewedByUserId": "USER_GEN",
+      "statusReason": "",
+      "statusDetails": "",
+      "damages": [],
+      "evidence": [],
+      "witnesses": [],
+      "hearings": [
+        {
+          "id": 1941425,
+          "locationId": 357596,
+          "dateTimeOfHearing": "2024-02-14T14:40:00",
+          "oicHearingType": "GOV_ADULT",
+          "outcome": {
+            "id": 1747087,
+            "adjudicator": "USER_GEN",
+            "code": "REFER_INAD",
+            "details": "b"
+          },
+          "agencyId": "MDI"
+        },
+        {
+          "id": 1941426,
+          "locationId": 357596,
+          "dateTimeOfHearing": "2024-02-23T13:50:00",
+          "oicHearingType": "GOV_ADULT",
+          "outcome": {
+            "id": 1747088,
+            "adjudicator": "USER_GEN",
+            "code": "ADJOURN",
+            "reason": "OTHER",
+            "details": "w",
+            "plea": "GUILTY"
+          },
+          "agencyId": "MDI"
+        }
+      ],
+      "disIssueHistory": [],
+      "dateTimeOfFirstHearing": "2024-02-14T14:40:00",
+      "outcomes": [
+        {
+          "hearing": {
+            "id": 1941425,
+            "locationId": 357596,
+            "dateTimeOfHearing": "2024-02-14T14:40:00",
+            "oicHearingType": "GOV_ADULT",
+            "outcome": {
+              "id": 1747087,
+              "adjudicator": "USER_GEN",
+              "code": "REFER_INAD",
+              "details": "b"
+            },
+            "agencyId": "MDI"
+          },
+          "outcome": {
+            "outcome": {
+              "id": 1206823,
+              "code": "REFER_INAD",
+              "details": "b",
+              "canRemove": true
+            },
+            "referralOutcome": {
+              "id": 1206824,
+              "code": "REFER_GOV",
+              "details": "nm",
+              "canRemove": true
+            }
+          }
+        },
+        {
+          "outcome": {
+            "outcome": {
+              "id": 1206825,
+              "code": "SCHEDULE_HEARING",
+              "canRemove": true
+            }
+          }
+        },
+        {
+          "hearing": {
+            "id": 1941426,
+            "locationId": 357596,
+            "dateTimeOfHearing": "2024-02-23T13:50:00",
+            "oicHearingType": "GOV_ADULT",
+            "outcome": {
+              "id": 1747088,
+              "adjudicator": "USER_GEN",
+              "code": "ADJOURN",
+              "reason": "OTHER",
+              "details": "w",
+              "plea": "GUILTY"
+            },
+            "agencyId": "MDI"
+          }
+        }
+      ],
+      "punishments": [],
+      "punishmentComments": [],
+      "outcomeEnteredInNomis": false,
+      "originatingAgencyId": "MDI",
+      "linkedChargeNumbers": [],
+      "canActionFromHistory": false
+    },
+    {
+      "chargeNumber": "MDI-000185",
+      "prisonerNumber": "A3863DZ",
+      "gender": "FEMALE",
+      "incidentDetails": {
+        "locationId": 26995,
+        "dateTimeOfIncident": "2024-07-10T10:10:00",
+        "dateTimeOfDiscovery": "2024-07-10T10:10:00",
+        "handoverDeadline": "2024-07-12T10:10:00"
+      },
+      "isYouthOffender": false,
+      "incidentRole": {},
+      "offenceDetails": {
+        "offenceCode": 16001,
+        "offenceRule": {
+          "paragraphNumber": "16",
+          "paragraphDescription": "Intentionally or recklessly sets fire to any part of a prison or any other property, whether or not her own",
+          "nomisCode": "51:16",
+          "withOthersNomisCode": "51:25C"
+        },
+        "protectedCharacteristics": []
+      },
+      "incidentStatement": {
+        "statement": "Testing this user journey",
+        "completed": true
+      },
+      "createdByUserId": "USER_GEN",
+      "createdDateTime": "2024-07-23T16:25:10.703662",
+      "status": "AWAITING_REVIEW",
+      "damages": [],
+      "evidence": [],
+      "witnesses": [],
+      "hearings": [],
+      "disIssueHistory": [],
+      "outcomes": [],
+      "punishments": [],
+      "punishmentComments": [],
+      "outcomeEnteredInNomis": false,
+      "originatingAgencyId": "MDI",
+      "linkedChargeNumbers": [],
+      "canActionFromHistory": false
+    }
+  ]
+}

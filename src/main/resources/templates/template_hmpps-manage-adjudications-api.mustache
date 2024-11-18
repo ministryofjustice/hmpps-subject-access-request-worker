@@ -3,7 +3,6 @@
 {{#.}}
     <table class="summary-list">
         <tr><td>Charge number</td><td>{{ optionalValue chargeNumber }}</td></tr>
-        <tr><td>Prisoner number</td><td>{{ optionalValue prisonerNumber }}</td></tr>
     </table>
 
     <br>
@@ -21,7 +20,7 @@
     {{#incidentRole}}
         <table class="summary-list">
             <tr><td>Incident role code</td><td>{{ optionalValue roleCode }}</td></tr>
-            <tr><td>Associated prisoners number</td><td>{{ optionalValue associatedPrisonersNumber }}</td></tr>
+            <tr><td>Associated prisoners</td><td>{{ optionalValue associatedPrisonersNumber }}</td></tr>
         </table>
         {{#offenceRule}}
             <table class="summary-list">
@@ -42,7 +41,6 @@
                 <table class="summary-list">
                     <tr><td>Paragraph number</td><td>{{ optionalValue paragraphNumber }}</td></tr>
                     <tr><td>Description</td><td>{{ optionalValue paragraphDescription }}</td></tr>
-                    <tr><td>With others Nomis code</td><td>{{ optionalValue withOthersNomisCode }}</td></tr>
                 </table>
             {{/offenceRule}}
             <br>
@@ -58,6 +56,12 @@
                         <td>{{ optionalValue id }}</td>
                     </tr>
                 {{/protectedCharacteristics}}
+                {{^protectedCharacteristics}}
+                    <tr>
+                        <td>No Data Held</td>
+                        <td>No Data Held</td>
+                    </tr>
+                {{/protectedCharacteristics}}
             </table>
         </table>
     {{/offenceDetails}}
@@ -67,7 +71,6 @@
     {{#incidentStatement}}
         <table class="summary-list">
             <tr><td>Statement</td><td>{{ optionalValue statement }}</td></tr>
-            <tr><td>Completed</td><td>{{ optionalValue completed }}</td></tr>
         </table>
     {{/incidentStatement}}
     <br>
@@ -92,6 +95,12 @@
                 <td>{{ optionalValue details }}</td>
             </tr>
         {{/damages}}
+        {{^damages}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+            </tr>
+        {{/damages}}
     </table>
 
     <br>
@@ -108,7 +117,15 @@
                 <td>{{ optionalValue code }}</td>
                 <td>{{ optionalValue details }}</td>
                 <td>{{ optionalValue identifier }}</td>
-                <td>{{ optionalValue reporter }}</td>
+                <td>{{ getUserLastName reporter }}</td>
+            </tr>
+        {{/evidence}}
+        {{^evidence}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
             </tr>
         {{/evidence}}
     </table>
@@ -127,7 +144,15 @@
                 <td>{{ optionalValue code }}</td>
                 <td>{{ optionalValue firstName }}</td>
                 <td>{{ optionalValue lastName }}</td>
-                <td>{{ optionalValue reporter }}</td>
+                <td>{{ getUserLastName reporter }}</td>
+            </tr>
+        {{/witnesses}}
+        {{^witnesses}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
             </tr>
         {{/witnesses}}
     </table>
@@ -135,14 +160,15 @@
     <br>
     <h2>Hearings</h2>
     {{#hearings}}
+        <h3>Hearing</h3>
         <table class="summary-list">
             <tr><td>Date and time of hearing</td><td>{{ optionalValue (formatDate dateTimeOfHearing) }}</td></tr>
             <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
             <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
-            <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
+            <tr><td>Agency</td><td>{{ getPrisonName agencyId }}</td></tr>
         </table>
         <br>
-        <h3>Outcome</h3>
+        <h4>Outcome</h4>
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Plea</td>
@@ -153,12 +179,23 @@
             {{#outcome}}
                 <tr>
                     <td>{{ optionalValue plea }}</td>
-                    <td>{{ optionalValue adjudicator }}</td>
+                    <td>{{ getUserLastName adjudicator }}</td>
                     <td>{{ optionalValue id }}</td>
                     <td>{{ optionalValue code }}</td>
                 </tr>
             {{/outcome}}
+            {{^outcome}}
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
+            {{/outcome}}
         </table>
+    {{/hearings}}
+    {{^hearings}}
+        <p>No Data Held</p>
     {{/hearings}}
 
     <br>
@@ -172,6 +209,12 @@
             <tr>
                 <td>{{ optionalValue issuingOfficer }}</td>
                 <td>{{ optionalValue (formatDate dateTimeOfIssue) }}</td>
+            </tr>
+        {{/disIssueHistory}}
+        {{^disIssueHistory}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
             </tr>
         {{/disIssueHistory}}
     </table>
@@ -190,7 +233,7 @@
                 <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
                 <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
                 <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
-                <tr><td>Agency ID</td><td>{{ optionalValue agencyId }}</td></tr>
+                <tr><td>Agency</td><td>{{ getPrisonName agencyId }}</td></tr>
             </table>
             <h4>Outcome</h4>
             <table class="data-table">
@@ -203,7 +246,7 @@
                 {{#outcome}}
                     <tr>
                         <td>{{ optionalValue plea }}</td>
-                        <td>{{ optionalValue adjudicator }}</td>
+                        <td>{{ getUserLastName adjudicator }}</td>
                         <td>{{ optionalValue id }}</td>
                         <td>{{ optionalValue code }}</td>
                     </tr>
@@ -215,10 +258,15 @@
                 <table class="summary-list">
                     <tr><td>ID</td><td>{{ optionalValue id }}</td></tr>
                     <tr><td>Code</td><td>{{ optionalValue code }}</td></tr>
-                    <tr><td>Removable</td><td>{{ optionalValue canRemove }}</td></tr>
                 </table>
             {{/outcome}}
         {{/outcome}}
+        {{^outcome}}
+            <p>No Data Held</p>
+        {{/outcome}}
+    {{/outcomes}}
+    {{^outcomes}}
+        <p>No Data Held</p>
     {{/outcomes}}
 
     <br>
@@ -330,7 +378,20 @@
                     <td>{{ optionalValue completed }}</td>
                 </tr>
             {{/rehabilitativeActivities}}
+            {{#rehabilitativeActivities}}
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
+            {{/rehabilitativeActivities}}
         </table>
+    {{/punishments}}
+    {{^punishments}}
+        <p>No Data Held</p>
     {{/punishments}}
 
     <h2>Punishment comments</h2>
@@ -343,11 +404,13 @@
             <tr><td>Actual created date</td><td>{{ optionalValue (formatDate actualCreatedDate) }}</td></tr>
         </table>
     {{/punishmentComments}}
+    {{^punishmentComments}}
+        <p>No Data Held</p>
+    {{/punishmentComments}}
 
     <table class="summary-list">
-        <tr><td>Originating agency ID</td><td>{{ optionalValue originatingAgencyId }}</td></tr>
-        <tr><td>Actionable from history</td><td>{{ optionalValue canActionFromHistory }}</td></tr>
-        <tr><td>Linked charge numbers</td><td>{{ optionalValue linkedChargeNumbers }}</td></tr>
-        <tr><td>Has the outcome been entered in Nomis</td><td>{{ optionalValue outcomeEnteredInNomis }}</td></tr>
+        <tr><td>Originating agency</td><td>{{ getPrisonName originatingAgencyId }}</td></tr>
+        <tr><td>Suspended punishments activated</td><td>{{ convertBoolean canActionFromHistory }}</td></tr>
+        <tr><td>Linked charge numbers</td><td>{{#linkedChargeNumbers}}{{ . }}{{#unless @last}}, {{/unless}}{{/linkedChargeNumbers}}{{^linkedChargeNumbers}}No Data Held{{/linkedChargeNumbers}}</td></tr>
     </table>
 {{/.}}
