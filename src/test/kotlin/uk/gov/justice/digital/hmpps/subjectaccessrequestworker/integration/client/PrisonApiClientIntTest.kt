@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -7,7 +8,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
+import org.springframework.web.reactive.function.client.WebClientRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
@@ -36,6 +39,21 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
 
   companion object {
     const val SUBJECT_ID = "A1234AA"
+
+    @JvmStatic
+    fun responseStubs4xx(): List<StubErrorResponse> = listOf(
+      StubErrorResponse(HttpStatus.BAD_REQUEST, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.UNAUTHORIZED, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.FORBIDDEN, WebClientRequestException::class.java),
+    )
+
+    @JvmStatic
+    fun responseStubsNamesNullAndEmpty(): List<PrisonApiClient.GetOffenderDetailsResponse> = listOf(
+      PrisonApiClient.GetOffenderDetailsResponse(null, null),
+      PrisonApiClient.GetOffenderDetailsResponse("", null),
+      PrisonApiClient.GetOffenderDetailsResponse(null, ""),
+      PrisonApiClient.GetOffenderDetailsResponse("", ""),
+    )
   }
 
   @BeforeEach
@@ -56,7 +74,18 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
   }
 
   @ParameterizedTest
-  @MethodSource("status4xxResponseStubs")
+  @MethodSource("responseStubsNamesNullAndEmpty")
+  fun `should return empty when`(apiResponse: PrisonApiClient.GetOffenderDetailsResponse) {
+    hmppsAuth.stubGrantToken()
+    prisonApi.stubGetOffenderDetails(SUBJECT_ID, apiResponse)
+
+    val response = prisonApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
+
+    assertThat(response).isEqualTo("")
+  }
+
+  @ParameterizedTest
+  @MethodSource("responseStubs4xx")
   fun `should not retry on 4xx error`(stubResponse: StubErrorResponse) {
     hmppsAuth.stubGrantToken()
     prisonApi.stubResponseFor(SUBJECT_ID, stubResponse.getResponse())
@@ -78,6 +107,17 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
         "httpStatus" to stubResponse.status,
       ),
     )
+  }
+
+  @Test
+  fun `should not retry on 404 error and return empty string`() {
+    hmppsAuth.stubGrantToken()
+    prisonApi.stubResponseFor(SUBJECT_ID, WireMock.notFound())
+
+    val actual = prisonApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
+
+    assertThat(actual).isEmpty()
+    prisonApi.verifyApiCalled(1, SUBJECT_ID)
   }
 
   @ParameterizedTest
