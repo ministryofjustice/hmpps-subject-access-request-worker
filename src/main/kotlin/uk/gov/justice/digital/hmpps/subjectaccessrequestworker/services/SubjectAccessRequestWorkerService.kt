@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.microsoft.applicationinsights.TelemetryClient
+import io.micrometer.common.util.StringUtils
 import io.sentry.Sentry
 import kotlinx.coroutines.delay
 import org.apache.commons.lang3.time.StopWatch
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
@@ -158,10 +158,12 @@ class SubjectAccessRequestWorkerService(
       TIME_ELAPSED_KEY to stopWatch.time.toString(),
     )
 
-    var subjectName: String
-    try {
-      subjectName = getSubjectName(subjectAccessRequest, subjectAccessRequest.nomisId, subjectAccessRequest.ndeliusCaseReferenceId)
-    } catch (exception: WebClientResponseException.NotFound) {
+    var subjectName: String = getSubjectName(
+      subjectAccessRequest,
+      subjectAccessRequest.nomisId,
+      subjectAccessRequest.ndeliusCaseReferenceId,
+    )
+    if (StringUtils.isEmpty(subjectName)) {
       subjectName = "No subject name found"
     }
 
