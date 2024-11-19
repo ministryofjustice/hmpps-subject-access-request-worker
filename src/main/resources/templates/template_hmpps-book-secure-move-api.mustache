@@ -23,7 +23,7 @@
                                     <td>{{ optionalValue (formatDate date) }}</td>
                                     <td>{{ optionalValue move_type }}</td>
                                     <td>{{ optionalValue status }}</td>
-                                    <td>{{ optionalValue move_agreed }}</td>
+                                    <td>{{ convertBoolean move_agreed }}</td>
                                 </tr>
                             </table>
                             <table class="data-table">
@@ -81,37 +81,27 @@
                                                 <td class="data-column-25">City</td>
                                                 <td class="data-column-25">Country</td>
                                                 <td class="data-column-25">Postcode</td>
-                                                <td class="data-column-25">Latitude</td>
+                                                <td class="data-column-25">Created at</td>
                                             </tr>
                                             <tr>
                                                 <td>{{ optionalValue city }}</td>
                                                 <td>{{ optionalValue country }}</td>
                                                 <td>{{ optionalValue postcode }}</td>
-                                                <td>{{ optionalValue latitude }}</td>
+                                                <td>{{ optionalValue (formatDate created_at) }}</td>
                                             </tr>
                                         </table>
                                         <table class="data-table">
                                             <tr>
-                                                <td class="data-column-25">Longitude</td>
-                                                <td class="data-column-25">Created at</td>
                                                 <td class="data-column-25">Disabled at</td>
                                                 <td class="data-column-25">Extradition capable</td>
-                                            </tr>
-                                            <tr>
-                                                <td>{{ optionalValue longitude }}</td>
-                                                <td>{{ optionalValue (formatDate created_at) }}</td>
-                                                <td>{{ optionalValue (formatDate disabled_at) }}</td>
-                                                <td>{{ optionalValue extradition_capable }}</td>
-                                            </tr>
-                                        </table>
-                                        <table class="data-table">
-                                            <tr>
                                                 <td class="data-column-25">Youth offender institution</td>
                                                 <td class="data-column-25">Can upload documents</td>
                                             </tr>
                                             <tr>
-                                                <td>{{ optionalValue young_offender_institution }}</td>
-                                                <td>{{ optionalValue can_upload_documents }}</td>
+                                                <td>{{ optionalValue (formatDate disabled_at) }}</td>
+                                                <td>{{ optionalValue extradition_capable }}</td>
+                                                <td>{{ convertBoolean young_offender_institution }}</td>
+                                                <td>{{ convertBoolean can_upload_documents }}</td>
                                             </tr>
                                         </table>
                                     {{/attributes}}
@@ -144,37 +134,27 @@
                                                 <td class="data-column-25">City</td>
                                                 <td class="data-column-25">Country</td>
                                                 <td class="data-column-25">Postcode</td>
-                                                <td class="data-column-25">Latitude</td>
+                                                <td class="data-column-25">Created at</td>
                                             </tr>
                                             <tr>
                                                 <td>{{ optionalValue city }}</td>
                                                 <td>{{ optionalValue country }}</td>
                                                 <td>{{ optionalValue postcode }}</td>
-                                                <td>{{ optionalValue latitude }}</td>
+                                                <td>{{ optionalValue (formatDate created_at) }}</td>
                                             </tr>
                                         </table>
                                         <table class="data-table">
                                             <tr>
-                                                <td class="data-column-25">Longitude</td>
-                                                <td class="data-column-25">Created at</td>
                                                 <td class="data-column-25">Disabled at</td>
                                                 <td class="data-column-25">Extradition capable</td>
-                                            </tr>
-                                            <tr>
-                                                <td>{{ optionalValue longitude }}</td>
-                                                <td>{{ optionalValue (formatDate created_at) }}</td>
-                                                <td>{{ optionalValue (formatDate disabled_at) }}</td>
-                                                <td>{{ optionalValue extradition_capable }}</td>
-                                            </tr>
-                                        </table>
-                                        <table class="data-table">
-                                            <tr>
                                                 <td class="data-column-25">Youth offender institution</td>
                                                 <td class="data-column-25">Can upload documents</td>
                                             </tr>
                                             <tr>
-                                                <td>{{ optionalValue young_offender_institution }}</td>
-                                                <td>{{ optionalValue can_upload_documents }}</td>
+                                                <td>{{ optionalValue (formatDate disabled_at) }}</td>
+                                                <td>{{ optionalValue extradition_capable }}</td>
+                                                <td>{{ convertBoolean young_offender_institution }}</td>
+                                                <td>{{ convertBoolean can_upload_documents }}</td>
                                             </tr>
                                         </table>
                                     {{/attributes}}
@@ -190,12 +170,10 @@
                                     {{#attributes}}
                                         <table class="data-table">
                                             <tr>
-                                                <td class="data-column-25">Key</td>
-                                                <td class="data-column-25">Title</td>
-                                                <td class="data-column-25">Disabled at</td>
+                                                <td class="data-column-50">Title</td>
+                                                <td class="data-column-50">Disabled at</td>
                                             </tr>
                                             <tr>
-                                                <td>{{ optionalValue key }}</td>
                                                 <td>{{ optionalValue title }}</td>
                                                 <td>{{ optionalValue (formatDate disabled_at) }}</td>
                                             </tr>
@@ -270,37 +248,27 @@
                                                         <td class="data-column-25">City</td>
                                                         <td class="data-column-25">Country</td>
                                                         <td class="data-column-25">Postcode</td>
-                                                        <td class="data-column-25">Latitude</td>
+                                                        <td class="data-column-25">Created at</td>
                                                     </tr>
                                                     <tr>
                                                         <td>{{ optionalValue city }}</td>
                                                         <td>{{ optionalValue country }}</td>
                                                         <td>{{ optionalValue postcode }}</td>
-                                                        <td>{{ optionalValue latitude }}</td>
+                                                        <td>{{ optionalValue (formatDate created_at) }}</td>
                                                     </tr>
                                                 </table>
                                                 <table class="data-table">
                                                     <tr>
-                                                        <td class="data-column-25">Longitude</td>
-                                                        <td class="data-column-25">Created at</td>
                                                         <td class="data-column-25">Disabled at</td>
                                                         <td class="data-column-25">Extradition capable</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>{{ optionalValue longitude }}</td>
-                                                        <td>{{ optionalValue (formatDate created_at) }}</td>
-                                                        <td>{{ optionalValue (formatDate disabled_at) }}</td>
-                                                        <td>{{ optionalValue extradition_capable }}</td>
-                                                    </tr>
-                                                </table>
-                                                <table class="data-table">
-                                                    <tr>
                                                         <td class="data-column-25">Youth offender institution</td>
                                                         <td class="data-column-25">Can upload documents</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>{{ optionalValue young_offender_institution }}</td>
-                                                        <td>{{ optionalValue can_upload_documents }}</td>
+                                                        <td>{{ optionalValue (formatDate disabled_at) }}</td>
+                                                        <td>{{ optionalValue extradition_capable }}</td>
+                                                        <td>{{ convertBoolean young_offender_institution }}</td>
+                                                        <td>{{ convertBoolean can_upload_documents }}</td>
                                                     </tr>
                                                 </table>
                                             {{/attributes}}
@@ -333,37 +301,27 @@
                                                         <td class="data-column-25">City</td>
                                                         <td class="data-column-25">Country</td>
                                                         <td class="data-column-25">Postcode</td>
-                                                        <td class="data-column-25">Latitude</td>
+                                                        <td class="data-column-25">Created at</td>
                                                     </tr>
                                                     <tr>
                                                         <td>{{ optionalValue city }}</td>
                                                         <td>{{ optionalValue country }}</td>
                                                         <td>{{ optionalValue postcode }}</td>
-                                                        <td>{{ optionalValue latitude }}</td>
+                                                        <td>{{ optionalValue (formatDate created_at) }}</td>
                                                     </tr>
                                                 </table>
                                                 <table class="data-table">
                                                     <tr>
-                                                        <td class="data-column-25">Longitude</td>
-                                                        <td class="data-column-25">Created at</td>
                                                         <td class="data-column-25">Disabled at</td>
                                                         <td class="data-column-25">Extradition capable</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>{{ optionalValue longitude }}</td>
-                                                        <td>{{ optionalValue (formatDate created_at) }}</td>
-                                                        <td>{{ optionalValue (formatDate disabled_at) }}</td>
-                                                        <td>{{ optionalValue extradition_capable }}</td>
-                                                    </tr>
-                                                </table>
-                                                <table class="data-table">
-                                                    <tr>
                                                         <td class="data-column-25">Youth offender institution</td>
                                                         <td class="data-column-25">Can upload documents</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>{{ optionalValue young_offender_institution }}</td>
-                                                        <td>{{ optionalValue can_upload_documents }}</td>
+                                                        <td>{{ optionalValue (formatDate disabled_at) }}</td>
+                                                        <td>{{ optionalValue extradition_capable }}</td>
+                                                        <td>{{ convertBoolean young_offender_institution }}</td>
+                                                        <td>{{ convertBoolean can_upload_documents }}</td>
                                                     </tr>
                                                 </table>
                                             {{/attibutes}}
