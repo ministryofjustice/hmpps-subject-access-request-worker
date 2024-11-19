@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
@@ -33,9 +34,9 @@ class TemplateHelpers(
     return prisonDetails?.prisonName ?: caseloadId
   }
 
-  fun getUserLastName(userId: String): String {
-    if (userId.isEmpty() || userId == "") return "No Data Held"
-    val userDetails = userDetailsRepository.findByUsername(userId)
+  fun getUserLastName(userId: String?): String {
+    if (StringUtils.isBlank(userId)) return "No Data Held"
+    val userDetails = userDetailsRepository.findByUsername(userId!!)
 
     return userDetails?.lastName ?: userId
   }

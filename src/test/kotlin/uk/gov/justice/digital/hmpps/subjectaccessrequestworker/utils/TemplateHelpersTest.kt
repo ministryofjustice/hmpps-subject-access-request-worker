@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.NullSource
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
@@ -14,7 +16,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDe
 
 class TemplateHelpersTest {
 
-  private val dateConversionHelper = DateConversionHelper
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val userDetailsRepository: UserDetailsRepository = mock()
   private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
@@ -95,9 +96,11 @@ class TemplateHelpersTest {
       assertThat(response).isEqualTo("Johnson")
     }
 
-    @Test
-    fun `getUserLastName returns No Data Held if null`() {
-      val response = templateHelpers.getUserLastName("")
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = ["", " "])
+    fun `getUserLastName returns No Data Held if null`(input: String?) {
+      val response = templateHelpers.getUserLastName(input)
       assertThat(response).isEqualTo("No Data Held")
     }
   }

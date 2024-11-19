@@ -12,31 +12,27 @@
             <tr>
                 <td>{{ optionalValue courseName }}</td>
                 <td>{{ optionalValue (formatDate submittedOn) }}</td>
-                <td>{{ optionalValue courseOrganisation}}</td>
+                <td>{{ getPrisonName courseOrganisation}}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-33">Status code</td>
+                <td class="data-column-33">Status</td>
                 <td class="data-column-33">Audience</td>
-                <td class="data-column-33">Oasys confirmed</td>
+                <td class="data-column-33">Referrer</td>
             </tr>
             <tr>
                 <td>{{ optionalValue statusCode }}</td>
                 <td>{{ optionalValue audience }}</td>
-                <td>{{ optionalValue oasysConfirmed }}</td>
+                <td>{{ getUserLastName referrerUsername}}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-33">Referrer username</td>
                 <td class="data-column-33">Has reviewed programme history</td>
-                <td class="data-column-33">Prisoner number</td>
             </tr>
             <tr>
-                <td>{{ getUserLastName referrerUsername}}</td>
-                <td>{{ optionalValue hasReviewedProgrammeHistory }}</td>
-                <td>{{ optionalValue prisonerNumber }}</td>
+                <td>{{ convertBoolean hasReviewedProgrammeHistory }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -49,6 +45,9 @@
         </table>
         <br>
     {{/referrals}}
+    {{^referrals}}
+        <p>No Data Held</p>
+    {{/referrals}}
 
     <h2>Course participation</h2>
     {{#courseParticipation}}
@@ -58,7 +57,7 @@
             <tr>
                 <td class="data-column-33">Course name</td>
                 <td class="data-column-33">Created date-time</td>
-                <td class="data-column-33">Created by user</td>
+                <td class="data-column-33">Created by</td>
             </tr>
             <tr>
                 <td>{{ optionalValue courseName }}</td>
@@ -70,7 +69,7 @@
             <tr>
                 <td class="data-column-33">Source</td>
                 <td class="data-column-33">Type</td>
-                <td class="data-column-33">Outcome status</td>
+                <td class="data-column-33">Outcome</td>
             </tr>
             <tr>
                 <td>{{ optionalValue source }}</td>
@@ -87,19 +86,19 @@
             <tr>
                 <td>{{ optionalValue yearStarted }}</td>
                 <td>{{ optionalValue yearCompleted}}</td>
-                <td>{{ optionalValue location }}</td>
+                <td>{{ getPrisonName location }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-33">Prisoner number</td>
-                <td class="data-column-33">Updated by user</td>
+                <td class="data-column-33">Updated by</td>
                 <td class="data-column-33">Updated date-time</td>
+                <td class="data-column-33"></td>
             </tr>
             <tr>
-                <td>{{ optionalValue prisonerNumber }}</td>
                 <td>{{ getUserLastName updatedByUser}}</td>
                 <td>{{ optionalValue (formatDate updatedDateTime) }}</td>
+                <td></td>
             </tr>
         </table>
         <table class="data-table">
@@ -112,4 +111,7 @@
         </table>
         <br>
     <br>
+    {{/courseParticipation}}
+    {{^courseParticipation}}
+        <p>No Data Held</p>
     {{/courseParticipation}}
