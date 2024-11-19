@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDe
 
 class TemplateHelpersTest {
 
-  private val dateConversionHelper = DateConversionHelper
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val userDetailsRepository: UserDetailsRepository = mock()
   private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
