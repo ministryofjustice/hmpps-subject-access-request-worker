@@ -58,7 +58,7 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<td>Allocation reason</td><td>MANUAL</td>")
+    assertThat(renderedStyleTemplate).contains("<td>Active</td><td>No</td>")
     assertThat(renderedStyleTemplate).contains("<td>Creation date</td><td>03 December 2019, 11:00:58 am</td>")
   }
 
