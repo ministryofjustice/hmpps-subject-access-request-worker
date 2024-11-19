@@ -3,10 +3,6 @@
 {{#.}}
     <table class="summary-list">
         <tr>
-            <td>Prisoner number</td>
-            <td>{{ optionalValue prisonerNumber }}</td>
-        </tr>
-        <tr>
             <td>Date from</td>
             <td>{{ optionalValue (formatDate fromDate) }}</td>
         </tr>
@@ -22,7 +18,7 @@
         <h3>Allocation</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Prison Code</td>
+                <td class="data-column-25">Prison Name</td>
                 <td class="data-column-25">Prisoner Status</td>
                 <td class="data-column-50">Activity summary</td>
             </tr>
@@ -72,7 +68,7 @@
         <h3>Application - Waiting list ID {{ optionalValue waitingListId }}</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Prison Code</td>
+                <td class="data-column-25">Prison Name</td>
                 <td class="data-column-25">Date created</td>
                 <td class="data-column-30">Activity summary</td>
                 <td class="data-column-20">Originator</td>
@@ -110,9 +106,9 @@
         <h3>Appointment</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Prison Code</td>
+                <td class="data-column-25">Prison Name</td>
                 <td class="data-column-25">Date created</td>
-                <td class="data-column-25">Category code</td>
+                <td class="data-column-25">Category</td>
                 <td class="data-column-25">Attended</td>
             </tr>
 
