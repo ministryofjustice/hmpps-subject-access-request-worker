@@ -1,0 +1,169 @@
+{
+  "content": {
+    "prisonerNumber": "A4743DZ",
+    "fromDate": "1970-01-01",
+    "toDate": "2024-11-19",
+    "allocations": [
+      {
+        "allocationId": 16,
+        "prisonCode": "LEI",
+        "prisonerStatus": "ENDED",
+        "startDate": "2023-07-21",
+        "endDate": "2023-07-21",
+        "activityId": 3,
+        "activitySummary": "QAtestingKitchenActivity",
+        "payBand": "Pay band 5",
+        "createdDate": "2023-07-20"
+      },
+      {
+        "allocationId": 2953,
+        "prisonCode": "LEI",
+        "prisonerStatus": "ACTIVE",
+        "startDate": "2023-09-16",
+        "endDate": null,
+        "activityId": 6,
+        "activitySummary": "Adam's Advanced Archery",
+        "payBand": "Pay band 4",
+        "createdDate": "2023-09-15"
+      }
+    ],
+    "attendanceSummary": [
+      {
+        "attendanceReasonCode": "ATTENDED",
+        "count": 4
+      },
+      {
+        "attendanceReasonCode": "CANCELLED",
+        "count": 6
+      },
+      {
+        "attendanceReasonCode": "AUTO_SUSPENDED",
+        "count": 1
+      }
+    ],
+    "waitingListApplications": [],
+    "appointments": [
+      {
+        "appointmentId": 18305,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-08-11",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18306,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-08-18",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18307,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-08-25",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18308,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-09-01",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18309,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-09-08",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18310,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-09-15",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18311,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-09-22",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18312,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-09-29",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18313,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-10-06",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18314,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-10-13",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      },
+      {
+        "appointmentId": 18315,
+        "prisonCode": "LEI",
+        "categoryCode": "CAREER",
+        "startDate": "2023-10-20",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "extraInformation": "",
+        "attended": "Unmarked",
+        "createdDate": "2023-08-10"
+      }
+    ]
+  }
+}
