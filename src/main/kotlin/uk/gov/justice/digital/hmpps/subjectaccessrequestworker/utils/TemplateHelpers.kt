@@ -33,8 +33,8 @@ class TemplateHelpers(
     return prisonDetails?.prisonName ?: caseloadId
   }
 
-  fun getUserLastName(userId: String): String {
-    if (userId.isEmpty() || userId == "") return "No Data Held"
+  fun getUserLastName(userId: String?): String {
+    if (userId == null || userId.isBlank()) return "No Data Held"
     val userDetails = userDetailsRepository.findByUsername(userId)
 
     return userDetails?.lastName ?: userId

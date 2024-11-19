@@ -1,0 +1,98 @@
+{
+  "content": {
+    "referrals": [
+      {
+        "prisonerNumber": "A1234AA",
+        "oasysConfirmed": false,
+        "statusCode": "REFERRAL_STARTED",
+        "hasReviewedProgrammeHistory": false,
+        "additionalInformation": null,
+        "submittedOn": null,
+        "referrerUsername": "USER_GEN_EXTERNAL",
+        "courseName": "Becoming New Me Plus",
+        "audience": "Sexual offence",
+        "courseOrganisation": "WTI"
+      },
+      {
+        "prisonerNumber": "A1234AA",
+        "oasysConfirmed": false,
+        "statusCode": "REFERRAL_STARTED",
+        "hasReviewedProgrammeHistory": false,
+        "additionalInformation": null,
+        "submittedOn": null,
+        "referrerUsername": "USER_GEN_EXTERNAL",
+        "courseName": "Becoming New Me Plus",
+        "audience": "Sexual offence",
+        "courseOrganisation": "WTI"
+      },
+      {
+        "prisonerNumber": "A1234AA",
+        "oasysConfirmed": false,
+        "statusCode": "REFERRAL_STARTED",
+        "hasReviewedProgrammeHistory": false,
+        "additionalInformation": null,
+        "submittedOn": null,
+        "referrerUsername": "USER_GEN_EXTERNAL",
+        "courseName": "Becoming New Me Plus",
+        "audience": "Sexual offence",
+        "courseOrganisation": "WTI"
+      },
+      {
+        "prisonerNumber": "A1234AA",
+        "oasysConfirmed": false,
+        "statusCode": "REFERRAL_STARTED",
+        "hasReviewedProgrammeHistory": false,
+        "additionalInformation": null,
+        "submittedOn": null,
+        "referrerUsername": "USER_GEN",
+        "courseName": "Kaizen",
+        "audience": "Sexual offence",
+        "courseOrganisation": "WTI"
+      },
+      {
+        "prisonerNumber": "A1234AA",
+        "oasysConfirmed": true,
+        "statusCode": "REFERRAL_SUBMITTED",
+        "hasReviewedProgrammeHistory": true,
+        "additionalInformation": "nothing",
+        "submittedOn": "2024-09-17T12:15:42.684341",
+        "referrerUsername": "USER_GEN",
+        "courseName": "Living as New Me",
+        "audience": "All offences",
+        "courseOrganisation": "WTI"
+      }
+    ],
+    "courseParticipation": [
+      {
+        "prisonNumber": "A1234AA",
+        "yearStarted": null,
+        "source": "In case notes",
+        "type": "CUSTODY",
+        "outcomeStatus": "COMPLETE",
+        "yearCompleted": 2020,
+        "location": null,
+        "detail": null,
+        "courseName": "Becoming New Me Plus",
+        "createdByUser": "USER_GEN",
+        "createdDateTime": "2024-08-01T12:45:38.075045",
+        "updatedByUser": "USER_GEN",
+        "updatedDateTime": "2024-08-01T12:46:05.180123"
+      },
+      {
+        "prisonNumber": "A1234AA",
+        "yearStarted": null,
+        "source": null,
+        "type": null,
+        "outcomeStatus": null,
+        "yearCompleted": null,
+        "location": null,
+        "detail": null,
+        "courseName": "Becoming New Me Plus",
+        "createdByUser": "USER_GEN_EXTERNAL",
+        "createdDateTime": "2024-10-07T15:28:18.941386",
+        "updatedByUser": null,
+        "updatedDateTime": null
+      }
+    ]
+  }
+}

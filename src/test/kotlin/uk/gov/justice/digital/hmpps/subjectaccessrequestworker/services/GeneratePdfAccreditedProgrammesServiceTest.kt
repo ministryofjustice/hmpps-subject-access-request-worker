@@ -11,9 +11,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
@@ -34,6 +35,9 @@ class GeneratePdfAccreditedProgrammesServiceTest {
     whenever(userDetailsRepository.findByUsername("ADMINA_ADM")).thenReturn(UserDetail("ADMINA_ADM", "March-Phillips"))
     whenever(userDetailsRepository.findByUsername("USERA_GEN")).thenReturn(UserDetail("USERA_GEN", "Appleyard"))
     whenever(userDetailsRepository.findByUsername("USERC_GEN")).thenReturn(UserDetail("USERA_GEN", "Lassen"))
+    whenever(prisonDetailsRepository.findByPrisonId("WTI")).thenReturn(PrisonDetail("WTI", "Whatton (HMP)"))
+    whenever(prisonDetailsRepository.findByPrisonId("AYI")).thenReturn(PrisonDetail("AYI", "Aylesbury (HMP)"))
+    whenever(prisonDetailsRepository.findByPrisonId("Example Location")).thenReturn(null)
     val serviceList =
       listOf(DpsService(name = "hmpps-accredited-programmes-api", content = accreditedProgrammesServiceData))
     val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-accredited-programmes-template.pdf")))
@@ -47,15 +51,21 @@ class GeneratePdfAccreditedProgrammesServiceTest {
 
     assertThat(text).contains("Accredited programmes")
     assertThat(text).contains("Referral")
-    assertThat(text).contains("Prisoner number")
     assertThat(text).contains("March-Phillips")
     assertThat(text).contains("Appleyard")
     assertThat(text).contains("Lassen")
+    assertThat(text).contains("Whatton (HMP)")
+    assertThat(text).contains("Aylesbury (HMP)")
+    assertThat(text).contains("Example Location")
 
     verify(userDetailsRepository, times(3)).findByUsername("ADMINA_ADM")
     verify(userDetailsRepository, times(1)).findByUsername("USERA_GEN")
     verify(userDetailsRepository, times(2)).findByUsername("USERC_GEN")
-    verifyNoInteractions(prisonDetailsRepository)
+    verifyNoMoreInteractions(userDetailsRepository)
+    verify(prisonDetailsRepository).findByPrisonId("WTI")
+    verify(prisonDetailsRepository).findByPrisonId("AYI")
+    verify(prisonDetailsRepository).findByPrisonId("Example Location")
+    verifyNoMoreInteractions(prisonDetailsRepository)
   }
 
   private val accreditedProgrammesServiceData: Map<Any, Any> = mapOf(
@@ -93,7 +103,7 @@ class GeneratePdfAccreditedProgrammesServiceTest {
         "type" to "CUSTODY",
         "outcomeStatus" to "COMPLETE",
         "yearCompleted" to 2020,
-        "location" to null,
+        "location" to "Example Location",
         "detail" to null,
         "courseName" to "Kaizen",
         "createdByUser" to "USERC_GEN",
@@ -108,7 +118,7 @@ class GeneratePdfAccreditedProgrammesServiceTest {
         "type" to "COMMUNITY",
         "outcomeStatus" to "COMPLETE",
         "yearCompleted" to 2004,
-        "location" to "Example",
+        "location" to null,
         "detail" to "Example",
         "courseName" to "Enhanced Thinking Skills",
         "createdByUser" to "ADMINA_ADM",
