@@ -6,10 +6,12 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
+import com.google.gson.Gson
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 
 class ProbationApiMockServer : WireMockServer(4002) {
 
@@ -41,6 +43,18 @@ class ProbationApiMockServer : WireMockServer(4002) {
               }
               """.trimIndent(),
             ),
+        ),
+    )
+  }
+
+  fun stubGetOffenderDetails(subjectId: String, apiResponse: ProbationApiClient.GetOffenderDetailsResponse) {
+    stubFor(
+      get("/probation-case/$subjectId")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody(Gson().toJson(apiResponse)),
         ),
     )
   }

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -7,7 +8,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
+import org.springframework.web.reactive.function.client.WebClientRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
@@ -15,6 +18,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
@@ -37,6 +41,21 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
 
   companion object {
     const val SUBJECT_ID = "A1234AA"
+
+    @JvmStatic
+    fun responseStubsNamesNullAndEmpty(): List<ProbationApiClient.GetOffenderDetailsResponse> = listOf(
+      ProbationApiClient.GetOffenderDetailsResponse(ProbationApiClient.NameDetails(null, null)),
+      ProbationApiClient.GetOffenderDetailsResponse(ProbationApiClient.NameDetails("", null)),
+      ProbationApiClient.GetOffenderDetailsResponse(ProbationApiClient.NameDetails(null, "")),
+      ProbationApiClient.GetOffenderDetailsResponse(ProbationApiClient.NameDetails("", "")),
+    )
+
+    @JvmStatic
+    fun responseStubs4xxErrors(): List<StubErrorResponse> = listOf(
+      StubErrorResponse(HttpStatus.BAD_REQUEST, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.UNAUTHORIZED, WebClientRequestException::class.java),
+      StubErrorResponse(HttpStatus.FORBIDDEN, WebClientRequestException::class.java),
+    )
   }
 
   @BeforeEach
@@ -58,9 +77,31 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
     assertThat(response).isEqualTo("WIMP, Eric")
   }
 
+  @Test
+  fun `should not retry on 404 error and return empty string`() {
+    hmppsAuth.stubGrantToken()
+    probationApi.stubResponseFor(SUBJECT_ID, WireMock.notFound())
+
+    val actual = probationApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
+
+    assertThat(actual).isEmpty()
+    probationApi.verifyGetOffenderDetailsCalled(1, SUBJECT_ID)
+  }
+
   @ParameterizedTest
-  @MethodSource("status4xxResponseStubs")
-  fun `should not retry on 4xx error`(stubResponse: BaseClientIntTest.Companion.StubErrorResponse) {
+  @MethodSource("responseStubsNamesNullAndEmpty")
+  fun `should return empty when`(apiResponse: ProbationApiClient.GetOffenderDetailsResponse) {
+    hmppsAuth.stubGrantToken()
+    probationApi.stubGetOffenderDetails(SUBJECT_ID, apiResponse)
+
+    val response = probationApiClient.getOffenderName(subjectAccessRequest, SUBJECT_ID)
+
+    assertThat(response).isEqualTo("")
+  }
+
+  @ParameterizedTest
+  @MethodSource("responseStubs4xxErrors")
+  fun `should not retry on 4xx error`(stubResponse: StubErrorResponse) {
     hmppsAuth.stubGrantToken()
     probationApi.stubResponseFor(SUBJECT_ID, stubResponse.getResponse())
 
@@ -88,7 +129,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
 
   @ParameterizedTest
   @MethodSource("status5xxResponseStubs")
-  fun `should retry on 5xx error`(stubResponse: BaseClientIntTest.Companion.StubErrorResponse) {
+  fun `should retry on 5xx error`(stubResponse: StubErrorResponse) {
     hmppsAuth.stubGrantToken()
     probationApi.stubResponseFor(SUBJECT_ID, stubResponse.getResponse())
 
@@ -115,7 +156,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
 
   @ParameterizedTest
   @MethodSource("authErrorResponseStubs")
-  fun `should not retry on authentication failures`(stubResponse: BaseClientIntTest.Companion.StubErrorResponse) {
+  fun `should not retry on authentication failures`(stubResponse: StubErrorResponse) {
     hmppsAuth.stubGrantToken(stubResponse.getResponse())
 
     val exception = assertThrows<FatalSubjectAccessRequestException> {
