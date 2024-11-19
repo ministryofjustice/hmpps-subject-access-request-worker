@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.apache.commons.lang3.StringUtils
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.security.oauth2.client.ClientAuthorizationException
@@ -13,6 +12,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.formatName
 
 @Service
 class PrisonApiClient(
@@ -60,7 +60,7 @@ class PrisonApiClient(
         )
         .block()
 
-      response?.formatName() ?: ""
+      formatName(response?.firstName, response?.lastName)
     } catch (ex: ClientAuthorizationException) {
       throw FatalSubjectAccessRequestException(
         message = "prisonApiClient error authorization exception",
@@ -75,18 +75,7 @@ class PrisonApiClient(
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  data class GetOffenderDetailsResponse(val lastName: String? = "", val firstName: String? = "") {
-    /**
-     * Return the offender name formatted as "SURNAME, forename" if both values present. Otherwise, return empty string
-     */
-    fun formatName(): String {
-      if (StringUtils.isEmpty(lastName) || StringUtils.isEmpty(firstName)) {
-        return ""
-      }
-
-      return "${lastName!!.uppercase()}, ${firstName!!.lowercase().replaceFirstChar { it.titlecase() }}"
-    }
-  }
+  data class GetOffenderDetailsResponse(val lastName: String? = "", val firstName: String? = "")
 
   class SubjectNotFoundException(subjectId: String) : RuntimeException("/api/offenders/$subjectId not found")
 }

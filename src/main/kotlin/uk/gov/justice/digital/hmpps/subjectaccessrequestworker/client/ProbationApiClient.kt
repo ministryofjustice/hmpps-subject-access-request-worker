@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.apache.commons.lang3.StringUtils
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
@@ -13,6 +12,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.formatName
 
 @Service
 class ProbationApiClient(
@@ -60,7 +60,7 @@ class ProbationApiClient(
         )
         .block()
 
-      response?.nameDetails?.formatName() ?: ""
+      formatName(response?.nameDetails?.forename, response?.nameDetails?.surname)
     } catch (ex: ClientAuthorizationException) {
       throw FatalSubjectAccessRequestException(
         message = "probationApiClient error authorization exception",
@@ -80,18 +80,7 @@ class ProbationApiClient(
     val nameDetails: NameDetails?,
   )
 
-  data class NameDetails(val surname: String? = "", val forename: String? = "") {
-    /**
-     * Return the offender name formatted as "SURNAME, forename" if both values present. Otherwise, return empty string
-     */
-    fun formatName(): String {
-      if (StringUtils.isEmpty(surname) || StringUtils.isEmpty(forename)) {
-        return ""
-      }
-
-      return "${surname!!.uppercase()}, ${forename!!.lowercase().replaceFirstChar { it.titlecase() }}"
-    }
-  }
+  data class NameDetails(val surname: String? = "", val forename: String? = "")
 
   class SubjectNotFoundException(subjectId: String) : RuntimeException("/probation-case/$subjectId not found")
 }
