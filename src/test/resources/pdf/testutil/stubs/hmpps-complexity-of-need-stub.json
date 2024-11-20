@@ -1,0 +1,22 @@
+{
+  "content": [
+    {
+      "offenderNo": "A1234AA",
+      "level": "low",
+      "createdTimeStamp": "2021-03-30T11:45:10.266Z",
+      "sourceUser": "USER_GEN",
+      "sourceSystem": "keyworker-to-complexity-api-test",
+      "notes": "string",
+      "active": true
+    },
+    {
+      "offenderNo": "A1234AA",
+      "level": "low",
+      "createdTimeStamp": "2021-03-30T19:54:46.056Z",
+      "sourceUser": "USER_GEN",
+      "sourceSystem": "keyworker-to-complexity-api-test",
+      "notes": "string",
+      "active": true
+    }
+  ]
+}
