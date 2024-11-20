@@ -1,0 +1,102 @@
+{
+  "content": [
+    {
+      "id": 2702117,
+      "bookingId": 1201102,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "ENH",
+      "prisonId": "MDI",
+      "locationId": null,
+      "reviewTime": "2022-06-08T14:41:18",
+      "reviewedBy": "INCENTIVES_API",
+      "commentText": "A prisoner has been received into prison",
+      "current": true,
+      "reviewType": "MIGRATED"
+    },
+    {
+      "id": 2858721,
+      "bookingId": 1201102,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "STD",
+      "prisonId": "MDI",
+      "locationId": null,
+      "reviewTime": "2021-01-08T15:27:03",
+      "reviewedBy": "MWILLIS_GEN",
+      "commentText": "Admission to MOORLAND (HMP & YOI)",
+      "current": false,
+      "reviewType": "MIGRATED"
+    },
+    {
+      "id": 2626466,
+      "bookingId": 1048991,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "ENH",
+      "prisonId": "MDI",
+      "locationId": null,
+      "reviewTime": "2016-06-06T15:33:16",
+      "reviewedBy": "CQU44V",
+      "commentText": null,
+      "current": false,
+      "reviewType": "MIGRATED"
+    },
+    {
+      "id": 2480197,
+      "bookingId": 1048991,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "STD",
+      "prisonId": "MDI",
+      "locationId": null,
+      "reviewTime": "2016-03-17T14:41:36",
+      "reviewedBy": "EQN94O",
+      "commentText": null,
+      "current": false,
+      "reviewType": "MIGRATED"
+    },
+    {
+      "id": 2398037,
+      "bookingId": 1048991,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "STD",
+      "prisonId": "DNI",
+      "locationId": null,
+      "reviewTime": "2016-03-15T10:17:55",
+      "reviewedBy": "GQZ12G",
+      "commentText": null,
+      "current": false,
+      "reviewType": "MIGRATED"
+    },
+    {
+      "id": 2417017,
+      "bookingId": 1048991,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "STD",
+      "prisonId": "MDI",
+      "locationId": null,
+      "reviewTime": "2015-12-23T14:28:58",
+      "reviewedBy": "EQN94O",
+      "commentText": null,
+      "current": false,
+      "reviewType": "MIGRATED"
+    },
+    {
+      "id": 2461269,
+      "bookingId": 1048991,
+      "prisonerNumber": "A1234AA",
+      "nextReviewDate": "2023-06-08",
+      "levelCode": "STD",
+      "prisonId": "LCI",
+      "locationId": null,
+      "reviewTime": "2015-12-20T09:15:21",
+      "reviewedBy": "VQE88O",
+      "commentText": null,
+      "current": false,
+      "reviewType": "MIGRATED"
+    }
+  ]
+}
