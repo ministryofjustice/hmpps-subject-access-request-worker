@@ -19,7 +19,7 @@ dependencies {
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
   implementation("com.github.jknack:handlebars:4.4.0")
   implementation("org.apache.commons:commons-lang3:3.17.0")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.3")
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.18.0")
   implementation("io.sentry:sentry-logback:7.18.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.8")
