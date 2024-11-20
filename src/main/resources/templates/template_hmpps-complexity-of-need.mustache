@@ -1,11 +1,10 @@
 <h1>Complexity of need</h1>
 {{#.}}
-    <h3>Offender number {{ optionalValue offenderNo }}</h3>
     <br>
     <table class="summary-list">
         <tr><td>Level</td><td>{{ optionalValue level }}</td></tr>
-        <tr><td>Active</td><td>{{ optionalValue active }}</td></tr>
-        <tr><td>Creation timestamp</td><td>{{ optionalValue (formatDate createdTimeStamp) }}</td></tr>
+        <tr><td>Active</td><td>{{ convertBoolean active }}</td></tr>
+        <tr><td>Creation</td><td>{{ optionalValue (formatDate createdTimeStamp) }}</td></tr>
         <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
     </table>
 {{/.}}
