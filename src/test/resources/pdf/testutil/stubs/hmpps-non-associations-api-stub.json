@@ -1,0 +1,43 @@
+{
+  "content": {
+    "prisonerNumber": "A4743DZ",
+    "firstName": "PRISONER",
+    "lastName": "TEST",
+    "prisonId": "LEI",
+    "prisonName": "Leeds (HMP)",
+    "cellLocation": "RECP",
+    "openCount": 1,
+    "closedCount": 0,
+    "nonAssociations": [
+      {
+        "id": 83493,
+        "role": "PERPETRATOR",
+        "roleDescription": "Perpetrator",
+        "reason": "ORGANISED_CRIME",
+        "reasonDescription": "Organised crime",
+        "restrictionType": "LANDING",
+        "restrictionTypeDescription": "Cell and landing",
+        "comment": "This is a test for SAR",
+        "authorisedBy": "USER_GEN",
+        "whenCreated": "2024-05-07T14:49:51",
+        "whenUpdated": "2024-05-07T14:49:51",
+        "updatedBy": "USER_GEN",
+        "isClosed": false,
+        "closedBy": null,
+        "closedReason": null,
+        "closedAt": null,
+        "otherPrisonerDetails": {
+          "prisonerNumber": "G4769GD",
+          "role": "PERPETRATOR",
+          "roleDescription": "Perpetrator",
+          "firstName": "OTHER",
+          "lastName": "PRISONER",
+          "prisonId": "PRI",
+          "prisonName": "Parc (HMP)",
+          "cellLocation": "T-5-41"
+        },
+        "isOpen": true
+      }
+    ]
+  }
+}

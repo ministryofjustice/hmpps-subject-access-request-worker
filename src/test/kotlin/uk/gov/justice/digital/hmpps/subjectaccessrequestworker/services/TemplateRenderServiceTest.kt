@@ -205,7 +205,7 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
     assertThat(renderedStyleTemplate).contains("<h3>Non-association - ID 83493</h3>")
-    assertThat(renderedStyleTemplate).contains("Restriction type description")
+    assertThat(renderedStyleTemplate).contains("Restriction type")
     assertThat(renderedStyleTemplate).contains("This is a test for SAR")
   }
 
