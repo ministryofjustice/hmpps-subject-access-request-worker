@@ -11,8 +11,6 @@
 
 <h2>Categorisation</h2>
 {{#categorisationTool}}
-
-    <h3>Categorisation form</h3>
     {{#catForm}}
 
         <br>
@@ -20,7 +18,7 @@
             <tr>
                 <td class="data-column-25">Referred date</td>
                 <td class="data-column-25">Status</td>
-                <td class="data-column-25">Prison ID</td>
+                <td class="data-column-25">Prison name</td>
                 <td class="data-column-25">Start date</td>
             </tr>
             <tr>
@@ -163,7 +161,7 @@
                     <td class="data-column-50">Provisional categorisation</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue life }}</td>
+                    <td>{{ convertBoolean life }}</td>
                     <td>{{ optionalValue riskType }}</td>
                     <td>{{ optionalValue provisionalCategorisation }}</td>
                 </tr>
@@ -219,9 +217,9 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue numberOfNonSeriousAssaults }}</td>
-                        <td>{{ optionalValue veryHighRiskViolentOffender }}</td>
+                        <td>{{ convertBoolean veryHighRiskViolentOffender }}</td>
                         <td>{{ optionalValue provisionalCategorisation }}</td>
-                        <td>{{ optionalValue notifySafetyCustodyLead }}</td>
+                        <td>{{ convertBoolean notifySafetyCustodyLead }}</td>
                     </tr>
                 </table>
             {{/violenceProfile}}
@@ -231,8 +229,8 @@
 
         {{/risk_profile}}
 
+        <h4>Lite category</h4>
         {{#liteCategory}}
-            <h4>Lite category</h4>
             <table class="data-table">
                 <tr>
                     <td class="data-column-25">Category</td>
@@ -272,11 +270,11 @@
 
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Approved placement prison ID</td>
+                    <td class="data-column-25">Approved placement prison name</td>
                     <td class="data-column-75">Approved placement comment</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue approved_placement_prison_id }}</td>
+                    <td>{{ getPrisonName approved_placement_prison_id }}</td>
                     <td>{{ optionalValue approved_placement_comment }}</td>
                 </tr>
             </table>
@@ -305,7 +303,7 @@
     {{#riskProfiler}}
         <h3>Risk profiler</h3>
         <table class="summary-list">
-            <tr><td>Execute date-time</td><td>{{ optionalValue (formatDate execute_date_time) }}</td></tr>
+            <tr><td>Performed date and time</td><td>{{ optionalValue (formatDate execute_date_time) }}</td></tr>
         </table>
 
         {{#violence}}
@@ -333,9 +331,9 @@
             </tr>
             <tr>
                 <td>{{ optionalValue numberOfNonSeriousAssaults }}</td>
-                <td>{{ optionalValue notifySafetyCustodyLead }}</td>
+                <td>{{ convertBoolean notifySafetyCustodyLead }}</td>
                 <td>{{ optionalValue provisionalCategorisation }}</td>
-                <td>{{ optionalValue veryHighRiskViolentOffender }}</td>
+                <td>{{ convertBoolean veryHighRiskViolentOffender }}</td>
             </tr>
         </table>
         {{/violence}}
