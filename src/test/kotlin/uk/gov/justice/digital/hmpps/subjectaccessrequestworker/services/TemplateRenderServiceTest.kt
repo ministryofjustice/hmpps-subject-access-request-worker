@@ -232,10 +232,10 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<h3>Categorisation form</h3>")
+    assertThat(renderedStyleTemplate).contains("<h2>Categorisation</h2>")
     assertThat(renderedStyleTemplate).contains("<tr><td>Text</td><td>previous terrorism offences text - talking about bombs</td></tr>")
     assertThat(renderedStyleTemplate).contains("<h5>Security Input</h5>")
-    assertThat(renderedStyleTemplate).contains("<tr><td>Execute date-time</td><td>27 July 2021, 2:17:48 am</td></tr>")
+    assertThat(renderedStyleTemplate).contains("<tr><td>Performed date and time</td><td>27 July 2021, 2:17:48 am</td></tr>")
   }
 
   private val testServiceTemplateData: ArrayList<Any> = arrayListOf(
