@@ -112,7 +112,6 @@ class GeneratePdfServiceManagePrisonOffenderManagerCasesTest {
     writeAndThenReadPdf(testInput).use {
       val text = PdfTextExtractor.getTextFromPage(it.getPage(2))
       assertThat(text).contains("Manage Prison Offender Manager Cases")
-      assertThat(text).contains("NOMS number G9979UV")
     }
   }
 
@@ -268,10 +267,9 @@ class GeneratePdfServiceManagePrisonOffenderManagerCasesTest {
     writeAndThenReadPdf(testInput).use {
       val text = PdfTextExtractor.getTextFromPage(it.getPage(2))
       assertThat(text).contains("Manage Prison Offender Manager Cases")
-      assertThat(text).contains("NOMS number G9979UV")
       assertThat(text).contains("Message")
       val thirdPageText = PdfTextExtractor.getTextFromPage(it.getPage(3))
-      assertThat(thirdPageText).contains("Local delivery unit ID")
+      assertThat(thirdPageText).contains("Local delivery unit")
       assertThat(thirdPageText).contains("High risk of serious harm")
       val fourthPageText = PdfTextExtractor.getTextFromPage(it.getPage(4))
       assertThat(fourthPageText).contains("some other event")

@@ -1,33 +1,31 @@
 <h1>Manage Prison Offender Manager Cases</h1>
 <br>
 {{#.}}
-    <table class="summary-list">
-        <tr><td>NOMS number</td><td>{{ optionalValue nomsNumber }}</td></tr>
-    </table>
-    <br>
     <h3>Allocation history</h3>
     <br>
     {{#allocationHistory}}
+        <h4>Allocation</h4>
+        <br>
         <table class="data-table">
             <tr>
-                <td class="data-column-35">Prison</td>
+                <td class="data-column-35">Prison name</td>
                 <td class="data-column-30">Allocated at tier</td>
-                <td class="data-column-35">Primary POM Nomis ID</td>
+                <td class="data-column-35">Primary Prisoner Offender Manager</td>
             </tr>
             <tr>
                 <td>{{ optionalValue prison }}</td>
                 <td>{{ optionalValue allocatedAtTier }}</td>
-                <td>{{ optionalValue primaryPomNomisId }}</td>
+                <td>{{ optionalValue primaryPomName }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-35">Secondary POM Nomis ID</td>
+                <td class="data-column-35">Secondary Prisoner Offender Manager</td>
                 <td class="data-column-30">Event</td>
                 <td class="data-column-35">Event trigger</td>
             </tr>
             <tr>
-                <td>{{ optionalValue secondaryPomNomisId }}</td>
+                <td>{{ optionalValue secondaryPomName }}</td>
                 <td>{{ optionalValue event }}</td>
                 <td>{{ optionalValue eventTrigger }}</td>
             </tr>
@@ -89,6 +87,9 @@
             </tr>
         </table>
     {{/allocationHistory}}
+    {{^allocationHistory}}
+        <p>No Data Held</p>
+    {{/allocationHistory}}
 
     {{#calculatedEarlyAllocationStatus}}
         <br>
@@ -101,7 +102,7 @@
                 <td class="data-column-35">Updated at</td>
             </tr>
             <tr>
-                <td>{{ optionalValue eligible }}</td>
+                <td>{{ convertBoolean eligible }}</td>
                 <td>{{ optionalValue (formatDate createdAt) }}</td>
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
             </tr>
@@ -133,7 +134,7 @@
             <tr>
                 <td>{{ optionalValue (formatDate createdAt) }}</td>
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
-                <td>{{ optionalValue lastCalculatedAt }}</td>
+                <td>{{ optionalValue (formatDate lastCalculatedAt) }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -153,8 +154,8 @@
         <table class="data-table">
             <tr>
                 <td class="data-column-35">Tier</td>
-                <td class="data-column-30">CRN</td>
-                <td class="data-column-35">Mappa level</td>
+                <td class="data-column-30">Case Reference Number</td>
+                <td class="data-column-35">Multi Agency Public Protection Arrangements level</td>
             </tr>
             <tr>
                 <td>{{ optionalValue tier }}</td>
@@ -164,50 +165,37 @@
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-35">Manual entry</td>
                 <td class="data-column-30">Created at</td>
                 <td class="data-column-35">Updated at</td>
+                <td class="data-column-35">Probation service</td>
             </tr>
             <tr>
-                <td>{{ optionalValue manualEntry }}</td>
                 <td>{{ optionalValue (formatDate createdAt) }}</td>
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
-
+                <td>{{ optionalValue probationService }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-35">Probation service</td>
                 <td class="data-column-30">COM name</td>
                 <td class="data-column-35">Team name</td>
+                <td class="data-column-35">Local delivery unit</td>
             </tr>
             <tr>
-                <td>{{ optionalValue probationService }}</td>
                 <td>{{ optionalValue comName }}</td>
                 <td>{{ optionalValue teamName }}</td>
-            </tr>
-        </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-35">Local delivery unit ID</td>
-                <td class="data-column-30">LDU code</td>
-                <td class="data-column-35">COM email</td>
-            </tr>
-            <tr>
                 <td>{{ optionalValue localDeliveryUnitId}}</td>
-                <td>{{ optionalValue lduCode }}</td>
-                <td>{{ optionalValue comEmail }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-35">Active VLO</td>
+                <td class="data-column-35">Active Victims Liason Officer</td>
                 <td class="data-column-30">Enhanced resourcing</td>
                 <td class="data-column-35"></td>
             </tr>
             <tr>
-                <td>{{ optionalValue activeVlo }}</td>
-                <td>{{ optionalValue enhancedResourcing}}</td>
+                <td>{{ convertBoolean activeVlo }}</td>
+                <td>{{ convertBoolean enhancedResourcing}}</td>
                 <td></td>
             </tr>
         </table>
@@ -219,37 +207,37 @@
     {{#earlyAllocations}}
         <table class="data-table">
             <tr>
-                <td class="data-column-35">OASYS risk assessment date</td>
+                <td class="data-column-35">Offender Assessment System risk assessment date</td>
                 <td class="data-column-30">High profile</td>
-                <td class="data-column-35">Convicted under terrorisom act 2000</td>
+                <td class="data-column-35">Convicted under terrorism act 2000</td>
             </tr>
             <tr>
                 <td>{{ optionalValue (formatDate oasysRiskAssessmentDate) }}</td>
-                <td>{{ optionalValue highProfile }}</td>
-                <td>{{ optionalValue convictedUnderTerrorisomAct2000 }}</td>
+                <td>{{ convertBoolean highProfile }}</td>
+                <td>{{ convertBoolean convictedUnderTerrorisomAct2000 }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
                 <td class="data-column-35">Serious crime prevention order</td>
-                <td class="data-column-30">Mappa level 3</td>
+                <td class="data-column-30">Multi Agency Public Protection Arrangements level 3</td>
                 <td class="data-column-35">CPPC case</td>
             </tr>
             <tr>
-                <td>{{ optionalValue seriousCrimePreventionOrder}}</td>
-                <td>{{ optionalValue mappaLevel3 }}</td>
-                <td>{{ optionalValue cppcCase }}</td>
+                <td>{{ convertBoolean seriousCrimePreventionOrder}}</td>
+                <td>{{ convertBoolean mappaLevel3 }}</td>
+                <td>{{ convertBoolean cppcCase }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
                 <td class="data-column-35">High risk of serious harm</td>
-                <td class="data-column-30">Mappa level 2</td>
+                <td class="data-column-30">Multi Agency Public Protection Arrangements level 2</td>
                 <td class="data-column-35">Pathfinder process</td>
             </tr>
             <tr>
-                <td>{{ optionalValue highRiskOfSeriousHarm }}</td>
-                <td>{{ optionalValue mappaLevel2 }}</td>
+                <td>{{ convertBoolean highRiskOfSeriousHarm }}</td>
+                <td>{{ convertBoolean mappaLevel2 }}</td>
                 <td>{{ optionalValue pathfinderProcess }}</td>
             </tr>
         </table>
@@ -261,8 +249,8 @@
             </tr>
             <tr>
                 <td>{{ optionalValue otherReason}}</td>
-                <td>{{ optionalValue extremismSeparation }}</td>
-                <td>{{ optionalValue dueForReleaseInLessThan24months }}</td>
+                <td>{{ convertBoolean extremismSeparation }}</td>
+                <td>{{ convertBoolean dueForReleaseInLessThan24months }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -283,7 +271,7 @@
                 <td class="data-column-65">Reason</td>
             </tr>
             <tr>
-                <td>{{ optionalValue approved}}</td>
+                <td>{{ convertBoolean approved}}</td>
                 <td>{{ optionalValue reason }}</td>
             </tr>
         </table>
@@ -296,7 +284,7 @@
             <tr>
                 <td>{{ optionalValue createdByLastName }}</td>
                 <td>{{ optionalValue updatedByLastName }}</td>
-                <td>{{ optionalValue createdWithinReferralWindow }}</td>
+                <td>{{ convertBoolean createdWithinReferralWindow }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -309,6 +297,9 @@
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
             </tr>
         </table>
+    {{/earlyAllocations}}
+    {{^earlyAllocations}}
+        <p>No Data Held</p>
     {{/earlyAllocations}}
 
     <br>
@@ -342,6 +333,9 @@
         </table>
         <br>
     {{/emailHistories}}
+    {{^emailHistories}}
+        <p>No Data Held</p>
+    {{/emailHistories}}
 
     {{#handoverProgressChecklist}}
         <br>
@@ -349,14 +343,14 @@
         <br>
         <table class="data-table">
             <tr>
-                <td class="data-column-35">Reviewed OASYS</td>
-                <td class="data-column-30">Contacted COM</td>
+                <td class="data-column-35">Reviewed Offender Assessment System</td>
+                <td class="data-column-30">Contacted Community Offender Managers</td>
                 <td class="data-column-35">Attended handover meeting</td>
             </tr>
             <tr>
-                <td>{{ optionalValue reviewedOasys }}</td>
-                <td>{{ optionalValue contactedCom }}</td>
-                <td>{{ optionalValue attendedHandoverMeeting }}</td>
+                <td>{{ convertBoolean reviewedOasys }}</td>
+                <td>{{ convertBoolean contactedCom }}</td>
+                <td>{{ convertBoolean attendedHandoverMeeting }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -366,7 +360,7 @@
                 <td class="data-column-35">Updated at</td>
             </tr>
             <tr>
-                <td>{{ optionalValue sentHandoverReport }}</td>
+                <td>{{ convertBoolean sentHandoverReport }}</td>
                 <td>{{ optionalValue (formatDate createdAt) }}</td>
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
             </tr>
@@ -390,6 +384,9 @@
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
             </tr>
         </table>
+    {{/offenderEmailSent}}
+    {{^offenderEmailSent}}
+        <p>No Data Held</p>
     {{/offenderEmailSent}}
 
     {{#paroleRecord}}
@@ -455,6 +452,9 @@
                 <td>{{ optionalValue (formatDate updatedAt) }}</td>
             </tr>
         </table>
+    {{/victimLiaisonOfficers}}
+    {{^victimLiaisonOfficers}}
+        <p>No Data Held</p>
     {{/victimLiaisonOfficers}}
 {{/.}}
 {{^.}}
