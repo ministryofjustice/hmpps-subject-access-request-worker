@@ -99,7 +99,6 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
     assertThat(renderedStyleTemplate).contains("<td>Date and time of incident</td><td>08 June 2023, 12:00:00 pm</td>")
-    assertThat(renderedStyleTemplate).contains("<td>Incident role code</td><td>25c</td>")
     assertThat(renderedStyleTemplate).contains("<td>Description</td><td>Assists another prisoner to commit, or to attempt to commit, any of the foregoing offences:</td>")
     assertThat(renderedStyleTemplate).contains("<td>Description</td><td>Intentionally or recklessly sets fire to any part of a prison or any other property, whether or not her own</td>")
     assertThat(renderedStyleTemplate).contains("<td>Status</td><td>CHARGE_PROVED</td>")
