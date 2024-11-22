@@ -4,9 +4,9 @@
     <br>
     <table class="summary-list">
         <tr><td>Kind</td><td>{{ optionalValue kind }}</td></tr>
-        <tr><td>Type code</td><td>{{ optionalValue typeCode }}</td></tr>
+        <tr><td>Type</td><td>{{ optionalValue typeCode }}</td></tr>
         <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
-        <tr><td>Status code</td><td>{{{ optionalValue statusCode }}}</td></tr>
+        <tr><td>Status</td><td>{{{ optionalValue statusCode }}}</td></tr>
         <tr><td>Appointment person</td><td>{{ optionalValue appointmentPerson }}</td></tr>
         <tr><td>Appointment time</td><td>{{ optionalValue appointmentTime }}</td></tr>
         <tr><td>Appointment time type</td><td>{{ optionalValue appointmentTimeType }}</td></tr>
@@ -40,7 +40,7 @@
     </table>
     <br>
 
-    <h2>Standard PSS conditions</h2>
+    <h2>Standard post sentence supervision (PSS) conditions</h2>
     <br>
     <table class="data-table">
         <tr>
@@ -51,12 +51,12 @@
                 <td>{{ optionalValue text }}</td>
             </tr>
         {{/standardPssConditions}}
+        {{^standardPssConditions}}
+            <tr>
+                <td>No Data Held</td>
+            </tr>
+        {{/standardPssConditions}}
     </table>
-    {{^standardPssConditions}}
-        <tr>
-            <td>No Data Held</td>
-        </tr>
-    {{/standardPssConditions}}
 
     {{#additionalLicenceConditions}}
         <br>
@@ -66,7 +66,7 @@
             <tr><td>Category</td><td>{{ optionalValue category }}</td></tr>
             <tr><td>Expanded text</td><td>{{ optionalValue expandedText }}</td></tr>
             <tr><td>Data</td><td>{{#data}}{{optionalValue field}} = {{ optionalValue value }}{{/data}}{{^data}}No Data Held{{/data}}</td></tr>
-            <tr><td>Upload summary</td><td>{{{ optionalValue uploadSummary }}}</td></tr>
+            <tr><td>Upload summary</td><td>{{#uploadSummary}}{{ . }}{{#unless @last}}, {{/unless}}{{/uploadSummary}}{{^uploadSummary}}No Data Held{{/uploadSummary}}</td></tr>
         </table>
     {{/additionalLicenceConditions}}
 
@@ -90,8 +90,8 @@
         {{#bespokeConditions}}
             <tr><td>{{{ optionalValue text }}}</td></tr>
         {{/bespokeConditions}}
+        {{^bespokeConditions}}
+            <tr><td>No Data Held</td></tr>
+        {{/bespokeConditions}}
     </table>
-    {{^bespokeConditions}}
-        <tr><td>No Data Held</td></tr>
-    {{/bespokeConditions}}
 {{/licences}}

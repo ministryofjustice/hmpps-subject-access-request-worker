@@ -1,0 +1,308 @@
+{
+  "content": {
+    "licences": [
+      {
+        "kind": "CRD",
+        "id": 241,
+        "typeCode": "AP",
+        "version": "3.0",
+        "statusCode": "ACTIVE",
+        "nomsId": "G7500UN",
+        "bookingId": 1167389,
+        "appointmentPerson": "Appointment User",
+        "appointmentTime": null,
+        "appointmentTimeType": "IMMEDIATE_UPON_RELEASE",
+        "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
+        "appointmentContact": "01899767993",
+        "approvedDate": "19/11/2024 17:26:59",
+        "approvedByUsername": "APPROVER_USER",
+        "submittedDate": "19/11/2024 17:24:08",
+        "approvedByName": "Approval User",
+        "supersededDate": null,
+        "dateCreated": "19/11/2024 17:20:40",
+        "createdByUsername": "TEST_USER",
+        "dateLastUpdated": "19/11/2024 17:26:59",
+        "updatedByUsername": "APPROVER_USER",
+        "standardLicenceConditions": [
+          {
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+          },
+          {
+            "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+            "text": "Not commit any offence."
+          },
+          {
+            "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+            "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+          },
+          {
+            "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+            "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+          },
+          {
+            "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+            "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+          },
+          {
+            "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+            "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+          },
+          {
+            "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+            "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+          },
+          {
+            "code": "88069445-08cb-4f16-915f-5a162d085c26",
+            "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+          },
+          {
+            "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+            "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+          }
+        ],
+        "standardPssConditions": [],
+        "additionalLicenceConditions": [
+          {
+            "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+            "version": "3.0",
+            "category": "Residence at a specific place",
+            "expandedText": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "data": [
+              {
+                "field": "probationRegion",
+                "value": "Greater Manchester"
+              }
+            ],
+            "uploadSummary": [],
+            "readyToSubmit": true
+          },
+          {
+            "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
+            "version": "3.0",
+            "category": "Items and documents",
+            "expandedText": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "data": [],
+            "uploadSummary": [],
+            "readyToSubmit": true
+          },
+          {
+            "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
+            "version": "3.0",
+            "category": "Disclosure of information",
+            "expandedText": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "data": [
+              {
+                "field": "accountTypes",
+                "value": "crypto currency accounts or wallets"
+              }
+            ],
+            "uploadSummary": [],
+            "readyToSubmit": true
+          },
+          {
+            "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
+            "version": "3.0",
+            "category": "Serious organised crime",
+            "expandedText": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "data": [],
+            "uploadSummary": [],
+            "readyToSubmit": true
+          }
+        ],
+        "additionalPssConditions": [],
+        "bespokeConditions": [
+          {
+            "text": "Do not enter the school on your street"
+          }
+        ],
+        "createdByFullName": "TEST USER",
+        "licenceVersion": "1.0"
+      }
+    ],
+    "auditEvents": [
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:20:40",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Licence created for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0 kind CRD"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:20:51",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated initial appointment details for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:21:04",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated initial appointment details for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:21:12",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated initial appointment details for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:21:34",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated initial appointment details for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:22:21",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated additional conditions for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:22:29",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:22:32",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:23:29",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated bespoke conditions for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:23:49",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Updated initial appointment details for Osjteregun Lerif",
+        "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:24:08",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Licence submitted for approval for Osjteregun Lerif",
+        "detail": "ID 241 type AP status SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:25:17",
+        "username": "TEST_OMU",
+        "fullName": "Omu User",
+        "eventType": "USER_EVENT",
+        "summary": "Licence viewed for Osjteregun Lerif",
+        "detail": "ID 241 type AP status SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:26:12",
+        "username": "APPROVER_USER",
+        "fullName": "Approval User",
+        "eventType": "USER_EVENT",
+        "summary": "Licence viewed for approval for Osjteregun Lerif",
+        "detail": "ID 241 type AP status SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:26:59",
+        "username": "APPROVER_USER",
+        "fullName": "Approval User",
+        "eventType": "USER_EVENT",
+        "summary": "Licence approved for Osjteregun Lerif",
+        "detail": "ID 241 type AP status APPROVED version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:27:43",
+        "username": "TEST_OMU",
+        "fullName": "Omu User",
+        "eventType": "USER_EVENT",
+        "summary": "Licence viewed for Osjteregun Lerif",
+        "detail": "ID 241 type AP status APPROVED version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "19/11/2024 17:27:52",
+        "username": "TEST_OMU",
+        "fullName": "Omu User",
+        "eventType": "USER_EVENT",
+        "summary": "Licence printed for Osjteregun Lerif (PDF)",
+        "detail": "ID 241 type AP status APPROVED version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "20/11/2024 16:29:58",
+        "username": "TEST_USER",
+        "fullName": "TEST USER",
+        "eventType": "USER_EVENT",
+        "summary": "Licence printed for Osjteregun Lerif (PDF)",
+        "detail": "ID 241 type AP status ACTIVE version 3.0"
+      }
+    ],
+    "licencesEvents": [
+      {
+        "licenceId": 241,
+        "eventType": "CREATED",
+        "username": "TEST_USER",
+        "forenames": "TEST",
+        "surname": "USER",
+        "eventDescription": "Licence created for Osjteregun Lerif",
+        "eventTime": "19/11/2024 17:20:40"
+      },
+      {
+        "licenceId": 241,
+        "eventType": "SUBMITTED",
+        "username": "TEST_USER",
+        "forenames": "TEST",
+        "surname": "USER",
+        "eventDescription": "Licence submitted for approval for Osjteregun Lerif",
+        "eventTime": "19/11/2024 17:24:08"
+      },
+      {
+        "licenceId": 241,
+        "eventType": "APPROVED",
+        "username": "APPROVER_USER",
+        "forenames": "Approval",
+        "surname": "User",
+        "eventDescription": "Licence updated to APPROVED for Osjteregun Lerif",
+        "eventTime": "19/11/2024 17:26:59"
+      }
+    ]
+  }
+}
