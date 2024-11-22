@@ -15,9 +15,9 @@
                 <td class="data-column-30">Created by</td>
             </tr>
             <tr>
-                <td>{{ optionalValue author }}</td>
+                <td>{{ getUserLastName author }}</td>
                 <td>{{ optionalValue (formatDate created) }}</td>
-                <td>{{ optionalValue createdBy }}</td>
+                <td>{{ getUserLastName createdBy }}</td>
             </tr>
         </table>
         <table class="data-table">
@@ -28,7 +28,7 @@
             </tr>
             <tr>
                 <td>{{ optionalValue (formatDate lastUpdated) }}</td>
-                <td>{{ optionalValue lastUpdatedBy }}</td>
+                <td>{{ getUserLastName lastUpdatedBy }}</td>
                 <td>{{ optionalValue caseNumber }}</td>
             </tr>
         </table>
@@ -58,7 +58,7 @@
             </tr>
             <tr>
                 <td>{{ optionalValue state}}</td>
-                <td>{{ optionalValue assignedTo }}</td>
+                <td>{{ getUserLastName assignedTo }}</td>
                 <td>{{ optionalValue (formatDate createdDate) }}</td>
             </tr>
         </table>
@@ -76,7 +76,7 @@
             </tr>
             <tr>
                 <td>{{ optionalValue hearingId }}</td>
-                <td>{{ optionalValue author }}</td>
+                <td>{{ getUserLastName author }}</td>
                 <td>{{ optionalValue note }}</td>
             </tr>
         </table>
