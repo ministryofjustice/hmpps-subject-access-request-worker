@@ -158,7 +158,7 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("Prison ID")
+    assertThat(renderedStyleTemplate).contains("Prison name")
     assertThat(renderedStyleTemplate).contains("Deed poll certificate")
     assertThat(renderedStyleTemplate).contains("Account opened")
     assertThat(renderedStyleTemplate).contains("FINANCE_AND_ID")
