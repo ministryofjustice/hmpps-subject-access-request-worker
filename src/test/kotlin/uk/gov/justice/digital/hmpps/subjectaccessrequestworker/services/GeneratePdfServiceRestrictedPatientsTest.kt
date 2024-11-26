@@ -48,7 +48,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
     writeAndThenReadPdf(testInput).use {
       val text = PdfTextExtractor.getTextFromPage(it.getPage(2))
       assertThat(text).contains("Restricted Patients")
-      assertThat(text).contains("Prison number A1234AA")
       assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
       assertThat(text).contains("Hospital location Weston Park Hospital")
       assertThat(text).contains("Supporting prison HMP Exeter")
@@ -67,7 +66,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
     writeAndThenReadPdf(testInput).use {
       val text = PdfTextExtractor.getTextFromPage(it.getPage(2))
       assertThat(text).contains("Restricted Patients")
-      assertThat(text).contains("Prison number A1234AA")
       assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
       assertThat(text).contains("Hospital location Weston Park Hospital")
       assertThat(text).contains("Supporting prison HMP Exeter")

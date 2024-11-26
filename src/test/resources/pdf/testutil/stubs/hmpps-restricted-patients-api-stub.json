@@ -1,0 +1,9 @@
+{
+  "content": {
+    "prisonerNumber": "A1234AA",
+    "supportingPrisonDescription": "HMP Exeter",
+    "hospitalLocationDescription": "Weston Park Hospital",
+    "dischargeTime": "2024-09-05T08:50:44.19812",
+    "commentText": "This is a restricted patients comment"
+  }
+}
