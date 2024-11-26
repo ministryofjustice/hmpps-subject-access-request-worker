@@ -42,7 +42,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
   fun `generatePdfService renders for Restricted Patients API`() {
     val testInput = mapOf(
       "prisonerNumber" to "A1234AA",
-      "supportingPrisonDescription" to "HMP Exeter",
       "supportingPrisonId" to "EXI",
       "hospitalLocationDescription" to "Weston Park Hospital",
       "dischargeTime" to "2024-09-05T08:50:44.19812",
@@ -64,7 +63,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
   fun `generatePdfService renders for Restricted Patients API with optional data missing`() {
     val testInput = mapOf(
       "prisonerNumber" to "A1234AA",
-      "supportingPrisonDescription" to "HMP Exeter",
       "hospitalLocationDescription" to "Weston Park Hospital",
       "dischargeTime" to "2024-09-05T08:50:44.19812",
     )
