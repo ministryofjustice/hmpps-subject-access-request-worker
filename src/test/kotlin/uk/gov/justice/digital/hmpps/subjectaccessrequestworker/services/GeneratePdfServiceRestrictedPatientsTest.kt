@@ -9,7 +9,9 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -41,16 +43,19 @@ class GeneratePdfServiceRestrictedPatientsTest {
     val testInput = mapOf(
       "prisonerNumber" to "A1234AA",
       "supportingPrisonDescription" to "HMP Exeter",
+      "supportingPrisonId" to "EXI",
       "hospitalLocationDescription" to "Weston Park Hospital",
       "dischargeTime" to "2024-09-05T08:50:44.19812",
       "commentText" to "This is a restricted patients comment",
     )
+    whenever(prisonDetailsRepository.findByPrisonId("EXI")).thenReturn(PrisonDetail("EXI", "Exeter (HMP)"))
+
     writeAndThenReadPdf(testInput).use {
       val text = PdfTextExtractor.getTextFromPage(it.getPage(2))
       assertThat(text).contains("Restricted Patients")
       assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
       assertThat(text).contains("Hospital location Weston Park Hospital")
-      assertThat(text).contains("Supporting prison HMP Exeter")
+      assertThat(text).contains("Supporting prison Exeter (HMP)")
       assertThat(text).contains("Comments This is a restricted patients comment")
     }
   }
@@ -68,7 +73,7 @@ class GeneratePdfServiceRestrictedPatientsTest {
       assertThat(text).contains("Restricted Patients")
       assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
       assertThat(text).contains("Hospital location Weston Park Hospital")
-      assertThat(text).contains("Supporting prison HMP Exeter")
+      assertThat(text).contains("Supporting prison No Data Held")
       assertThat(text).contains("Comments No Data Held")
     }
   }
