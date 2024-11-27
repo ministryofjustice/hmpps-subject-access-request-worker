@@ -47,9 +47,9 @@ generic-service:
       DATABASE_PASSWORD: "database_password"
 
     service-urls:
-      G1-API-URL: "G1_API_URL"
-      G2-API-URL: "G2_API_URL"
-      G3-API-URL: "G3_API_URL"
+      G1_API_URL: "G1_API_URL"
+      G2_API_URL: "G2_API_URL"
+      G3_API_URL: "G3_API_URL"
 
   allowlist:
     groups:
