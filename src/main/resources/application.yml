@@ -95,11 +95,11 @@ probation-api:
 sar-api:
   url: http://localhost:8080
 G1-api:
-  url: ${G1_API_URL:http://localhost:9001}
+  url: ${G1_API_URL)
 G2-api:
-  url: ${G2_API_URL:http://localhost:9002}
+  url: ${G2_API_URL}
 G3-api:
-  url: ${G3_API_URL:http://localhost:9003}
+  url: ${G3_API_URL}
 
 
 sentry:
