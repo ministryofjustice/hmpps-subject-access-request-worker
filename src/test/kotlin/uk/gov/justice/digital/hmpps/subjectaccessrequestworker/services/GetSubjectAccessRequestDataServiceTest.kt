@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.anyOrNull
@@ -129,8 +128,8 @@ class GetSubjectAccessRequestDataServiceTest {
 
     val orderedDpsServices = getSubjectAccessRequestDataService.order(selectedDpsServices)
 
-    Assertions.assertThat(orderedDpsServices[0].name).isEqualTo("service-A")
-    Assertions.assertThat(orderedDpsServices[1].name).isEqualTo("service-B")
-    Assertions.assertThat(orderedDpsServices[2].name).isEqualTo("service-C")
+    assertThat(orderedDpsServices[0].name).isEqualTo("service-A")
+    assertThat(orderedDpsServices[1].name).isEqualTo("service-B")
+    assertThat(orderedDpsServices[2].name).isEqualTo("service-C")
   }
 }

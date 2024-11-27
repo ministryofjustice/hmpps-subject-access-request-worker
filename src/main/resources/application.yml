@@ -94,6 +94,12 @@ probation-api:
   url: http://localhost:4002
 sar-api:
   url: http://localhost:8080
+G1-api:
+  url: ${G1_API_URL:http://localhost:9001}
+G2-api:
+  url: ${G2_API_URL:http://localhost:9002}
+G3-api:
+  url: ${G3_API_URL:http://localhost:9003}
 
 
 sentry:

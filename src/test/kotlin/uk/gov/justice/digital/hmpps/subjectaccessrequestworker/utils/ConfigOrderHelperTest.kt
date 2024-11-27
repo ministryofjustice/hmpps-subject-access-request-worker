@@ -7,7 +7,11 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfig
 
 class ConfigOrderHelperTest {
-  val configOrderHelper = ConfigOrderHelper()
+  val configOrderHelper = ConfigOrderHelper(
+    "https://service-g1.example.com",
+    "https://service-g2.example.com",
+    "https://service-g3.example.com",
+  )
 
   @Nested
   inner class ExtractServicesConfig {
@@ -26,21 +30,35 @@ class ConfigOrderHelperTest {
       @Test
       fun `getDpsServices returns a list of DPS service objects`() {
         val testServicesMap = mapOf(
-          "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-          "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-        )
-        val expectedDpsServices = listOf(
-          DpsService(name = "fake-hmpps-prisoner-search", url = "https://fake-prisoner-search.prison.service.justice.gov.uk"),
-          DpsService(name = "fake-hmpps-prisoner-search-indexer", url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk"),
+          "example service 1" to "https://example-one.hmpps.service.justice.gov.uk",
+          "example service 2" to "https://example-two.hmpps.service.justice.gov.uk",
         )
 
         val testDpsServices = configOrderHelper.getDpsServices(testServicesMap)
 
-        assertThat(testDpsServices[0].name).isEqualTo(expectedDpsServices[0].name)
-        assertThat(testDpsServices[0].url).isEqualTo(expectedDpsServices[0].url)
-        assertThat(testDpsServices[1].name).isEqualTo(expectedDpsServices[1].name)
-        assertThat(testDpsServices[1].url).isEqualTo(expectedDpsServices[1].url)
+        assertThat(testDpsServices[0].name).isEqualTo("example service 1")
+        assertThat(testDpsServices[0].url).isEqualTo("https://example-one.hmpps.service.justice.gov.uk")
+        assertThat(testDpsServices[1].name).isEqualTo("example service 2")
+        assertThat(testDpsServices[1].url).isEqualTo("https://example-two.hmpps.service.justice.gov.uk")
       }
     }
+  }
+
+  @Test
+  fun `getDpsServices swaps G1, G2, and G3 values`() {
+    val testServicesMap = mapOf(
+      "G1" to "G1",
+      "G2" to "G2",
+      "G3" to "G3",
+      "other-service" to "https://other-service.example.com",
+    )
+
+    val testDpsServices = configOrderHelper.getDpsServices(testServicesMap)
+
+    assertThat(testDpsServices).hasSize(4)
+    assertThat(testDpsServices[0].url).isEqualTo("https://service-g1.example.com")
+    assertThat(testDpsServices[1].url).isEqualTo("https://service-g2.example.com")
+    assertThat(testDpsServices[2].url).isEqualTo("https://service-g3.example.com")
+    assertThat(testDpsServices[3].url).isEqualTo("https://other-service.example.com")
   }
 }
