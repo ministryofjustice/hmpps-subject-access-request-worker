@@ -137,7 +137,7 @@ class TemplateRenderServiceTest {
 
   @Test
   fun `renderTemplate renders a template given a Use of Force template`() {
-    whenever(userDetailsRepository.findByUsername("ZANDYLEE_ADM")).thenReturn(UserDetail("ZANDYLEE_ADM", "Lee"))
+    whenever(userDetailsRepository.findByUsername("ZANDYUSER_ADM")).thenReturn(UserDetail("ZANDYUSER_ADM", "Lee"))
 
     val renderedStyleTemplate = templateRenderService.renderTemplate("hmpps-uof-data-api", testUseOfForceServiceData)
 
@@ -797,8 +797,8 @@ class TemplateRenderServiceTest {
       "deleted" to "2021-11-30T15:47:13.139",
       "status" to "SUBMITTED",
       "agencyId" to "MDI",
-      "userId" to "ANDYLEE_ADM",
-      "reporterName" to "Andrew Lee",
+      "userId" to "ANDYUSER_ADM",
+      "reporterName" to "Andrew User",
       "offenderNo" to "A1234AA",
       "bookingId" to 1048991,
       "formResponse" to mapOf(
@@ -828,18 +828,18 @@ class TemplateRenderServiceTest {
         ),
         "involvedStaff" to arrayListOf(
           mapOf(
-            "name" to "Andrew Lee",
-            "email" to "andrew.lee@digital.justice.gov.uk",
+            "name" to "Andrew User",
+            "email" to "andrew.userser@digital.justice.gov.uk",
             "staffId" to 486084,
-            "username" to "ZANDYLEE_ADM",
+            "username" to "ZANDYUSER_ADM",
             "verified" to true,
             "activeCaseLoadId" to "MDI",
           ),
           mapOf(
-            "name" to "Lee Andrew",
-            "email" to "lee.andrew@digital.justice.gov.uk",
+            "name" to "Lee User",
+            "email" to "lee.user@digital.justice.gov.uk",
             "staffId" to 486084,
-            "username" to "AMD_LEE",
+            "username" to "LEEUSER_ADM",
             "verified" to true,
             "activeCaseLoadId" to "MDI",
           ),
@@ -850,10 +850,10 @@ class TemplateRenderServiceTest {
           "authorisedBy" to "",
           "witnesses" to arrayListOf(
             mapOf(
-              "name" to "Andrew Lee",
+              "name" to "Andrew User",
             ),
             mapOf(
-              "name" to "Andrew Leedsd",
+              "name" to "Andrew Userdsd",
             ),
           ),
         ),
@@ -936,9 +936,9 @@ class TemplateRenderServiceTest {
           "nextReminderDate" to "2021-04-09T09:23:51.165",
           "overdueDate" to "2021-04-11T09:23:51.165",
           "removalRequestedDate" to "2021-04-21T10:09:25.626246",
-          "userId" to "ZANDYLEE_ADM",
-          "name" to "Andrew Lee",
-          "email" to "andrew.lee@digital.justice.gov.uk",
+          "userId" to "ZANDYUSER_ADM",
+          "name" to "Andrew User",
+          "email" to "andrew.userser@digital.justice.gov.uk",
           "statementStatus" to "REMOVAL_REQUESTED",
           "lastTrainingMonth" to 1,
           "lastTrainingYear" to 2019,
@@ -974,9 +974,9 @@ class TemplateRenderServiceTest {
           "nextReminderDate" to "2021-04-09T09:23:51.165",
           "overdueDate" to "2021-04-11T09:23:51.165",
           "removalRequestedDate" to "2021-04-21T10:09:25.626246",
-          "userId" to "ZANDYLEE_ADM",
-          "name" to "Andrew Lee",
-          "email" to "andrew.lee@digital.justice.gov.uk",
+          "userId" to "ZANDYUSER_ADM",
+          "name" to "Andrew User",
+          "email" to "andrew.userser@digital.justice.gov.uk",
           "statementStatus" to "REMOVAL_REQUESTED",
           "lastTrainingMonth" to 1,
           "lastTrainingYear" to 2019,
