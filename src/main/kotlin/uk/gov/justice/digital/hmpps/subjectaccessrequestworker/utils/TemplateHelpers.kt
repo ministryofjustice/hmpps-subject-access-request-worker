@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.StringUtils.leftPad
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
+import java.lang.String.format
 
 @Service
 class TemplateHelpers(
@@ -46,5 +48,12 @@ class TemplateHelpers(
     input is Boolean && !input -> "No"
     input == null -> "No Data Held"
     else -> input
+  }
+
+  fun buildDate(year: String?, month: String?, day: String?): String {
+    if (year == null || month == null || day == null) {
+      return "No Data Held"
+    }
+    return formatDate(format("%s-%s-%s", leftPad(year, 4, "0"), leftPad(month, 2, "0"), leftPad(day, 2, "0")))
   }
 }

@@ -62,3 +62,6 @@ dpsServices:
   - name: launchpad-auth
     orderPosition: 21
     businessName: Launchpad
+  - name: hmpps-approved-premises-api
+    orderPosition: 22
+    businessName: Approved Premises

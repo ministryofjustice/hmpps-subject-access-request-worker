@@ -136,4 +136,72 @@ class TemplateHelpersTest {
       assertThat(response).isEqualTo(expectedValue)
     }
   }
+
+  @Nested
+  inner class BuildDateTest {
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "2024 | 11    | null",
+        "2024 | 11    | ",
+        "2024 | null  | 15",
+        "2024 |       | 15",
+        "null | 11    | 15",
+        "     | 11    | 15",
+        "null | null  | null",
+        "     |       |",
+      ],
+      delimiterString = "|",
+      nullValues = ["null"],
+    )
+    fun `buildDate returns No Data Held when any blank input`(
+      yearInput: String?,
+      monthInput: String?,
+      dayInput: String?,
+    ) {
+      val response = templateHelpers.buildDate(yearInput, monthInput, dayInput)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "year     | 11    | 19        | year-11-19",
+        "2024     | month | 19        | 2024-month-19",
+        "2024     | 11    | something | 2024-11-something",
+        "invalid  | date  | vals      | invalid-date-vals",
+      ],
+      delimiterString = "|",
+      nullValues = ["null"],
+    )
+    fun `buildDate returns original values when not able to convert to date`(
+      yearInput: String?,
+      monthInput: String?,
+      dayInput: String?,
+      expectedValue: String,
+    ) {
+      val response = templateHelpers.buildDate(yearInput, monthInput, dayInput)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "2024 | 11    | 19        | 19 November 2024",
+        "2024 | 4     | 8         | 08 April 2024",
+        "2024 | 04    | 08        | 08 April 2024",
+      ],
+      delimiterString = "|",
+      nullValues = ["null"],
+    )
+    fun `buildDate returns formatted date`(
+      yearInput: String?,
+      monthInput: String?,
+      dayInput: String?,
+      expectedValue: String,
+    ) {
+      val response = templateHelpers.buildDate(yearInput, monthInput, dayInput)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+  }
 }
