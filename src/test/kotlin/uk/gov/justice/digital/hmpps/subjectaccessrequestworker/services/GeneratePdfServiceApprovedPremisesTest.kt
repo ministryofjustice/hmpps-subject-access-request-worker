@@ -94,7 +94,7 @@ class GeneratePdfServiceApprovedPremisesTest {
                 "cpp-details-and-hdc-licence-conditions" to mapOf(
                   "cpp-details" to mapOf(
                     "probationRegion" to "Leeds",
-                    "name" to "Roger Smith",
+                    "name" to "Name Smith",
                     "telephone" to "01234 777 099",
                     "email" to "cpp@justice.example.com",
                   ),
@@ -148,7 +148,7 @@ class GeneratePdfServiceApprovedPremisesTest {
               "created_at" to null,
               "abandoned_at" to null,
               "referring_prison_code" to null,
-              "created_by_user" to "Roger Smith (Fake)",
+              "created_by_user" to "Name Smith (Fake)",
               "noms_number" to "A1234AI",
               "preferred_areas" to "Bristol | Newcastle",
               "id" to "edd787eb-31a3-4fad-a473-9cf8969f1487",
@@ -252,7 +252,7 @@ class GeneratePdfServiceApprovedPremisesTest {
               "cpp-details-and-hdc-licence-conditions" to mapOf(
                 "cpp-details" to mapOf(
                   "probationRegion" to "Leeds",
-                  "name" to "Roger Smith",
+                  "name" to "Name Smith",
                   "telephone" to "01234 777 099",
                   "email" to "cpp@justice.example.com",
                 ),
@@ -423,7 +423,7 @@ class GeneratePdfServiceApprovedPremisesTest {
                   "hasAdditionalInformation" to "no",
                 ),
                 "risk-to-others" to mapOf(
-                  "whoIsAtRisk" to "[R10.1] IN CUSTODY\r\n\r\nKNOWN ADULTS:\r\nSuch as Ms Elaine Underhill and any of the victims of the index offence if they are placed close to Mr Smith cell.\r\n\r\nCHILDREN:\r\nSimon Smith, Roger Smith, Lindy Smith",
+                  "whoIsAtRisk" to "[R10.1] IN CUSTODY\r\n\r\nKNOWN ADULTS:\r\nSuch as Ms Name Underhill and any of the victims of the index offence if they are placed close to Mr Smith cell.\r\n\r\nCHILDREN:\r\nOne Smith, Two Smith, Three Smith",
                   "natureOfRisk" to "[R10.2] IN CUSTODY:\r\n\r\nKNOWN ADULTS:\r\nIntimidation, threats of violence, use of weapons or boiling water, physical education and violent assault, long term psychological impact as a result of Mr Smith violent behaviour. This harm may be cause in the course of physical altercation due to seeking revenge or holding grudges...",
                   "confirmation" to "confirmed",
                 ),
@@ -543,7 +543,7 @@ class GeneratePdfServiceApprovedPremisesTest {
                   "telephone" to "07777 777 777",
                 ),
                 "confirm-details" to mapOf(
-                  "name" to "Roger Smith",
+                  "name" to "Name Smith",
                   "email" to "rsmith@justice.example.com",
                 ),
               ),
@@ -554,7 +554,7 @@ class GeneratePdfServiceApprovedPremisesTest {
             "created_at" to "2023-11-10T09:00:00+00:00",
             "abandoned_at" to null,
             "referring_prison_code" to "LEI",
-            "created_by_user" to "Roger Smith (Fake)",
+            "created_by_user" to "Name Smith (Fake)",
             "noms_number" to "A1234AI",
             "preferred_areas" to "Bristol | Newcastle",
             "id" to "edd787eb-31a3-4fad-a473-9cf8969f1487",
