@@ -7,16 +7,14 @@
         {{#StatusUpdateDetails}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Status Label</td>
-                    <td class="data-column-25">Created at</td>
-                    <td class="data-column-25">Detail Label</td>
-                    <td class="data-column-25">Case Reference Number</td>
+                    <td class="data-column-30">Status Label</td>
+                    <td class="data-column-30">Created at</td>
+                    <td class="data-column-30">Detail Label</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue status_label }}</td>
                     <td>{{ optionalValue (formatDate created_at) }}</td>
                     <td>{{ optionalValue detail_label }}</td>
-                    <td>{{ optionalValue crn }}</td>
                 </tr>
             </table>
         {{/StatusUpdateDetails}}
@@ -32,6 +30,7 @@
                 <tr><td>Submitted at</td><td>{{ optionalValue (formatDate submitted_at) }}</td></tr>
                 <tr><td>Conditional release date</td><td>{{ optionalValue (formatDate conditional_release_date) }}</td></tr>
                 <tr><td>Created at</td><td>{{ optionalValue (formatDate created_at) }}</td></tr>
+                <tr><td>Abandoned at</td><td>{{ optionalValue (formatDate abandoned_at) }}</td></tr>
                 <tr><td>Referring prison code</td><td>{{ getPrisonName referring_prison_code }}</td></tr>
                 <tr><td>Preferred areas</td><td>{{ optionalValue preferred_areas }}</td></tr>
                 <tr><td>Home Detention Curfew eligibility date</td><td>{{ optionalValue (formatDate hdc_eligibility_date) }}</td></tr>
@@ -291,6 +290,16 @@
                 <p>No Data Held</p>
             {{/data.personal-information}}
 
+            <h5>Check your answers</h5>
+            {{#data.check-your-answers}}
+                <table class="summary-list">
+                    <tr><td>Check your answers</td><td>{{ optionalValue check-your-answers.checkYourAnswers }}</td></tr>
+                </table>
+            {{/data.check-your-answers}}
+            {{^data.check-your-answers}}
+                <p>No Data Held</p>
+            {{/data.check-your-answers}}
+
             <h5>Equality and diversity monitoring</h5>
             {{#data.equality-and-diversity-monitoring}}
                 <table class="data-table">
@@ -356,6 +365,11 @@
 
             <h5>Risk of serious harm</h5>
             {{#data.risk-of-serious-harm}}
+                <p><b>Summary</b></p>
+                <table class="summary-list">
+                    <tr><td>Additional comments</td><td>{{ optionalValue summary.additionalComments }}</td></tr>
+                </table>
+
                 <p><b>Reducing risk</b></p>
                 <table class="summary-list">
                     <tr><td>Factors likely to reduce risk</td><td>{{ optionalValue reducing-risk.factorsLikelyToReduceRisk }}</td></tr>
@@ -392,14 +406,6 @@
                             <td>{{ optionalValue value.riskToPublic }}</td>
                             <td>{{ optionalValue value.riskToKnownAdult }}</td>
                             <td>{{ optionalValue value.riskToStaff }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-30">Status</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue status }}</td>
                         </tr>
                     </table>
                 {{/summary-data}}
@@ -720,6 +726,31 @@
                 <p>No Data Held</p>
             {{/data.referrer-details}}
 
+            <h5>Document</h5>
+            {{#document}}
+                {{#sections}}
+                    <p><b>{{ title }}</b></p>
+                    {{#tasks}}
+                        <p><b>{{ title }}</b></p>
+                        {{#questionsAndAnswers}}
+                            <table class="summary-list">
+                                <tr><td>Question</td><td>{{ optionalValue question }}</td></tr>
+                                <tr><td>Answer</td><td>{{ optionalValue answer }}</td></tr>
+                            </table>
+                        {{/questionsAndAnswers}}
+                    {{/tasks}}
+                    {{^tasks}}
+                        <p>No Data Held</p>
+                    {{/tasks}}
+                {{/sections}}
+                {{^sections}}
+                    <p>No Data Held</p>
+                {{/sections}}
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
         {{/Applications}}
         {{^Applications}}
             <p>No Data Held</p>
@@ -743,6 +774,33 @@
         {{^Assessments}}
             <p>No Data Held</p>
         {{/Assessments}}
+
+        <h3>Status updates</h3>
+        {{#StatusUpdates}}
+            <br/>
+            <table class="summary-list">
+                <tr><td>Created at</td><td>{{ optionalValue (formatDate created_at) }}</td></tr>
+                <tr><td>Description</td><td>{{ optionalValue description }}</td></tr>
+                <tr><td>Assessor origin</td><td>{{ optionalValue assessor_origin }}</td></tr>
+                <tr><td>Assessor name</td><td>{{ optionalValue assessor_name }}</td></tr>
+                <tr><td>Label</td><td>{{ optionalValue label }}</td></tr>
+            </table>
+        {{/StatusUpdates}}
+        {{^StatusUpdates}}
+            <p>No Data Held</p>
+        {{/StatusUpdates}}
+
+        <h3>Application Notes</h3>
+        {{#ApplicationNotes}}
+            <br/>
+            <table class="summary-list">
+                <tr><td>Create by user</td><td>{{ optionalValue created_by_user }}</td></tr>
+                <tr><td>Body</td><td>{{ optionalValue body }}</td></tr>
+            </table>
+        {{/ApplicationNotes}}
+        {{^ApplicationNotes}}
+            <p>No Data Held</p>
+        {{/ApplicationNotes}}
 
     {{/ShortTermAccommodation}}
     {{^ShortTermAccommodation}}
