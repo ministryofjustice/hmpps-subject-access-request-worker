@@ -5,6 +5,7 @@
         <tr><td>Level</td><td>{{ optionalValue level }}</td></tr>
         <tr><td>Active</td><td>{{ convertBoolean active }}</td></tr>
         <tr><td>Creation</td><td>{{ optionalValue (formatDate createdTimeStamp) }}</td></tr>
+        <tr><td>Updated</td><td>{{ optionalValue (formatDate updatedTimeStamp) }}</td></tr>
         <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
     </table>
 {{/.}}
