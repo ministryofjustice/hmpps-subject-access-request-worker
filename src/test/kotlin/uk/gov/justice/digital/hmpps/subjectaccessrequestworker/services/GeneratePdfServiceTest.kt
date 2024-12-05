@@ -483,6 +483,22 @@ class GeneratePdfServiceTest {
         "expected" to "01 May 2024, 5:43:59 pm",
       ),
       mapOf(
+        "input" to "2024-05-01T17:43:59.123456789",
+        "expected" to "01 May 2024, 5:43:59 pm",
+      ),
+      mapOf(
+        "input" to "2024-05-01T17:43:59.123456789+01:00",
+        "expected" to "01 May 2024, 5:43:59 pm",
+      ),
+      mapOf(
+        "input" to "2024-05-01T17:43:59.123456789Z",
+        "expected" to "01 May 2024, 5:43:59 pm",
+      ),
+      mapOf(
+        "input" to "2024-05-01T17:43:59.123456789Z+01:00",
+        "expected" to "01 May 2024, 5:43:59 pm",
+      ),
+      mapOf(
         "input" to "01/05/2024 17:43",
         "expected" to "01 May 2024, 5:43 pm",
       ),

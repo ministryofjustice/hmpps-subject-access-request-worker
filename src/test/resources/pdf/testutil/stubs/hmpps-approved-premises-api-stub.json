@@ -1434,7 +1434,53 @@
             "created_by_user": "Cas-two Test Admin"
           }
         ],
-        "DomainEvents": []
+        "DomainEvents": [
+          {
+            "data": {
+              "eventDetails": {
+                "updatedBy": {
+                  "origin": "NACRO",
+                  "name": "Cas-two Test Admin",
+                  "email": "test@digital.justice.gov.uk",
+                  "username": "TEST@DIGITAL.JUSTICE.GOV.UK"
+                },
+                "newStatus": {
+                  "name": "moreInfoRequested",
+                  "description": "The prison offender manager (POM) must provide information requested for the application to progress.",
+                  "statusDetails": [
+                    {
+                      "name": "healthNeeds",
+                      "label": "Health needs"
+                    }
+                  ],
+                  "label": "More information requested"
+                },
+                "applicationUrl": "https://community-accommodation-tier-2-dev.hmpps.service.justice.gov.uk/applications/edd787eb-31a3-4fad-a473-9cf8969f1487",
+                "applicationId": "edd787eb-31a3-4fad-a473-9cf8969f1487",
+                "personReference": {
+                  "noms": "A1234AI",
+                  "crn": "X320741"
+                },
+                "updatedAt": "2024-12-04T08:58:48.536926706Z"
+              },
+              "id": "d41acd9c-5eb6-4981-89ac-331cc1108513",
+              "eventType": "applications.cas2.application.status-updated",
+              "timestamp": "2024-12-04T08:58:48.536926706Z"
+            },
+            "created_at": "2024-12-04T08:58:48.604727+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": null,
+            "type": "CAS2_APPLICATION_STATUS_UPDATED",
+            "application_id": "edd787eb-31a3-4fad-a473-9cf8969f1487",
+            "occurred_at": "2024-12-04T08:58:48.536927+00:00",
+            "booking_id": null,
+            "noms_number": "A1234AI",
+            "service": "CAS2",
+            "id": "d41acd9c-5eb6-4981-89ac-331cc1108513",
+            "crn": "X320741"
+          }
+        ]
       }
     },
     {

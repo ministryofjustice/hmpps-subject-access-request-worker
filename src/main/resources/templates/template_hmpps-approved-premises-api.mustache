@@ -1,7 +1,7 @@
 <h1>Approved Premises</h1>
 {{#.}}
-    <h2>Short term accommodation</h2>
     {{#ShortTermAccommodation}}
+    <h2>Short term accommodation</h2>
 
         <h3>Status update details</h3>
         {{#StatusUpdateDetails}}
@@ -802,10 +802,254 @@
             <p>No Data Held</p>
         {{/ApplicationNotes}}
 
+        <h3>Domain Events</h3>
+        {{#DomainEvents}}
+            <h4>Domain event</h4>
+            <table class="summary-list">
+                <tr><td>Created at</td><td>{{ optionalValue (formatDate created_at) }}</td></tr>
+                <tr><td>Trigger source</td><td>{{ optionalValue trigger_source }}</td></tr>
+                <tr><td>Triggered by user</td><td>{{ getUserLastName triggered_by_user }}</td></tr>
+                <tr><td>Occurred at</td><td>{{ optionalValue (formatDate occurred_at) }}</td></tr>
+                <tr><td>Service</td><td>{{ optionalValue service }}</td></tr>
+                <tr><td>Updated at</td><td>{{ optionalValue (formatDate data.eventDetails.updatedAt) }}</td></tr>
+            </table>
+            <h5>Updated by</h5>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Origin</td>
+                    <td class="data-column-25">Name</td>
+                    <td class="data-column-25">Email</td>
+                    <td class="data-column-25">Username</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue data.eventDetails.updatedBy.origin }}</td>
+                    <td>{{ optionalValue data.eventDetails.updatedBy.name }}</td>
+                    <td>{{ optionalValue data.eventDetails.updatedBy.email }}</td>
+                    <td>{{ optionalValue data.eventDetails.updatedBy.username }}</td>
+                </tr>
+            </table>
+            <h5>New status</h5>
+            <table class="summary-list">
+                <tr><td>Name</td><td>{{ optionalValue data.eventDetails.newStatus.name }}</td></tr>
+                <tr><td>Description</td><td>{{ optionalValue data.eventDetails.newStatus.description }}</td></tr>
+                <tr><td>Label</td><td>{{ optionalValue data.eventDetails.newStatus.label }}</td></tr>
+            </table>
+            <p><b>Status details</b></p>
+            {{#data.eventDetails.newStatus.statusDetails}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Name</td>
+                    <td class="data-column-50">Label</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue name }}</td>
+                    <td>{{ optionalValue label }}</td>
+                </tr>
+            </table>
+            {{/data.eventDetails.newStatus.statusDetails}}
+            {{^data.eventDetails.newStatus.statusDetails}}
+                <p>No Data Held</p>
+            {{/data.eventDetails.newStatus.statusDetails}}
+        {{/DomainEvents}}
+        {{^DomainEvents}}
+            <p>No Data Held</p>
+        {{/DomainEvents}}
+
     {{/ShortTermAccommodation}}
-    {{^ShortTermAccommodation}}
+
+    {{#ApprovedPremises}}
+    <h2>Approved Premises</h2>
+
+        <h3>Booking Extensions</h3>
+        {{#BookingExtensions}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/BookingExtensions}}
+        {{^BookingExtensions}}
+        {{/BookingExtensions}}
         <p>No Data Held</p>
-    {{/ShortTermAccommodation}}
+
+        <h3>Applications</h3>
+        {{#Applications}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Applications}}
+        {{^Applications}}
+            <p>No Data Held</p>
+        {{/Applications}}
+
+        <h3>Application Timeline</h3>
+        {{#ApplicationTimeline}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/ApplicationTimeline}}
+        {{^ApplicationTimeline}}
+            <p>No Data Held</p>
+        {{/ApplicationTimeline}}
+
+        <h3>Appeals</h3>
+        {{#Appeals}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Appeals}}
+        {{^Appeals}}
+            <p>No Data Held</p>
+        {{/Appeals}}
+
+        <h3>Assessment Clarification Notes</h3>
+        {{#AssessmentClarificationNotes}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/AssessmentClarificationNotes}}
+        {{^AssessmentClarificationNotes}}
+            <p>No Data Held</p>
+        {{/AssessmentClarificationNotes}}
+
+        <h3>Placement Requirement Criteria</h3>
+        {{#PlacementRequirementCriteria}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/PlacementRequirementCriteria}}
+        {{^PlacementRequirementCriteria}}
+            <p>No Data Held</p>
+        {{/PlacementRequirementCriteria}}
+
+        <h3>Assessments</h3>
+        {{#Assessments}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Assessments}}
+        {{^Assessments}}
+            <p>No Data Held</p>
+        {{/Assessments}}
+
+        <h3>Cancellations</h3>
+        {{#Cancellations}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Cancellations}}
+        {{^Cancellations}}
+            <p>No Data Held</p>
+        {{/Cancellations}}
+
+        <h3>Placement Requirements</h3>
+        {{#PlacementRequirements}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/PlacementRequirements}}
+        {{^PlacementRequirements}}
+            <p>No Data Held</p>
+        {{/PlacementRequirements}}
+
+        <h3>Offline Applications</h3>
+        {{#OfflineApplications}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/OfflineApplications}}
+        {{^OfflineApplications}}
+            <p>No Data Held</p>
+        {{/OfflineApplications}}
+
+        <h3>Placement Requests</h3>
+        {{#PlacementRequests}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/PlacementRequests}}
+        {{^PlacementRequests}}
+            <p>No Data Held</p>
+        {{/PlacementRequests}}
+
+        <h3>Booking Not Mades</h3>
+        {{#BookingNotMades}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/BookingNotMades}}
+        {{^BookingNotMades}}
+            <p>No Data Held</p>
+        {{/BookingNotMades}}
+
+        <h3>Bed Moves</h3>
+        {{#BedMoves}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/BedMoves}}
+        {{^BedMoves}}
+            <p>No Data Held</p>
+        {{/BedMoves}}
+
+        <h3>Placement Applications</h3>
+        {{#PlacementApplications}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/PlacementApplications}}
+        {{^PlacementApplications}}
+            <p>No Data Held</p>
+        {{/PlacementApplications}}
+
+        <h3>Bookings</h3>
+        {{#Bookings}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Bookings}}
+        {{^Bookings}}
+            <p>No Data Held</p>
+        {{/Bookings}}
+
+        <h3>Domain Events</h3>
+        {{#DomainEvents}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/DomainEvents}}
+        {{^DomainEvents}}
+            <p>No Data Held</p>
+        {{/DomainEvents}}
+
+    {{/ApprovedPremises}}
+
+    {{#TemporaryAccommodation}}
+    <h2>Temporary Accommodation</h2>
+
+        <h3>Booking Extensions</h3>
+        {{#BookingExtensions}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/BookingExtensions}}
+        {{^BookingExtensions}}
+            <p>No Data Held</p>
+        {{/BookingExtensions}}
+
+        <h3>Applications</h3>
+        {{#Applications}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Applications}}
+        {{^Applications}}
+            <p>No Data Held</p>
+        {{/Applications}}
+
+        <h3>Assessment Referral History Notes</h3>
+        {{#AssessmentReferralHistoryNotes}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/AssessmentReferralHistoryNotes}}
+        {{^AssessmentReferralHistoryNotes}}
+            <p>No Data Held</p>
+        {{/AssessmentReferralHistoryNotes}}
+
+        <h3>Bookings</h3>
+        {{#Bookings}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Bookings}}
+        {{^Bookings}}
+            <p>No Data Held</p>
+        {{/Bookings}}
+
+        <h3>Assessments</h3>
+        {{#Assessments}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Assessments}}
+        {{^Assessments}}
+            <p>No Data Held</p>
+        {{/Assessments}}
+
+        <h3>Cancellations</h3>
+        {{#Cancellations}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/Cancellations}}
+        {{^Cancellations}}
+            <p>No Data Held</p>
+        {{/Cancellations}}
+
+        <h3>Domain Events</h3>
+        {{#DomainEvents}}
+            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+        {{/DomainEvents}}
+        {{^DomainEvents}}
+            <p>No Data Held</p>
+        {{/DomainEvents}}
+
+    {{/TemporaryAccommodation}}
 
 {{/.}}
 {{^.}}
