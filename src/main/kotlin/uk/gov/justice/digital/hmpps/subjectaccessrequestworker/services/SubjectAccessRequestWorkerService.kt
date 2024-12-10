@@ -60,8 +60,10 @@ class SubjectAccessRequestWorkerService(
       claimSubjectAccessRequest(webClient, subjectAccessRequest)
 
       stopWatch.start()
-      doReport(subjectAccessRequest)
+      createSubjectAccessRequestReport(subjectAccessRequest)
+
       sarGateway.complete(webClient, subjectAccessRequest)
+
       stopWatch.stop()
       telemetryClient.trackSarEvent(
         "NewReportClaimComplete",
@@ -123,7 +125,7 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent("NewReportClaimStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
   }
 
-  fun doReport(subjectAccessRequest: SubjectAccessRequest) {
+  fun createSubjectAccessRequestReport(subjectAccessRequest: SubjectAccessRequest) {
     val stopWatch = StopWatch.createStarted()
     telemetryClient.trackSarEvent("DoReportStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
 
@@ -136,7 +138,7 @@ class SubjectAccessRequestWorkerService(
       TIME_ELAPSED_KEY to stopWatch.time.toString(),
     )
 
-    val dpsServiceList = getSubjectAccessRequestDataService.execute(
+    val dpsServiceList = getSubjectAccessRequestDataService.requestDataFromServices(
       selectedServices,
       subjectAccessRequest.nomisId,
       subjectAccessRequest.ndeliusCaseReferenceId,
