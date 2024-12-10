@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.StringUtils.isBlank
 import org.apache.commons.lang3.StringUtils.leftPad
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
@@ -37,7 +38,7 @@ class TemplateHelpers(
   }
 
   fun getUserLastName(userId: String?): String {
-    if (StringUtils.isBlank(userId)) return "No Data Held"
+    if (isBlank(userId)) return "No Data Held"
     val userDetails = userDetailsRepository.findByUsername(userId!!)
 
     return userDetails?.lastName ?: userId
@@ -51,9 +52,13 @@ class TemplateHelpers(
   }
 
   fun buildDate(year: String?, month: String?, day: String?): String {
-    if (year == null || month == null || day == null) {
+    if (isBlank(year) || isBlank(month) || isBlank(day)) {
       return "No Data Held"
     }
     return formatDate(format("%s-%s-%s", leftPad(year, 4, "0"), leftPad(month, 2, "0"), leftPad(day, 2, "0")))
   }
+
+  fun buildDateNumber(year: Number?, month: Number?, day: Number?): String =
+    buildDate(year?.toInt()?.toString(), month?.toInt()?.toString(), day?.toInt()?.toString())
+
 }

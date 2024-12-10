@@ -870,7 +870,752 @@
 
         <h3>Applications</h3>
         {{#Applications}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Application</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Offence id</td>
+                    <td class="data-column-25">Application user</td>
+                    <td class="data-column-25">Sentence type</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue id }}</td>
+                    <td>{{ optionalValue offence_id }}</td>
+                    <td>{{ getUserLastName application_user_name }}</td>
+                    <td>{{ optionalValue sentence_type }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Submitted at</td>
+                    <td class="data-column-25">Withdrawal reason</td>
+                    <td class="data-column-25">Application type</td>
+                    <td class="data-column-25">Created at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate submitted_at) }}</td>
+                    <td>{{ optionalValue withdrawal_reason }}</td>
+                    <td>{{ optionalValue ap_type }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Is withdrawn</td>
+                    <td class="data-column-25">Inmate in out status on submission</td>
+                    <td class="data-column-25">Created by</td>
+                    <td class="data-column-25">Notice type</td>
+                </tr>
+                <tr>
+                    <td>{{ convertBoolean is_withdrawn }}</td>
+                    <td>{{ optionalValue inmate_in_out_status_on_submission }}</td>
+                    <td>{{ getUserLastName created_by_user }}</td>
+                    <td>{{ optionalValue notice_type }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Arrival date</td>
+                    <td class="data-column-25">Target location</td>
+                    <td class="data-column-25">Conviction id</td>
+                    <td class="data-column-25">Case manager name</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                    <td>{{ optionalValue target_location }}</td>
+                    <td>{{ optionalValue conviction_id }}</td>
+                    <td>{{ optionalValue case_manager_name }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Is emergency application</td>
+                    <td class="data-column-25">Release type</td>
+                    <td class="data-column-25">Name</td>
+                    <td class="data-column-25">Case manager is not applicant</td>
+                </tr>
+                <tr>
+                    <td>{{ convertBoolean is_emergency_application }}</td>
+                    <td>{{ optionalValue release_type }}</td>
+                    <td>{{ optionalValue name }}</td>
+                    <td>{{ convertBoolean case_manager_is_not_applicant }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Event number</td>
+                    <td class="data-column-25">Is women application</td>
+                    <td class="data-column-25">Other withdrawal reason</td>
+                    <td class="data-column-25">Status</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue event_number }}</td>
+                    <td>{{ convertBoolean is_womens_application }}</td>
+                    <td>{{ optionalValue other_withdrawal_reason }}</td>
+                    <td>{{ optionalValue status }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Type of approved premises</td>
+                    <td class="data-column-25">Check your answers reviewed</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue data.type-of-ap.ap-type.type }}</td>
+                    <td>{{ optionalValue data.check-your-answers.review.reviewed }}</td>
+                </tr>
+            </table>
+
+            <h5>Offender Assessment System Import</h5>
+            {{#data.oasys-import}}
+                <p><b>Risk of Serious Harm summary</b></p>
+                {{#rosh-summary.roshSummaries}}
+                    <table class="summary-list">
+                        <tr><td>{{ questionNumber }} {{ label }}</td><td>{{ optionalValue answer }}</td></tr>
+                    </table>
+                {{/rosh-summary.roshSummaries}}
+                {{^rosh-summary.roshSummaries}}
+                    <p>No Data Held</p>
+                {{/rosh-summary.roshSummaries}}
+
+                <p><b>Risk management plan</b></p>
+                {{#risk-management-plan.riskManagementSummaries}}
+                    <table class="summary-list">
+                        <tr><td>{{ questionNumber }} {{ label }}</td><td>{{ optionalValue answer }}</td></tr>
+                    </table>
+                {{/risk-management-plan.riskManagementSummaries}}
+                {{^risk-management-plan.riskManagementSummaries}}
+                    <p>No Data Held</p>
+                {{/risk-management-plan.riskManagementSummaries}}
+
+                <p><b>Risk to self</b></p>
+                {{#risk-to-self.riskToSelfSummaries}}
+                    <table class="summary-list">
+                        <tr><td>{{ questionNumber }} {{ label }}</td><td>{{ optionalValue answer }}</td></tr>
+                    </table>
+                {{/risk-to-self.riskToSelfSummaries}}
+                {{^risk-to-self.riskToSelfSummaries}}
+                    <p>No Data Held</p>
+                {{/risk-to-self.riskToSelfSummaries}}
+
+                <p><b>Supporting information</b></p>
+                {{#supporting-information.supportingInformationSummaries}}
+                    <table class="data-table">
+                        <tr>
+                            <td class="data-column-30">Question number</td>
+                            <td class="data-column-30">Linked to re-offending</td>
+                            <td class="data-column-30">Linked to harm</td>
+                        </tr>
+                        <tr>
+                            <td>{{ optionalValue questionNumber }}</td>
+                            <td>{{ convertBoolean linkedToReOffending }}</td>
+                            <td>{{ convertBoolean linkedToHarm }}</td>
+                        </tr>
+                    </table>
+                    <table class="summary-list">
+                        <tr><td>{{ label }}</td><td>{{ optionalValue answer }}</td></tr>
+                    </table>
+                {{/supporting-information.supportingInformationSummaries}}
+                {{^supporting-information.supportingInformationSummaries}}
+                    <p>No Data Held</p>
+                {{/supporting-information.supportingInformationSummaries}}
+
+                <p><b>Offence details</b></p>
+                {{#offence-details.offenceDetailsSummaries}}
+                    <table class="summary-list">
+                        <tr><td>{{ questionNumber }} {{ label }}</td><td>{{ optionalValue answer }}</td></tr>
+                    </table>
+                {{/offence-details.offenceDetailsSummaries}}
+                {{^offence-details.offenceDetailsSummaries}}
+                    <p>No Data Held</p>
+                {{/offence-details.offenceDetailsSummaries}}
+
+                <p><b>Optional sections</b></p>
+                {{#optional-oasys-sections}}
+                    <p><b>Other needs</b></p>
+                    {{#otherNeeds}}
+                        <table class="data-table">
+                            <tr>
+                                <td class="data-column-25">Name</td>
+                                <td class="data-column-25">Section</td>
+                                <td class="data-column-25">Linked to re-offending</td>
+                                <td class="data-column-25">Linked to harm</td>
+                            </tr>
+                            <tr>
+                                <td>{{ optionalValue name }}</td>
+                                <td>{{ optionalValue section }}</td>
+                                <td>{{ convertBoolean linkedToReOffending }}</td>
+                                <td>{{ convertBoolean linkedToHarm }}</td>
+                            </tr>
+                        </table>
+                    {{/otherNeeds}}
+                    {{^otherNeeds}}
+                        <p>No Data Held</p>
+                    {{/otherNeeds}}
+                {{/optional-oasys-sections}}
+                {{^optional-oasys-sections}}
+                    <p>No Data Held</p>
+                {{/optional-oasys-sections}}
+
+            {{/data.oasys-import}}
+            {{^data.oasys-import}}
+                <p>No Data Held</p>
+            {{/data.oasys-import}}
+
+            <h5>Risk Management Features</h5>
+            {{#data.risk-management-features}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Additional features details</td>
+                        <td class="data-column-30">Manage risk details</td>
+                        <td class="data-column-30">Convicted offences response</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue risk-management-features.additionalFeaturesDetails }}</td>
+                        <td>{{ optionalValue risk-management-features.manageRiskDetails }}</td>
+                        <td>{{ optionalValue convicted-offences.response }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Rehabilitative interventions summary</td>
+                        <td class="data-column-30">Other intervention</td>
+                        <td class="data-column-30">Rehabilitative interventions</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue rehabilitative-interventions.summary }}</td>
+                        <td>{{ optionalValue rehabilitative-interventions.otherIntervention }}</td>
+                        <td>{{#rehabilitative-interventions.rehabilitativeInterventions}}{{.}}{{#unless @last}}, {{/unless}}{{/rehabilitative-interventions.rehabilitativeInterventions}}{{^rehabilitative-interventions.rehabilitativeInterventions}}No Data Held{{/rehabilitative-interventions.rehabilitativeInterventions}}</td>
+                    </tr>
+                </table>
+            {{/data.risk-management-features}}
+            {{^data.risk-management-features}}
+                <p>No Data Held</p>
+            {{/data.risk-management-features}}
+
+            <h5>Move on</h5>
+            {{#data.move-on}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Placement duration days</td>
+                        <td class="data-column-25">Placement duration weeks</td>
+                        <td class="data-column-25">Different duration</td>
+                        <td class="data-column-25">Reason</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue placement-duration.durationDays }}</td>
+                        <td>{{ optionalValue placement-duration.durationWeeks }}</td>
+                        <td>{{ optionalValue placement-duration.differentDuration }}</td>
+                        <td>{{ optionalValue placement-duration.reason }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Are plans in place</td>
+                        <td class="data-column-25">Plans not in place detail</td>
+                        <td class="data-column-25">Type of accommodation</td>
+                        <td class="data-column-25">Other accommodation type</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue plans-in-place.arePlansInPlace }}</td>
+                        <td>{{ optionalValue plans-in-place.plansNotInPlaceDetail }}</td>
+                        <td>{{ optionalValue type-of-accommodation.accommodationType }}</td>
+                        <td>{{ optionalValue type-of-accommodation.otherAccommodationType }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Relocation postcode area</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue relocation-region.postcodeArea }}</td>
+                    </tr>
+                </table>
+            {{/data.move-on}}
+            {{^data.move-on}}
+                <p>No Data Held</p>
+            {{/data.move-on}}
+
+            <h5>Access and healthcare</h5>
+            {{#data.access-and-healthcare}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Covid booster eligibility</td>
+                        <td class="data-column-25">Covid booster eligibility detail</td>
+                        <td class="data-column-25">Is immunosuppressed</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue covid.boosterEligibility }}</td>
+                        <td>{{ optionalValue covid.boosterEligibilityDetail }}</td>
+                        <td>{{ optionalValue covid.immunosuppressed }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Has care and support needs</td>
+                        <td class="data-column-25">Care and support needs</td>
+                        <td class="data-column-25">Has religious or cultural needs</td>
+                        <td class="data-column-25">Religious or cultural needs</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue access-needs.careAndSupportNeeds }}</td>
+                        <td>{{ optionalValue access-needs.careAndSupportNeedsDetail }}</td>
+                        <td>{{ optionalValue access-needs.religiousOrCulturalNeeds }}</td>
+                        <td>{{ optionalValue access-needs.religiousOrCulturalNeedsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Needs interpreter</td>
+                        <td class="data-column-25">Interpreter language</td>
+                        <td class="data-column-25">Additional needs</td>
+                        <td class="data-column-25">Care act assessment completed</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue access-needs.needsInterpreter }}</td>
+                        <td>{{ optionalValue access-needs.interpreterLanguage }}</td>
+                        <td>{{# access-needs.additionalNeeds }}{{.}}{{#unless @last}}, {{/unless}}{{/ access-needs.additionalNeeds }}{{^ access-needs.additionalNeeds }}No Data Held{{/ access-needs.additionalNeeds }}</td>
+                        <td>{{ optionalValue access-needs.careActAssessmentCompleted }}</td>
+                    </tr>
+                </table>
+            {{/data.access-and-healthcare}}
+            {{^data.access-and-healthcare}}
+                <p>No Data Held</p>
+            {{/data.access-and-healthcare}}
+
+            <h5>Attach Required Documents</h5>
+            {{#data.attach-required-documents}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Selected documents</td>
+                        <td class="data-column-50">Other document details</td>
+                    </tr>
+                    <tr>
+                        <td><ul>{{# attach-documents.selectedDocuments }}<li>{{.}}</li>{{/ attach-documents.selectedDocuments }}{{^ attach-documents.selectedDocuments }}No Data Held{{/ attach-documents.selectedDocuments }}</ul></td>
+                        <td>{{ optionalValue attach-documents.otherDocumentDetails }}</td>
+                    </tr>
+                </table>
+            {{/data.attach-required-documents}}
+            {{^data.attach-required-documents}}
+                <p>No Data Held</p>
+            {{/data.attach-required-documents}}
+
+            <h5>Basic information</h5>
+            {{#data.basic-information}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Licence expiry date</td>
+                        <td class="data-column-25">Sentence expiry date</td>
+                        <td class="data-column-25">Parole eligibility date</td>
+                        <td class="data-column-25">Placement purposes</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue (formatDate relevant-dates.licenceExpiryDate) }}</td>
+                        <td>{{ optionalValue (formatDate relevant-dates.sentenceExpiryDate) }}</td>
+                        <td>{{ optionalValue (formatDate relevant-dates.paroleEligibilityDate) }}</td>
+                        <td>{{# placement-purpose.placementPurposes }}{{.}}{{#unless @last}}, {{/unless}}{{/ placement-purpose.placementPurposes }}{{^ placement-purpose.placementPurposes }}No Data Held{{/ placement-purpose.placementPurposes }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Sentence type</td>
+                        <td class="data-column-25">Release date known</td>
+                        <td class="data-column-25">Release date</td>
+                        <td class="data-column-25">Release type</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue sentence-type.sentenceType }}</td>
+                        <td>{{ optionalValue release-date.knowReleaseDate }}</td>
+                        <td>{{ optionalValue (formatDate release-date.releaseDate) }}</td>
+                        <td>{{ optionalValue release-type.releaseType }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Oral hearing date known</td>
+                        <td class="data-column-25">Oral hearing date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue oral-hearing.knowOralHearingDate }}</td>
+                        <td>{{ optionalValue (formatDate oral-hearing.oralHearingDate) }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Placement start same as release date</td>
+                        <td class="data-column-25">Is exceptional case</td>
+                        <td class="data-column-25">Managed by Multi-Agency Public Protection Arrangements</td>
+                        <td class="data-column-25">Transgender or has transgender history</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue placement-date.startDateSameAsReleaseDate }}</td>
+                        <td>{{ optionalValue is-exceptional-case.isExceptionalCase }}</td>
+                        <td>{{ optionalValue managed-by-mappa.managedByMappa }}</td>
+                        <td>{{ optionalValue transgender.transgenderOrHasTransgenderHistory }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Agreed case with manager</td>
+                        <td class="data-column-25">Agreement date</td>
+                        <td class="data-column-25">Manager name</td>
+                        <td class="data-column-25">Agreement summary</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue exception-details.agreedCaseWithManager }}</td>
+                        <td>{{ optionalValue (formatDate exception-details.agreementDate) }}</td>
+                        <td>{{ optionalValue exception-details.managerName }}</td>
+                        <td>{{ optionalValue exception-details.agreementSummary }}</td>
+                    </tr>
+                </table>
+                <p><b>Confirm your details</b></p>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Name</td>
+                        <td class="data-column-25">Email address</td>
+                    </tr>
+                    <tr>
+                        <td>{{ getUserLastName confirm-your-details.userDetailsFromDelius.name }}</td>
+                        <td>{{ optionalValue confirm-your-details.userDetailsFromDelius.emailAddress }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Phone number</td>
+                        <td class="data-column-25">Area</td>
+                        <td class="data-column-25">Case management responsibility</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue confirm-your-details.phoneNumber }}</td>
+                        <td>{{ optionalValue confirm-your-details.userDetailsFromDelius.area.name }}</td>
+                        <td>{{ optionalValue confirm-your-details.caseManagementResponsibility }}</td>
+                    </tr>
+                </table>
+
+            {{/data.basic-information}}
+            {{^data.basic-information}}
+                <p>No Data Held</p>
+            {{/data.basic-information}}
+
+            <h5>Further Consideration</h5>
+            {{#data.further-considerations}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Has additional circumstances</td>
+                        <td class="data-column-75">Additional circumstances</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue additional-circumstances.additionalCircumstances }}</td>
+                        <td>{{ optionalValue additional-circumstances.additionalCircumstancesDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Has previous placement</td>
+                        <td class="data-column-75">Previous placement</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue previous-placements.previousPlacement }}</td>
+                        <td>{{ optionalValue previous-placements.previousPlacementDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Catering</td>
+                        <td class="data-column-75">Catering detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue catering.catering }}</td>
+                        <td>{{ optionalValue catering.cateringDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Exploitable</td>
+                        <td class="data-column-75">Exploitable detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue vulnerability.exploitable }}</td>
+                        <td>{{ optionalValue vulnerability.exploitableDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Exploits others</td>
+                        <td class="data-column-75">Exploits others detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue vulnerability.exploitOthers }}</td>
+                        <td>{{ optionalValue vulnerability.exploitOthersDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk to others</td>
+                        <td class="data-column-75">Risk to others detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue room-sharing.riskToOthers }}</td>
+                        <td>{{ optionalValue room-sharing.riskToOthersDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Trauma concerns</td>
+                        <td class="data-column-75">Trauma concerns detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue room-sharing.traumaConcerns }}</td>
+                        <td>{{ optionalValue room-sharing.traumaConcernsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Sharing concerns</td>
+                        <td class="data-column-75">Sharing concerns detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue room-sharing.sharingConcerns }}</td>
+                        <td>{{ optionalValue room-sharing.sharingConcernsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk to staff</td>
+                        <td class="data-column-75">Risk to staff detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue room-sharing.riskToStaff }}</td>
+                        <td>{{ optionalValue room-sharing.riskToStaffDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Sharing benefits</td>
+                        <td class="data-column-75">Sharing benefits detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue room-sharing.sharingBenefits }}</td>
+                        <td>{{ optionalValue room-sharing.sharingBenefitsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Arson</td>
+                        <td class="data-column-75">Arson detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue arson.arson }}</td>
+                        <td>{{ optionalValue arson.arsonDetail }}</td>
+                    </tr>
+                </table>
+            {{/data.further-considerations}}
+            {{^data.further-considerations}}
+                <p>No Data Held</p>
+            {{/data.further-considerations}}
+
+            <h5>Location Factors</h5>
+            {{#data.location-factors}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Alternative radius accepted</td>
+                        <td class="data-column-30">Postcode area</td>
+                        <td class="data-column-30">Positive factors</td>
+
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue describe-location-factors.alternativeRadiusAccepted }}</td>
+                        <td>{{ optionalValue describe-location-factors.postcodeArea }}</td>
+                        <td>{{ optionalValue describe-location-factors.positiveFactors }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Restrictions</td>
+                        <td class="data-column-50">Restriction detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue describe-location-factors.restrictions }}</td>
+                        <td>{{ optionalValue describe-location-factors.restrictionDetail }}</td>
+                    </tr>
+                </table>
+                <p><b>Preferred Approved Premises</b></p>
+                {{#preferred-aps.selectedAps}}
+                    <table class="data-table">
+                        <tr>
+                            <td class="data-column-25">Name</td>
+                            <td class="data-column-25">Area</td>
+                            <td class="data-column-25">Supports space bookings</td>
+                            <td class="data-column-25">Bed count</td>
+                        </tr>
+                        <tr>
+                            <td>{{ optionalValue name }}</td>
+                            <td>{{ optionalValue apArea.name }}</td>
+                            <td>{{ convertBoolean supportsSpaceBookings }}</td>
+                            <td>{{ optionalValue bedCount }}</td>
+                        </tr>
+                    </table>
+                {{/preferred-aps.selectedAps}}
+                {{^preferred-aps.selectedAps}}
+                    <p>No Data Held</p>
+                {{/preferred-aps.selectedAps}}
+
+            {{/data.location-factors}}
+            {{^data.location-factors}}
+                <p>No Data Held</p>
+            {{/data.location-factors}}
+
+            <h5>Risk Ratings</h5>
+            {{#risk_ratings}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Multi-Agency Public Protection Arrangements value</td>
+                        <td class="data-column-50">Multi-Agency Public Protection Arrangements status</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue mappa.value }}</td>
+                        <td>{{ optionalValue mappa.status }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Tier level</td>
+                        <td class="data-column-25">Tier status</td>
+                        <td class="data-column-25">Tier last updated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue tier.value.level }}</td>
+                        <td>{{ optionalValue tier.status }}</td>
+                        <td>{{ buildDateNumber tier.value.lastUpdated.[0] tier.value.lastUpdated.[1] tier.value.lastUpdated.[2] }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk of Serious Harm overall risk</td>
+                        <td class="data-column-25">Risk to Children</td>
+                        <td class="data-column-25">Risk to Public</td>
+                        <td class="data-column-25">Risk to Known Adult</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue roshRisks.value.overallRisk }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToChildren }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToPublic }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToKnownAdult }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk to Staff</td>
+                        <td class="data-column-25">Risk of Serious Harm status</td>
+                        <td class="data-column-25">Risk of Serious Harm last updated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue roshRisks.value.riskToStaff }}</td>
+                        <td>{{ optionalValue roshRisks.status }}</td>
+                        <td>{{ buildDateNumber roshRisks.value.lastUpdated.[0] roshRisks.value.lastUpdated.[1] roshRisks.value.lastUpdated.[2] }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Flags</td>
+                        <td class="data-column-50">Flags status</td>
+                    </tr>
+                    <tr>
+                        <td>{{#flags.value}}{{.}}{{#unless @last}}, {{/unless}}{{/flags.value}}{{^flags.value}}No Data Held{{/flags.value}}</td>
+                        <td>{{ optionalValue flags.status }}</td>
+                    </tr>
+                </table>
+            {{/risk_ratings}}
+            {{^risk_ratings}}
+                <p>No Data Held</p>
+            {{/risk_ratings}}
+
+            <h5>Document</h5>
+            {{#document}}
+                <p><b>Offender Assessment System Import</b></p>
+                {{#oasys-import}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/oasys-import}}
+                {{^oasys-import}}
+                    <p>No Data Held</p>
+                {{/oasys-import}}
+
+                <p><b>Risk Management Features</b></p>
+                {{#risk-management-features}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/risk-management-features}}
+                {{^risk-management-features}}
+                    <p>No Data Held</p>
+                {{/risk-management-features}}
+
+                <p><b>Move on</b></p>
+                {{#move-on}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/move-on}}
+                {{^move-on}}
+                    <p>No Data Held</p>
+                {{/move-on}}
+
+                <p><b>Access and Healthcare</b></p>
+                {{#access-and-healthcare}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/access-and-healthcare}}
+                {{^access-and-healthcare}}
+                    <p>No Data Held</p>
+                {{/access-and-healthcare}}
+
+                <p><b>Attach Required Documents</b></p>
+                {{#attach-required-documents}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/attach-required-documents}}
+                {{^attach-required-documents}}
+                    <p>No Data Held</p>
+                {{/attach-required-documents}}
+
+                <p><b>Type of Approve Premises</b></p>
+                {{#type-of-ap}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/type-of-ap}}
+                {{^type-of-ap}}
+                    <p>No Data Held</p>
+                {{/type-of-ap}}
+
+                <p><b>Basic Information</b></p>
+                {{#basic-information}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/basic-information}}
+                {{^basic-information}}
+                    <p>No Data Held</p>
+                {{/basic-information}}
+
+                <p><b>Further Considerations</b></p>
+                {{#further-considerations}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/further-considerations}}
+                {{^further-considerations}}
+                    <p>No Data Held</p>
+                {{/further-considerations}}
+
+                <p><b>Prison Information</b></p>
+                {{#prison-information}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/prison-information}}
+                {{^prison-information}}
+                    <p>No Data Held</p>
+                {{/prison-information}}
+
+                <p><b>Location Factors</b></p>
+                {{#location-factors}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/location-factors}}
+                {{^location-factors}}
+                    <p>No Data Held</p>
+                {{/location-factors}}
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
         {{/Applications}}
         {{^Applications}}
             <p>No Data Held</p>
@@ -886,7 +1631,42 @@
 
         <h3>Appeals</h3>
         {{#Appeals}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Appeal</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Appeal id</td>
+                    <td class="data-column-30">Assessment id</td>
+                    <td class="data-column-30">Application id</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue appeal_id }}</td>
+                    <td>{{ optionalValue assessment_id }}</td>
+                    <td>{{ optionalValue application_id }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                    <td class="data-column-30">Appeal detail</td>
+                    <td class="data-column-30">Appeal date</td>
+                    <td class="data-column-30">Appeal created at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue appeal_detail }}</td>
+                    <td>{{ optionalValue (formatDate appeal_date) }}</td>
+                    <td>{{ optionalValue (formatDate appeal_created_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Created by user</td>
+                    <td class="data-column-30">Decision</td>
+                    <td class="data-column-30">Decision detail</td>
+                </tr>
+                <tr>
+                    <td>{{ getUserLastName created_by_user }}</td>
+                    <td>{{ optionalValue decision }}</td>
+                    <td>{{ optionalValue decision_detail }}</td>
+                </tr>
+            </table>
         {{/Appeals}}
         {{^Appeals}}
             <p>No Data Held</p>
@@ -894,7 +1674,30 @@
 
         <h3>Assessment Clarification Notes</h3>
         {{#AssessmentClarificationNotes}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Assessment id</td>
+                    <td class="data-column-30">Application id</td>
+                    <td class="data-column-30">Created by user</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue assessment_id }}</td>
+                    <td>{{ optionalValue application_id }}</td>
+                    <td>{{ getUserLastName created_by_user }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Created at</td>
+                    <td class="data-column-30">Query</td>
+                    <td class="data-column-30">Response</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue query }}</td>
+                    <td>{{ optionalValue response }}</td>
+                </tr>
+            </table>
         {{/AssessmentClarificationNotes}}
         {{^AssessmentClarificationNotes}}
             <p>No Data Held</p>
@@ -902,7 +1705,32 @@
 
         <h3>Placement Requirement Criteria</h3>
         {{#PlacementRequirementCriteria}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Criteria</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Placement requirement id</td>
+                    <td class="data-column-30">Criteria name</td>
+                    <td class="data-column-30">Criteria type</td>
+
+                </tr>
+                <tr>
+                    <td>{{ optionalValue placement_requirement_id }}</td>
+                    <td>{{ optionalValue criteria_name }}</td>
+                    <td>{{ optionalValue criteria_type }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Is active</td>
+                    <td class="data-column-30">Service scope</td>
+                    <td class="data-column-30">Model scope</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue is_active }}</td>
+                    <td>{{ optionalValue service_scope }}</td>
+                    <td>{{ optionalValue model_scope }}</td>
+                </tr>
+            </table>
         {{/PlacementRequirementCriteria}}
         {{^PlacementRequirementCriteria}}
             <p>No Data Held</p>
@@ -910,7 +1738,321 @@
 
         <h3>Assessments</h3>
         {{#Assessments}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Assessment</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Assessment id</td>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Decision</td>
+                    <td class="data-column-25">rejection_rationale</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue assessment_id }}</td>
+                    <td>{{ optionalValue application_id }}</td>
+                    <td>{{ optionalValue decision }}</td>
+                    <td>{{ optionalValue rejection_rationale }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Is withdrawn</td>
+                    <td class="data-column-25">Created from appeal</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Submitted at</td>
+                </tr>
+                <tr>
+                    <td>{{ convertBoolean is_withdrawn }}</td>
+                    <td>{{ convertBoolean created_from_appeal }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue (formatDate submitted_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Due at</td>
+                    <td class="data-column-25">Allocated at</td>
+                    <td class="data-column-25">Reallocated at</td>
+                    <td class="data-column-25">Assessor name</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate due_at) }}</td>
+                    <td>{{ optionalValue (formatDate allocated_at) }}</td>
+                    <td>{{ optionalValue (formatDate reallocated_at) }}</td>
+                    <td>{{ optionalValue (formatDate assessor_name) }}</td>
+                </tr>
+            </table>
+
+            <h5>Make a Decision</h5>
+            {{#data.make-a-decision.make-a-decision}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Decision</td>
+                        <td class="data-column-50">Decision rationale</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue decision }}</td>
+                        <td>{{ optionalValue decisionRationale }}</td>
+                    </tr>
+                </table>
+            {{/data.make-a-decision.make-a-decision}}
+            {{^data.make-a-decision.make-a-decision}}
+                <p>No Data Held</p>
+            {{/data.make-a-decision.make-a-decision}}
+
+            <h5>Required Actions</h5>
+            {{#data.required-actions.required-actions}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Name of area manager</td>
+                        <td class="data-column-30">Outline of discussion</td>
+                        <td class="data-column-30">Date of discussion</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue nameOfAreaManager }}</td>
+                        <td>{{ optionalValue outlineOfDiscussion }}</td>
+                        <td>{{ buildDate dateOfDiscussion-year dateOfDiscussion-month dateOfDiscussion-day }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Additional actions</td>
+                        <td class="data-column-25">Additional actions comments</td>
+                        <td class="data-column-25">Concerns of unmanageable risk</td>
+                        <td class="data-column-25">Concerns of unmanageable risk comments</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue additionalActions }}</td>
+                        <td>{{ optionalValue additionalActionsComments }}</td>
+                        <td>{{ optionalValue concernsOfUnmanagableRisk }}</td>
+                        <td>{{ optionalValue concernsOfUnmanagableRiskComments }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Curfews or sign ins</td>
+                        <td class="data-column-25">Curfews or sign ins comments</td>
+                        <td class="data-column-25">Additional recommendations</td>
+                        <td class="data-column-25">Additional recommendations comments</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue curfewsOrSignIns }}</td>
+                        <td>{{ optionalValue curfewsOrSignInsComments }}</td>
+                        <td>{{ optionalValue additionalRecommendations }}</td>
+                        <td>{{ optionalValue additionalRecommendationsComments }}</td>
+                    </tr>
+                </table>
+            {{/data.required-actions.required-actions}}
+            {{^data.required-actions.required-actions}}
+                <p>No Data Held</p>
+            {{/data.required-actions.required-actions}}
+
+            <h5>Matching Information</h5>
+            {{#data.matching-information.matching-information}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Approved Premises type</td>
+                        <td class="data-column-25">Length of stay agreed</td>
+                        <td class="data-column-25">Length of stay weeks</td>
+                        <td class="data-column-25">Length of stay days</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue apType }}</td>
+                        <td>{{ optionalValue lengthOfStayAgreed }}</td>
+                        <td>{{ optionalValue lengthOfStayWeeks }}</td>
+                        <td>{{ optionalValue lengthOfStayDays }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Central Referrers Unit information</td>
+                        <td class="data-column-25">Has en suite</td>
+                        <td class="data-column-25">Is catered</td>
+                        <td class="data-column-25">Is single</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue cruInformation }}</td>
+                        <td>{{ optionalValue hasEnSuite }}</td>
+                        <td>{{ optionalValue isCatered }}</td>
+                        <td>{{ optionalValue isSingle }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Is suited for sex offenders</td>
+                        <td class="data-column-25">Accepts sex offenders</td>
+                        <td class="data-column-25">Accepts child sex offenders</td>
+                        <td class="data-column-25">Accepts non sexual child offenders</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue isSuitedForSexOffenders }}</td>
+                        <td>{{ optionalValue acceptsSexOffenders }}</td>
+                        <td>{{ optionalValue acceptsChildSexOffenders }}</td>
+                        <td>{{ optionalValue acceptsNonSexualChildOffenders }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Accepts hate crime offenders</td>
+                        <td class="data-column-25">Is wheelchair designated</td>
+                        <td class="data-column-25">Is step free designated</td>
+                        <td class="data-column-25">Is suitable for vulnerable</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue acceptsHateCrimeOffenders }}</td>
+                        <td>{{ optionalValue isWheelchairDesignated }}</td>
+                        <td>{{ optionalValue isStepFreeDesignated }}</td>
+                        <td>{{ optionalValue isSuitableForVulnerable }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Is arson suitable</td>
+                        <td class="data-column-25">Is arson designated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue isArsonSuitable }}</td>
+                        <td>{{ optionalValue isArsonDesignated }}</td>
+                    </tr>
+                </table>
+            {{/data.matching-information.matching-information}}
+            {{^data.matching-information.matching-information}}
+                <p>No Data Held</p>
+            {{/data.matching-information.matching-information}}
+
+            <h5>Suitability Assessment</h5>
+            {{#data.suitability-assessment.suitability-assessment}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk factors</td>
+                        <td class="data-column-25">Risk factors comments</td>
+                        <td class="data-column-25">Risk management</td>
+                        <td class="data-column-25">Risk management comments</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskFactors }}</td>
+                        <td>{{ optionalValue riskFactorsComments }}</td>
+                        <td>{{ optionalValue riskManagement }}</td>
+                        <td>{{ optionalValue riskManagementComments }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Move on plan</td>
+                        <td class="data-column-25">Move on plan comments</td>
+                        <td class="data-column-25">Location of placement</td>
+                        <td class="data-column-25">Location of placement comments</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue moveOnPlan }}</td>
+                        <td>{{ optionalValue moveOnPlanComments }}</td>
+                        <td>{{ optionalValue locationOfPlacement }}</td>
+                        <td>{{ optionalValue locationOfPlacementComments }}</td>
+                    </tr>
+                </table>
+            {{/data.suitability-assessment.suitability-assessment}}
+            {{^data.suitability-assessment.suitability-assessment}}
+                <p>No Data Held</p>
+            {{/data.suitability-assessment.suitability-assessment}}
+
+            <h5>Review Application</h5>
+            {{#data.review-application}}
+                <table class="summary-list">
+                    <tr><td>Reviewed</td><td>{{ optionalValue review.reviewed }}</td></tr>
+                </table>
+            {{/data.review-application}}
+            {{^data.review-application}}
+                <p>No Data Held</p>
+            {{/data.review-application}}
+
+            <h5>Sufficient Information</h5>
+            {{#data.sufficient-information.sufficient-information}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Sufficient information</td>
+                        <td class="data-column-50">Query</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue sufficientInformation }}</td>
+                        <td>{{ optionalValue query }}</td>
+                    </tr>
+                </table>
+            {{/data.sufficient-information.sufficient-information}}
+            {{^data.sufficient-information.sufficient-information}}
+                <p>No Data Held</p>
+            {{/data.sufficient-information.sufficient-information}}
+
+            <h5>Check Your Answers</h5>
+            {{#data.check-your-answers.check-your-answers}}
+                <table class="summary-list">
+                    <tr><td>Reviewed</td><td>{{ optionalValue reviewed }}</td></tr>
+                </table>
+            {{/data.check-your-answers.check-your-answers}}
+            {{^data.check-your-answers.check-your-answers}}
+                <p>No Data Held</p>
+            {{/data.check-your-answers.check-your-answers}}
+
+            <h5>Document</h5>
+            {{#document}}
+                <p><b>Make a Decision</b></p>
+                {{#make-a-decision}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/make-a-decision}}
+                {{^make-a-decision}}
+                    <p>No Data Held</p>
+                {{/make-a-decision}}
+
+                <p><b>Required Actions</b></p>
+                {{#required-actions}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/required-actions}}
+                {{^required-actions}}
+                    <p>No Data Held</p>
+                {{/required-actions}}
+
+                <p><b>Matching Information</b></p>
+                {{#matching-information}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/matching-information}}
+                {{^matching-information}}
+                    <p>No Data Held</p>
+                {{/matching-information}}
+
+                <p><b>Suitability Assessment</b></p>
+                {{#suitability-assessment}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/suitability-assessment}}
+                {{^suitability-assessment}}
+                    <p>No Data Held</p>
+                {{/suitability-assessment}}
+
+                <p><b>Review Application</b></p>
+                {{#review-application}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/review-application}}
+                {{^review-application}}
+                    <p>No Data Held</p>
+                {{/review-application}}
+
+                <p><b>Sufficient Information</b></p>
+                {{#sufficient-information}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/sufficient-information}}
+                {{^sufficient-information}}
+                    <p>No Data Held</p>
+                {{/sufficient-information}}
+
+                <p><b>Check Your Answers</b></p>
+                {{#check-your-answers}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/check-your-answers}}
+                {{^check-your-answers}}
+                    <p>No Data Held</p>
+                {{/check-your-answers}}
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
         {{/Assessments}}
         {{^Assessments}}
             <p>No Data Held</p>
@@ -918,7 +2060,29 @@
 
         <h3>Cancellations</h3>
         {{#Cancellations}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Cancellation</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Created at</td>
+                    <td class="data-column-30">Cancellation date</td>
+                    <td class="data-column-30">Cancellation reason</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue (formatDate cancellation_date) }}</td>
+                    <td>{{ optionalValue cancellation_reason }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Other reason</td>
+                    <td class="data-column-50">Notes</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue other_reason }}</td>
+                    <td>{{ optionalValue notes }}</td>
+                </tr>
+            </table>
         {{/Cancellations}}
         {{^Cancellations}}
             <p>No Data Held</p>
@@ -926,7 +2090,35 @@
 
         <h3>Placement Requirements</h3>
         {{#PlacementRequirements}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Placement Requirement</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Placement requirements id</td>
+                    <td class="data-column-25">Assessment id</td>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Approved Premises type</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue placement_requirements_id }}</td>
+                    <td>{{ optionalValue assessment_id }}</td>
+                    <td>{{ optionalValue application_id }}</td>
+                    <td>{{ optionalValue ap_type }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Gender</td>
+                    <td class="data-column-25">Outcode</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Radius</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue gender }}</td>
+                    <td>{{ optionalValue outcode }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue radius }}</td>
+                </tr>
+            </table>
         {{/PlacementRequirements}}
         {{^PlacementRequirements}}
             <p>No Data Held</p>
@@ -942,13 +2134,55 @@
 
         <h3>Placement Requests</h3>
         {{#PlacementRequests}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Placement Request</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Assessment id</td>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Placement application id</td>
+                    <td class="data-column-25">Booking id</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue assessment_id }}</td>
+                    <td>{{ optionalValue application_id }}</td>
+                    <td>{{ optionalValue placement_application_id }}</td>
+                    <td>{{ optionalValue booking_id }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Notes</td>
+                    <td class="data-column-25">Withdrawal reason</td>
+                    <td class="data-column-25">Is withdrawn</td>
+                    <td class="data-column-25">Is parole</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue notes }}</td>
+                    <td>{{ optionalValue withdrawal_reason }}</td>
+                    <td>{{ convertBoolean is_withdrawn }}</td>
+                    <td>{{ convertBoolean is_parole }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Expected arrival</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Due at</td>
+                    <td class="data-column-25">Duration</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate expected_arrival) }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue (formatDate due_at) }}</td>
+                    <td>{{ optionalValue duration }}</td>
+                </tr>
+            </table>
         {{/PlacementRequests}}
         {{^PlacementRequests}}
             <p>No Data Held</p>
         {{/PlacementRequests}}
 
-        <h3>Booking Not Mades</h3>
+        <h3>Booking Not Made</h3>
         {{#BookingNotMades}}
             <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
         {{/BookingNotMades}}
@@ -966,7 +2200,159 @@
 
         <h3>Placement Applications</h3>
         {{#PlacementApplications}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Placement Application</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Placement type</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Created by user</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue application_id }}</td>
+                    <td>{{ optionalValue placement_type }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ getUserLastName created_by_user }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Submitted at)</td>
+                    <td class="data-column-25">Allocated user</td>
+                    <td class="data-column-25">Reallocated_at</td>
+                    <td class="data-column-25">Due at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate submitted_at) }}</td>
+                    <td>{{ getUserLastName allocated_user }}</td>
+                    <td>{{ optionalValue (formatDate reallocated_at) }}</td>
+                    <td>{{ optionalValue (formatDate due_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Decision</td>
+                    <td class="data-column-25">Decision made at</td>
+                    <td class="data-column-25">Is withdrawn</td>
+                    <td class="data-column-25">Withdrawal reason</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue decision }}</td>
+                    <td>{{ optionalValue (formatDate decision_made_at) }}</td>
+                    <td>{{ convertBoolean is_withdrawn }}</td>
+                    <td>{{ optionalValue withdrawal_reason }}</td>
+                </tr>
+            </table>
+
+            <h5>Reason for Placement</h5>
+            {{#data.request-a-placement.reason-for-placement}}
+                <table class="summary-list">
+                    <tr><td>Reason</td><td>{{ optionalValue reason }}</td></tr>
+                </table>
+            {{/data.request-a-placement.reason-for-placement}}
+            {{^data.request-a-placement.reason-for-placement}}
+                <p>No Data Held</p>
+            {{/data.request-a-placement.reason-for-placement}}
+
+            <h5>Updates to Application</h5>
+            {{#data.request-a-placement.updates-to-application}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk factors</td>
+                        <td class="data-column-25">Risk factors detail</td>
+                        <td class="data-column-25">Significant events</td>
+                        <td class="data-column-25">Significant events detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskFactors }}</td>
+                        <td>{{ optionalValue riskFactorsDetail }}</td>
+                        <td>{{ optionalValue significantEvents }}</td>
+                        <td>{{ optionalValue significantEventsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Location factors</td>
+                        <td class="data-column-25">Location factors detail</td>
+                        <td class="data-column-25">Access or healthcare needs</td>
+                        <td class="data-column-25">Access or healthcare needs detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue locationFactors }}</td>
+                        <td>{{ optionalValue locationFactorsDetail }}</td>
+                        <td>{{ optionalValue accessOrHealthcareNeeds }}</td>
+                        <td>{{ optionalValue accessOrHealthcareNeedsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Changed circumstances</td>
+                        <td class="data-column-25">Changed circumstances detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue changedCirumstances }}</td>
+                        <td>{{ optionalValue changedCirumstancesDetail }}</td>
+                    </tr>
+                </table>
+            {{/data.request-a-placement.updates-to-application}}
+            {{^data.request-a-placement.updates-to-application}}
+                <p>No Data Held</p>
+            {{/data.request-a-placement.updates-to-application}}
+
+            <h5>Previous Release On Temporary Licence Placement</h5>
+            {{#data.request-a-placement.previous-rotl-placement}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Previous Release On Temporary Licence placement</td>
+                        <td class="data-column-25">Last Approved Premises</td>
+                        <td class="data-column-25">Last placement date</td>
+                        <td class="data-column-25">Details</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue previousRotlPlacement }}</td>
+                        <td>{{ optionalValue lastAp }}</td>
+                        <td>{{ buildDate lastPlacementDate-year lastPlacementDate-month lastPlacementDate-day }}</td>
+                        <td>{{ optionalValue details }}</td>
+                    </tr>
+                </table>
+            {{/data.request-a-placement.previous-rotl-placement}}
+            {{^data.request-a-placement.previous-rotl-placement}}
+                <p>No Data Held</p>
+            {{/data.request-a-placement.previous-rotl-placement}}
+
+            <h5>Dates of Placement</h5>
+            {{#data.request-a-placement.dates-of-placement.datesOfPlacement}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Arrival date</td>
+                        <td class="data-column-25">Duration weeks</td>
+                        <td class="data-column-25">Duration days</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue (formatDate arrivalDate) }}</td>
+                        <td>{{ optionalValue durationWeeks }}</td>
+                        <td>{{ optionalValue durationDays }}</td>
+                    </tr>
+                </table>
+            {{/data.request-a-placement.dates-of-placement.datesOfPlacement}}
+            {{^data.request-a-placement.dates-of-placement.datesOfPlacement}}
+                <p>No Data Held</p>
+            {{/data.request-a-placement.dates-of-placement.datesOfPlacement}}
+
+            <h5>Document</h5>
+            {{#document}}
+                <p><b>Request a Placement</b></p>
+                {{#request-a-placement}}
+                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                {{/request-a-placement}}
+                {{^request-a-placement}}
+                    <p>No Data Held</p>
+                {{/request-a-placement}}
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
         {{/PlacementApplications}}
         {{^PlacementApplications}}
             <p>No Data Held</p>
@@ -974,7 +2360,49 @@
 
         <h3>Bookings</h3>
         {{#Bookings}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Booking</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Offline application id</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Version</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue application_id }}</td>
+                    <td>{{ optionalValue offline_application_id }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue version }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Status</td>
+                    <td class="data-column-25">Premises name</td>
+                    <td class="data-column-25">Departure date</td>
+                    <td class="data-column-25">Arrival date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue status }}</td>
+                    <td>{{ optionalValue premises_name }}</td>
+                    <td>{{ optionalValue (formatDate departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Original arrival date</td>
+                    <td class="data-column-25">Original departure date</td>
+                    <td class="data-column-25">Key worker staff code</td>
+                    <td class="data-column-25">Adhoc</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
+                    <td>{{ optionalValue (formatDate original_departure_date) }}</td>
+                    <td>{{ optionalValue key_worker_staff_code }}</td>
+                    <td>{{ convertBoolean adhoc }}</td>
+                </tr>
+            </table>
         {{/Bookings}}
         {{^Bookings}}
             <p>No Data Held</p>
