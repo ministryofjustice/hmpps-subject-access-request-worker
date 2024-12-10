@@ -146,7 +146,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
     whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
     whenever(
-      mockGetSubjectAccessRequestDataService.execute(
+      mockGetSubjectAccessRequestDataService.requestDataFromServices(
         selectedDpsServices,
         null,
         "1",
@@ -210,7 +210,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.execute(
+        mockGetSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -241,9 +241,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
         .thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.doReport(sampleSAR)
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, times(1)).execute(
+      verify(mockGetSubjectAccessRequestDataService, times(1)).requestDataFromServices(
         services = selectedDpsServices,
         null,
         "1",
@@ -265,7 +265,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.execute(
+        mockGetSubjectAccessRequestDataService.requestDataFromServices(
           services = selectedDpsServices,
           null,
           "1",
@@ -289,7 +289,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       )
 
       val exception = assertThrows<RuntimeException> {
-        subjectAccessRequestWorkerService.doReport(sampleSAR)
+        subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
       }
 
       assertThat(exception.message).isNull()
@@ -307,7 +307,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.execute(
+        mockGetSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -339,9 +339,9 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
         .thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.doReport(sampleSAR)
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, times(1)).execute(any(), eq(null), any(), any(), any(), any())
+      verify(mockGetSubjectAccessRequestDataService, times(1)).requestDataFromServices(any(), eq(null), any(), any(), any(), any())
     }
 
     @Test
@@ -356,7 +356,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.execute(
+        mockGetSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -389,7 +389,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.doReport(sampleSAR)
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
       verify(generatePdfService, times(1)).execute(any(), eq(null), any(), any(), any(), any(), any(), any(), any())
     }
@@ -406,7 +406,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.execute(
+        mockGetSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -438,7 +438,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
         .thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.doReport(sampleSAR)
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
       verify(documentStorageClient, times(1)).storeDocument(
         sampleSAR,

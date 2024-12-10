@@ -53,6 +53,11 @@ class WebClientConfiguration(
   fun probationApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient =
     builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = probationApiBaseUri, timeout)
 
+  @Bean
+  fun dynamicWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient =
+    builder.codecs { configurer -> configurer.defaultCodecs().maxInMemorySize(100 * 1024 * 1024) }
+      .authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = "http", timeout = timeout)
+
   private var backOffDuration: Duration = Duration.parse(backOff)
 
   fun getBackoffDuration() = backOffDuration

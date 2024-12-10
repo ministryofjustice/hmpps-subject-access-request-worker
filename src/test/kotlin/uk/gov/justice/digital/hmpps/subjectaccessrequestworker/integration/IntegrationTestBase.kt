@@ -16,9 +16,11 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Priso
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 
-@ExtendWith(HmppsAuthApiExtension::class, DocumentApiExtension::class, PrisonApiExtension::class, ProbationApiExtension::class)
+@ExtendWith(HmppsAuthApiExtension::class, DocumentApiExtension::class, PrisonApiExtension::class, ProbationApiExtension::class, ServiceOneApiExtension::class, ServiceTwoApiExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 abstract class IntegrationTestBase {
