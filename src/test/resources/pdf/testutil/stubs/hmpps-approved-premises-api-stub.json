@@ -1782,7 +1782,7 @@
                   "accommodationType": "livingWithPartnerFamilyOrFriends",
                   "otherAccommodationType": ""
                 },
-                "relocrelocation-regionation-region": {
+                "relocation-region": {
                   "postcodeArea": "WS1"
                 }
               },
