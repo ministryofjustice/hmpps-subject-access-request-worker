@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.StringUtils.isBlank
 import org.apache.commons.lang3.StringUtils.leftPad
 import org.springframework.stereotype.Service
@@ -60,5 +59,4 @@ class TemplateHelpers(
 
   fun buildDateNumber(year: Number?, month: Number?, day: Number?): String =
     buildDate(year?.toInt()?.toString(), month?.toInt()?.toString(), day?.toInt()?.toString())
-
 }
