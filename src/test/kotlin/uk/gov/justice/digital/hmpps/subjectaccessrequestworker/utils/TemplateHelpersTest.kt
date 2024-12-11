@@ -172,7 +172,6 @@ class TemplateHelpersTest {
         "invalid  | date  | vals      | invalid-date-vals",
       ],
       delimiterString = "|",
-      nullValues = ["null"],
     )
     fun `buildDate returns original values when not able to convert to date`(
       yearInput: String?,
@@ -192,7 +191,6 @@ class TemplateHelpersTest {
         "2024 | 04    | 08        | 08 April 2024",
       ],
       delimiterString = "|",
-      nullValues = ["null"],
     )
     fun `buildDate returns formatted date`(
       yearInput: String?,
@@ -201,6 +199,69 @@ class TemplateHelpersTest {
       expectedValue: String,
     ) {
       val response = templateHelpers.buildDate(yearInput, monthInput, dayInput)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+  }
+
+  @Nested
+  inner class BuildDateNumberTest {
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "2024 | 11    | null",
+        "2024 | null  | 15",
+        "null | 11    | 15",
+        "null | null  | null",
+      ],
+      delimiterString = "|",
+      nullValues = ["null"],
+    )
+    fun `buildDateNumber returns No Data Held when any blank input`(
+      yearInput: Integer?,
+      monthInput: Integer?,
+      dayInput: Integer?,
+    ) {
+      val response = templateHelpers.buildDateNumber(yearInput, monthInput, dayInput)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "-102 | 11  | 19  | -102-11-19",
+        "2024 | -11 | 19  | 2024--11-19",
+        "2024 | 11  | -19 | 2024-11--19",
+      ],
+      delimiterString = "|",
+    )
+    fun `buildDateNumber returns original values when not able to convert to date`(
+      yearInput: Integer?,
+      monthInput: Integer?,
+      dayInput: Integer?,
+      expectedValue: String,
+    ) {
+      val response = templateHelpers.buildDateNumber(yearInput, monthInput, dayInput)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "2024     | 11     | 19     | 19 November 2024",
+        "2024     | 4      | 8      | 08 April 2024",
+        "2024     | 04     | 08     | 08 April 2024",
+        "2024.0   | 04.0   | 08.0   | 08 April 2024",
+        "2024.434 | 04.563 | 08.544 | 08 April 2024",
+      ],
+      delimiterString = "|",
+    )
+    fun `buildDateNumber returns formatted date`(
+      yearInput: Double?,
+      monthInput: Double?,
+      dayInput: Double?,
+      expectedValue: String,
+    ) {
+      val response = templateHelpers.buildDateNumber(yearInput, monthInput, dayInput)
       assertThat(response).isEqualTo(expectedValue)
     }
   }
