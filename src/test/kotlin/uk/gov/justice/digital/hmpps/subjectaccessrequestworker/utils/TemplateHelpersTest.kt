@@ -272,10 +272,10 @@ class TemplateHelpersTest {
     @CsvSource(
       value = [
         "Value 1 | Value 1",
-        "null    | null"
+        "null    | null",
       ],
       delimiterString = "|",
-      nullValues = ["null"]
+      nullValues = ["null"],
     )
     fun `eq returns true when args are equal`(firstArg: String?, secondArg: String?) {
       val response = templateHelpers.eq(firstArg, secondArg)
@@ -287,10 +287,10 @@ class TemplateHelpersTest {
       value = [
         "Value 1 | Value 2",
         "null    | Value 2",
-        "Value 1 | null"
+        "Value 1 | null",
       ],
       delimiterString = "|",
-      nullValues = ["null"]
+      nullValues = ["null"],
     )
     fun `eq returns false when args are not equal`(firstArg: String?, secondArg: String?) {
       val response = templateHelpers.eq(firstArg, secondArg)
