@@ -3839,111 +3839,6 @@
           {
             "data": {
               "eventDetails": {
-                "mappa": null,
-                "offenceId": "M2500403796",
-                "submittedBy": {
-                  "staffMember": {
-                    "staffCode": "N02A034",
-                    "surname": "TEST_1",
-                    "forenames": "AP_USER",
-                    "staffIdentifier": -1,
-                    "username": "AP_USER_TEST_1"
-                  },
-                  "team": {
-                    "code": "N07UAT",
-                    "name": "Unallocated Team(N07)"
-                  },
-                  "ldu": {
-                    "code": "N07ALL",
-                    "name": "All London"
-                  },
-                  "region": {
-                    "code": "N02",
-                    "name": "NPS North East"
-                  },
-                  "probationArea": {
-                    "code": "N02",
-                    "name": "NPS North East"
-                  }
-                },
-                "gender": "Male",
-                "deliusEventNumber": "2",
-                "targetLocation": "B71",
-                "releaseType": "licence",
-                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/0bc84141-28e8-49c5-afc1-00163db8fcfc",
-                "submittedAt": "2024-12-05T11:36:18.912716758Z",
-                "applicationId": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
-                "personReference": {
-                  "noms": "A7779DY",
-                  "crn": "X371199"
-                },
-                "age": 31,
-                "sentenceLengthInMonths": null
-              },
-              "id": "5ecf73fd-7819-4cdf-9d17-98cbe7652ffb",
-              "eventType": "approved-premises.application.submitted",
-              "timestamp": "2024-12-05T11:36:18.786388327Z"
-            },
-            "created_at": "2024-12-05T11:36:18.914182+00:00",
-            "trigger_source": null,
-            "assessment_id": null,
-            "triggered_by_user": "AP_USER TEST_1",
-            "type": "APPROVED_PREMISES_APPLICATION_SUBMITTED",
-            "application_id": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
-            "occurred_at": "2024-12-05T11:36:18.786388+00:00",
-            "booking_id": null,
-            "noms_number": "A7779DY",
-            "service": "CAS1",
-            "id": "5ecf73fd-7819-4cdf-9d17-98cbe7652ffb",
-            "crn": "X371199"
-          },
-          {
-            "data": {
-              "eventDetails": {
-                "allocatedTo": {
-                  "staffCode": "N02A034",
-                  "surname": "TEST_1",
-                  "forenames": "AP_USER",
-                  "staffIdentifier": -1,
-                  "username": "AP_USER_TEST_1"
-                },
-                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/a3429327-136f-47ae-935b-f92e0c3694c9",
-                "allocatedBy": {
-                  "staffCode": "N02A034",
-                  "surname": "TEST_1",
-                  "forenames": "AP_USER",
-                  "staffIdentifier": -1,
-                  "username": "AP_USER_TEST_1"
-                },
-                "applicationId": "a3429327-136f-47ae-935b-f92e0c3694c9",
-                "personReference": {
-                  "noms": "A7779DY",
-                  "crn": "X371199"
-                },
-                "assessmentId": "ce7915dd-af95-44a5-ac36-afca2ed3606a",
-                "allocatedAt": "2024-12-05T11:36:24.019566690Z",
-                "assessmentUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/assessments/ce7915dd-af95-44a5-ac36-afca2ed3606a"
-              },
-              "id": "1a933f89-31d1-4de9-9e35-4f8371ca7b1a",
-              "eventType": "approved-premises.assessment.allocated",
-              "timestamp": "2024-12-05T11:36:24.019516933Z"
-            },
-            "created_at": "2024-12-05T11:36:24.019672+00:00",
-            "trigger_source": "USER",
-            "assessment_id": "ce7915dd-af95-44a5-ac36-afca2ed3606a",
-            "triggered_by_user": "AP_USER TEST_1",
-            "type": "APPROVED_PREMISES_ASSESSMENT_ALLOCATED",
-            "application_id": "a3429327-136f-47ae-935b-f92e0c3694c9",
-            "occurred_at": "2024-12-05T11:36:24.019517+00:00",
-            "booking_id": null,
-            "noms_number": "A7779DY",
-            "service": "CAS1",
-            "id": "1a933f89-31d1-4de9-9e35-4f8371ca7b1a",
-            "crn": "X371199"
-          },
-          {
-            "data": {
-              "eventDetails": {
                 "duration": 84,
                 "createdAt": "2024-12-05T11:36:35.314467276Z",
                 "expectedArrival": "2025-07-25",
@@ -3978,9 +3873,56 @@
           {
             "data": {
               "eventDetails": {
-                "mappa": null,
-                "offenceId": "M2500403796",
-                "submittedBy": {
+                "notes": null,
+                "arrivedAt": "2024-12-04T11:36:00Z",
+                "premises": {
+                  "legacyApCode": "Q005",
+                  "name": "SWSC Men Premise 1",
+                  "id": "c9c12518-d53a-4489-9c63-9d74e3a19b82",
+                  "apCode": "SWSCMEN1",
+                  "localAuthorityAreaName": "Southampton"
+                },
+                "keyWorker": {
+                  "staffCode": "N07B482",
+                  "surname": "Bins",
+                  "forenames": "Louise",
+                  "staffIdentifier": -1,
+                  "username": null
+                },
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/a3429327-136f-47ae-935b-f92e0c3694c9",
+                "deliusEventNumber": "2",
+                "expectedDepartureOn": "2025-10-17",
+                "applicationId": "a3429327-136f-47ae-935b-f92e0c3694c9",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "applicationSubmittedOn": "2024-12-05",
+                "previousExpectedDepartureOn": null,
+                "bookingId": "19b64ee9-3a8f-49be-8be4-72c43439f752"
+              },
+              "id": "7b935afe-be2e-45d0-9811-53ee37b018d9",
+              "eventType": "approved-premises.person.arrived",
+              "timestamp": "2024-12-05T11:36:44.868555325Z"
+            },
+            "created_at": "2024-12-05T11:36:44.869481+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_5",
+            "type": "APPROVED_PREMISES_PERSON_ARRIVED",
+            "application_id": "a3429327-136f-47ae-935b-f92e0c3694c9",
+            "occurred_at": "2024-12-04T11:36:00+00:00",
+            "booking_id": null,
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "7b935afe-be2e-45d0-9811-53ee37b018d9",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "decision": "ACCEPTED",
+                "assessedBy": {
                   "staffMember": {
                     "staffCode": "N02A034",
                     "surname": "TEST_1",
@@ -3988,52 +3930,364 @@
                     "staffIdentifier": -1,
                     "username": "AP_USER_TEST_1"
                   },
-                  "team": {
-                    "code": "N07UAT",
-                    "name": "Unallocated Team(N07)"
-                  },
-                  "ldu": {
-                    "code": "N07ALL",
-                    "name": "All London"
-                  },
-                  "region": {
-                    "code": "N02",
-                    "name": "NPS North East"
+                  "cru": {
+                    "name": "North East"
                   },
                   "probationArea": {
                     "code": "N02",
                     "name": "NPS North East"
                   }
                 },
-                "gender": "Male",
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/0bc84141-28e8-49c5-afc1-00163db8fcfc",
                 "deliusEventNumber": "2",
-                "targetLocation": "B71",
-                "releaseType": "licence",
-                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/02a3fb4e-3355-48c4-8820-85680b95c901",
-                "submittedAt": "2024-12-05T11:36:23.338614546Z",
-                "applicationId": "02a3fb4e-3355-48c4-8820-85680b95c901",
+                "assessedAt": "2024-12-05T11:36:34.638616377Z",
+                "applicationId": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
                 "personReference": {
                   "noms": "A7779DY",
                   "crn": "X371199"
                 },
-                "age": 31,
-                "sentenceLengthInMonths": null
+                "decisionRationale": null,
+                "arrivalDate": "2025-07-25T00:00:00Z"
               },
-              "id": "8b7cc057-8647-4c7c-8d9a-fce4cf40daaa",
-              "eventType": "approved-premises.application.submitted",
-              "timestamp": "2024-12-05T11:36:23.138142234Z"
+              "id": "aba9c2b5-f11b-4785-9ce4-e0f48206e620",
+              "eventType": "approved-premises.application.assessed",
+              "timestamp": "2024-12-05T11:36:34.638616377Z"
             },
-            "created_at": "2024-12-05T11:36:23.339835+00:00",
+            "created_at": "2024-12-05T11:36:34.732669+00:00",
             "trigger_source": null,
-            "assessment_id": null,
+            "assessment_id": "6fb71922-3a1c-4e06-bb9e-eb3410bfdf09",
             "triggered_by_user": "AP_USER TEST_1",
-            "type": "APPROVED_PREMISES_APPLICATION_SUBMITTED",
-            "application_id": "02a3fb4e-3355-48c4-8820-85680b95c901",
-            "occurred_at": "2024-12-05T11:36:23.138142+00:00",
+            "type": "APPROVED_PREMISES_APPLICATION_ASSESSED",
+            "application_id": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
+            "occurred_at": "2024-12-05T11:36:34.638616+00:00",
             "booking_id": null,
             "noms_number": "A7779DY",
             "service": "CAS1",
-            "id": "8b7cc057-8647-4c7c-8d9a-fce4cf40daaa",
+            "id": "aba9c2b5-f11b-4785-9ce4-e0f48206e620",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "createdAt": "2024-12-05T11:36:56.302635126Z",
+                "appealDetail": "Appeal reasons",
+                "decision": "accepted",
+                "createdBy": {
+                  "staffCode": "N02A034",
+                  "surname": "TEST_1",
+                  "forenames": "AP_USER",
+                  "staffIdentifier": -1,
+                  "username": "AP_USER_TEST_1"
+                },
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/11364eaf-3eb2-4e6f-a89e-56464d48987a",
+                "deliusEventNumber": "2",
+                "applicationId": "11364eaf-3eb2-4e6f-a89e-56464d48987a",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "appealId": "67cec8fd-da46-41d5-b7cc-1fd06a9c3f56",
+                "appealUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/11364eaf-3eb2-4e6f-a89e-56464d48987a/appeals/67cec8fd-da46-41d5-b7cc-1fd06a9c3f56",
+                "decisionDetail": "Appeal decision reasons"
+              },
+              "id": "6b6f3ea3-f0b4-4830-946c-191d2898ecdc",
+              "eventType": "approved-premises.assessment.appealed",
+              "timestamp": "2024-12-05T11:36:56.302635126Z"
+            },
+            "created_at": "2024-12-05T11:36:56.318723+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_1",
+            "type": "APPROVED_PREMISES_ASSESSMENT_APPEALED",
+            "application_id": "11364eaf-3eb2-4e6f-a89e-56464d48987a",
+            "occurred_at": "2024-12-05T11:36:56.302635+00:00",
+            "booking_id": null,
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "6b6f3ea3-f0b4-4830-946c-191d2898ecdc",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "assignedKeyWorkerName": "Louise Bins",
+                "previousKeyWorkerName": null,
+                "premises": {
+                  "legacyApCode": "Q005",
+                  "name": "SWSC Men Premise 1",
+                  "id": "c9c12518-d53a-4489-9c63-9d74e3a19b82",
+                  "apCode": "SWSCMEN1",
+                  "localAuthorityAreaName": "Southampton"
+                },
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/a3429327-136f-47ae-935b-f92e0c3694c9",
+                "deliusEventNumber": "2",
+                "departureDate": "2025-10-17",
+                "applicationId": "a3429327-136f-47ae-935b-f92e0c3694c9",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "bookingId": "19b64ee9-3a8f-49be-8be4-72c43439f752",
+                "arrivalDate": "2025-07-25"
+              },
+              "id": "3e9af73e-3893-47d0-9e23-47d97934fe61",
+              "eventType": "approved-premises.booking.keyworker.assigned",
+              "timestamp": "2024-12-05T11:36:43.995724857Z"
+            },
+            "created_at": "2024-12-05T11:36:44.004321+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_5",
+            "type": "APPROVED_PREMISES_BOOKING_KEYWORKER_ASSIGNED",
+            "application_id": "a3429327-136f-47ae-935b-f92e0c3694c9",
+            "occurred_at": "2024-12-05T11:36:43.995725+00:00",
+            "booking_id": null,
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "3e9af73e-3893-47d0-9e23-47d97934fe61",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "departureOn": "2025-03-05",
+                "premises": {
+                  "legacyApCode": "Q714",
+                  "name": "LON Men Premise 1",
+                  "id": "2c648765-6b61-4d57-b223-83243b8c4e02",
+                  "apCode": "LONMEN1",
+                  "localAuthorityAreaName": "Hackney"
+                },
+                "changedBy": {
+                  "staffCode": "N02A034",
+                  "surname": "TEST_1",
+                  "forenames": "AP_USER",
+                  "staffIdentifier": -1,
+                  "username": "AP_USER_TEST_1"
+                },
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/0bc84141-28e8-49c5-afc1-00163db8fcfc",
+                "deliusEventNumber": "2",
+                "changedAt": "2024-12-05T11:36:38.987306168Z",
+                "arrivalOn": "2025-02-05",
+                "applicationId": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "bookingId": "9e325956-49dd-4185-8bbb-9512dfd0ef63"
+              },
+              "id": "e73678bc-78de-46c8-a96b-98beeddaf7c2",
+              "eventType": "approved-premises.booking.changed",
+              "timestamp": "2024-12-05T11:36:38.987306168Z"
+            },
+            "created_at": "2024-12-05T11:36:38.997397+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_1",
+            "type": "APPROVED_PREMISES_BOOKING_CHANGED",
+            "application_id": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
+            "occurred_at": "2024-12-05T11:36:38.987306+00:00",
+            "booking_id": "9e325956-49dd-4185-8bbb-9512dfd0ef63",
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "e73678bc-78de-46c8-a96b-98beeddaf7c2",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "requester": {
+                  "staffCode": "N02A034",
+                  "surname": "TEST_1",
+                  "forenames": "AP_USER",
+                  "staffIdentifier": -1,
+                  "username": "AP_USER_TEST_1"
+                },
+                "requestedAt": "2024-12-05T11:37:25.143176469Z",
+                "requestId": "a62ff307-0ad0-4337-ab41-af5c172053fe",
+                "recipient": {
+                  "staffCode": "N02A034",
+                  "surname": "TEST_1",
+                  "forenames": "AP_USER",
+                  "staffIdentifier": -1,
+                  "username": "AP_USER_TEST_1"
+                },
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/a17dde1c-ec25-4315-bd35-0220900d505b",
+                "applicationId": "a17dde1c-ec25-4315-bd35-0220900d505b",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "assessmentId": "bae1e7ed-aba4-4f8c-ac05-815a2b843145",
+                "assessmentUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/assessments/bae1e7ed-aba4-4f8c-ac05-815a2b843145"
+              },
+              "id": "0ad3e13c-9d06-4ab2-9a06-f948ed484b42",
+              "eventType": "approved-premises.assessment.info-requested",
+              "timestamp": "2024-12-05T11:37:25.078017973Z"
+            },
+            "created_at": "2024-12-05T11:37:25.143612+00:00",
+            "trigger_source": null,
+            "assessment_id": "bae1e7ed-aba4-4f8c-ac05-815a2b843145",
+            "triggered_by_user": "AP_USER TEST_1",
+            "type": "APPROVED_PREMISES_ASSESSMENT_INFO_REQUESTED",
+            "application_id": "a17dde1c-ec25-4315-bd35-0220900d505b",
+            "occurred_at": "2024-12-05T11:37:25.078018+00:00",
+            "booking_id": null,
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "0ad3e13c-9d06-4ab2-9a06-f948ed484b42",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "cancellationReason": "Probation Practitioner requested it",
+                "premises": {
+                  "legacyApCode": "Q714",
+                  "name": "LON Men Premise 1",
+                  "id": "2c648765-6b61-4d57-b223-83243b8c4e02",
+                  "apCode": "LONMEN1",
+                  "localAuthorityAreaName": "Hackney"
+                },
+                "cancelledAt": "2024-12-05T00:00:00Z",
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/0bc84141-28e8-49c5-afc1-00163db8fcfc",
+                "deliusEventNumber": "2",
+                "cancellationRecordedAt": "2024-12-05T11:36:41.724564592Z",
+                "cancelledBy": {
+                  "staffCode": "N02A034",
+                  "surname": "TEST_1",
+                  "forenames": "AP_USER",
+                  "staffIdentifier": -1,
+                  "username": "AP_USER_TEST_1"
+                },
+                "applicationId": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "bookingId": "9e325956-49dd-4185-8bbb-9512dfd0ef63",
+                "cancelledAtDate": "2024-12-05"
+              },
+              "id": "d62ba4f7-5533-44d8-9130-da8d280d56cd",
+              "eventType": "approved-premises.booking.cancelled",
+              "timestamp": "2024-12-05T11:36:41.724564592Z"
+            },
+            "created_at": "2024-12-05T11:36:41.735566+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_1",
+            "type": "APPROVED_PREMISES_BOOKING_CANCELLED",
+            "application_id": "0bc84141-28e8-49c5-afc1-00163db8fcfc",
+            "occurred_at": "2024-12-05T11:36:41.724565+00:00",
+            "booking_id": "9e325956-49dd-4185-8bbb-9512dfd0ef63",
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "d62ba4f7-5533-44d8-9130-da8d280d56cd",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "withdrawnAt": "2024-12-05T11:37:35.408874307Z",
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/13483017-0d75-4c49-bf5f-8aec9e4e478e",
+                "deliusEventNumber": "2",
+                "withdrawnBy": {
+                  "staffMember": {
+                    "staffCode": "N02A034",
+                    "surname": "TEST_1",
+                    "forenames": "AP_USER",
+                    "staffIdentifier": -1,
+                    "username": "AP_USER_TEST_1"
+                  },
+                  "probationArea": {
+                    "code": "N02",
+                    "name": "NPS North East"
+                  }
+                },
+                "withdrawalReason": "ALTERNATIVE_PROVISION_IDENTIFIED",
+                "applicationId": "13483017-0d75-4c49-bf5f-8aec9e4e478e",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "placementApplicationId": "d3072b54-d5df-48eb-a395-5ece0b382119",
+                "placementDates": [
+                  {
+                    "endDate": "2025-10-23",
+                    "startDate": "2025-07-31"
+                  }
+                ]
+              },
+              "id": "45885658-74bb-47be-a4b1-586dbbeacc56",
+              "eventType": "approved-premises.placement-application.withdrawn",
+              "timestamp": "2024-12-05T11:37:35.408874307Z"
+            },
+            "created_at": "2024-12-05T11:37:35.411251+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_1",
+            "type": "APPROVED_PREMISES_PLACEMENT_APPLICATION_WITHDRAWN",
+            "application_id": "13483017-0d75-4c49-bf5f-8aec9e4e478e",
+            "occurred_at": "2024-12-05T11:37:35.408874+00:00",
+            "booking_id": null,
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "45885658-74bb-47be-a4b1-586dbbeacc56",
+            "crn": "X371199"
+          },
+          {
+            "data": {
+              "eventDetails": {
+                "reason": "Absconded, still at large",
+                "premises": {
+                  "legacyApCode": "Q005",
+                  "name": "SWSC Men Premise 1",
+                  "id": "c9c12518-d53a-4489-9c63-9d74e3a19b82",
+                  "apCode": "SWSCMEN1",
+                  "localAuthorityAreaName": "Southampton"
+                },
+                "keyWorker": {
+                  "staffCode": "N07B482",
+                  "surname": "Bins",
+                  "forenames": "Louise",
+                  "staffIdentifier": -1,
+                  "username": null
+                },
+                "destination": {
+                  "destinationProvider": null,
+                  "moveOnCategory": {
+                    "description": "Not Applicable",
+                    "id": "ea3d79b0-1ee5-47ff-a7ae-b0d964ca7626",
+                    "legacyMoveOnCategoryCode": "MCNA"
+                  },
+                  "premises": null
+                },
+                "applicationUrl": "https://approved-premises-dev.hmpps.service.justice.gov.uk/applications/a3429327-136f-47ae-935b-f92e0c3694c9",
+                "deliusEventNumber": "2",
+                "departedAt": "2024-12-05T10:36:00Z",
+                "applicationId": "a3429327-136f-47ae-935b-f92e0c3694c9",
+                "personReference": {
+                  "noms": "A7779DY",
+                  "crn": "X371199"
+                },
+                "bookingId": "19b64ee9-3a8f-49be-8be4-72c43439f752",
+                "legacyReasonCode": "J"
+              },
+              "id": "2a62c10f-e704-4598-b10d-03716241cecf",
+              "eventType": "approved-premises.person.departed",
+              "timestamp": "2024-12-05T11:36:46.891840775Z"
+            },
+            "created_at": "2024-12-05T11:36:46.893688+00:00",
+            "trigger_source": null,
+            "assessment_id": null,
+            "triggered_by_user": "AP_USER TEST_5",
+            "type": "APPROVED_PREMISES_PERSON_DEPARTED",
+            "application_id": "a3429327-136f-47ae-935b-f92e0c3694c9",
+            "occurred_at": "2024-12-05T10:36:00+00:00",
+            "booking_id": null,
+            "noms_number": "A7779DY",
+            "service": "CAS1",
+            "id": "2a62c10f-e704-4598-b10d-03716241cecf",
             "crn": "X371199"
           }
         ]

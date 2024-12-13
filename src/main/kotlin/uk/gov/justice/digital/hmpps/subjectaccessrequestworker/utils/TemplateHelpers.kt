@@ -59,4 +59,6 @@ class TemplateHelpers(
 
   fun buildDateNumber(year: Number?, month: Number?, day: Number?): String =
     buildDate(year?.toInt()?.toString(), month?.toInt()?.toString(), day?.toInt()?.toString())
+
+  fun eq(input: String?, value: String?): Boolean = input == value
 }

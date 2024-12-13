@@ -265,4 +265,19 @@ class TemplateHelpersTest {
       assertThat(response).isEqualTo(expectedValue)
     }
   }
+
+  @Nested
+  inner class EqualsTest {
+    @Test
+    fun `eq returns true when args are equal`() {
+      val response = templateHelpers.eq("Value 1", "Value 1")
+      assertThat(response).isTrue()
+    }
+
+    @Test
+    fun `eq returns false when args are equal`() {
+      val response = templateHelpers.eq("Value 1", "Value 2")
+      assertThat(response).isFalse()
+    }
+  }
 }
