@@ -894,7 +894,21 @@
 
         <h3>Booking Extensions</h3>
         {{#BookingExtensions}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Booking Extension</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Notes</td>
+                    <td class="data-column-25">New departure date</td>
+                    <td class="data-column-25">Previous departure date</td>
+                    <td class="data-column-25">Created at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue notes }}</td>
+                    <td>{{ optionalValue (formatDate new_departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate previous_departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                </tr>
+            </table>
         {{/BookingExtensions}}
         {{^BookingExtensions}}
         {{/BookingExtensions}}
@@ -1677,6 +1691,7 @@
                 </tr>
             </table>
             <table class="data-table">
+                <tr>
                     <td class="data-column-30">Appeal detail</td>
                     <td class="data-column-30">Appeal date</td>
                     <td class="data-column-30">Appeal created at</td>
@@ -2395,43 +2410,37 @@
             <h4>Booking</h4>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Application id</td>
-                    <td class="data-column-25">Offline application id</td>
                     <td class="data-column-25">Created at</td>
-                    <td class="data-column-25">Version</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue application_id }}</td>
-                    <td>{{ optionalValue offline_application_id }}</td>
-                    <td>{{ optionalValue (formatDate created_at) }}</td>
-                    <td>{{ optionalValue version }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
                     <td class="data-column-25">Status</td>
                     <td class="data-column-25">Premises name</td>
-                    <td class="data-column-25">Departure date</td>
-                    <td class="data-column-25">Arrival date</td>
                 </tr>
                 <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
                     <td>{{ optionalValue status }}</td>
                     <td>{{ optionalValue premises_name }}</td>
-                    <td>{{ optionalValue (formatDate departure_date) }}</td>
-                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
                 </tr>
             </table>
             <table class="data-table">
                 <tr>
+                    <td class="data-column-25">Arrival date</td>
+                    <td class="data-column-25">Departure date</td>
                     <td class="data-column-25">Original arrival date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                    <td>{{ optionalValue (formatDate departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
                     <td class="data-column-25">Original departure date</td>
                     <td class="data-column-25">Key worker staff code</td>
                     <td class="data-column-25">Adhoc</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
                     <td>{{ optionalValue (formatDate original_departure_date) }}</td>
-                    <td>{{ optionalValue key_worker_staff_code }}</td>
+                    <td>{{ getUserLastName key_worker_staff_code }}</td>
                     <td>{{ convertBoolean adhoc }}</td>
                 </tr>
             </table>
@@ -3024,7 +3033,21 @@
 
         <h3>Booking Extensions</h3>
         {{#BookingExtensions}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Booking Extension</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Notes</td>
+                    <td class="data-column-25">New departure date</td>
+                    <td class="data-column-25">Previous departure date</td>
+                    <td class="data-column-25">Created at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue notes }}</td>
+                    <td>{{ optionalValue (formatDate new_departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate previous_departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                </tr>
+            </table>
         {{/BookingExtensions}}
         {{^BookingExtensions}}
             <p>No Data Held</p>
@@ -3032,7 +3055,673 @@
 
         <h3>Applications</h3>
         {{#Applications}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Application</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Probation Delivery Unit</td>
+                    <td class="data-column-25">Offence id</td>
+                    <td class="data-column-25">Offender name</td>
+                    <td class="data-column-25">Submitted at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue pdu }}</td>
+                    <td>{{ optionalValue offence_id }}</td>
+                    <td>{{ optionalValue offender_name }}</td>
+                    <td>{{ optionalValue (formatDate submitted_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Prison name on creation</td>
+                    <td class="data-column-25">Has history of arson</td>
+                    <td class="data-column-25">Is registered sex offender</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue prison_name_on_creation }}</td>
+                    <td>{{ convertBoolean has_history_of_arson }}</td>
+                    <td>{{ convertBoolean is_registered_sex_offender }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Is concerning arson behaviour</td>
+                    <td class="data-column-25">Needs accessible property</td>
+                    <td class="data-column-25">Is history of sexual offence</td>
+                    <td class="data-column-25">Is concerning sexual behaviour</td>
+                </tr>
+                <tr>
+                    <td>{{ convertBoolean is_concerning_arson_behaviour }}</td>
+                    <td>{{ convertBoolean needs_accessible_property }}</td>
+                    <td>{{ convertBoolean is_history_of_sexual_offence }}</td>
+                    <td>{{ convertBoolean is_concerning_sexual_behaviour }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Is duty to refer submitted</td>
+                    <td class="data-column-25">Duty to refer submission date</td>
+                    <td class="data-column-25">Duty to refer outcome</td>
+                    <td class="data-column-25">Duty to refer local authority area name</td>
+                </tr>
+                <tr>
+                    <td>{{ convertBoolean is_duty_to_refer_submitted }}</td>
+                    <td>{{ optionalValue (formatDate duty_to_refer_submission_date) }}</td>
+                    <td>{{ optionalValue duty_to_refer_outcome }}</td>
+                    <td>{{ optionalValue duty_to_refer_local_authority_area_name }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Probation region</td>
+                    <td class="data-column-25">Arrival date</td>
+                    <td class="data-column-25">Is eligible</td>
+                    <td class="data-column-25">Eligibility reason</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue probation_region }}</td>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                    <td>{{ convertBoolean is_eligible }}</td>
+                    <td>{{ optionalValue eligibility_reason }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Applications user name</td>
+                    <td class="data-column-25">Prison release types</td>
+                    <td class="data-column-25">Person release date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue applications_user_name }}</td>
+                    <td>{{ optionalValue prison_release_types }}</td>
+                    <td>{{ optionalValue (formatDate person_release_date) }}</td>
+                </tr>
+            </table>
+
+            <h5>Safeguarding and Support</h5>
+            {{#data.safeguarding-and-support}}
+                <table class="summary-list">
+                    <tr><td class="data-column-25">Safeguarding and vulnerability concerns</td><td>{{ optionalValue safeguarding-and-vulnerability.concerns }}</td></tr>
+                    <tr><td class="data-column-25">Safeguarding and vulnerability concerns Detail</td><td>{{ optionalValue safeguarding-and-vulnerability.concernsDetail }}</td></tr>
+                    <tr><td class="data-column-25">Caring responsibilities</td><td>{{ optionalValue caring-responsibilities.caringResponsibilities }}</td></tr>
+                    <tr><td class="data-column-25">Caring responsibilities detail</td><td>{{ optionalValue caring-responsibilities.caringResponsibilitiesDetail }}</td></tr>
+                    <tr><td class="data-column-25">Support in the community</td><td>{{ optionalValue support-in-the-community.support }}</td></tr>
+                    <tr><td class="data-column-25">Local connections</td><td>{{ optionalValue local-connections.localConnections }}</td></tr>
+                </table>
+            {{/data.safeguarding-and-support}}
+            {{^data.safeguarding-and-support}}
+                <p>No Data Held</p>
+            {{/data.safeguarding-and-support}}
+
+            <h5>Placement Location</h5>
+            {{#data.placement-location}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Alternative Probation Delivery Unit</td>
+                        <td class="data-column-25">Alternative Probation Delivery Unit name</td>
+                        <td class="data-column-25">Alternative Probation Delivery Unit reason</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue alternative-pdu.alternativePdu }}</td>
+                        <td>{{ optionalValue alternative-pdu.pduName }}</td>
+                        <td>{{ optionalValue alternative-pdu-reason.reason }}</td>
+                    </tr>
+                </table>
+            {{/data.placement-location}}
+            {{^data.placement-location}}
+                <p>No Data Held</p>
+            {{/data.placement-location}}
+
+            <h5>Licence Conditions</h5>
+            {{#data.licence-conditions.additional-licence-conditions}}
+                <table class="summary-list">
+                        <tr><td>Conditions</td><td>{{#conditions}}{{.}}{{#unless @last}}, {{/unless}}{{/conditions}}{{^conditions}}No Data Held{{/conditions}}</td></tr>
+                        <tr><td>Exclusion zone detail</td><td>{{ optionalValue exclusionZoneDetail }}</td></tr>
+                        <tr><td>Non association detail</td><td>{{ optionalValue nonAssociationDetail }}</td></tr>
+                        <tr><td>Intimate relationships detail</td><td>{{ optionalValue initmateRelationshipsDetail }}</td></tr>
+                        <tr><td>Civil orders detail</td><td>{{ optionalValue civilOrdersDetail }}</td></tr>
+                        <tr><td>Other detail</td><td>{{ optionalValue otherDetail }}</td></tr>
+                        <tr><td>Programmes detail</td><td>{{ optionalValue programmesDetail }}</td></tr>
+                        <tr><td>Drug testing detail</td><td>{{ optionalValue drugTestingDetail }}</td></tr>
+                        <tr><td>Curfew detail</td><td>{{ optionalValue curfewDetail }}</td></tr>
+                        <tr><td>No contact with children detail</td><td>{{ optionalValue noContactWithChildrenDetail }}</td></tr>
+                        <tr><td>Non contact detail</td><td>{{ optionalValue nonContactDetail }}</td></tr>
+                        <tr><td>Engagement with services detail</td><td>{{ optionalValue engagementWithServicesDetail }}</td></tr>
+                        <tr><td>Alcohol monitoring detail</td><td>{{ optionalValue alcoholMonitoringDetail }}</td></tr>
+                        <tr><td>Residency restriction detail</td><td>{{ optionalValue residencyRestrictionDetail }}</td></tr>
+                </table>
+            {{/data.licence-conditions.additional-licence-conditions}}
+            {{^data.licence-conditions.additional-licence-conditions}}
+                <p>No Data Held</p>
+            {{/data.licence-conditions.additional-licence-conditions}}
+
+            <h5>Offence and Behaviour Summary</h5>
+            {{#data.offence-and-behaviour-summary}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">History of arson offence</td>
+                        <td class="data-column-75">History of arson offence detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue history-of-arson-offence.historyOfArsonOffence }}</td>
+                        <td>{{ optionalValue history-of-arson-offence.historyOfArsonOffenceDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">History of sexual offence</td>
+                        <td class="data-column-75">History of sexual offence detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue history-of-sexual-offence.historyOfSexualOffence }}</td>
+                        <td>{{ optionalValue history-of-sexual-offence.historyOfSexualOffenceDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Concerning arson behaviour</td>
+                        <td class="data-column-75">Concerning arson behaviour detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue concerning-arson-behaviour.concerningArsonBehaviour }}</td>
+                        <td>{{ optionalValue concerning-arson-behaviour.concerningArsonBehaviourDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Concerning sexual behaviour</td>
+                        <td class="data-column-75">Concerning sexual behaviour detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue concerning-sexual-behaviour.concerningSexualBehaviour }}</td>
+                        <td>{{ optionalValue concerning-sexual-behaviour.concerningSexualBehaviourDetail }}</td>
+                    </tr>
+                </table>
+            {{/data.offence-and-behaviour-summary}}
+            {{^data.offence-and-behaviour-summary}}
+                <p>No Data Held</p>
+            {{/data.offence-and-behaviour-summary}}
+
+            <h5>Move On Plan</h5>
+            {{#data.move-on-plan.move-on-plan}}
+                <table class="summary-list">
+                    <tr><td>Plan</td><td>{{ optionalValue plan }}</td></tr>
+                </table>
+            {{/data.move-on-plan.move-on-plan}}
+            {{^data.move-on-plan.move-on-plan}}
+                <p>No Data Held</p>
+            {{/data.move-on-plan.move-on-plan}}
+
+            <h5>Accommodation Referral Details</h5>
+            {{#data.accommodation-referral-details}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Other accommodation options</td>
+                        <td class="data-column-30">Other accommodation options detail</td>
+                        <td class="data-column-30">Commissioned Rehabilitative Services submitted</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue other-accommodation-options.otherOptions }}</td>
+                        <td>{{ optionalValue other-accommodation-options.otherOptionsDetail }}</td>
+                        <td>{{ optionalValue crs-submitted.crsSubmitted }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Duty to refer submitted</td>
+                        <td class="data-column-30">Duty to refer reference</td>
+                        <td class="data-column-30">Duty to refer date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue dtr-submitted.dtrSubmitted }}</td>
+                        <td>{{ optionalValue dtr-details.reference }}</td>
+                        <td>{{ optionalValue (formatDate dtr-details.date) }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Duty to refer outcome</td>
+                        <td class="data-column-30">Duty to refer outcome other details</td>
+                        <td class="data-column-30">Duty to refer local authority area</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue dtr-details.dutyToReferOutcome }}</td>
+                        <td>{{ optionalValue dtr-details.dutyToReferOutcomeOtherDetails }}</td>
+                        <td>{{ optionalValue dtr-details.localAuthorityAreaName }}</td>
+                    </tr>
+                </table>
+            {{/data.accommodation-referral-details}}
+            {{^data.accommodation-referral-details}}
+                <p>No Data Held</p>
+            {{/data.accommodation-referral-details}}
+
+            <h5>Eligibility</h5>
+            {{#data.eligibility}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Release date</td>
+                        <td class="data-column-30">Eligibility reason</td>
+                        <td class="data-column-30">Accommodation required from date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue (formatDate release-date.releaseDate) }}</td>
+                        <td>{{ optionalValue eligibility-reason.reason }}</td>
+                        <td>{{ optionalValue (formatDate accommodation-required-from-date.accommodationRequiredFromDate) }}</td>
+                    </tr>
+                </table>
+            {{/data.eligibility}}
+            {{^data.eligibility}}
+                <p>No Data Held</p>
+            {{/data.eligibility}}
+
+            <h5>Sentence Information</h5>
+            {{#data.sentence-information}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Sentence type</td>
+                        <td class="data-column-50">Sentence expiry date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue sentence-type.sentenceType }}</td>
+                        <td>{{ optionalValue (formatDate sentence-expiry.sentenceExpiryDate) }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Sentence length years</td>
+                        <td class="data-column-25">Sentence length months</td>
+                        <td class="data-column-25">Sentence length weeks</td>
+                        <td class="data-column-25">Sentence length days</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue sentence-length.years }}</td>
+                        <td>{{ optionalValue sentence-length.months }}</td>
+                        <td>{{ optionalValue sentence-length.weeks }}</td>
+                        <td>{{ optionalValue sentence-length.days }}</td>
+                    </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Release types</td><td>{{#release-type.releaseTypes}}{{.}}{{#unless @last}}, {{/unless}}{{/release-type.releaseTypes}}{{^release-type.releaseTypes}}No Data Held{{/release-type.releaseTypes}}</td></tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Fixed term recall start date</td>
+                        <td class="data-column-25">Fixed term recall end date</td>
+                        <td class="data-column-25">Parole start date</td>
+                        <td class="data-column-25">Parole end date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue (formatDate release-type.fixedTermRecallStartDate) }}</td>
+                        <td>{{ optionalValue (formatDate release-type.fixedTermRecallEndDate) }}</td>
+                        <td>{{ optionalValue (formatDate release-type.paroleStartDate) }}</td>
+                        <td>{{ optionalValue (formatDate release-type.paroleEndDate) }}</td>
+                    </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Summary</td><td>{{ optionalValue offending-summary.summary }}</td></tr>
+                </table>
+            {{/data.sentence-information}}
+            {{^data.sentence-information}}
+                <p>No Data Held</p>
+            {{/data.sentence-information}}
+
+            <h5>Consent</h5>
+            {{#data.consent}}
+                <table class="summary-list">
+                    <tr><td>Consent given</td><td>{{ optionalValue consent-given.consentGiven }}</td></tr>
+                </table>
+            {{/data.consent}}
+            {{^data.consent}}
+                <p>No Data Held</p>
+            {{/data.consent}}
+
+            <h5>Check Your Answers</h5>
+            {{#data.check-your-answers}}
+                <table class="summary-list">
+                    <tr><td>Consent given</td><td>{{ optionalValue review.reviewed }}</td></tr>
+                </table>
+            {{/data.check-your-answers}}
+            {{^data.check-your-answers}}
+                <p>No Data Held</p>
+            {{/data.check-your-answers}}
+
+            <h5>Disability Cultural and Specific Needs</h5>
+            {{#data.disability-cultural-and-specific-needs}}
+                <table class="summary-list">
+                    <tr><td>Needs</td><td>{{#needs.needs}}{{.}}{{#unless @last}}, {{/unless}}{{/needs.needs}}{{^needs.needs}}No Data Held{{/needs.needs}}</td></tr>
+                    <tr><td>Language detail</td><td>{{ optionalValue needs.languageDetail }}</td></tr>
+                    <tr><td>Hearing impairment detail</td><td>{{ optionalValue needs.hearingImpairmentDetail }}</td></tr>
+                    <tr><td>Mental health detail</td><td>{{ optionalValue needs.mentalHealthDetail }}</td></tr>
+                    <tr><td>Learning disability detail</td><td>{{ optionalValue needs.learningDisabilityDetail }}</td></tr>
+                    <tr><td>Visual impairment detail</td><td>{{ optionalValue needs.visualImpairmentDetail }}</td></tr>
+                    <tr><td>Physical health detail</td><td>{{ optionalValue needs.physicalHealthDetail }}</td></tr>
+                    <tr><td>Mobility detail</td><td>{{ optionalValue needs.mobilityDetail }}</td></tr>
+                    <tr><td>Neurodivergence detail</td><td>{{ optionalValue needs.neurodivergenceDetail }}</td></tr>
+                    <tr><td>Other detail</td><td>{{ optionalValue needs.otherDetail }}</td></tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Religious or cultural needs</td>
+                        <td class="data-column-75">Religious or cultural needs detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue religious-or-cultural-needs.religiousOrCulturalNeeds }}</td>
+                        <td>{{ optionalValue religious-or-cultural-needs.religiousOrCulturalNeedsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Property attributes or adaptations</td>
+                        <td class="data-column-75">Property attributes or adaptations detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue property-attributes-or-adaptations.propertyAttributesOrAdaptations }}</td>
+                        <td>{{ optionalValue property-attributes-or-adaptations.propertyAttributesOrAdaptationsDetail }}</td>
+                    </tr>
+                </table>
+            {{/data.disability-cultural-and-specific-needs}}
+            {{^data.disability-cultural-and-specific-needs}}
+                <p>No Data Held</p>
+            {{/data.disability-cultural-and-specific-needs}}
+
+            <h5>Prison Information</h5>
+            {{#data.prison-information}}
+                <p><b>Adjudications</b></p>
+                {{#adjudications.adjudications}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-20">Reported at</td>
+                        <td class="data-column-20">Establishment</td>
+                        <td class="data-column-20">Offence description</td>
+                        <td class="data-column-20">Hearing held</td>
+                        <td class="data-column-20">Finding</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue (formatDate reportedAt) }}</td>
+                        <td>{{ optionalValue establishment }}</td>
+                        <td>{{ optionalValue offenceDescription }}</td>
+                        <td>{{ convertBoolean hearingHeld }}</td>
+                        <td>{{ optionalValue finding }}</td>
+                    </tr>
+                </table>
+                {{/adjudications.adjudications}}
+                {{^adjudications.adjudications}}
+                    <p>No Data Held</p>
+                {{/adjudications.adjudications}}
+
+                <p><b>Assessment, Care in Custody and Teamwork Alerts</b></p>
+                {{#acct-alerts.acctAlerts}}
+                    <table class="data-table">
+                        <tr>
+                            <td class="data-column-20">Date created</td>
+                            <td class="data-column-20">Expired</td>
+                            <td class="data-column-20">Active</td>
+                            <td class="data-column-20">Comment</td>
+                            <td class="data-column-20">Date expires</td>
+                        </tr>
+                        <tr>
+                            <td>{{ optionalValue (formatDate dateCreated) }}</td>
+                            <td>{{ convertBoolean expired }}</td>
+                            <td>{{ convertBoolean active }}</td>
+                            <td>{{ optionalValue comment }}</td>
+                            <td>{{ optionalValue (formatDate dateExpires) }}</td>
+                        </tr>
+                    </table>
+                {{/acct-alerts.acctAlerts}}
+                {{^acct-alerts.acctAlerts}}
+                    <p>No Data Held</p>
+                {{/acct-alerts.acctAlerts}}
+            {{/data.prison-information}}
+            {{^data.prison-information}}
+                <p>No Data Held</p>
+            {{/data.prison-information}}
+
+            <h5>Approvals For Specific Risks</h5>
+            {{#data.approvals-for-specific-risks.approvals-for-specific-risks}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Approvals</td>
+                        <td class="data-column-75">Approvals detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue approvals }}</td>
+                        <td>{{ optionalValue approvalsDetail }}</td>
+                    </tr>
+                </table>
+            {{/data.approvals-for-specific-risks.approvals-for-specific-risks}}
+            {{^data.approvals-for-specific-risks.approvals-for-specific-risks}}
+                <p>No Data Held</p>
+            {{/data.approvals-for-specific-risks.approvals-for-specific-risks}}
+
+            <h5>Behaviour in Community Accommodation Services</h5>
+            {{#data.behaviour-in-cas}}
+                <table class="summary-list">
+                    <tr><td>Previous stays</td><td>{{ optionalValue previous-stays.previousStays }}</td></tr>
+                    <tr><td>Accommodation types</td><td>{{#previous-stays-details.accommodationTypes}}{{.}}{{#unless @last}}, {{/unless}}{{/previous-stays-details.accommodationTypes}}{{^previous-stays-details.accommodationTypes}}No Data Held{{/previous-stays-details.accommodationTypes}}</td></tr>
+                    <tr><td>Approved premises (CAS1) detail</td><td>{{ optionalValue previous-stays-details.cas1Detail }}</td></tr>
+                    <tr><td>Short term accommodation (CAS2) detail</td><td>{{ optionalValue previous-stays-details.cas2Detail }}</td></tr>
+                    <tr><td>Transitional accommodation (CAS3) detail</td><td>{{ optionalValue previous-stays-details.cas3Detail }}</td></tr>
+                </table>
+            {{/data.behaviour-in-cas}}
+            {{^data.behaviour-in-cas}}
+                <p>No Data Held</p>
+            {{/data.behaviour-in-cas}}
+
+            <h5>Contact Details</h5>
+            {{#data.contact-details}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Practitioner name</td>
+                        <td class="data-column-25">Practitioner email</td>
+                        <td class="data-column-25">Practitioner phone</td>
+                        <td class="data-column-25">Practitioner probation delivery unit</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue practitioner-name.name }}</td>
+                        <td>{{ optionalValue practitioner-email.email }}</td>
+                        <td>{{ optionalValue practitioner-phone.phone }}</td>
+                        <td>{{ optionalValue practitioner-pdu.name }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Probation practitioner name</td>
+                        <td class="data-column-25">Probation practitioner email</td>
+                        <td class="data-column-25">Probation practitioner phone</td>
+                        <td class="data-column-25">Probation practitioner probation delivery unit</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue probation-practitioner.name }}</td>
+                        <td>{{ optionalValue probation-practitioner.phone }}</td>
+                        <td>{{ optionalValue probation-practitioner.email }}</td>
+                        <td>{{ optionalValue probation-practitioner.pdu.name }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Backup contact name</td>
+                        <td class="data-column-25">Backup contact phone</td>
+                        <td class="data-column-25">Backup contact email</td>
+                        <td class="data-column-25">Person on Probation phone</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue backup-contact.name }}</td>
+                        <td>{{ optionalValue backup-contact.phone }}</td>
+                        <td>{{ optionalValue backup-contact.email }}</td>
+                        <td>{{ optionalValue pop-phone-number.phone }}</td>
+                    </tr>
+                </table>
+            {{/data.contact-details}}
+            {{^data.contact-details}}
+                <p>No Data Held</p>
+            {{/data.contact-details}}
+
+            <h5>Food Allergies</h5>
+            {{#data.food-allergies.food-allergies}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Has food allergies</td>
+                        <td class="data-column-75">Food allergies detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue foodAllergies }}</td>
+                        <td>{{ optionalValue foodAllergiesDetail }}</td>
+                    </tr>
+                </table>
+            {{/data.food-allergies.food-allergies}}
+            {{^data.food-allergies.food-allergies}}
+                <p>No Data Held</p>
+            {{/data.food-allergies.food-allergies}}
+
+            <h5>Placement Considerations</h5>
+            {{#data.placement-considerations}}
+                <table class="summary-list">
+                    <tr><td>Risk to self</td><td>{{ optionalValue rosh-level.riskToSelf }}</td></tr>
+                    <tr><td>Risk to children</td><td>{{ optionalValue rosh-level.riskToChildren }}</td></tr>
+                    <tr><td>Risk to public</td><td>{{ optionalValue rosh-level.riskToPublic }}</td></tr>
+                    <tr><td>Risk to known adult</td><td>{{ optionalValue rosh-level.riskToKnownAdult }}</td></tr>
+                    <tr><td>Risk to staff</td><td>{{ optionalValue rosh-level.riskToStaff }}</td></tr>
+                    <tr><td>Cooperation support</td><td>{{ optionalValue cooperation.support }}</td></tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Anti social behaviour concerns</td>
+                        <td class="data-column-75">Anti social behaviour concerns detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue anti-social-behaviour.concerns }}</td>
+                        <td>{{ optionalValue anti-social-behaviour.concernsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Substance misuse</td>
+                        <td class="data-column-75">Substance misuse detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue substance-misuse.substanceMisuse }}</td>
+                        <td>{{ optionalValue substance-misuse.substanceMisuseDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-30">Accommodation sharing</td>
+                        <td class="data-column-30">Accommodation sharing yes detail</td>
+                        <td class="data-column-30">Accommodation sharing no detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue accommodation-sharing.accommodationSharing }}</td>
+                        <td>{{ optionalValue accommodation-sharing.accommodationSharingYesDetail }}</td>
+                        <td>{{ optionalValue accommodation-sharing.accommodationSharingNoDetail }}</td>
+                    </tr>
+                </table>
+                <p><b>Risk Management Summaries</b></p>
+                <table class="summary-list">
+                    {{#risk-management-plan.riskManagementSummaries}}
+                        <tr><td>{{ questionNumber }} - {{ label }}</td><td>{{ optionalValue answer }}</td></tr>
+                    {{/risk-management-plan.riskManagementSummaries}}
+                    {{^risk-management-plan.riskManagementSummaries}}No Data Held{{/risk-management-plan.riskManagementSummaries}}
+                </table>
+            {{/data.placement-considerations}}
+            {{^data.placement-considerations}}
+                <p>No Data Held</p>
+            {{/data.placement-considerations}}
+
+            <h5>Risk Ratings</h5>
+            {{#risk_ratings}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Multi-Agency Public Protection Arrangements value</td>
+                        <td class="data-column-50">Multi-Agency Public Protection Arrangements status</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue mappa.value }}</td>
+                        <td>{{ optionalValue mappa.status }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Tier level</td>
+                        <td class="data-column-25">Tier status</td>
+                        <td class="data-column-25">Tier last updated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue tier.value.level }}</td>
+                        <td>{{ optionalValue tier.status }}</td>
+                        <td>{{ buildDateNumber tier.value.lastUpdated.[0] tier.value.lastUpdated.[1] tier.value.lastUpdated.[2] }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk of Serious Harm overall risk</td>
+                        <td class="data-column-25">Risk to Children</td>
+                        <td class="data-column-25">Risk to Public</td>
+                        <td class="data-column-25">Risk to Known Adult</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue roshRisks.value.overallRisk }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToChildren }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToPublic }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToKnownAdult }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk to Staff</td>
+                        <td class="data-column-25">Risk of Serious Harm status</td>
+                        <td class="data-column-25">Risk of Serious Harm last updated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue roshRisks.value.riskToStaff }}</td>
+                        <td>{{ optionalValue roshRisks.status }}</td>
+                        <td>{{ buildDateNumber roshRisks.value.lastUpdated.[0] roshRisks.value.lastUpdated.[1] roshRisks.value.lastUpdated.[2] }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Flags</td>
+                        <td class="data-column-50">Flags status</td>
+                    </tr>
+                    <tr>
+                        <td>{{#flags.value}}{{.}}{{#unless @last}}, {{/unless}}{{/flags.value}}{{^flags.value}}No Data Held{{/flags.value}}</td>
+                        <td>{{ optionalValue flags.status }}</td>
+                    </tr>
+                </table>
+            {{/risk_ratings}}
+            {{^risk_ratings}}
+                <p>No Data Held</p>
+            {{/risk_ratings}}
+
+            <h5>Document</h5>
+            {{#document}}
+                {{#sections}}
+                    <p><b>{{ title }}</b></p>
+                    {{#tasks}}
+                        <p><b>{{ title }}</b></p>
+                        {{#content}}
+                            <table class="summary-list">
+                                {{#each .}}
+                                    <tr><td>{{ @key }}</td><td>{{ this }}</td></tr>
+                                {{/each}}
+                            </table>
+                        {{/content}}
+                        {{^content}}
+                            <p>No Data Held</p>
+                        {{/content}}
+                    {{/tasks}}
+                    {{^tasks}}
+                        <p>No Data Held</p>
+                    {{/tasks}}
+                {{/sections}}
+                {{^sections}}
+                    <p>No Data Held</p>
+                {{/sections}}
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
         {{/Applications}}
         {{^Applications}}
             <p>No Data Held</p>
@@ -3040,7 +3729,21 @@
 
         <h3>Assessment Referral History Notes</h3>
         {{#AssessmentReferralHistoryNotes}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Message</td>
+                    <td class="data-column-25">System noted type</td>
+                    <td class="data-column-25">Created by user</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue message }}</td>
+                    <td>{{ optionalValue system_note_type }}</td>
+                    <td>{{ optionalValue created_by_user }}</td>
+                </tr>
+            </table>
+            <br/>
         {{/AssessmentReferralHistoryNotes}}
         {{^AssessmentReferralHistoryNotes}}
             <p>No Data Held</p>
@@ -3048,7 +3751,43 @@
 
         <h3>Bookings</h3>
         {{#Bookings}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Booking</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Status</td>
+                    <td class="data-column-25">Premises name</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue status }}</td>
+                    <td>{{ optionalValue premises_name }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Arrival date</td>
+                    <td class="data-column-25">Departure date</td>
+                    <td class="data-column-25">Original arrival date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                    <td>{{ optionalValue (formatDate departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Original departure date</td>
+                    <td class="data-column-25">Key worker staff code</td>
+                    <td class="data-column-25">Adhoc</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate original_departure_date) }}</td>
+                    <td>{{ getUserLastName key_worker_staff_code }}</td>
+                    <td>{{ convertBoolean adhoc }}</td>
+                </tr>
+            </table>
         {{/Bookings}}
         {{^Bookings}}
             <p>No Data Held</p>
@@ -3056,7 +3795,63 @@
 
         <h3>Assessments</h3>
         {{#Assessments}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Assessment</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Decision</td>
+                    <td class="data-column-25">Submitted at</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Is withdrawn</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue decision }}</td>
+                    <td>{{ optionalValue (formatDate submitted_at) }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ convertBoolean is_withdrawn }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Referral rejection reason category</td>
+                    <td class="data-column-25">Rejection rationale</td>
+                    <td class="data-column-25">Referral rejection reason detail</td>
+                    <td class="data-column-25">Completed at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue referral_rejection_reason_category }}</td>
+                    <td>{{ optionalValue rejection_rationale }}</td>
+                    <td>{{ optionalValue referral_rejection_reason_detail }}</td>
+                    <td>{{ optionalValue (formatDate completed_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Accommodation required from date</td>
+                    <td class="data-column-25">Is able to share</td>
+                    <td class="data-column-25">Release type</td>
+                    <td class="data-column-25">Release date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate accommodation_required_from_date) }}</td>
+                    <td>{{ convertBoolean summary_data.isAbleToShare }}</td>
+                    <td>{{ optionalValue summary_data.releaseType }}</td>
+                    <td>{{ optionalValue (formatDate release_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Reallocated at</td>
+                    <td class="data-column-25">Due at</td>
+                    <td class="data-column-25">Assessor name</td>
+                    <td class="data-column-25">Allocated at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate reallocated_at) }}</td>
+                    <td>{{ optionalValue (formatDate due_at) }}</td>
+                    <td>{{ optionalValue assessor_name }}</td>
+                    <td>{{ optionalValue (formatDate allocated_at) }}</td>
+                </tr>
+            </table>
         {{/Assessments}}
         {{^Assessments}}
             <p>No Data Held</p>
@@ -3064,7 +3859,14 @@
 
         <h3>Cancellations</h3>
         {{#Cancellations}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Cancellation</h4>
+            <table class="summary-list">
+                <tr><td>Created at</td><td>{{ optionalValue (formatDate created_at) }}</td></tr>
+                <tr><td>Cancellation date</td><td>{{ optionalValue (formatDate cancellation_date) }}</td></tr>
+                <tr><td>Cancellation reason</td><td>{{ optionalValue cancellation_reason }}</td></tr>
+                <tr><td>Other reason</td><td>{{ optionalValue other_reason }}</td></tr>
+                <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
+            </table>
         {{/Cancellations}}
         {{^Cancellations}}
             <p>No Data Held</p>
