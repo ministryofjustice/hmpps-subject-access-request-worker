@@ -2410,43 +2410,37 @@
             <h4>Booking</h4>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Application id</td>
-                    <td class="data-column-25">Offline application id</td>
                     <td class="data-column-25">Created at</td>
-                    <td class="data-column-25">Version</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue application_id }}</td>
-                    <td>{{ optionalValue offline_application_id }}</td>
-                    <td>{{ optionalValue (formatDate created_at) }}</td>
-                    <td>{{ optionalValue version }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
                     <td class="data-column-25">Status</td>
                     <td class="data-column-25">Premises name</td>
-                    <td class="data-column-25">Departure date</td>
-                    <td class="data-column-25">Arrival date</td>
                 </tr>
                 <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
                     <td>{{ optionalValue status }}</td>
                     <td>{{ optionalValue premises_name }}</td>
-                    <td>{{ optionalValue (formatDate departure_date) }}</td>
-                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
                 </tr>
             </table>
             <table class="data-table">
                 <tr>
+                    <td class="data-column-25">Arrival date</td>
+                    <td class="data-column-25">Departure date</td>
                     <td class="data-column-25">Original arrival date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                    <td>{{ optionalValue (formatDate departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
                     <td class="data-column-25">Original departure date</td>
                     <td class="data-column-25">Key worker staff code</td>
                     <td class="data-column-25">Adhoc</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
                     <td>{{ optionalValue (formatDate original_departure_date) }}</td>
-                    <td>{{ optionalValue key_worker_staff_code }}</td>
+                    <td>{{ getUserLastName key_worker_staff_code }}</td>
                     <td>{{ convertBoolean adhoc }}</td>
                 </tr>
             </table>
@@ -3634,6 +3628,100 @@
                 <p>No Data Held</p>
             {{/data.placement-considerations}}
 
+            <h5>Risk Ratings</h5>
+            {{#risk_ratings}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Multi-Agency Public Protection Arrangements value</td>
+                        <td class="data-column-50">Multi-Agency Public Protection Arrangements status</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue mappa.value }}</td>
+                        <td>{{ optionalValue mappa.status }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Tier level</td>
+                        <td class="data-column-25">Tier status</td>
+                        <td class="data-column-25">Tier last updated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue tier.value.level }}</td>
+                        <td>{{ optionalValue tier.status }}</td>
+                        <td>{{ buildDateNumber tier.value.lastUpdated.[0] tier.value.lastUpdated.[1] tier.value.lastUpdated.[2] }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk of Serious Harm overall risk</td>
+                        <td class="data-column-25">Risk to Children</td>
+                        <td class="data-column-25">Risk to Public</td>
+                        <td class="data-column-25">Risk to Known Adult</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue roshRisks.value.overallRisk }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToChildren }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToPublic }}</td>
+                        <td>{{ optionalValue roshRisks.value.riskToKnownAdult }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk to Staff</td>
+                        <td class="data-column-25">Risk of Serious Harm status</td>
+                        <td class="data-column-25">Risk of Serious Harm last updated</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue roshRisks.value.riskToStaff }}</td>
+                        <td>{{ optionalValue roshRisks.status }}</td>
+                        <td>{{ buildDateNumber roshRisks.value.lastUpdated.[0] roshRisks.value.lastUpdated.[1] roshRisks.value.lastUpdated.[2] }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Flags</td>
+                        <td class="data-column-50">Flags status</td>
+                    </tr>
+                    <tr>
+                        <td>{{#flags.value}}{{.}}{{#unless @last}}, {{/unless}}{{/flags.value}}{{^flags.value}}No Data Held{{/flags.value}}</td>
+                        <td>{{ optionalValue flags.status }}</td>
+                    </tr>
+                </table>
+            {{/risk_ratings}}
+            {{^risk_ratings}}
+                <p>No Data Held</p>
+            {{/risk_ratings}}
+
+            <h5>Document</h5>
+            {{#document}}
+                {{#sections}}
+                    <p><b>{{ title }}</b></p>
+                    {{#tasks}}
+                        <p><b>{{ title }}</b></p>
+                        {{#content}}
+                            <table class="summary-list">
+                                {{#each .}}
+                                    <tr><td>{{ @key }}</td><td>{{ this }}</td></tr>
+                                {{/each}}
+                            </table>
+                        {{/content}}
+                        {{^content}}
+                            <p>No Data Held</p>
+                        {{/content}}
+                    {{/tasks}}
+                    {{^tasks}}
+                        <p>No Data Held</p>
+                    {{/tasks}}
+                {{/sections}}
+                {{^sections}}
+                    <p>No Data Held</p>
+                {{/sections}}
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
         {{/Applications}}
         {{^Applications}}
             <p>No Data Held</p>
@@ -3641,7 +3729,21 @@
 
         <h3>Assessment Referral History Notes</h3>
         {{#AssessmentReferralHistoryNotes}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Message</td>
+                    <td class="data-column-25">System noted type</td>
+                    <td class="data-column-25">Created by user</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue message }}</td>
+                    <td>{{ optionalValue system_note_type }}</td>
+                    <td>{{ optionalValue created_by_user }}</td>
+                </tr>
+            </table>
+            <br/>
         {{/AssessmentReferralHistoryNotes}}
         {{^AssessmentReferralHistoryNotes}}
             <p>No Data Held</p>
@@ -3649,7 +3751,43 @@
 
         <h3>Bookings</h3>
         {{#Bookings}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Booking</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Status</td>
+                    <td class="data-column-25">Premises name</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ optionalValue status }}</td>
+                    <td>{{ optionalValue premises_name }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Arrival date</td>
+                    <td class="data-column-25">Departure date</td>
+                    <td class="data-column-25">Original arrival date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate arrival_date) }}</td>
+                    <td>{{ optionalValue (formatDate departure_date) }}</td>
+                    <td>{{ optionalValue (formatDate original_arrival_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Original departure date</td>
+                    <td class="data-column-25">Key worker staff code</td>
+                    <td class="data-column-25">Adhoc</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate original_departure_date) }}</td>
+                    <td>{{ getUserLastName key_worker_staff_code }}</td>
+                    <td>{{ convertBoolean adhoc }}</td>
+                </tr>
+            </table>
         {{/Bookings}}
         {{^Bookings}}
             <p>No Data Held</p>
@@ -3657,7 +3795,63 @@
 
         <h3>Assessments</h3>
         {{#Assessments}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Assessment</h4>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Decision</td>
+                    <td class="data-column-25">Submitted at</td>
+                    <td class="data-column-25">Created at</td>
+                    <td class="data-column-25">Is withdrawn</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue decision }}</td>
+                    <td>{{ optionalValue (formatDate submitted_at) }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
+                    <td>{{ convertBoolean is_withdrawn }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Referral rejection reason category</td>
+                    <td class="data-column-25">Rejection rationale</td>
+                    <td class="data-column-25">Referral rejection reason detail</td>
+                    <td class="data-column-25">Completed at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue referral_rejection_reason_category }}</td>
+                    <td>{{ optionalValue rejection_rationale }}</td>
+                    <td>{{ optionalValue referral_rejection_reason_detail }}</td>
+                    <td>{{ optionalValue (formatDate completed_at) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Accommodation required from date</td>
+                    <td class="data-column-25">Is able to share</td>
+                    <td class="data-column-25">Release type</td>
+                    <td class="data-column-25">Release date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate accommodation_required_from_date) }}</td>
+                    <td>{{ convertBoolean summary_data.isAbleToShare }}</td>
+                    <td>{{ optionalValue summary_data.releaseType }}</td>
+                    <td>{{ optionalValue (formatDate release_date) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Reallocated at</td>
+                    <td class="data-column-25">Due at</td>
+                    <td class="data-column-25">Assessor name</td>
+                    <td class="data-column-25">Allocated at</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate reallocated_at) }}</td>
+                    <td>{{ optionalValue (formatDate due_at) }}</td>
+                    <td>{{ optionalValue assessor_name }}</td>
+                    <td>{{ optionalValue (formatDate allocated_at) }}</td>
+                </tr>
+            </table>
         {{/Assessments}}
         {{^Assessments}}
             <p>No Data Held</p>
@@ -3665,7 +3859,14 @@
 
         <h3>Cancellations</h3>
         {{#Cancellations}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+            <h4>Cancellation</h4>
+            <table class="summary-list">
+                <tr><td>Created at</td><td>{{ optionalValue (formatDate created_at) }}</td></tr>
+                <tr><td>Cancellation date</td><td>{{ optionalValue (formatDate cancellation_date) }}</td></tr>
+                <tr><td>Cancellation reason</td><td>{{ optionalValue cancellation_reason }}</td></tr>
+                <tr><td>Other reason</td><td>{{ optionalValue other_reason }}</td></tr>
+                <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
+            </table>
         {{/Cancellations}}
         {{^Cancellations}}
             <p>No Data Held</p>
