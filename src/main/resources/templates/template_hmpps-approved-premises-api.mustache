@@ -3874,7 +3874,151 @@
 
         <h3>Domain Events</h3>
         {{#DomainEvents}}
-            <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ this }}</td></tr>{{/each}}</table><br/>
+
+            {{#if (eq type "CAS2_APPLICATION_SUBMITTED")}}
+                <h5>Application_submitted</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS2_APPLICATION_STATUS_UPDATED")}}
+                <h5>Application_status_updated</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_BOOKING_PROVISIONALLY_MADE")}}
+                <h5>Booking_provisionally_made</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_BOOKING_CONFIRMED")}}
+                <h5>Booking_confirmed</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_BOOKING_CANCELLED")}}
+                <h5>Booking_cancelled</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_BOOKING_CANCELLED_UPDATED")}}
+                <h5>Booking_cancelled_updated</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_PERSON_ARRIVED")}}
+                <h5>Person_arrived</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_PERSON_ARRIVED_UPDATED")}}
+                <h5>Person_arrived_updated</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_PERSON_DEPARTED")}}
+                <h5>Person_departed</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_PERSON_DEPARTURE_UPDATED")}}
+                <h5>Person_departure_updated</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_REFERRAL_SUBMITTED")}}
+                <h5>Referral_submitted</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
+            {{#if (eq type "CAS3_ASSESSMENT_UPDATED")}}
+                <h5>Assessment_updated</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">  TODO  </td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue data.eventDetails. }}</td>
+                    </tr>
+                </table>
+            {{/if}}
+
         {{/DomainEvents}}
         {{^DomainEvents}}
             <p>No Data Held</p>
