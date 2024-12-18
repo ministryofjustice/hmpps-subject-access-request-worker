@@ -2746,16 +2746,6 @@
                         <td>{{ optionalValue (formatDate data.eventDetails.previousExpectedDepartureOn) }}</td>
                     </tr>
                 </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-30">Created at</td>
-                        <td class="data-column-30">Created by</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue (formatDate data.eventDetails.createdAt) }}</td>
-                        <td>{{ getUserLastName data.eventDetails.createdBy }}</td>
-                    </tr>
-                </table>
             {{/if}}
 
             {{#if (eq type "APPROVED_PREMISES_PERSON_NOT_ARRIVED")}}
@@ -2838,7 +2828,7 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue (formatDate data.eventDetails.allocatedAt) }}</td>
-                        <td>{{ getUserLastName data.eventDetails.allocatedBy }}</td>
+                        <td>{{#data.eventDetails.allocatedBy.username}}{{getUserLastName .}}{{/data.eventDetails.allocatedBy.username}}{{^data.eventDetails.allocatedBy.username}}{{optionalValue data.eventDetails.allocatedBy.surname}}{{/data.eventDetails.allocatedBy.username}}</td>
                         <td>{{#data.eventDetails.allocatedTo.username}}{{getUserLastName .}}{{/data.eventDetails.allocatedTo.username}}{{^data.eventDetails.allocatedTo.username}}{{optionalValue data.eventDetails.allocatedTo.surname}}{{/data.eventDetails.allocatedTo.username}}</td>
                     </tr>
                 </table>
@@ -2937,7 +2927,7 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue (formatDate data.eventDetails.createdAt) }}</td>
-                        <td>{{ getUserLastName data.eventDetails.createdBy }}</td>
+                        <td>{{#data.eventDetails.createdBy.username}}{{getUserLastName .}}{{/data.eventDetails.createdBy.username}}{{^data.eventDetails.createdBy.username}}{{optionalValue data.eventDetails.createdBy.surname}}{{/data.eventDetails.createdBy.username}}</td>
                     </tr>
                 </table>
             {{/if}}
@@ -3886,7 +3876,7 @@
                     </tr>
                     <tr>
                         <td>{{ getUserLastName data.eventDetails.bookedBy.username }}</td>
-                        <td>{{ getUserLastName data.eventDetails.bookedBy.probationRegionCode }}</td>
+                        <td>{{ optionalValue data.eventDetails.bookedBy.probationRegionCode }}</td>
                         <td>{{ optionalValue (formatDate data.eventDetails.expectedArrivedAt) }}</td>
                         <td>{{ optionalValue data.eventDetails.notes }}</td>
                     </tr>
