@@ -297,4 +297,24 @@ class TemplateHelpersTest {
       assertThat(response).isFalse()
     }
   }
+
+  @Nested
+  inner class ConvertCamelCaseTest {
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "camelCaseValue       | camel case value",
+        "SomeValue            | some value",
+        "Value With Spaces    | Value With Spaces",
+        "                     | No Data Held",
+        "null                 | No Data Held",
+      ],
+      delimiterString = "|",
+      nullValues = ["null"],
+    )
+    fun `convertCamelCase returns expected value`(input: String?, expectedValue: String) {
+      val response = templateHelpers.convertCamelCase(input)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+  }
 }

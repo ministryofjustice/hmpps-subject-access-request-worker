@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
 import org.apache.commons.lang3.StringUtils.isBlank
 import org.apache.commons.lang3.StringUtils.leftPad
+import org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
@@ -61,4 +62,10 @@ class TemplateHelpers(
     buildDate(year?.toInt()?.toString(), month?.toInt()?.toString(), day?.toInt()?.toString())
 
   fun eq(input: String?, value: String?): Boolean = input == value
+
+  fun convertCamelCase(input: String?): String {
+    if (input == null || input == "") return "No Data Held"
+    if (input.contains(" ")) return input
+    return splitByCharacterTypeCamelCase(input).joinToString(" ").lowercase()
+  }
 }

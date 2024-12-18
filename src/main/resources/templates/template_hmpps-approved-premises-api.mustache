@@ -68,7 +68,7 @@
             <h5>Offending history</h5>
             {{#data.offending-history}}
                 <table class="summary-list">
-                    <tr><td>Has any previous convictions</td><td>{{ optionalValue any-previous-convictions.hasAnyPreviousConvictions }}</td></tr>
+                    <tr><td>Has any previous convictions</td><td>{{ convertCamelCase any-previous-convictions.hasAnyPreviousConvictions }}</td></tr>
                 </table>
                 <p><b>Offence history</b></p>
                 {{#offence-history-data}}
@@ -214,7 +214,7 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue national-insurance.nationalInsuranceNumber }}</td>
-                        <td>{{ optionalValue funding-source.fundingSource }}</td>
+                        <td>{{ convertCamelCase funding-source.fundingSource }}</td>
                     </tr>
                 </table>
             {{/data.funding-information}}
@@ -327,7 +327,7 @@
                         <td>{{ optionalValue sex-and-gender.optionalGenderIdentity }}</td>
                         <td>{{ optionalValue ethnic-group.ethnicGroup }}</td>
                         <td>{{ optionalValue parental-carer-responsibilities.hasParentalOrCarerResponsibilities }}</td>
-                        <td>{{ optionalValue disability.hasDisability }}</td>
+                        <td>{{ convertCamelCase disability.hasDisability }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
@@ -341,7 +341,7 @@
                         <td>{{ optionalValue disability.otherDisability }}</td>
                         <td>{{ optionalValue white-background.whiteBackground }}</td>
                         <td>{{ optionalValue white-background.optionalWhiteBackground }}</td>
-                        <td>{{ optionalValue sexual-orientation.orientation }}</td>
+                        <td>{{ convertCamelCase sexual-orientation.orientation }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
@@ -353,7 +353,7 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue sexual-orientation.otherOrientation }}</td>
-                        <td>{{ optionalValue marital-status.maritalStatus }}</td>
+                        <td>{{ convertCamelCase marital-status.maritalStatus }}</td>
                         <td>{{ optionalValue will-answer-equality-questions.willAnswer }}</td>
                         <td>{{ optionalValue religion.religion }}</td>
                     </tr>
@@ -559,7 +559,7 @@
                             <td>{{ optionalValue hasMentalHealthNeeds }}</td>
                             <td>{{ optionalValue isEngagedWithCommunity }}</td>
                             <td>{{ optionalValue isEngagedWithServicesInCustody }}</td>
-                            <td>{{ optionalValue canManageMedication }}</td>
+                            <td>{{ convertCamelCase canManageMedication }}</td>
                         </tr>
                     </table>
                     <table class="summary-list">
@@ -842,7 +842,7 @@
                         <td class="data-column-30">New status description</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue data.eventDetails.newStatus.name }}</td>
+                        <td>{{ convertCamelCase data.eventDetails.newStatus.name }}</td>
                         <td>{{ optionalValue data.eventDetails.newStatus.label }}</td>
                         <td>{{ optionalValue data.eventDetails.newStatus.description }}</td>
                     </tr>
@@ -928,7 +928,7 @@
                     <td>{{ optionalValue id }}</td>
                     <td>{{ optionalValue offence_id }}</td>
                     <td>{{ getUserLastName application_user_name }}</td>
-                    <td>{{ optionalValue sentence_type }}</td>
+                    <td>{{ convertCamelCase sentence_type }}</td>
                 </tr>
             </table>
             <table class="data-table">
@@ -1131,7 +1131,7 @@
                     <tr>
                         <td>{{ optionalValue rehabilitative-interventions.summary }}</td>
                         <td>{{ optionalValue rehabilitative-interventions.otherIntervention }}</td>
-                        <td>{{#rehabilitative-interventions.rehabilitativeInterventions}}{{.}}{{#unless @last}}, {{/unless}}{{/rehabilitative-interventions.rehabilitativeInterventions}}{{^rehabilitative-interventions.rehabilitativeInterventions}}No Data Held{{/rehabilitative-interventions.rehabilitativeInterventions}}</td>
+                        <td>{{#rehabilitative-interventions.rehabilitativeInterventions}}{{convertCamelCase .}}{{#unless @last}}, {{/unless}}{{/rehabilitative-interventions.rehabilitativeInterventions}}{{^rehabilitative-interventions.rehabilitativeInterventions}}No Data Held{{/rehabilitative-interventions.rehabilitativeInterventions}}</td>
                     </tr>
                 </table>
             {{/data.risk-management-features}}
@@ -1165,7 +1165,7 @@
                     <tr>
                         <td>{{ optionalValue plans-in-place.arePlansInPlace }}</td>
                         <td>{{ optionalValue plans-in-place.plansNotInPlaceDetail }}</td>
-                        <td>{{ optionalValue type-of-accommodation.accommodationType }}</td>
+                        <td>{{ convertCamelCase type-of-accommodation.accommodationType }}</td>
                         <td>{{ optionalValue type-of-accommodation.otherAccommodationType }}</td>
                     </tr>
                 </table>
@@ -1259,7 +1259,7 @@
                         <td>{{ optionalValue (formatDate relevant-dates.licenceExpiryDate) }}</td>
                         <td>{{ optionalValue (formatDate relevant-dates.sentenceExpiryDate) }}</td>
                         <td>{{ optionalValue (formatDate relevant-dates.paroleEligibilityDate) }}</td>
-                        <td>{{# placement-purpose.placementPurposes }}{{.}}{{#unless @last}}, {{/unless}}{{/ placement-purpose.placementPurposes }}{{^ placement-purpose.placementPurposes }}No Data Held{{/ placement-purpose.placementPurposes }}</td>
+                        <td>{{# placement-purpose.placementPurposes }}{{convertCamelCase .}}{{#unless @last}}, {{/unless}}{{/ placement-purpose.placementPurposes }}{{^ placement-purpose.placementPurposes }}No Data Held{{/ placement-purpose.placementPurposes }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
@@ -1270,7 +1270,7 @@
                         <td class="data-column-25">Release type</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue sentence-type.sentenceType }}</td>
+                        <td>{{ convertCamelCase sentence-type.sentenceType }}</td>
                         <td>{{ optionalValue release-date.knowReleaseDate }}</td>
                         <td>{{ optionalValue (formatDate release-date.releaseDate) }}</td>
                         <td>{{ optionalValue release-type.releaseType }}</td>
@@ -1773,7 +1773,7 @@
                     <td class="data-column-30">Model scope</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue is_active }}</td>
+                    <td>{{ convertBoolean is_active }}</td>
                     <td>{{ optionalValue service_scope }}</td>
                     <td>{{ optionalValue model_scope }}</td>
                 </tr>
@@ -1837,7 +1837,7 @@
                         <td class="data-column-50">Decision rationale</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue decision }}</td>
+                        <td>{{ convertCamelCase decision }}</td>
                         <td>{{ optionalValue decisionRationale }}</td>
                     </tr>
                 </table>
@@ -1918,9 +1918,9 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue cruInformation }}</td>
-                        <td>{{ optionalValue hasEnSuite }}</td>
-                        <td>{{ optionalValue isCatered }}</td>
-                        <td>{{ optionalValue isSingle }}</td>
+                        <td>{{ convertCamelCase hasEnSuite }}</td>
+                        <td>{{ convertCamelCase isCatered }}</td>
+                        <td>{{ convertCamelCase isSingle }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
@@ -1931,10 +1931,10 @@
                         <td class="data-column-25">Accepts non sexual child offenders</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue isSuitedForSexOffenders }}</td>
-                        <td>{{ optionalValue acceptsSexOffenders }}</td>
-                        <td>{{ optionalValue acceptsChildSexOffenders }}</td>
-                        <td>{{ optionalValue acceptsNonSexualChildOffenders }}</td>
+                        <td>{{ convertCamelCase isSuitedForSexOffenders }}</td>
+                        <td>{{ convertCamelCase acceptsSexOffenders }}</td>
+                        <td>{{ convertCamelCase acceptsChildSexOffenders }}</td>
+                        <td>{{ convertCamelCase acceptsNonSexualChildOffenders }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
@@ -1945,10 +1945,10 @@
                         <td class="data-column-25">Is suitable for vulnerable</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue acceptsHateCrimeOffenders }}</td>
-                        <td>{{ optionalValue isWheelchairDesignated }}</td>
-                        <td>{{ optionalValue isStepFreeDesignated }}</td>
-                        <td>{{ optionalValue isSuitableForVulnerable }}</td>
+                        <td>{{ convertCamelCase acceptsHateCrimeOffenders }}</td>
+                        <td>{{ convertCamelCase isWheelchairDesignated }}</td>
+                        <td>{{ convertCamelCase isStepFreeDesignated }}</td>
+                        <td>{{ convertCamelCase isSuitableForVulnerable }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
@@ -1957,8 +1957,8 @@
                         <td class="data-column-25">Is arson designated</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue isArsonSuitable }}</td>
-                        <td>{{ optionalValue isArsonDesignated }}</td>
+                        <td>{{ convertCamelCase isArsonSuitable }}</td>
+                        <td>{{ convertCamelCase isArsonDesignated }}</td>
                     </tr>
                 </table>
             {{/data.matching-information.matching-information}}
@@ -2607,7 +2607,7 @@
                         <td>{{#data.eventDetails.bookedBy.staffMember.username}}{{getUserLastName .}}{{/data.eventDetails.bookedBy.staffMember.username}}{{^data.eventDetails.bookedBy.staffMember.username}}{{optionalValue data.eventDetails.bookedBy.staffMember.surname}}{{/data.eventDetails.bookedBy.staffMember.username}}</td>
                         <td>{{ optionalValue data.eventDetails.bookedBy.cru.name }}</td>
                         <td>{{ optionalValue data.eventDetails.situation }}</td>
-                        <td>{{ optionalValue data.eventDetails.sentenceType }}</td>
+                        <td>{{ convertCamelCase data.eventDetails.sentenceType }}</td>
                     </tr>
                 </table>
             {{/if}}
@@ -3108,7 +3108,7 @@
                 <tr>
                     <td>{{ convertBoolean is_duty_to_refer_submitted }}</td>
                     <td>{{ optionalValue (formatDate duty_to_refer_submission_date) }}</td>
-                    <td>{{ optionalValue duty_to_refer_outcome }}</td>
+                    <td>{{ convertCamelCase duty_to_refer_outcome }}</td>
                     <td>{{ optionalValue duty_to_refer_local_authority_area_name }}</td>
                 </tr>
             </table>
@@ -3123,7 +3123,7 @@
                     <td>{{ optionalValue probation_region }}</td>
                     <td>{{ optionalValue (formatDate arrival_date) }}</td>
                     <td>{{ convertBoolean is_eligible }}</td>
-                    <td>{{ optionalValue eligibility_reason }}</td>
+                    <td>{{ convertCamelCase eligibility_reason }}</td>
                 </tr>
             </table>
             <table class="data-table">
@@ -3176,7 +3176,7 @@
             <h5>Licence Conditions</h5>
             {{#data.licence-conditions.additional-licence-conditions}}
                 <table class="summary-list">
-                        <tr><td>Conditions</td><td>{{#conditions}}{{.}}{{#unless @last}}, {{/unless}}{{/conditions}}{{^conditions}}No Data Held{{/conditions}}</td></tr>
+                        <tr><td>Conditions</td><td>{{#conditions}}{{convertCamelCase .}}{{#unless @last}}, {{/unless}}{{/conditions}}{{^conditions}}No Data Held{{/conditions}}</td></tr>
                         <tr><td>Exclusion zone detail</td><td>{{ optionalValue exclusionZoneDetail }}</td></tr>
                         <tr><td>Non association detail</td><td>{{ optionalValue nonAssociationDetail }}</td></tr>
                         <tr><td>Intimate relationships detail</td><td>{{ optionalValue initmateRelationshipsDetail }}</td></tr>
@@ -3286,7 +3286,7 @@
                         <td class="data-column-30">Duty to refer local authority area</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue dtr-details.dutyToReferOutcome }}</td>
+                        <td>{{ convertCamelCase dtr-details.dutyToReferOutcome }}</td>
                         <td>{{ optionalValue dtr-details.dutyToReferOutcomeOtherDetails }}</td>
                         <td>{{ optionalValue dtr-details.localAuthorityAreaName }}</td>
                     </tr>
@@ -3306,7 +3306,7 @@
                     </tr>
                     <tr>
                         <td>{{ optionalValue (formatDate release-date.releaseDate) }}</td>
-                        <td>{{ optionalValue eligibility-reason.reason }}</td>
+                        <td>{{ convertCamelCase eligibility-reason.reason }}</td>
                         <td>{{ optionalValue (formatDate accommodation-required-from-date.accommodationRequiredFromDate) }}</td>
                     </tr>
                 </table>
@@ -3323,7 +3323,7 @@
                         <td class="data-column-50">Sentence expiry date</td>
                     </tr>
                     <tr>
-                        <td>{{ optionalValue sentence-type.sentenceType }}</td>
+                        <td>{{ convertCamelCase sentence-type.sentenceType }}</td>
                         <td>{{ optionalValue (formatDate sentence-expiry.sentenceExpiryDate) }}</td>
                     </tr>
                 </table>
@@ -3342,7 +3342,7 @@
                     </tr>
                 </table>
                 <table class="summary-list">
-                    <tr><td>Release types</td><td>{{#release-type.releaseTypes}}{{.}}{{#unless @last}}, {{/unless}}{{/release-type.releaseTypes}}{{^release-type.releaseTypes}}No Data Held{{/release-type.releaseTypes}}</td></tr>
+                    <tr><td>Release types</td><td>{{#release-type.releaseTypes}}{{convertCamelCase .}}{{#unless @last}}, {{/unless}}{{/release-type.releaseTypes}}{{^release-type.releaseTypes}}No Data Held{{/release-type.releaseTypes}}</td></tr>
                 </table>
                 <table class="data-table">
                     <tr>
@@ -3389,7 +3389,7 @@
             <h5>Disability Cultural and Specific Needs</h5>
             {{#data.disability-cultural-and-specific-needs}}
                 <table class="summary-list">
-                    <tr><td>Needs</td><td>{{#needs.needs}}{{.}}{{#unless @last}}, {{/unless}}{{/needs.needs}}{{^needs.needs}}No Data Held{{/needs.needs}}</td></tr>
+                    <tr><td>Needs</td><td>{{#needs.needs}}{{convertCamelCase .}}{{#unless @last}}, {{/unless}}{{/needs.needs}}{{^needs.needs}}No Data Held{{/needs.needs}}</td></tr>
                     <tr><td>Language detail</td><td>{{ optionalValue needs.languageDetail }}</td></tr>
                     <tr><td>Hearing impairment detail</td><td>{{ optionalValue needs.hearingImpairmentDetail }}</td></tr>
                     <tr><td>Mental health detail</td><td>{{ optionalValue needs.mentalHealthDetail }}</td></tr>
