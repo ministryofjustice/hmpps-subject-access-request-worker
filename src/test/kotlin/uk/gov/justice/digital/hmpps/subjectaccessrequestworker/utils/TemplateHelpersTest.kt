@@ -110,9 +110,9 @@ class TemplateHelpersTest {
     @ParameterizedTest
     @CsvSource(
       value = [
-        "true           | Yes",
-        "false          | No",
-        "               | No Data Held",
+        "true  | Yes",
+        "false | No",
+        "      | No Data Held",
       ],
       delimiterString = "|",
     )
@@ -124,6 +124,24 @@ class TemplateHelpersTest {
     @ParameterizedTest
     @CsvSource(
       value = [
+        "1    | Yes",
+        "0    | No",
+        "     | No Data Held",
+      ],
+      delimiterString = "|",
+    )
+    fun `convertBoolean returns yes or no value when 1 or 0`(inputValue: Integer?, expectedValue: String) {
+      val response = templateHelpers.convertBoolean(inputValue)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "true           | Yes",
+        "false          | No",
+        "1              | Yes",
+        "0              | No",
         "Yes            | Yes",
         "No             | No",
         "               | No Data Held",
@@ -131,7 +149,7 @@ class TemplateHelpersTest {
       ],
       delimiterString = "|",
     )
-    fun `convertBoolean returns original value when not boolean`(inputValue: String?, expectedValue: String) {
+    fun `convertBoolean returns original value when not boolean or 1 or 0`(inputValue: String?, expectedValue: String) {
       val response = templateHelpers.convertBoolean(inputValue)
       assertThat(response).isEqualTo(expectedValue)
     }

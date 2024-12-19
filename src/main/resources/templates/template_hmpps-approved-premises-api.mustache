@@ -878,7 +878,6 @@
                 <tr><td>Trigger source</td><td>{{ optionalValue trigger_source }}</td></tr>
                 <tr><td>Triggered by user</td><td>{{ getUserLastName triggered_by_user }}</td></tr>
                 <tr><td>Occurred at</td><td>{{ optionalValue (formatDate occurred_at) }}</td></tr>
-                <tr><td>Service</td><td>{{ optionalValue service }}</td></tr>
                 <tr><td>Updated at</td><td>{{ optionalValue (formatDate data.eventDetails.updatedAt) }}</td></tr>
             </table>
 
@@ -1008,7 +1007,7 @@
                 </tr>
                 <tr>
                     <td>{{ optionalValue data.type-of-ap.ap-type.type }}</td>
-                    <td>{{ optionalValue data.check-your-answers.review.reviewed }}</td>
+                    <td>{{ convertBoolean data.check-your-answers.review.reviewed }}</td>
                 </tr>
             </table>
 
@@ -1692,27 +1691,21 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-30">Appeal detail</td>
-                    <td class="data-column-30">Appeal date</td>
-                    <td class="data-column-30">Appeal created at</td>
+                    <td class="data-column-25">Appeal date</td>
+                    <td class="data-column-25">Appeal created at</td>
+                    <td class="data-column-25">Created by user</td>
+                    <td class="data-column-25">Decision</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue appeal_detail }}</td>
                     <td>{{ optionalValue (formatDate appeal_date) }}</td>
                     <td>{{ optionalValue (formatDate appeal_created_at) }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-30">Created by user</td>
-                    <td class="data-column-30">Decision</td>
-                    <td class="data-column-30">Decision detail</td>
-                </tr>
-                <tr>
                     <td>{{ getUserLastName created_by_user }}</td>
                     <td>{{ optionalValue decision }}</td>
-                    <td>{{ optionalValue decision_detail }}</td>
                 </tr>
+            </table>
+            <table class="summary-list">
+                <tr><td>Appeal detail</td><td>{{ optionalValue appeal_detail }}</td></tr>
+                <tr><td>Decision detail</td><td>{{ optionalValue decision_detail }}</td></tr>
             </table>
         {{/Appeals}}
         {{^Appeals}}
@@ -1721,29 +1714,24 @@
 
         <h3>Assessment Clarification Notes</h3>
         {{#AssessmentClarificationNotes}}
+            <h4>Assessment Clarification Note</h4>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-30">Assessment id</td>
-                    <td class="data-column-30">Application id</td>
-                    <td class="data-column-30">Created by user</td>
+                    <td class="data-column-25">Assessment id</td>
+                    <td class="data-column-25">Application id</td>
+                    <td class="data-column-25">Created by user</td>
+                    <td class="data-column-25">Created at</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue assessment_id }}</td>
                     <td>{{ optionalValue application_id }}</td>
                     <td>{{ getUserLastName created_by_user }}</td>
+                    <td>{{ optionalValue (formatDate created_at) }}</td>
                 </tr>
             </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-30">Created at</td>
-                    <td class="data-column-30">Query</td>
-                    <td class="data-column-30">Response</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue (formatDate created_at) }}</td>
-                    <td>{{ optionalValue query }}</td>
-                    <td>{{ optionalValue response }}</td>
-                </tr>
+            <table class="summary-list">
+                <tr><td>Query</td><td>{{ optionalValue query }}</td></tr>
+                <tr><td>Response</td><td>{{ optionalValue response }}</td></tr>
             </table>
         {{/AssessmentClarificationNotes}}
         {{^AssessmentClarificationNotes}}
@@ -1757,24 +1745,22 @@
                 <tr>
                     <td class="data-column-30">Placement requirement id</td>
                     <td class="data-column-30">Criteria name</td>
-                    <td class="data-column-30">Criteria type</td>
 
                 </tr>
                 <tr>
                     <td>{{ optionalValue placement_requirement_id }}</td>
                     <td>{{ optionalValue criteria_name }}</td>
-                    <td>{{ optionalValue criteria_type }}</td>
                 </tr>
             </table>
             <table class="data-table">
                 <tr>
+                    <td class="data-column-30">Criteria type</td>
                     <td class="data-column-30">Is active</td>
-                    <td class="data-column-30">Service scope</td>
                     <td class="data-column-30">Model scope</td>
                 </tr>
                 <tr>
+                    <td>{{ optionalValue criteria_type }}</td>
                     <td>{{ convertBoolean is_active }}</td>
-                    <td>{{ optionalValue service_scope }}</td>
                     <td>{{ optionalValue model_scope }}</td>
                 </tr>
             </table>
@@ -1863,13 +1849,19 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Additional actions</td>
-                        <td class="data-column-25">Additional actions comments</td>
-                        <td class="data-column-25">Concerns of unmanageable risk</td>
-                        <td class="data-column-25">Concerns of unmanageable risk comments</td>
+                        <td class="data-column-75">Additional actions comments</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue additionalActions }}</td>
                         <td>{{ optionalValue additionalActionsComments }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Concerns of unmanageable risk</td>
+                        <td class="data-column-75">Concerns of unmanageable risk comments</td>
+                    </tr>
+                    <tr>
                         <td>{{ optionalValue concernsOfUnmanagableRisk }}</td>
                         <td>{{ optionalValue concernsOfUnmanagableRiskComments }}</td>
                     </tr>
@@ -1877,13 +1869,19 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Curfews or sign ins</td>
-                        <td class="data-column-25">Curfews or sign ins comments</td>
-                        <td class="data-column-25">Additional recommendations</td>
-                        <td class="data-column-25">Additional recommendations comments</td>
+                        <td class="data-column-75">Curfews or sign ins comments</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue curfewsOrSignIns }}</td>
                         <td>{{ optionalValue curfewsOrSignInsComments }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Additional recommendations</td>
+                        <td class="data-column-75">Additional recommendations comments</td>
+                    </tr>
+                    <tr>
                         <td>{{ optionalValue additionalRecommendations }}</td>
                         <td>{{ optionalValue additionalRecommendationsComments }}</td>
                     </tr>
@@ -1971,13 +1969,19 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Risk factors</td>
-                        <td class="data-column-25">Risk factors comments</td>
-                        <td class="data-column-25">Risk management</td>
-                        <td class="data-column-25">Risk management comments</td>
+                        <td class="data-column-75">Risk factors comments</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue riskFactors }}</td>
                         <td>{{ optionalValue riskFactorsComments }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Risk management</td>
+                        <td class="data-column-75">Risk management comments</td>
+                    </tr>
+                    <tr>
                         <td>{{ optionalValue riskManagement }}</td>
                         <td>{{ optionalValue riskManagementComments }}</td>
                     </tr>
@@ -1985,13 +1989,19 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Move on plan</td>
-                        <td class="data-column-25">Move on plan comments</td>
-                        <td class="data-column-25">Location of placement</td>
-                        <td class="data-column-25">Location of placement comments</td>
+                        <td class="data-column-75">Move on plan comments</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue moveOnPlan }}</td>
                         <td>{{ optionalValue moveOnPlanComments }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Location of placement</td>
+                        <td class="data-column-75">Location of placement comments</td>
+                    </tr>
+                    <tr>
                         <td>{{ optionalValue locationOfPlacement }}</td>
                         <td>{{ optionalValue locationOfPlacementComments }}</td>
                     </tr>
@@ -2031,7 +2041,7 @@
             <h5>Check Your Answers</h5>
             {{#data.check-your-answers.check-your-answers}}
                 <table class="summary-list">
-                    <tr><td>Reviewed</td><td>{{ optionalValue reviewed }}</td></tr>
+                    <tr><td>Reviewed</td><td>{{ convertBoolean reviewed }}</td></tr>
                 </table>
             {{/data.check-your-answers.check-your-answers}}
             {{^data.check-your-answers.check-your-answers}}
@@ -2050,7 +2060,7 @@
 
                 <p><b>Required Actions</b></p>
                 {{#required-actions}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-80">{{ @key }}</td><td class="data-column-20">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/required-actions}}
                 {{^required-actions}}
                     <p>No Data Held</p>
@@ -2058,7 +2068,7 @@
 
                 <p><b>Matching Information</b></p>
                 {{#matching-information}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-80">{{ @key }}</td><td class="data-column-20">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/matching-information}}
                 {{^matching-information}}
                     <p>No Data Held</p>
@@ -2066,7 +2076,7 @@
 
                 <p><b>Suitability Assessment</b></p>
                 {{#suitability-assessment}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-80">{{ @key }}</td><td class="data-column-20">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/suitability-assessment}}
                 {{^suitability-assessment}}
                     <p>No Data Held</p>
@@ -2074,7 +2084,7 @@
 
                 <p><b>Review Application</b></p>
                 {{#review-application}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-80">{{ @key }}</td><td class="data-column-20">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/review-application}}
                 {{^review-application}}
                     <p>No Data Held</p>
@@ -2082,7 +2092,7 @@
 
                 <p><b>Sufficient Information</b></p>
                 {{#sufficient-information}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-80">{{ @key }}</td><td class="data-column-20">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/sufficient-information}}
                 {{^sufficient-information}}
                     <p>No Data Held</p>
@@ -2090,7 +2100,7 @@
 
                 <p><b>Check Your Answers</b></p>
                 {{#check-your-answers}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-80">{{ @key }}</td><td class="data-column-20">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/check-your-answers}}
                 {{^check-your-answers}}
                     <p>No Data Held</p>
@@ -2264,7 +2274,7 @@
             </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Submitted at)</td>
+                    <td class="data-column-25">Submitted at</td>
                     <td class="data-column-25">Allocated user</td>
                     <td class="data-column-25">Reallocated_at</td>
                     <td class="data-column-25">Due at</td>
@@ -2306,13 +2316,19 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Risk factors</td>
-                        <td class="data-column-25">Risk factors detail</td>
-                        <td class="data-column-25">Significant events</td>
-                        <td class="data-column-25">Significant events detail</td>
+                        <td class="data-column-75">Risk factors detail</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue riskFactors }}</td>
                         <td>{{ optionalValue riskFactorsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Significant events</td>
+                        <td class="data-column-75">Significant events detail</td>
+                    </tr>
+                    <tr>
                         <td>{{ optionalValue significantEvents }}</td>
                         <td>{{ optionalValue significantEventsDetail }}</td>
                     </tr>
@@ -2320,13 +2336,19 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Location factors</td>
-                        <td class="data-column-25">Location factors detail</td>
-                        <td class="data-column-25">Access or healthcare needs</td>
-                        <td class="data-column-25">Access or healthcare needs detail</td>
+                        <td class="data-column-75">Location factors detail</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue locationFactors }}</td>
                         <td>{{ optionalValue locationFactorsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Access or healthcare needs</td>
+                        <td class="data-column-75">Access or healthcare needs detail</td>
+                    </tr>
+                    <tr>
                         <td>{{ optionalValue accessOrHealthcareNeeds }}</td>
                         <td>{{ optionalValue accessOrHealthcareNeedsDetail }}</td>
                     </tr>
@@ -2334,7 +2356,7 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Changed circumstances</td>
-                        <td class="data-column-25">Changed circumstances detail</td>
+                        <td class="data-column-75">Changed circumstances detail</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue changedCirumstances }}</td>
@@ -2350,17 +2372,18 @@
             {{#data.request-a-placement.previous-rotl-placement}}
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-25">Previous Release On Temporary Licence placement</td>
-                        <td class="data-column-25">Last Approved Premises</td>
-                        <td class="data-column-25">Last placement date</td>
-                        <td class="data-column-25">Details</td>
+                        <td class="data-column-30">Previous Release On Temporary Licence placement</td>
+                        <td class="data-column-30">Last Approved Premises</td>
+                        <td class="data-column-30">Last placement date</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue previousRotlPlacement }}</td>
                         <td>{{ optionalValue lastAp }}</td>
                         <td>{{ buildDate lastPlacementDate-year lastPlacementDate-month lastPlacementDate-day }}</td>
-                        <td>{{ optionalValue details }}</td>
                     </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Details</td><td>{{ optionalValue details }}</td></tr>
                 </table>
             {{/data.request-a-placement.previous-rotl-placement}}
             {{^data.request-a-placement.previous-rotl-placement}}
@@ -2390,7 +2413,7 @@
             {{#document}}
                 <p><b>Request a Placement</b></p>
                 {{#request-a-placement}}
-                    <table class="summary-list">{{#each .}}<tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
+                    <table class="summary-list">{{#each .}}<tr><td class="data-column-75">{{ @key }}</td><td class="data-column-25">{{ optionalValue this }}</td></tr>{{/each}}</table><br/>
                 {{/request-a-placement}}
                 {{^request-a-placement}}
                     <p>No Data Held</p>
@@ -2766,13 +2789,14 @@
                     <tr>
                         <td class="data-column-30">Recorded by</td>
                         <td class="data-column-30">Reason</td>
-                        <td class="data-column-30">Notes</td>
                     </tr>
                     <tr>
                         <td>{{#data.eventDetails.recordedBy.username}}{{getUserLastName .}}{{/data.eventDetails.recordedBy.username}}{{^data.eventDetails.recordedBy.username}}{{optionalValue data.eventDetails.recordedBy.surname}}{{/data.eventDetails.recordedBy.username}}</td>
                         <td>{{ optionalValue data.eventDetails.reason }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
                     </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -2838,25 +2862,19 @@
                 <h4>Approved Premises Assessment Appealed</h4>
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-25">Created at</td>
-                        <td class="data-column-25">Created by</td>
-                        <td class="data-column-25">Appeal detail</td>
+                        <td class="data-column-30">Created at</td>
+                        <td class="data-column-30">Created by</td>
+                        <td class="data-column-30">Decision</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue (formatDate data.eventDetails.createdAt) }}</td>
                         <td>{{#data.eventDetails.createdBy.username}}{{getUserLastName .}}{{/data.eventDetails.createdBy.username}}{{^data.eventDetails.createdBy.username}}{{optionalValue data.eventDetails.createdBy.surname}}{{/data.eventDetails.createdBy.username}}</td>
-                        <td>{{ optionalValue data.eventDetails.appealDetail }}</td>
+                        <td>{{ optionalValue data.eventDetails.decision }}</td>
                     </tr>
                 </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-25">Decision</td>
-                        <td class="data-column-25">Decision detail</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue data.eventDetails.decision }}</td>
-                        <td>{{ optionalValue data.eventDetails.decisionDetail }}</td>
-                    </tr>
+                <table class="summary-list">
+                    <tr><td class="data-column-75">Decision detail</td><td>{{ optionalValue data.eventDetails.decisionDetail }}</td></tr>
+                    <tr><td class="data-column-25">Appeal detail</td><td>{{ optionalValue data.eventDetails.appealDetail }}</td></tr>
                 </table>
             {{/if}}
 
@@ -2948,8 +2966,8 @@
                 </table>
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-50">Decision</td>
-                        <td class="data-column-50">Decision summary</td>
+                        <td class="data-column-25">Decision</td>
+                        <td class="data-column-75">Decision summary</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue data.eventDetails.decision }}</td>
@@ -3007,7 +3025,6 @@
                 <tr><td>Trigger source</td><td>{{ optionalValue trigger_source }}</td></tr>
                 <tr><td>Triggered by user</td><td>{{ getUserLastName triggered_by_user }}</td></tr>
                 <tr><td>Occurred at</td><td>{{ optionalValue (formatDate occurred_at) }}</td></tr>
-                <tr><td>Service</td><td>{{ optionalValue service }}</td></tr>
                 <tr><td>Updated at</td><td>{{ optionalValue (formatDate data.eventDetails.updatedAt) }}</td></tr>
             </table>
 
@@ -3026,17 +3043,18 @@
             <h4>Booking Extension</h4>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Notes</td>
                     <td class="data-column-25">New departure date</td>
                     <td class="data-column-25">Previous departure date</td>
                     <td class="data-column-25">Created at</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue notes }}</td>
                     <td>{{ optionalValue (formatDate new_departure_date) }}</td>
                     <td>{{ optionalValue (formatDate previous_departure_date) }}</td>
                     <td>{{ optionalValue (formatDate created_at) }}</td>
                 </tr>
+            </table>
+            <table class="summary-list">
+                <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
             </table>
         {{/BookingExtensions}}
         {{^BookingExtensions}}
@@ -3131,13 +3149,35 @@
 
             <h5>Safeguarding and Support</h5>
             {{#data.safeguarding-and-support}}
-                <table class="summary-list">
-                    <tr><td class="data-column-25">Safeguarding and vulnerability concerns</td><td>{{ optionalValue safeguarding-and-vulnerability.concerns }}</td></tr>
-                    <tr><td class="data-column-25">Safeguarding and vulnerability concerns Detail</td><td>{{ optionalValue safeguarding-and-vulnerability.concernsDetail }}</td></tr>
-                    <tr><td class="data-column-25">Caring responsibilities</td><td>{{ optionalValue caring-responsibilities.caringResponsibilities }}</td></tr>
-                    <tr><td class="data-column-25">Caring responsibilities detail</td><td>{{ optionalValue caring-responsibilities.caringResponsibilitiesDetail }}</td></tr>
-                    <tr><td class="data-column-25">Support in the community</td><td>{{ optionalValue support-in-the-community.support }}</td></tr>
-                    <tr><td class="data-column-25">Local connections</td><td>{{ optionalValue local-connections.localConnections }}</td></tr>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Safeguarding and vulnerability concerns</td>
+                        <td class="data-column-75">Safeguarding and vulnerability concerns Detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue safeguarding-and-vulnerability.concerns }}</td>
+                        <td>{{ optionalValue safeguarding-and-vulnerability.concernsDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Caring responsibilities</td>
+                        <td class="data-column-75">Caring responsibilities detail</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue caring-responsibilities.caringResponsibilities }}</td>
+                        <td>{{ optionalValue caring-responsibilities.caringResponsibilitiesDetail }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Support in the community</td>
+                        <td class="data-column-50">Local connections</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue support-in-the-community.support }}</td>
+                        <td>{{ optionalValue local-connections.localConnections }}</td>
+                    </tr>
                 </table>
             {{/data.safeguarding-and-support}}
             {{^data.safeguarding-and-support}}
@@ -3247,38 +3287,47 @@
             {{#data.accommodation-referral-details}}
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-30">Other accommodation options</td>
-                        <td class="data-column-30">Other accommodation options detail</td>
-                        <td class="data-column-30">Commissioned Rehabilitative Services submitted</td>
+                        <td class="data-column-25">Other accommodation options</td>
+                        <td class="data-column-75">Other accommodation options detail</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue other-accommodation-options.otherOptions }}</td>
                         <td>{{ optionalValue other-accommodation-options.otherOptionsDetail }}</td>
-                        <td>{{ optionalValue crs-submitted.crsSubmitted }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-30">Duty to refer submitted</td>
-                        <td class="data-column-30">Duty to refer reference</td>
-                        <td class="data-column-30">Duty to refer date</td>
+
                     </tr>
                     <tr>
+
+
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-20">Commissioned Rehabilitative Services submitted</td>
+                        <td class="data-column-20">Duty to refer submitted</td>
+                        <td class="data-column-20">Duty to refer reference</td>
+                        <td class="data-column-20">Duty to refer date</td>
+                        <td class="data-column-20">Duty to refer local authority area</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue crs-submitted.crsSubmitted }}</td>
                         <td>{{ optionalValue dtr-submitted.dtrSubmitted }}</td>
                         <td>{{ optionalValue dtr-details.reference }}</td>
                         <td>{{ optionalValue (formatDate dtr-details.date) }}</td>
+                        <td>{{ optionalValue dtr-details.localAuthorityAreaName }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-30">Duty to refer outcome</td>
-                        <td class="data-column-30">Duty to refer outcome other details</td>
-                        <td class="data-column-30">Duty to refer local authority area</td>
+                        <td class="data-column-25">Duty to refer outcome</td>
+                        <td class="data-column-75">Duty to refer outcome other details</td>
                     </tr>
                     <tr>
                         <td>{{ convertCamelCase dtr-details.dutyToReferOutcome }}</td>
                         <td>{{ optionalValue dtr-details.dutyToReferOutcomeOtherDetails }}</td>
-                        <td>{{ optionalValue dtr-details.localAuthorityAreaName }}</td>
                     </tr>
                 </table>
             {{/data.accommodation-referral-details}}
@@ -3721,17 +3770,18 @@
         {{#AssessmentReferralHistoryNotes}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Created at</td>
-                    <td class="data-column-25">Message</td>
-                    <td class="data-column-25">System noted type</td>
-                    <td class="data-column-25">Created by user</td>
+                    <td class="data-column-30">Created at</td>
+                    <td class="data-column-30">System noted type</td>
+                    <td class="data-column-30">Created by user</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue (formatDate created_at) }}</td>
-                    <td>{{ optionalValue message }}</td>
                     <td>{{ optionalValue system_note_type }}</td>
                     <td>{{ optionalValue created_by_user }}</td>
                 </tr>
+            </table>
+            <table class="summary-list">
+                <tr><td>Message</td><td>{{ optionalValue message }}</td></tr>
             </table>
             <br/>
         {{/AssessmentReferralHistoryNotes}}
@@ -3915,15 +3965,9 @@
                         <td>{{ optionalValue (formatDate data.eventDetails.cancelledAt) }}</td>
                     </tr>
                 </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-50">Cancellation reason</td>
-                        <td class="data-column-50">Notes</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue data.eventDetails.cancellationReason }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
-                    </tr>
+                <table class="summary-list">
+                    <tr><td>Cancellation reason</td><td>{{ optionalValue data.eventDetails.cancellationReason }}</td></tr>
+                    <tr><td>Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -3941,15 +3985,9 @@
                         <td>{{ optionalValue (formatDate data.eventDetails.cancelledAt) }}</td>
                     </tr>
                 </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-50">Cancellation reason</td>
-                        <td class="data-column-50">Notes</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue data.eventDetails.cancellationReason }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
-                    </tr>
+                <table class="summary-list">
+                    <tr><td>Cancellation reason</td><td>{{ optionalValue data.eventDetails.cancellationReason }}</td></tr>
+                    <tr><td>Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -3971,27 +4009,22 @@
                 </table>
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-25">Premises address line 1</td>
-                        <td class="data-column-25">Premises address line 2</td>
-                        <td class="data-column-25">Premises town</td>
-                        <td class="data-column-25">Premises region</td>
+                        <td class="data-column-20">Premises address line 1</td>
+                        <td class="data-column-20">Premises address line 2</td>
+                        <td class="data-column-20">Premises town</td>
+                        <td class="data-column-20">Premises region</td>
+                        <td class="data-column-20">Premises postcode</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine1 }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine2 }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.town }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.region }}</td>
+                        <td>{{ optionalValue data.eventDetails.premises.postcode }}</td>
                     </tr>
                 </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-25">Premises postcode</td>
-                        <td class="data-column-75">Notes</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue data.eventDetails.premises.postcode }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
-                    </tr>
+                <table class="summary-list">
+                    <tr><td>Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -4013,27 +4046,22 @@
                 </table>
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-25">Premises address line 1</td>
-                        <td class="data-column-25">Premises address line 2</td>
-                        <td class="data-column-25">Premises town</td>
-                        <td class="data-column-25">Premises region</td>
+                        <td class="data-column-20">Premises address line 1</td>
+                        <td class="data-column-20">Premises address line 2</td>
+                        <td class="data-column-20">Premises town</td>
+                        <td class="data-column-20">Premises region</td>
+                        <td class="data-column-20">Premises postcode</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine1 }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine2 }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.town }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.region }}</td>
+                        <td>{{ optionalValue data.eventDetails.premises.postcode }}</td>
                     </tr>
                 </table>
-                <table class="data-table">
-                    <tr>
-                        <td class="data-column-25">Premises postcode</td>
-                        <td class="data-column-75">Notes</td>
-                    </tr>
-                    <tr>
-                        <td>{{ optionalValue data.eventDetails.premises.postcode }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
-                    </tr>
+                <table class="summary-list">
+                    <tr><td class="data-column-75">Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -4042,42 +4070,43 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Reason</td>
-                        <td class="data-column-25">Reason detail</td>
-                        <td class="data-column-25">Recorded by</td>
-                        <td class="data-column-25">Recorded by probation region code</td>
+                        <td class="data-column-75">Reason detail</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue data.eventDetails.reason }}</td>
                         <td>{{ optionalValue data.eventDetails.reasonDetail }}</td>
-                        <td>{{ getUserLastName data.eventDetails.recordedBy.username }}</td>
-                        <td>{{ optionalValue data.eventDetails.recordedBy.probationRegionCode }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
                     <tr>
+                        <td class="data-column-25">Recorded by</td>
+                        <td class="data-column-25">Recorded by probation region code</td>
                         <td class="data-column-25">Premises address line 1</td>
                         <td class="data-column-25">Premises address line 2</td>
-                        <td class="data-column-25">Premises town</td>
-                        <td class="data-column-25">Premises region</td>
                     </tr>
                     <tr>
+                        <td>{{ getUserLastName data.eventDetails.recordedBy.username }}</td>
+                        <td>{{ optionalValue data.eventDetails.recordedBy.probationRegionCode }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine1 }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine2 }}</td>
-                        <td>{{ optionalValue data.eventDetails.premises.town }}</td>
-                        <td>{{ optionalValue data.eventDetails.premises.region }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
                     <tr>
+                        <td class="data-column-25">Premises town</td>
+                        <td class="data-column-25">Premises region</td>
                         <td class="data-column-25">Premises postcode</td>
                         <td class="data-column-25">Departed at</td>
-                        <td class="data-column-50">Notes</td>
                     </tr>
                     <tr>
+                        <td>{{ optionalValue data.eventDetails.premises.town }}</td>
+                        <td>{{ optionalValue data.eventDetails.premises.region }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.postcode }}</td>
                         <td>{{ optionalValue (formatDate data.eventDetails.departedAt) }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
                     </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -4086,42 +4115,43 @@
                 <table class="data-table">
                     <tr>
                         <td class="data-column-25">Reason</td>
-                        <td class="data-column-25">Reason detail</td>
-                        <td class="data-column-25">Recorded by</td>
-                        <td class="data-column-25">Recorded by probation region code</td>
+                        <td class="data-column-75">Reason detail</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue data.eventDetails.reason }}</td>
                         <td>{{ optionalValue data.eventDetails.reasonDetail }}</td>
-                        <td>{{ getUserLastName data.eventDetails.recordedBy.username }}</td>
-                        <td>{{ optionalValue data.eventDetails.recordedBy.probationRegionCode }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
                     <tr>
+                        <td class="data-column-25">Recorded by</td>
+                        <td class="data-column-25">Recorded by probation region code</td>
                         <td class="data-column-25">Premises address line 1</td>
                         <td class="data-column-25">Premises address line 2</td>
-                        <td class="data-column-25">Premises town</td>
-                        <td class="data-column-25">Premises region</td>
                     </tr>
                     <tr>
+                        <td>{{ getUserLastName data.eventDetails.recordedBy.username }}</td>
+                        <td>{{ optionalValue data.eventDetails.recordedBy.probationRegionCode }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine1 }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.addressLine2 }}</td>
-                        <td>{{ optionalValue data.eventDetails.premises.town }}</td>
-                        <td>{{ optionalValue data.eventDetails.premises.region }}</td>
                     </tr>
                 </table>
                 <table class="data-table">
                     <tr>
+                        <td class="data-column-25">Premises town</td>
+                        <td class="data-column-25">Premises region</td>
                         <td class="data-column-25">Premises postcode</td>
                         <td class="data-column-25">Departed at</td>
-                        <td class="data-column-50">Notes</td>
                     </tr>
                     <tr>
+                        <td>{{ optionalValue data.eventDetails.premises.town }}</td>
+                        <td>{{ optionalValue data.eventDetails.premises.region }}</td>
                         <td>{{ optionalValue data.eventDetails.premises.postcode }}</td>
                         <td>{{ optionalValue (formatDate data.eventDetails.departedAt) }}</td>
-                        <td>{{ optionalValue data.eventDetails.notes }}</td>
                     </tr>
+                </table>
+                <table class="summary-list">
+                    <tr><td>Notes</td><td>{{ optionalValue data.eventDetails.notes }}</td></tr>
                 </table>
             {{/if}}
 
@@ -4134,7 +4164,6 @@
                 <tr><td>Trigger source</td><td>{{ optionalValue trigger_source }}</td></tr>
                 <tr><td>Triggered by user</td><td>{{ getUserLastName triggered_by_user }}</td></tr>
                 <tr><td>Occurred at</td><td>{{ optionalValue (formatDate occurred_at) }}</td></tr>
-                <tr><td>Service</td><td>{{ optionalValue service }}</td></tr>
             </table>
 
         {{/DomainEvents}}
