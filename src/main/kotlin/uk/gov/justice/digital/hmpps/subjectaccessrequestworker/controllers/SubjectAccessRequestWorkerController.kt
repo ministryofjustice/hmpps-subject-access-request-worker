@@ -16,7 +16,7 @@ class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestSe
     ApplicationReadyEvent::class,
   )
   suspend fun startPolling() {
-    log.info("Starting polling...")
+    log.debug("Starting polling...")
     subjectAccessRequestService.startPolling()
   }
 }
