@@ -40,17 +40,17 @@ class ConfigOrderHelper(
       val url = when (key) {
         "G1" -> {
           // temp logging to ensure the correct URL is being used
-          log.info("Replacing G1 with URL: $G1")
+          log.debug("Replacing G1 with URL: $G1")
           G1
         }
         "G2" -> {
           // temp logging to ensure the correct URL is being used
-          log.info("Replacing G2 with URL: $G2")
+          log.debug("Replacing G2 with URL: $G2")
           G2
         }
         "G3" -> {
           // temp logging to ensure the correct URL is being used
-          log.info("Replacing G3 with URL: $G3")
+          log.debug("Replacing G3 with URL: $G3")
           G3
         }
         else -> value
