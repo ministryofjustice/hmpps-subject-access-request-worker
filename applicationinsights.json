@@ -6,9 +6,6 @@
     "service.version": "${BUILD_NUMBER}"
   },
   "instrumentation": {
-    "springScheduling": {
-      "enabled": false
-    },
     "logging": {
       "level": "INFO"
     }
@@ -35,7 +32,7 @@
         "attributes": [
           {
             "key": "server.address",
-            "value": "(sign-in|sts.eu).*",
+            "value": "(sign-in).*",
             "matchType": "regexp"
           }
         ],

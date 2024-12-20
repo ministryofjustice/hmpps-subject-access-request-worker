@@ -6,9 +6,6 @@
     "service.version": "${BUILD_NUMBER}"
   },
   "instrumentation": {
-    "springScheduling": {
-      "enabled": false
-    },
     "logging": {
       "level": "INFO"
     }
@@ -35,7 +32,7 @@
         "attributes": [
           {
             "key": "server.address",
-            "value": "(sign-in|sts.eu).*",
+            "value": "(sign-in).*",
             "matchType": "regexp"
           }
         ],
@@ -72,8 +69,7 @@
         "exclude": {
           "matchType": "regexp",
           "metricNames": [
-            "(cache|executor|disk|http|logback|spring_).*",
-            "spring_data_repository_invocations"
+            "(cache|executor|disk|http|logback|spring_).*"
           ]
         }
       }
