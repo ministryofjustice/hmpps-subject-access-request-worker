@@ -48,7 +48,7 @@ class TemplateHelpers(
     input is Boolean && input -> "Yes"
     input is Boolean && !input -> "No"
     input == 1 || input == "1" || input == "true" -> "Yes"
-    input == 0 || input == "0" || input == "false"  -> "No"
+    input == 0 || input == "0" || input == "false" -> "No"
     input == null -> "No Data Held"
     else -> input
   }
