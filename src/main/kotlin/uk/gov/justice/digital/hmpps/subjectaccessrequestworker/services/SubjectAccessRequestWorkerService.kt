@@ -112,7 +112,7 @@ class SubjectAccessRequestWorkerService(
     var response: Array<SubjectAccessRequest>? = emptyArray()
 
     while (response.isNullOrEmpty()) {
-      log.info("polling in ${POLL_DELAY}ms")
+      log.debug("polling in ${POLL_DELAY}ms")
       delay(POLL_DELAY)
       response = sarGateway.getUnclaimed(client)
     }
