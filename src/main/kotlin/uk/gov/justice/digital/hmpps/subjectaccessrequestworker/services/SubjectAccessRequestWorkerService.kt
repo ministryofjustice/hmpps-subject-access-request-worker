@@ -68,7 +68,7 @@ class SubjectAccessRequestWorkerService(
       telemetryClient.trackSarEvent(
         "NewReportClaimComplete",
         subjectAccessRequest,
-        TIME_ELAPSED_KEY to stopWatch.time.toString(),
+        TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
       )
     } catch (exception: Exception) {
       handleError(stopWatch, subjectAccessRequest, exception)
@@ -89,7 +89,7 @@ class SubjectAccessRequestWorkerService(
       "ReportFailedWithError",
       subjectAccessRequest,
       "error" to (exception.message ?: ""),
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
 
     val sarException = if (exception is SubjectAccessRequestException) {
@@ -135,7 +135,7 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "CollectingServiceDataStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
 
     val dpsServiceList = getSubjectAccessRequestDataService.requestDataFromServices(
@@ -150,14 +150,14 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "CollectingServiceDataComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
 
     log.info("${subjectAccessRequest.id} fetching subject name")
     telemetryClient.trackSarEvent(
       "CollectingSubjectNameStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
 
     var subjectName: String = getSubjectName(
@@ -172,14 +172,14 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "CollectingSubjectNameComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
 
     log.info("${subjectAccessRequest.id} extracted report")
     telemetryClient.trackSarEvent(
       "GeneratingPDFStreamStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
 
     val pdfStream = generatePdfService.execute(
@@ -198,14 +198,14 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "GeneratingPDFStreamComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
       "fileSize" to fileSize,
     )
 
     telemetryClient.trackSarEvent(
       "SavingFileStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
       "fileSize" to fileSize,
     )
     uploadToDocumentStore(stopWatch, subjectAccessRequest, pdfStream)
@@ -213,7 +213,7 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "DoReportComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.time.toString(),
+      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
     )
   }
 
@@ -233,7 +233,7 @@ class SubjectAccessRequestWorkerService(
       telemetryClient.trackSarEvent(
         "SavingFileComplete",
         subjectAccessRequest,
-        TIME_ELAPSED_KEY to stopWatch.time.toString(),
+        TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
         "fileSize" to postDocumentResponse.fileSize.toString(),
         "documentUuid" to postDocumentResponse.documentUuid.toString(),
       )
@@ -243,7 +243,7 @@ class SubjectAccessRequestWorkerService(
       telemetryClient.trackSarEvent(
         "SavingFileConflictAlreadyExists",
         subjectAccessRequest,
-        TIME_ELAPSED_KEY to stopWatch.time.toString(),
+        TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
         "outcome" to "no action required",
       )
     }
