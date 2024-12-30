@@ -109,7 +109,7 @@ class GetSubjectAccessRequestDataService(
       "ServiceDataRequestException",
       subjectAccessRequest,
       "serviceURL" to serviceUrl,
-      "eventTime" to stopWatch.time.toString(),
+      "eventTime" to stopWatch.nanoTime.toString(),
       "responseSize" to "0",
       "responseStatus" to "Exception",
       "errorMessage" to (ex.message ?: "unknown"),
@@ -127,7 +127,7 @@ class GetSubjectAccessRequestDataService(
       "ServiceDataRequestComplete",
       subjectAccessRequest,
       "serviceURL" to serviceUrl,
-      "eventTime" to stopWatch.time.toString(),
+      "eventTime" to stopWatch.nanoTime.toString(),
       "responseSize" to responseBody.size.toString(),
       "responseStatus" to responseStatus,
     )
@@ -143,7 +143,7 @@ class GetSubjectAccessRequestDataService(
       "ServiceDataRequestNoData",
       subjectAccessRequest,
       "serviceURL" to serviceUrl,
-      "eventTime" to stopWatch.time.toString(),
+      "eventTime" to stopWatch.nanoTime.toString(),
       "responseSize" to "0",
       "responseStatus" to responseStatus,
     )
