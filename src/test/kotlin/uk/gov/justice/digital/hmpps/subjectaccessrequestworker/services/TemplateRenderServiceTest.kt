@@ -58,8 +58,8 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<td>Active</td><td>No</td>")
-    assertThat(renderedStyleTemplate).contains("<td>Creation date</td><td>03 December 2019, 11:00:58 am</td>")
+    assertThat(renderedStyleTemplate).contains("<td>Allocated at</td><td>03 December 2019, 11:00:58 am</td>")
+    assertThat(renderedStyleTemplate).contains("<td>Allocation is active</td><td>No</td>")
   }
 
   @Test
@@ -262,21 +262,17 @@ class TemplateRenderServiceTest {
 
   private val testKeyworkerServiceData: ArrayList<Any> = arrayListOf(
     mapOf(
-      "offenderKeyworkerId" to 12912,
-      "offenderNo" to "A1234AA",
-      "staffId" to 485634,
-      "assignedDateTime" to "2019-12-03T11:00:58.21264",
-      "active" to false,
-      "allocationReason" to "MANUAL",
-      "allocationType" to "M",
-      "userId" to "AUSER_GEN",
-      "prisonId" to "MDI",
-      "expiryDateTime" to "2020-12-02T16:31:01",
-      "deallocationReason" to "RELEASED",
-      "creationDateTime" to "2019-12-03T11:00:58.213527",
-      "createUserId" to "AUSER_GEN",
-      "modifyDateTime" to "2020-12-02T16:31:32.128317",
-      "modifyUserId" to "AUSER_GEN",
+      "allocatedAt" to "2019-12-03T11:00:58.21264",
+      "allocationExpiredAt" to "2020-01-23T14:03:23.21264",
+      "activeAllocation" to false,
+      "allocationReason" to "Manual",
+      "allocationType" to "Manual",
+      "keyworker" to mapOf(
+        "firstName" to "",
+        "lastName" to "AUSER_GEN",
+      ),
+      "prisonCode" to "MDI",
+      "deallocationReason" to "Released",
     ),
   )
 

@@ -2,13 +2,13 @@
 {{#.}}
     <h2>Keyworker</h2>
     <table class="summary-list">
-        <tr><td>Assigned date</td><td>{{ optionalValue (formatDate assignedDateTime) }}</td></tr>
-        <tr><td>Active</td><td>{{ convertBoolean active }}</td></tr>
-        <tr><td>User</td><td>{{ getUserLastName userId }}</td></tr>
-        <tr><td>Prison name</td><td>{{ getPrisonName prisonId }}</td></tr>
-        <tr><td>Expiry date</td><td>{{ optionalValue (formatDate expiryDateTime) }}</td></tr>
+        <tr><td>Allocated at</td><td>{{ optionalValue (formatDate allocatedAt) }}</td></tr>
+        <tr><td>Keyworker last name</td><td>{{ optionalValue keyworker.lastName }}</td></tr>
+        <tr><td>Prison name</td><td>{{ getPrisonName prisonCode }}</td></tr>
+        <tr><td>Allocation type</td><td>{{{ optionalValue allocationType }}}</td></tr>
+        <tr><td>Allocation reason</td><td>{{{ optionalValue allocationReason }}}</td></tr>
+        <tr><td>Allocation is active</td><td>{{ convertBoolean activeAllocation }}</td></tr>
+        <tr><td>Allocation expired at</td><td>{{ optionalValue (formatDate allocationExpiredAt) }}</td></tr>
         <tr><td>Deallocation reason</td><td>{{{ optionalValue deallocationReason }}}</td></tr>
-        <tr><td>Creation date</td><td>{{ optionalValue (formatDate creationDateTime) }}</td></tr>
-        <tr><td>Modified</td><td>{{{ optionalValue (formatDate modifyDateTime) }}}</td></tr>
     </table>
 {{/.}}
