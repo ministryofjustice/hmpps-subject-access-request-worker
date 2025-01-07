@@ -2,7 +2,7 @@
   "content": {
     "prisonerNumber": "A4743DZ",
     "fromDate": "1970-01-01",
-    "toDate": "2024-11-19",
+    "toDate": "2025-01-07",
     "allocations": [
       {
         "allocationId": 16,
@@ -33,11 +33,11 @@
         "count": 4
       },
       {
-        "attendanceReason": "Cancelled",
+        "attendanceReason": "Not attended - Session cancelled",
         "count": 6
       },
       {
-        "attendanceReason": "Auto suspended",
+        "attendanceReason": "Temporarily absent",
         "count": 1
       }
     ],
@@ -58,7 +58,7 @@
       {
         "appointmentId": 18305,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-08-11",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -69,7 +69,7 @@
       {
         "appointmentId": 18306,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-08-18",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -80,7 +80,7 @@
       {
         "appointmentId": 18307,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-08-25",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -91,7 +91,7 @@
       {
         "appointmentId": 18308,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-09-01",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -102,7 +102,7 @@
       {
         "appointmentId": 18309,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-09-08",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -113,7 +113,7 @@
       {
         "appointmentId": 18310,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-09-15",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -124,7 +124,7 @@
       {
         "appointmentId": 18311,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-09-22",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -135,7 +135,7 @@
       {
         "appointmentId": 18312,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-09-29",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -146,7 +146,7 @@
       {
         "appointmentId": 18313,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-10-06",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -157,7 +157,7 @@
       {
         "appointmentId": 18314,
         "prisonCode": "LEI",
-        "category": "Career",
+        "category": "Careers Adviser Appointment",
         "startDate": "2023-10-13",
         "startTime": "10:00",
         "endTime": "11:00",
