@@ -50,9 +50,13 @@
     <br>
     <h2>Attendance summary</h2>
     <table class="data-table">
+        <tr>
+            <td>Attendance reason</td>
+            <td>Attendance count</td>
+        </tr>
         {{#attendanceSummary}}
             <tr>
-                <td>{{ optionalValue attendanceReasonCode }}</td>
+                <td>{{ optionalValue attendanceReason }}</td>
                 <td>{{ optionalValue count }}</td>
             </tr>
         {{/attendanceSummary}}
@@ -70,7 +74,7 @@
             <tr>
                 <td class="data-column-25">Prison Name</td>
                 <td class="data-column-25">Date created</td>
-                <td class="data-column-30">Activity summary</td>
+                <td class="data-column-30">Application date</td>
                 <td class="data-column-20">Originator</td>
             </tr>
             <tr>
@@ -84,12 +88,12 @@
             <tr>
                 <td class="data-column-25">Status</td>
                 <td class="data-column-25">Status date</td>
-                <td class="data-column-30">Application date</td>
+                <td class="data-column-30">Activity summary</td>
                 <td class="data-column-20">Comments</td>
             </tr>
             <tr>
-                <td>{{ optionalValue prisonerStatus }}</td>
-                <td>{{ optionalValue (formatDate startDate) }}</td>
+                <td>{{ optionalValue status }}</td>
+                <td>{{ optionalValue (formatDate statusDate) }}</td>
                 <td>{{ optionalValue activitySummary }}</td>
                 <td>{{ optionalValue comments }}</td>
             </tr>
@@ -115,7 +119,7 @@
             <tr>
                 <td>{{ getPrisonName prisonCode }}</td>
                 <td>{{ optionalValue (formatDate createdDate) }}</td>
-                <td>{{ optionalValue categoryCode }}</td>
+                <td>{{ optionalValue category }}</td>
                 <td>{{ optionalValue attended }}</td>
             </tr>
         </table>
@@ -123,11 +127,13 @@
             <tr>
                 <td class="data-column-25">Start date</td>
                 <td class="data-column-25">Start time</td>
-                <td class="data-column-50">Extra information</td>
+                <td class="data-column-25">End time</td>
+                <td class="data-column-25">Extra information</td>
             </tr>
             <tr>
                 <td>{{ optionalValue (formatDate startDate) }}</td>
                 <td>{{ optionalValue startTime }}</td>
+                <td>{{ optionalValue endTime }}</td>
                 <td>{{ optionalValue extraInformation }}</td>
             </tr>
         </table>
