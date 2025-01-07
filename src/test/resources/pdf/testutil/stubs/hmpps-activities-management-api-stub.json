@@ -7,7 +7,7 @@
       {
         "allocationId": 16,
         "prisonCode": "LEI",
-        "prisonerStatus": "ENDED",
+        "prisonerStatus": "Ended",
         "startDate": "2023-07-21",
         "endDate": "2023-07-21",
         "activityId": 3,
@@ -18,7 +18,7 @@
       {
         "allocationId": 2953,
         "prisonCode": "LEI",
-        "prisonerStatus": "ACTIVE",
+        "prisonerStatus": "Active",
         "startDate": "2023-09-16",
         "endDate": null,
         "activityId": 6,
@@ -29,35 +29,47 @@
     ],
     "attendanceSummary": [
       {
-        "attendanceReasonCode": "ATTENDED",
+        "attendanceReason": "Attended",
         "count": 4
       },
       {
-        "attendanceReasonCode": "CANCELLED",
+        "attendanceReason": "Cancelled",
         "count": 6
       },
       {
-        "attendanceReasonCode": "AUTO_SUSPENDED",
+        "attendanceReason": "Auto suspended",
         "count": 1
       }
     ],
-    "waitingListApplications": [],
+    "waitingListApplications": [
+      {
+        "waitingListId": 123456,
+        "prisonCode": "MDI",
+        "activitySummary": "Maths level 1",
+        "applicationDate": "2022-01-01",
+        "originator": "Prison staff",
+        "status": "Active",
+        "statusDate": "2022-01-01",
+        "comments": "OK to proceed",
+        "createdDate": "2022-01-01"
+      }
+    ],
     "appointments": [
       {
         "appointmentId": 18305,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-08-11",
         "startTime": "10:00",
         "endTime": "11:00",
-        "extraInformation": "",
+        "extraInformation": "Discuss God",
         "attended": "Unmarked",
         "createdDate": "2023-08-10"
       },
       {
         "appointmentId": 18306,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-08-18",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -68,7 +80,7 @@
       {
         "appointmentId": 18307,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-08-25",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -79,7 +91,7 @@
       {
         "appointmentId": 18308,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-09-01",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -90,7 +102,7 @@
       {
         "appointmentId": 18309,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-09-08",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -101,7 +113,7 @@
       {
         "appointmentId": 18310,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-09-15",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -112,7 +124,7 @@
       {
         "appointmentId": 18311,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-09-22",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -123,7 +135,7 @@
       {
         "appointmentId": 18312,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-09-29",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -134,7 +146,7 @@
       {
         "appointmentId": 18313,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-10-06",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -145,7 +157,7 @@
       {
         "appointmentId": 18314,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-10-13",
         "startTime": "10:00",
         "endTime": "11:00",
@@ -156,7 +168,7 @@
       {
         "appointmentId": 18315,
         "prisonCode": "LEI",
-        "categoryCode": "CAREER",
+        "category": "Career",
         "startDate": "2023-10-20",
         "startTime": "10:00",
         "endTime": "11:00",
