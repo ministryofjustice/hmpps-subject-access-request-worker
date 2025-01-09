@@ -1,3 +1,18 @@
+spring:
+
+  flyway:
+    enabled: true
+    locations: classpath:db/sar,db/sar/dev/data
+    baseline-on-migrate: true
+
+  datasource:
+    url: 'jdbc:h2:mem:subject-access-request-db;MODE=PostgreSQL'
+    username: sa
+    password:
+
+  jpa:
+    show-sql: true
+
 server:
   shutdown: immediate
 
@@ -9,7 +24,6 @@ web-client:
   configuration:
     max-retries: 2
     back-off: PT0.25S
-
 
 hmpps-auth:
   url: "http://localhost:9090/auth"
