@@ -2,38 +2,38 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.microsoft.applicationinsights.TelemetryClient
 import io.sentry.Sentry
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
+import java.util.concurrent.TimeUnit
 
 const val POLL_DELAY: Long = 10000
 
 @Service
 class SubjectAccessRequestWorkerService(
-  @Autowired val sarGateway: SubjectAccessRequestGateway,
   @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   @Autowired val documentStorageClient: DocumentStorageClient,
   @Autowired val generatePdfService: GeneratePdfService,
   @Autowired val prisonApiClient: PrisonApiClient,
   @Autowired val probationApiClient: ProbationApiClient,
   @Autowired val configOrderHelper: ConfigOrderHelper,
-  @Value("\${sar-api.url}") private val sarUrl: String,
+  private val subjectAccessRequestService: SubjectAccessRequestService,
   private val telemetryClient: TelemetryClient,
 ) {
 
@@ -45,30 +45,31 @@ class SubjectAccessRequestWorkerService(
   suspend fun startPolling() {
     while (true) {
       log.info("Polling for reports...")
-      doPoll()
+      pollForRequests()
     }
   }
 
-  suspend fun doPoll() {
+  suspend fun pollForRequests() {
     var subjectAccessRequest: SubjectAccessRequest? = null
     val stopWatch: StopWatch = StopWatch.create()
 
     try {
-      val webClient = sarGateway.getClient(sarUrl)
-      subjectAccessRequest = pollForNewSubjectAccessRequests(webClient)
+      subjectAccessRequest = pollForNewSubjectAccessRequests()
 
-      claimSubjectAccessRequest(webClient, subjectAccessRequest)
+      claimSubjectAccessRequest(subjectAccessRequest)
 
       stopWatch.start()
       createSubjectAccessRequestReport(subjectAccessRequest)
 
-      sarGateway.complete(webClient, subjectAccessRequest)
+      withContext(Dispatchers.IO) {
+        subjectAccessRequestService.updateStatus(subjectAccessRequest.id, Status.Completed)
+      }
 
       stopWatch.stop()
       telemetryClient.trackSarEvent(
         "NewReportClaimComplete",
         subjectAccessRequest,
-        TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+        TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
       )
     } catch (exception: Exception) {
       handleError(stopWatch, subjectAccessRequest, exception)
@@ -89,7 +90,7 @@ class SubjectAccessRequestWorkerService(
       "ReportFailedWithError",
       subjectAccessRequest,
       "error" to (exception.message ?: ""),
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
 
     val sarException = if (exception is SubjectAccessRequestException) {
@@ -108,19 +109,25 @@ class SubjectAccessRequestWorkerService(
     Sentry.captureException(sarException)
   }
 
-  suspend fun pollForNewSubjectAccessRequests(client: WebClient): SubjectAccessRequest {
-    var response: Array<SubjectAccessRequest>? = emptyArray()
+  suspend fun pollForNewSubjectAccessRequests(): SubjectAccessRequest {
+    var subjectAccessRequests: List<SubjectAccessRequest?> = emptyList()
 
-    while (response.isNullOrEmpty()) {
-      log.debug("polling in ${POLL_DELAY}ms")
+    while (subjectAccessRequests.isEmpty()) {
+      log.info("polling in ${POLL_DELAY}ms")
       delay(POLL_DELAY)
-      response = sarGateway.getUnclaimed(client)
+      withContext(Dispatchers.IO) {
+        subjectAccessRequests = subjectAccessRequestService.findUnclaimed()
+      }
     }
-    return response.first()
+    return subjectAccessRequests.first()!!
   }
 
-  suspend fun claimSubjectAccessRequest(webClient: WebClient, subjectAccessRequest: SubjectAccessRequest) {
-    sarGateway.claim(webClient, subjectAccessRequest)
+  suspend fun claimSubjectAccessRequest(subjectAccessRequest: SubjectAccessRequest) {
+    withContext(Dispatchers.IO) {
+      subjectAccessRequestService.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(
+        subjectAccessRequest.id,
+      )
+    }
     log.info("report claimed with ID ${subjectAccessRequest.id} (case reference ${subjectAccessRequest.sarCaseReferenceNumber})")
     telemetryClient.trackSarEvent("NewReportClaimStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
   }
@@ -135,7 +142,7 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "CollectingServiceDataStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
 
     val dpsServiceList = getSubjectAccessRequestDataService.requestDataFromServices(
@@ -150,14 +157,14 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "CollectingServiceDataComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
 
     log.info("${subjectAccessRequest.id} fetching subject name")
     telemetryClient.trackSarEvent(
       "CollectingSubjectNameStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
 
     var subjectName: String = getSubjectName(
@@ -172,14 +179,14 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "CollectingSubjectNameComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
 
     log.info("${subjectAccessRequest.id} extracted report")
     telemetryClient.trackSarEvent(
       "GeneratingPDFStreamStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
 
     val pdfStream = generatePdfService.execute(
@@ -198,14 +205,14 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "GeneratingPDFStreamComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
       "fileSize" to fileSize,
     )
 
     telemetryClient.trackSarEvent(
       "SavingFileStarted",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
       "fileSize" to fileSize,
     )
     uploadToDocumentStore(stopWatch, subjectAccessRequest, pdfStream)
@@ -213,7 +220,7 @@ class SubjectAccessRequestWorkerService(
     telemetryClient.trackSarEvent(
       "DoReportComplete",
       subjectAccessRequest,
-      TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+      TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
     )
   }
 
@@ -233,7 +240,7 @@ class SubjectAccessRequestWorkerService(
       telemetryClient.trackSarEvent(
         "SavingFileComplete",
         subjectAccessRequest,
-        TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+        TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
         "fileSize" to postDocumentResponse.fileSize.toString(),
         "documentUuid" to postDocumentResponse.documentUuid.toString(),
       )
@@ -243,7 +250,7 @@ class SubjectAccessRequestWorkerService(
       telemetryClient.trackSarEvent(
         "SavingFileConflictAlreadyExists",
         subjectAccessRequest,
-        TIME_ELAPSED_KEY to stopWatch.nanoTime.toString(),
+        TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
         "outcome" to "no action required",
       )
     }

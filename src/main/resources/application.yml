@@ -21,11 +21,6 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
   security:
     oauth2:
       resourceserver:
@@ -92,8 +87,6 @@ prison-api:
   url: http://localhost:8079
 probation-api:
   url: http://localhost:4002
-sar-api:
-  url: http://localhost:8080
 G1-api:
   url: ${G1_API_URL)
 G2-api:
