@@ -234,7 +234,6 @@
                         "title": "Plymouth Crown Court",
                         "location_type": "court",
                         "nomis_agency_id": "PLYMCC",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": null,
                         "locality": null,
@@ -243,9 +242,7 @@
                         "postcode": "PL1 2ER",
                         "latitude": 50.369194,
                         "longitude": -4.141694,
-                        "created_at": "2019-07-22T15:58:38+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:38+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -263,7 +260,6 @@
                         "title": "NOTTINGHAM (HMP)",
                         "location_type": "prison",
                         "nomis_agency_id": "NMI",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": "eEzJtZHeEzJtZH",
                         "locality": "eOiveOiv",
@@ -272,9 +268,7 @@
                         "postcode": "LN7 6VI",
                         "latitude": 52.984531,
                         "longitude": -1.155058,
-                        "created_at": "2019-07-22T15:58:38+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:38+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -327,7 +321,6 @@
                                 "title": "Plymouth Crown Court",
                                 "location_type": "court",
                                 "nomis_agency_id": "PLYMCC",
-                                "can_upload_documents": false,
                                 "young_offender_institution": false,
                                 "premise": null,
                                 "locality": null,
@@ -336,9 +329,7 @@
                                 "postcode": "PL1 2ER",
                                 "latitude": 50.369194,
                                 "longitude": -4.141694,
-                                "created_at": "2019-07-22T15:58:38+01:00",
-                                "disabled_at": null,
-                                "extradition_capable": null
+                                "created_at": "2019-07-22T15:58:38+01:00"
                               },
                               "relationships": {
                                 "suppliers": {
@@ -356,7 +347,6 @@
                                 "title": "NOTTINGHAM (HMP)",
                                 "location_type": "prison",
                                 "nomis_agency_id": "NMI",
-                                "can_upload_documents": false,
                                 "young_offender_institution": false,
                                 "premise": "eEzJtZHeEzJtZH",
                                 "locality": "eOiveOiv",
@@ -365,9 +355,7 @@
                                 "postcode": "LN7 6VI",
                                 "latitude": 52.984531,
                                 "longitude": -1.155058,
-                                "created_at": "2019-07-22T15:58:38+01:00",
-                                "disabled_at": null,
-                                "extradition_capable": null
+                                "created_at": "2019-07-22T15:58:38+01:00"
                               },
                               "relationships": {
                                 "suppliers": {
@@ -1230,7 +1218,6 @@
                         "title": "Pentonville (HMP)",
                         "location_type": "prison",
                         "nomis_agency_id": "PVI",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": "EitWwGgKEitWwGg",
                         "locality": null,
@@ -1239,9 +1226,7 @@
                         "postcode": "Q6 6CC",
                         "latitude": 51.545004,
                         "longitude": -0.115884,
-                        "created_at": "2019-07-22T15:58:39+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:39+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -1264,7 +1249,6 @@
                         "title": "SE Staffs Magistrates Court - Burton",
                         "location_type": "court",
                         "nomis_agency_id": "SIMPSONB",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": null,
                         "locality": null,
@@ -1273,9 +1257,7 @@
                         "postcode": "DE14 INZ",
                         "latitude": null,
                         "longitude": null,
-                        "created_at": "2019-07-22T15:58:34+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:34+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -1405,7 +1387,6 @@
                         "title": "COOKHAM WOOD (HMP)",
                         "location_type": "prison",
                         "nomis_agency_id": "CKI",
-                        "can_upload_documents": false,
                         "young_offender_institution": true,
                         "premise": "bHxwwUyubHxwwUyu",
                         "locality": null,
@@ -1414,9 +1395,7 @@
                         "postcode": "HY3 6YH",
                         "latitude": 51.365202,
                         "longitude": 0.4944,
-                        "created_at": "2019-07-22T15:58:35+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:35+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -1439,7 +1418,6 @@
                         "title": "NOTTINGHAM (HMP)",
                         "location_type": "prison",
                         "nomis_agency_id": "NMI",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": "eEzJtZHeEzJtZH",
                         "locality": "eOiveOiv",
@@ -1448,9 +1426,7 @@
                         "postcode": "LN7 6VI",
                         "latitude": 52.984531,
                         "longitude": -1.155058,
-                        "created_at": "2019-07-22T15:58:38+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:38+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -1561,7 +1537,6 @@
                         "title": "ALTCOURSE (HMP)",
                         "location_type": "prison",
                         "nomis_agency_id": "ACI",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": "BRIIjrGBRIIjr",
                         "locality": "pnGVnpnGVn",
@@ -1570,9 +1545,7 @@
                         "postcode": "X5 0GZ",
                         "latitude": 53.460927,
                         "longitude": -2.936031,
-                        "created_at": "2019-07-22T15:58:33+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:33+01:00"
                       },
                       "relationships": {
                         "suppliers": {
@@ -1595,7 +1568,6 @@
                         "title": "NOTTINGHAM (HMP)",
                         "location_type": "prison",
                         "nomis_agency_id": "NMI",
-                        "can_upload_documents": false,
                         "young_offender_institution": false,
                         "premise": "eEzJtZHeEzJtZH",
                         "locality": "eOiveOiv",
@@ -1604,9 +1576,7 @@
                         "postcode": "LN7 6VI",
                         "latitude": 52.984531,
                         "longitude": -1.155058,
-                        "created_at": "2019-07-22T15:58:38+01:00",
-                        "disabled_at": null,
-                        "extradition_capable": null
+                        "created_at": "2019-07-22T15:58:38+01:00"
                       },
                       "relationships": {
                         "suppliers": {
