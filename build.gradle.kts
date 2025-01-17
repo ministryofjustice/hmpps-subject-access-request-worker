@@ -1,5 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.1.2"
+  id("au.com.dius.pact") version "4.3.6"
   kotlin("plugin.spring") version "2.0.21"
 }
 
@@ -33,6 +34,7 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.10.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.google.code.gson:gson:2.11.0")
+  testImplementation("au.com.dius.pact.consumer:junit5:4.6.16")
 }
 
 kotlin {
@@ -42,5 +44,13 @@ kotlin {
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+  }
+}
+
+pact {
+  publish {
+    pactBrokerUrl = "http://localhost:9292/"
+//    pactBrokerUsername = "user"
+//    pactBrokerPassword = "password"
   }
 }
