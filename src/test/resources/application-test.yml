@@ -10,6 +10,15 @@ web-client:
     max-retries: 2
     back-off: PT0.25S
 
+spring:
+  jpa:
+    database: h2
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
 
 hmpps-auth:
   url: "http://localhost:9090/auth"
