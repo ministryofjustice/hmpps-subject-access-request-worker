@@ -35,6 +35,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.google.code.gson:gson:2.11.0")
   testImplementation("au.com.dius.pact.consumer:junit5:4.6.16")
+  testImplementation("org.jsoup:jsoup:1.18.3")
 }
 
 kotlin {
