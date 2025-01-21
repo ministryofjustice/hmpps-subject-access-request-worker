@@ -27,15 +27,18 @@ import java.util.UUID
 
 typealias SarResponseEntity = Map<*, *>?
 
-const val PRN = "A1234BC"
+const val EXPECTED_PRN = "A1234BC"
+const val FROM_DATE = "01/01/2024"
+const val TO_DATE = "01/01/2025"
+const val EXPECTED_FROM_DATE = "2024-01-01"
+const val EXPECTED_TO_DATE = "2025-01-01"
 
 @ExtendWith(PactConsumerTestExt::class)
 abstract class BasePactTest {
 
-  protected val FROM_DATE = "01/01/2024"
-  protected val TO_DATE = "01/01/2025"
-
-  protected val gson = GsonBuilder().setPrettyPrinting().create()
+  companion object {
+    val GSON = GsonBuilder().setPrettyPrinting().create()
+  }
 
   protected val webClientConfig = WebClientConfiguration(
     documentStorageApiBaseUri = "",
@@ -69,18 +72,15 @@ abstract class BasePactTest {
   protected fun createPact(
     pactScenario: String,
     builder: PactDslWithProvider,
-    prn: String,
-    fromDate: String,
-    toDate: String,
     responseBody: PactDslJsonBody,
   ): V4Pact {
     return builder
       .given(pactScenario)
       .uponReceiving("a subject access request")
       .path("/subject-access-request")
-      .matchQuery("prn", prn)
-      .queryMatchingDate("fromDate", fromDate)
-      .queryMatchingDate("toDate", toDate)
+      .matchQuery("prn", EXPECTED_PRN)
+      .queryMatchingDate("fromDate", EXPECTED_FROM_DATE)
+      .queryMatchingDate("toDate", EXPECTED_TO_DATE)
       .method("GET")
       .willRespondWith()
       .status(200)
@@ -89,8 +89,8 @@ abstract class BasePactTest {
       .toPact(V4Pact::class.java)
   }
 
-  fun <T> SarResponseEntity.toModel(t: Class<T>): T {
-    val result = gson.fromJson(gson.toJson(this), t)
+  fun <T> SarResponseEntity.convertTo(t: Class<T>): T {
+    val result = GSON.fromJson(GSON.toJson(this), t)
     assertThat(result).isNotNull
     return result
   }
@@ -100,7 +100,7 @@ abstract class BasePactTest {
 
     val resp = dynamicServicesClient.getDataFromService(
       serviceUrl = mockServer.getUrl(),
-      prn = PRN,
+      prn = EXPECTED_PRN,
       crn = null,
       dateFrom = LocalDate.parse(FROM_DATE, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
       dateTo = LocalDate.parse(TO_DATE, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
@@ -108,5 +108,4 @@ abstract class BasePactTest {
     )
     return resp?.body
   }
-
 }

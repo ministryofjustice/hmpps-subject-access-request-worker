@@ -6,45 +6,49 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.consumer.junit5.PactTestFor
 import au.com.dius.pact.core.model.V4Pact
 import au.com.dius.pact.core.model.annotations.Pact
+import org.apache.commons.lang3.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
 
 class SubjectAccessRequestDataPactTest : BasePactTest() {
 
   companion object {
-    const val CREATION_DATE_TIME = "2025-01-16T12:11:04.821Z"
-    val EXPECTED_CREATION_DATE_TIME = DateConversionHelper().convertDates(CREATION_DATE_TIME)
+    const val CREATION_DATE_TIME_1 = "2025-01-16T12:11:04.821Z"
+    val CONTENT_CREATION_DATE_TIME = DateConversionHelper().convertDates(CREATION_DATE_TIME_1)
 
     const val CREATION_DATE_TIME_2 = "2025-01-16T13:00:04.100Z"
-    val EXPECTED_CREATION_DATE_TIME_2 = DateConversionHelper().convertDates(CREATION_DATE_TIME_2)
+    val AMENDMENT_CREATION_DATE_TIME = DateConversionHelper().convertDates(CREATION_DATE_TIME_2)
 
-    const val TYPE_VALUE = "Pizza"
-    const val SUB_TYPE_VALUE = "Spanner"
-    const val TEXT_VALUE = "Once upon a midnight dreary, while I pondered, weak and weary..."
-    const val AUTHOR_USERNAME_VALUE = "Homer J Simpson"
-    const val ADDITIONAL_NOTE_TEXT_VALUE = "Quoth the Raven 'Nevermore'"
+    const val CONTENT_TYPE = "Pizza"
+    const val CONTENT_SUB_TYPE = "Spanner"
+    const val CONTENT_TEXT_VALUE = "Once upon a midnight dreary, while I pondered, weak and weary..."
+    const val CONTENT_AUTHOR_USERNAME = "Homer J Simpson"
+    const val AMENDMENT_ADDITIONAL_NOTE_TEXT = "Quoth the Raven 'Nevermore'"
+    const val AMENDMENT_AUTH_USERNAME = "E.A Poe"
 
-    val SUCCESS_BODY = PactDslJsonBody()
-      .stringType("prn", PRN)
-      .eachLike(
-        "content",
-        PactDslJsonBody()
-          .stringType("creationDateTime", CREATION_DATE_TIME)
-          .stringType("type", TYPE_VALUE)
-          .stringType("subType", SUB_TYPE_VALUE)
-          .stringType("text", TEXT_VALUE)
-          .stringType("authorUsername", AUTHOR_USERNAME_VALUE)
-          .eachLike(
-            "amendments",
-            PactDslJsonBody()
-              .stringType("creationDateTime", CREATION_DATE_TIME_2)
-              .stringType("additionalNoteText", ADDITIONAL_NOTE_TEXT_VALUE)
-              .stringType("authorUsername", AUTHOR_USERNAME_VALUE),
+    // The expected data entity returned by the Offender case notes SAR endpoint.
+    val expectedOffenderCaseNotes = OffenderCaseNotes(
+      prn = EXPECTED_PRN,
+      content = listOf(
+        Content(
+          creationDateTime = CREATION_DATE_TIME_1,
+          type = CONTENT_TYPE,
+          subType = CONTENT_SUB_TYPE,
+          text = CONTENT_TEXT_VALUE,
+          authorUsername = CONTENT_AUTHOR_USERNAME,
+          amendments = listOf(
+            Amendment(
+              creationDateTime = CREATION_DATE_TIME_2,
+              additionalNoteText = AMENDMENT_ADDITIONAL_NOTE_TEXT,
+              authorUsername = AMENDMENT_AUTH_USERNAME,
+            ),
           ),
-      )
+        ),
+      ),
+    )
   }
 
   @Pact(provider = "sar_offender_case_notes_provider", consumer = "sar_offender_case_notes_consumer")
@@ -52,10 +56,24 @@ class SubjectAccessRequestDataPactTest : BasePactTest() {
     return createPact(
       builder = builder,
       pactScenario = "SAR offender case notes data exists",
-      prn = PRN,
-      fromDate = "2024-01-01",
-      toDate = "2025-01-01",
-      responseBody = SUCCESS_BODY,
+      responseBody = PactDslJsonBody()
+        .stringType("prn", expectedOffenderCaseNotes.prn)
+        .eachLike(
+          "content",
+          PactDslJsonBody()
+            .stringType("creationDateTime", CREATION_DATE_TIME_1)
+            .stringType("type", CONTENT_TYPE)
+            .stringType("subType", CONTENT_SUB_TYPE)
+            .stringType("text", CONTENT_TEXT_VALUE)
+            .stringType("authorUsername", CONTENT_AUTHOR_USERNAME)
+            .eachLike(
+              "amendments",
+              PactDslJsonBody()
+                .stringType("creationDateTime", CREATION_DATE_TIME_2)
+                .stringType("additionalNoteText", AMENDMENT_ADDITIONAL_NOTE_TEXT)
+                .stringType("authorUsername", AMENDMENT_AUTH_USERNAME),
+            ),
+        ),
     )
   }
 
@@ -63,43 +81,17 @@ class SubjectAccessRequestDataPactTest : BasePactTest() {
   @PactTestFor(pactMethod = "offenderCaseNotesDataExistsPact")
   fun verifyTemplateTest(mockServer: MockServer) {
     val sarResponseEntity: SarResponseEntity = getSubjectAccessRequestServiceData(mockServer)
-    val content = assertResponseEntity(sarResponseEntity).content!![0]
-
-    val renderedHtml = templateRenderService.renderTemplate("offender-case-notes", content)
-    assertRenderedHtmlContent(renderedHtml)
-  }
-
-  private fun assertResponseEntity(sarResponseEntity: SarResponseEntity): OffenderCaseNotes {
     assertThat(sarResponseEntity).isNotNull
 
-    val offenderCaseNotesEntity = sarResponseEntity.toModel(OffenderCaseNotes::class.java)
+    val actualOffenderCaseNotes = sarResponseEntity.convertTo(OffenderCaseNotes::class.java)
+    assertThat(actualOffenderCaseNotes).isEqualTo(expectedOffenderCaseNotes)
 
-    assertThat(offenderCaseNotesEntity.prn).isEqualTo(PRN)
+    val renderedHtml = templateRenderService.renderTemplate(
+      serviceName = "offender-case-notes",
+      serviceData = actualOffenderCaseNotes.content,
+    )
 
-    val contents = offenderCaseNotesEntity.content
-    assertThat(contents).isNotNull
-    assertThat(contents).hasSize(1)
-
-    val content = contents!![0]
-    assertThat(content).isNotNull
-    assertThat(content.creationDateTime).isEqualTo(CREATION_DATE_TIME)
-    assertThat(content.type).isEqualTo(TYPE_VALUE)
-    assertThat(content.subType).isEqualTo(SUB_TYPE_VALUE)
-    assertThat(content.text).isEqualTo(TEXT_VALUE)
-    assertThat(content.authorUsername).isEqualTo(AUTHOR_USERNAME_VALUE)
-    assertThat(content.amendments).isNotNull
-
-    val amendments = content.amendments
-    assertThat(amendments).isNotNull
-    assertThat(amendments).hasSize(1)
-
-    val amendment = amendments!![0]
-    assertThat(amendment).isNotNull
-    assertThat(amendment.creationDateTime).isEqualTo(CREATION_DATE_TIME_2)
-    assertThat(amendment.additionalNoteText).isEqualTo(ADDITIONAL_NOTE_TEXT_VALUE)
-    assertThat(amendment.authorUsername).isEqualTo(AUTHOR_USERNAME_VALUE)
-
-    return offenderCaseNotesEntity
+    assertRenderedHtmlContent(renderedHtml)
   }
 
   private fun assertRenderedHtmlContent(renderedHtml: String?) {
@@ -115,16 +107,16 @@ class SubjectAccessRequestDataPactTest : BasePactTest() {
       cssQuery = ".summary-list",
       elementIndexToQuery = 0,
       expectedTableContent = listOf(
-        "Type", TYPE_VALUE,
-        "Sub type", SUB_TYPE_VALUE,
-        "Creation date time", EXPECTED_CREATION_DATE_TIME,
-        "Author name", AUTHOR_USERNAME_VALUE,
-      )
+        "Type", CONTENT_TYPE,
+        "Sub type", CONTENT_SUB_TYPE,
+        "Creation date time", CONTENT_CREATION_DATE_TIME,
+        "Author name", CONTENT_AUTHOR_USERNAME,
+      ),
     )
     doc.assertTableContent(
       cssQuery = ".data-table",
       elementIndexToQuery = 0,
-      expectedTableContent = listOf("Text", TEXT_VALUE)
+      expectedTableContent = listOf("Text", CONTENT_TEXT_VALUE),
     )
 
     // Assert Amendments section
@@ -134,35 +126,24 @@ class SubjectAccessRequestDataPactTest : BasePactTest() {
       cssQuery = ".summary-list",
       elementIndexToQuery = 1,
       expectedTableContent = listOf(
-        "Creation date time", EXPECTED_CREATION_DATE_TIME_2,
-        "Author Name", AUTHOR_USERNAME_VALUE,
-      )
+        "Creation date time", AMENDMENT_CREATION_DATE_TIME,
+        "Author Name", AMENDMENT_AUTH_USERNAME,
+      ),
     )
     doc.assertTableContent(
       cssQuery = ".data-table",
       elementIndexToQuery = 1,
-      expectedTableContent = listOf("Additional note text", ADDITIONAL_NOTE_TEXT_VALUE)
+      expectedTableContent = listOf("Additional note text", AMENDMENT_ADDITIONAL_NOTE_TEXT),
     )
-  }
-
-  fun Document.assertTableContent(
-    cssQuery: String,
-    elementIndexToQuery: Int,
-    expectedTableContent: List<String>
-  ) {
-    val tableElements = this.body().select(cssQuery)
-    assertThat(tableElements).hasSizeGreaterThanOrEqualTo(elementIndexToQuery)
-
-    val table = tableElements[elementIndexToQuery].select("tr > td")
-
-    assertThat(table).hasSize(expectedTableContent.size)
-    assertThat(table.map { it.text() }).containsExactlyElementsOf(expectedTableContent)
   }
 
   data class OffenderCaseNotes(
     val prn: String?,
     val content: List<Content>?,
-  )
+  ) {
+    override fun equals(other: Any?): Boolean = EqualsBuilder.reflectionEquals(this, other)
+    override fun hashCode(): Int = HashCodeBuilder.reflectionHashCode(this)
+  }
 
   data class Content(
     val creationDateTime: String?,
@@ -171,11 +152,17 @@ class SubjectAccessRequestDataPactTest : BasePactTest() {
     val text: String?,
     val authorUsername: String?,
     val amendments: List<Amendment>?,
-  )
+  ) {
+    override fun equals(other: Any?): Boolean = EqualsBuilder.reflectionEquals(this, other)
+    override fun hashCode(): Int = HashCodeBuilder.reflectionHashCode(this)
+  }
 
   data class Amendment(
     val creationDateTime: String,
     val additionalNoteText: String,
     val authorUsername: String,
-  )
+  ) {
+    override fun equals(other: Any?): Boolean = EqualsBuilder.reflectionEquals(this, other)
+    override fun hashCode(): Int = HashCodeBuilder.reflectionHashCode(this)
+  }
 }
