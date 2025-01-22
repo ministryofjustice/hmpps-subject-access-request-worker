@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact.v2
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact.v3
 
 import au.com.dius.pact.consumer.MockServer
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact.SarResponseE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact.assertTableContent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.DateConversionHelper
 
-class SubjectAccessRequestDataPactTest : BasePactTest() {
+class SubjectAccessRequestDataPactV3Test : BasePactTest() {
 
   companion object {
     const val CREATION_DATE_TIME_1 = "2025-01-16T12:11:04.821Z"

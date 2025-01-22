@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact.v2
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jsoup.nodes.Document

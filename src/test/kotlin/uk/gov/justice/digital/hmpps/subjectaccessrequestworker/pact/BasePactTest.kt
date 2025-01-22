@@ -1,13 +1,16 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact.v2
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.pact
 
 import au.com.dius.pact.consumer.MockServer
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt
 import au.com.dius.pact.core.model.V4Pact
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.microsoft.applicationinsights.TelemetryClient
 import com.nimbusds.jose.shaded.gson.GsonBuilder
 import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONObject
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.mock
 import org.springframework.web.reactive.function.client.WebClient
@@ -38,6 +41,7 @@ abstract class BasePactTest {
 
   companion object {
     val GSON = GsonBuilder().setPrettyPrinting().create()
+    val objectMapper = ObjectMapper()
   }
 
   protected val webClientConfig = WebClientConfiguration(
@@ -72,6 +76,26 @@ abstract class BasePactTest {
   protected fun createPact(
     pactScenario: String,
     builder: PactDslWithProvider,
+    responseBody: String,
+  ): V4Pact {
+    return builder
+      .given(pactScenario)
+      .uponReceiving("a subject access request")
+      .path("/subject-access-request")
+      .matchQuery("prn", EXPECTED_PRN)
+      .queryMatchingDate("fromDate", EXPECTED_FROM_DATE)
+      .queryMatchingDate("toDate", EXPECTED_TO_DATE)
+      .method("GET")
+      .willRespondWith()
+      .status(200)
+      .headers(mapOf("Content-Type" to "application/json"))
+      .body(responseBody)
+      .toPact(V4Pact::class.java)
+  }
+
+  protected fun createPact(
+    pactScenario: String,
+    builder: PactDslWithProvider,
     responseBody: PactDslJsonBody,
   ): V4Pact {
     return builder
@@ -95,7 +119,21 @@ abstract class BasePactTest {
     return result
   }
 
-  protected fun getSubjectAccessRequestServiceData(mockServer: MockServer): SarResponseEntity {
+  fun getResponseStubJsonAsString(resourceName: String): String {
+    val jsonString = this::class.java
+      .getResourceAsStream(resourceName)?.use { input ->
+        input.bufferedReader().use { reader ->
+          objectMapper.readValue(reader, JsonNode::class.java).toString()
+        }
+      }
+
+    assertThat(jsonString).isNotNull()
+    assertThat(jsonString).isNotEmpty()
+
+    return jsonString!!
+  }
+
+  protected fun getSubjectAccessRequestServiceData(mockServer: MockServer): Map<*, *>? {
     hmppsAuth.stubGrantToken()
 
     val resp = dynamicServicesClient.getDataFromService(
