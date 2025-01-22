@@ -89,11 +89,7 @@ class OffenderCaseNotesPactTestV3 : BasePactTest() {
     when (item) {
       is JSONObject -> item.keys().forEachRemaining { key -> flattenJsonValue(set, "$path.$key", item.get(key)) }
       is JSONArray -> item.forEachIndexed { i, element -> flattenJsonValue(set, "$path[$i]", element) }
-      else -> {
-        if (!exclusions.contains(path)) {
-          set.add(Node(path, transformations.getOrDefault(path, item)))
-        }
-      }
+      else -> set.add(Node(path, item))
     }
   }
 
