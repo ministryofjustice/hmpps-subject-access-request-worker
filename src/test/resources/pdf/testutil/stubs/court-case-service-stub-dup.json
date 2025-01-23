@@ -1,0 +1,76 @@
+{
+  "content": {
+    "comments": [
+      {
+        "comment": "test",
+        "author": "Test User",
+        "created": "2023-06-21T12:11:21.355792",
+        "createdBy": "TEST_USER(prepare-a-case-for-court-1)",
+        "lastUpdated": "2023-06-21T12:11:21.355792",
+        "lastUpdatedBy": "TEST_USER(prepare-a-case-for-court-1)",
+        "caseNumber": "2106223516243653402"
+      },
+      {
+        "comment": "Defendant details\r\nName\tTest Prisoner\r\nGender\tMale\r\nDate of birth\t28 February 1997 (25 years old)\r\nPhone number\tUnavailable\r\nAddress\t14 Tottenham Court Road\r\nLondon Road\r\nEngland\r\nUK\r\nEarth\r\nW1T 7RJ\r\nComments\r\nAdd notes and observations about this case. Your colleagues who use Prepare a Case will be able to read them.\r\n\r\nThese comments will not be saved to NDelius.\r\n\r\n",
+        "author": "Test User",
+        "created": "2022-08-23T09:12:10.827518",
+        "createdBy": "TEST_USER(prepare-a-case-for-court)",
+        "lastUpdated": "2022-08-23T09:12:10.827518",
+        "lastUpdatedBy": "TEST_USER(prepare-a-case-for-court)",
+        "caseNumber": ""
+      },
+      {
+        "comment": "Defendant details\r\nName\tTest Prisoner\r\nGender\tMale\r\nDate of birth\t28 February 1997 (25 years old)\r\nPhone number\tUnavailable\r\nAddress\t14 Tottenham Court Road\r\nLondon Road\r\nEngland\r\nUK\r\nEarth\r\nW1T 7RJ\r\nComments\r\nAdd notes and observations about this case. Your colleagues who use Prepare a Case will be able to read them.\r\n\r\nThese comments will not be saved to NDelius.\r\n\r\n",
+        "author": "Test User",
+        "created": "2022-08-23T09:12:14.612166",
+        "createdBy": "TEST_USER(prepare-a-case-for-court)",
+        "lastUpdated": "2022-08-23T09:12:14.612166",
+        "lastUpdatedBy": "TEST_USER(prepare-a-case-for-court)",
+        "caseNumber": ""
+      }
+    ],
+    "hearingOutcomes": [
+      {
+        "outcomeType": "OTHER",
+        "outcomeDate": "2023-06-22T14:12:31.396105",
+        "resultedDate": "2023-09-12T15:30:13.558769",
+        "state": "RESULTED",
+        "assignedTo": "User",
+        "createdDate": "2023-06-22T14:12:31.428778"
+      },
+      {
+        "outcomeType": "ADJOURNED",
+        "outcomeDate": "2023-09-20T09:48:47.035587",
+        "resultedDate": "2023-09-26T15:39:38.664474",
+        "state": "RESULTED",
+        "assignedTo": "Test User",
+        "createdDate": "2023-09-20T09:48:47.147291"
+      },
+      {
+        "outcomeType": "REPORT_REQUESTED",
+        "outcomeDate": "2023-09-28T15:41:16.988891",
+        "resultedDate": "2023-09-28T15:48:26.971731",
+        "state": "RESULTED",
+        "assignedTo": "Test User",
+        "createdDate": "2023-09-28T15:41:17.002934"
+      }
+    ],
+    "hearingNotes": [
+      {
+        "hearingId": "605e08b9-8544-417e-84fa-39ce337ab04e",
+        "note": "This is a note",
+        "author": "Test User"
+      },
+      {
+        "hearingId": "605e08b9-8544-417e-84fa-39ce337ab04e",
+        "note": "This is a note",
+        "author": "Test User"
+      },
+      {
+        "hearingId": "5ee27730-77f3-4cd8-8892-6cc144ca682d",
+        "note": "Hello note one",
+        "author": "Test User"
+      }
+    ]
+  }
+}
