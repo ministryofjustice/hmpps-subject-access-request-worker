@@ -1,0 +1,32 @@
+{
+  "content": {
+    "comments": [
+      {
+        "comment": "test",
+        "author": "Test User",
+        "created": "2023-06-21T12:11:21.355792",
+        "createdBy": "TEST_USER(prepare-a-case-for-court-1)",
+        "lastUpdated": "2023-06-21T12:11:21.355792",
+        "lastUpdatedBy": "TEST_USER(prepare-a-case-for-court-1)",
+        "caseNumber": "2106223516243653402"
+      }
+    ],
+    "hearingOutcomes": [
+      {
+        "outcomeType": "OTHER",
+        "outcomeDate": "2023-06-22T14:12:31.396105",
+        "resultedDate": "2023-09-12T15:30:13.558769",
+        "state": "RESULTED",
+        "assignedTo": "User",
+        "createdDate": "2023-06-22T14:12:31.428778"
+      }
+    ],
+    "hearingNotes": [
+      {
+        "hearingId": "605e08b9-8544-417e-84fa-39ce337ab04e",
+        "note": "This is a note",
+        "author": "Test User1"
+      }
+    ]
+  }
+}
