@@ -17,14 +17,9 @@ class Transformation(jsonPathRegex: String, val transformData: TransformDataFunc
     private val dateConverter = DateConversionHelper()
 
     val dateTransformer: TransformDataFunc = { value ->
-      var result = "No Data Held"
-
       value?.let {
-        it.takeIf { it is String }?.let {
-          result = dateConverter.convertDates(value.toString())
-        }
-      }
-      result
+        it.takeIf { it is String }?.let { dateConverter.convertDates(value.toString()) }
+      } ?: "No Data Held"
     }
 
     val optionalFieldTransformer: TransformDataFunc = { value -> value?.let{value}?: "No Data Held"}
