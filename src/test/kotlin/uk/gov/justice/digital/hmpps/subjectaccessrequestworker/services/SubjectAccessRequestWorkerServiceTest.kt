@@ -8,17 +8,15 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.gateways.SubjectAccessRequestGateway
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfig
@@ -32,12 +30,8 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
-  private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-  private val dateFrom = "02/01/2023"
-  private val dateFromFormatted = LocalDate.parse(dateFrom, formatter)
-  private val dateTo = "02/01/2024"
-  private val dateToFormatted = LocalDate.parse(dateTo, formatter)
-  private val requestTime = LocalDateTime.now()
+  private val dateFromFormatted = LocalDate.parse("02/01/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+  private val dateToFormatted = LocalDate.parse("02/01/2024", DateTimeFormatter.ofPattern("dd/MM/yyyy"))
   private val documentStorageClient: DocumentStorageClient = mock()
   private val sampleSAR = SubjectAccessRequest(
     id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
@@ -45,26 +39,26 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     dateFrom = dateFromFormatted,
     dateTo = dateToFormatted,
     sarCaseReferenceNumber = "1234abc",
-    services = "fake-hmpps-prisoner-search, https://fake-prisoner-search.prison.service.justice.gov.uk,fake-hmpps-prisoner-search-indexer, https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
+    services = "service-a, https://service-a.hmpps.service.justice.gov.uk,service-b, https://service-b.hmpps.service.justice.gov.uk",
     nomisId = null,
     ndeliusCaseReferenceId = "1",
     requestedBy = "aName",
-    requestDateTime = requestTime,
+    requestDateTime = LocalDateTime.now(),
     claimAttempts = 0,
   )
-  private val mockDpsServices = listOf(DpsService(), DpsService())
+  private val dpsServicesList = listOf(DpsService(), DpsService())
 
   val selectedDpsServices =
     mutableListOf(
       DpsService(
-        name = "fake-hmpps-prisoner-search",
-        url = "https://fake-prisoner-search.prison.service.justice.gov.uk",
+        name = "service-a",
+        url = "https://service-a.hmpps.service.justice.gov.uk",
         businessName = null,
         orderPosition = null,
       ),
       DpsService(
-        name = "fake-hmpps-prisoner-search-indexer",
-        url = "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
+        name = "service-b",
+        url = "https://service-b.hmpps.service.justice.gov.uk",
         businessName = null,
         orderPosition = null,
       ),
@@ -86,26 +80,24 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ),
     ),
   )
-  private val mockSarGateway: SubjectAccessRequestGateway = mock()
-  private val mockGetSubjectAccessRequestDataService: GetSubjectAccessRequestDataService = mock()
+  private val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService = mock()
   private val prisonApiClient: PrisonApiClient = mock()
   private val probationApiClient: ProbationApiClient = mock()
   private val generatePdfService: GeneratePdfService = mock()
-  private val mockStream: ByteArrayOutputStream = mock()
+  private val byteArrayOutputStream: ByteArrayOutputStream = mock()
   private val telemetryClient: TelemetryClient = mock()
   private val configOrderHelper: ConfigOrderHelper = mock()
-  private val mockWriter: PdfWriter = mock()
-  private val mockWebClient: WebClient = mock()
+  private val pdfWriter: PdfWriter = mock()
+  private val subjectAccessRequestService: SubjectAccessRequestService = mock()
 
   val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(
-    mockSarGateway,
-    mockGetSubjectAccessRequestDataService,
+    getSubjectAccessRequestDataService,
     documentStorageClient,
     generatePdfService,
     prisonApiClient,
     probationApiClient,
     configOrderHelper,
-    "http://localhost:8080",
+    subjectAccessRequestService,
     telemetryClient,
   )
 
@@ -113,40 +105,31 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Test
   fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
-    whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
+    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
 
     val result = subjectAccessRequestWorkerService
-      .pollForNewSubjectAccessRequests(mockWebClient)
+      .pollForNewSubjectAccessRequests()
 
     val expected: SubjectAccessRequest = sampleSAR
     assertThat(result).isEqualTo(expected)
   }
 
   @Test
-  fun `doPoll polls for unclaimed SAR`() = runTest {
-    whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
-    whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
+  fun `pollForRequests polls for unclaimed SAR`() = runTest {
+    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
 
-    subjectAccessRequestWorkerService.doPoll()
+    subjectAccessRequestWorkerService.pollForRequests()
 
-    verify(mockSarGateway, times(1)).getUnclaimed(mockWebClient)
+    verify(subjectAccessRequestService, times(1)).findUnclaimed()
   }
 
   @Test
   fun `startPolling calls claim and complete on happy path`() = runTest {
-    whenever(
-      configOrderHelper.getDpsServices(
-        mapOf(
-          "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-          "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-        ),
-      ),
-    ).thenReturn(selectedDpsServices)
+    whenever(configOrderHelper.getDpsServices(any())).thenReturn(selectedDpsServices)
     whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-    whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
-    whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
+
     whenever(
-      mockGetSubjectAccessRequestDataService.requestDataFromServices(
+      getSubjectAccessRequestDataService.requestDataFromServices(
         selectedDpsServices,
         null,
         "1",
@@ -155,16 +138,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         sampleSAR,
       ),
     )
-      .thenReturn(mockDpsServices)
-    whenever(generatePdfService.createPdfStream())
-      .thenReturn(mockStream)
-    whenever(generatePdfService.getPdfWriter(mockStream))
-      .thenReturn(mockWriter)
+      .thenReturn(dpsServicesList)
+    whenever(generatePdfService.getPdfWriter(byteArrayOutputStream))
+      .thenReturn(pdfWriter)
     whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
       .thenReturn("TEST, Name")
     whenever(
       generatePdfService.execute(
-        services = mockDpsServices,
+        services = dpsServicesList,
         nomisId = null,
         ndeliusCaseReferenceId = "1",
         sarCaseReferenceNumber = "1234abc",
@@ -173,44 +154,38 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         dateTo = dateToFormatted,
         subjectAccessRequest = sampleSAR,
       ),
-    ).thenReturn(mockStream)
+    ).thenReturn(byteArrayOutputStream)
 
-    whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+    whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream))
       .thenReturn(postDocumentResponse)
 
-    subjectAccessRequestWorkerService.doPoll()
+    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
 
-    verify(mockSarGateway, times(1)).claim(mockWebClient, sampleSAR)
-    verify(mockSarGateway, times(1)).complete(mockWebClient, sampleSAR)
+    subjectAccessRequestWorkerService.pollForRequests()
+
+    verify(subjectAccessRequestService, times(1)).findUnclaimed()
+    verify(subjectAccessRequestService, times(1)).updateStatus(UUID.fromString("11111111-1111-1111-1111-111111111111"), Status.Completed)
   }
 
   @Test
   fun `startPolling doesn't call complete if claim patch fails`() = runTest {
-    whenever(mockSarGateway.getClient("http://localhost:8080")).thenReturn(mockWebClient)
-    whenever(mockSarGateway.getUnclaimed(mockWebClient)).thenReturn(arrayOf(sampleSAR))
-    whenever(mockSarGateway.claim(mockWebClient, sampleSAR)).thenThrow(SubjectAccessRequestException("failed to claim SAR"))
+    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
+    whenever(subjectAccessRequestService.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(any())).thenThrow(RuntimeException("Database error"))
 
-    subjectAccessRequestWorkerService.doPoll()
+    subjectAccessRequestWorkerService.pollForRequests()
 
-    verify(mockSarGateway, times(1)).claim(mockWebClient, sampleSAR)
-    verify(mockSarGateway, times(0)).complete(mockWebClient, sampleSAR)
+    verify(subjectAccessRequestService, times(1)).findUnclaimed()
+    verify(subjectAccessRequestService, times(0)).updateStatus(any(), eq(Status.Completed))
   }
 
   @Nested
-  inner class DoReport {
+  inner class CreateSubjectAccessRequestReport {
     @Test
     fun `doReport calls getSubjectAccessRequestDataService with chosenSar details`() {
-      whenever(
-        configOrderHelper.getDpsServices(
-          mapOf(
-            "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-            "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-          ),
-        ),
-      ).thenReturn(selectedDpsServices)
+      whenever(configOrderHelper.getDpsServices(any())).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.requestDataFromServices(
+        getSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -218,17 +193,12 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           dateToFormatted,
           sampleSAR,
         ),
-      )
-        .thenReturn(mockDpsServices)
-      whenever(generatePdfService.createPdfStream())
-        .thenReturn(mockStream)
-      whenever(generatePdfService.getPdfWriter(mockStream))
-        .thenReturn(mockWriter)
-      whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
-        .thenReturn("TEST, Name")
+      ).thenReturn(dpsServicesList)
+      whenever(generatePdfService.getPdfWriter(byteArrayOutputStream)).thenReturn(pdfWriter)
+      whenever(probationApiClient.getOffenderName(sampleSAR, "1")).thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
-          services = mockDpsServices,
+          services = dpsServicesList,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
@@ -237,13 +207,12 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           sarCaseReferenceNumber = "1234abc",
           subjectAccessRequest = sampleSAR,
         ),
-      ).thenReturn(mockStream)
-      whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
-        .thenReturn(postDocumentResponse)
+      ).thenReturn(byteArrayOutputStream)
+      whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream)).thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, times(1)).requestDataFromServices(
+      verify(getSubjectAccessRequestDataService, times(1)).requestDataFromServices(
         services = selectedDpsServices,
         null,
         "1",
@@ -254,18 +223,11 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `doReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
-      whenever(
-        configOrderHelper.getDpsServices(
-          mapOf(
-            "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-            "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-          ),
-        ),
-      ).thenReturn(selectedDpsServices)
+    fun `createSubjectAccessRequestReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
+      whenever(configOrderHelper.getDpsServices(any())).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.requestDataFromServices(
+        getSubjectAccessRequestDataService.requestDataFromServices(
           services = selectedDpsServices,
           null,
           "1",
@@ -297,17 +259,10 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
     @Test
     fun `doReport calls GetSubjectAccessRequestDataService execute`() {
-      whenever(
-        configOrderHelper.getDpsServices(
-          mapOf(
-            "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-            "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-          ),
-        ),
-      ).thenReturn(selectedDpsServices)
+      whenever(configOrderHelper.getDpsServices(any())).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.requestDataFromServices(
+        getSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -316,16 +271,12 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           sampleSAR,
         ),
       )
-        .thenReturn(mockDpsServices)
-      whenever(generatePdfService.createPdfStream())
-        .thenReturn(mockStream)
-      whenever(generatePdfService.getPdfWriter(mockStream))
-        .thenReturn(mockWriter)
-      whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
-        .thenReturn("TEST, Name")
+        .thenReturn(dpsServicesList)
+      whenever(generatePdfService.getPdfWriter(byteArrayOutputStream)).thenReturn(pdfWriter)
+      whenever(probationApiClient.getOffenderName(sampleSAR, "1")).thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
-          services = mockDpsServices,
+          services = dpsServicesList,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
@@ -335,28 +286,21 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           subjectAccessRequest = sampleSAR,
         ),
       )
-        .thenReturn(mockStream)
-      whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+        .thenReturn(byteArrayOutputStream)
+      whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream))
         .thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
-      verify(mockGetSubjectAccessRequestDataService, times(1)).requestDataFromServices(any(), eq(null), any(), any(), any(), any())
+      verify(getSubjectAccessRequestDataService, times(1)).requestDataFromServices(any(), eq(null), any(), any(), any(), any())
     }
 
     @Test
     fun `doReport calls GeneratePdfService execute`() {
-      whenever(
-        configOrderHelper.getDpsServices(
-          mapOf(
-            "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-            "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-          ),
-        ),
-      ).thenReturn(selectedDpsServices)
+      whenever(configOrderHelper.getDpsServices(any())).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.requestDataFromServices(
+        getSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -365,14 +309,13 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           sampleSAR,
         ),
       )
-        .thenReturn(mockDpsServices)
-      whenever(generatePdfService.createPdfStream()).thenReturn(mockStream)
-      whenever(generatePdfService.getPdfWriter(mockStream)).thenReturn(mockWriter)
+        .thenReturn(dpsServicesList)
+      whenever(generatePdfService.getPdfWriter(byteArrayOutputStream)).thenReturn(pdfWriter)
       whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
         .thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
-          services = mockDpsServices,
+          services = dpsServicesList,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
@@ -381,32 +324,25 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           sarCaseReferenceNumber = "1234abc",
           subjectAccessRequest = sampleSAR,
         ),
-      ).thenReturn(mockStream)
+      ).thenReturn(byteArrayOutputStream)
       whenever(
         documentStorageClient.storeDocument(
           sampleSAR,
-          mockStream,
+          byteArrayOutputStream,
         ),
       ).thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
-      verify(generatePdfService, times(1)).execute(any(), eq(null), any(), any(), any(), any(), any(), any(), any())
+      verify(generatePdfService, times(1)).execute(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
     }
 
     @Test
     fun `doReport calls storeDocument`() = runTest {
-      whenever(
-        configOrderHelper.getDpsServices(
-          mapOf(
-            "fake-hmpps-prisoner-search" to "https://fake-prisoner-search.prison.service.justice.gov.uk",
-            "fake-hmpps-prisoner-search-indexer" to "https://fake-prisoner-search-indexer.prison.service.justice.gov.uk",
-          ),
-        ),
-      ).thenReturn(selectedDpsServices)
+      whenever(configOrderHelper.getDpsServices(any())).thenReturn(selectedDpsServices)
       whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
       whenever(
-        mockGetSubjectAccessRequestDataService.requestDataFromServices(
+        getSubjectAccessRequestDataService.requestDataFromServices(
           selectedDpsServices,
           null,
           "1",
@@ -415,16 +351,14 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           sampleSAR,
         ),
       )
-        .thenReturn(mockDpsServices)
-      whenever(generatePdfService.createPdfStream())
-        .thenReturn(mockStream)
-      whenever(generatePdfService.getPdfWriter(mockStream))
-        .thenReturn(mockWriter)
+        .thenReturn(dpsServicesList)
+      whenever(generatePdfService.getPdfWriter(byteArrayOutputStream))
+        .thenReturn(pdfWriter)
       whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
         .thenReturn("TEST, Name")
       whenever(
         generatePdfService.execute(
-          services = mockDpsServices,
+          services = dpsServicesList,
           nomisId = null,
           ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
@@ -434,15 +368,15 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
           subjectAccessRequest = sampleSAR,
         ),
       )
-        .thenReturn(mockStream)
-      whenever(documentStorageClient.storeDocument(sampleSAR, mockStream))
+        .thenReturn(byteArrayOutputStream)
+      whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream))
         .thenReturn(postDocumentResponse)
 
       subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
       verify(documentStorageClient, times(1)).storeDocument(
         sampleSAR,
-        mockStream,
+        byteArrayOutputStream,
       )
     }
   }
@@ -459,7 +393,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       nomisId = null,
       ndeliusCaseReferenceId = "1",
       requestedBy = "aName",
-      requestDateTime = requestTime,
+      requestDateTime = LocalDateTime.now(),
       claimAttempts = 0,
     )
 
