@@ -1,0 +1,1040 @@
+{
+  "content": {
+    "licences": [
+      {
+        "id": 1742,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "MODIFIED",
+        "version": 1,
+        "transitionDate": "2025-01-17T10:22:35.41382",
+        "varyVersion": 0,
+        "additionalConditionsVersion": null,
+        "standardConditionsVersion": null,
+        "deletedAt": "2025-01-23T12:24:47.540063",
+        "licenceInCvl": true,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": null,
+            "bassRequest": {
+              "bassRequested": "No"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": null
+          },
+          "proposedAddress": {
+            "curfewAddress": {
+              "addressLine1": "Test Street",
+              "addressLine2": "",
+              "addressTown": "Test Town",
+              "postCode": "B1 2TJ"
+            }
+          },
+          "curfew": {
+            "firstNight": {
+              "firstNightFrom": "15:00:00",
+              "firstNightUntil": "07:00:00"
+            },
+            "curfewHours": {
+              "mondayFrom": "19:00",
+              "mondayUntil": "07:00",
+              "tuesdayFrom": "19:00",
+              "tuesdayUntil": "07:00",
+              "wednesdayFrom": "19:00",
+              "wednesdayUntil": "07:00",
+              "thursdayFrom": "19:00",
+              "thursdayUntil": "07:00",
+              "fridayFrom": "19:00",
+              "fridayUntil": "07:00",
+              "saturdayFrom": "19:00",
+              "saturdayUntil": "07:00",
+              "sundayFrom": "19:00",
+              "sundayUntil": "07:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": {
+              "required": "No"
+            }
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Test Person",
+              "postcode": "B1 2TJ",
+              "telephone": "00000000001",
+              "townOrCity": "Test",
+              "organisation": "Test",
+              "reportingDate": "01/01/2026",
+              "reportingTime": "09:00",
+              "buildingAndStreet1": "Test Street",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": null,
+            "standard": {
+              "additionalConditionsRequired": "No"
+            },
+            "additional": null,
+            "conditionsSummary": null
+          },
+          "document": {
+            "template": {
+              "decision": "hdc_ap",
+              "offenceCommittedBeforeFeb2015": "No"
+            }
+          },
+          "approval": {
+            "release": {
+              "decision": "Yes",
+              "decisionMaker": "Gurps Singh",
+              "reasonForDecision": "Test"
+            }
+          },
+          "finalChecks": {
+            "onRemand": {
+              "decision": "No"
+            },
+            "seriousOffence": {
+              "decision": "No"
+            },
+            "confiscationOrder": {
+              "decision": "No"
+            }
+          }
+        }
+      },
+      {
+        "id": 1726,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "MODIFIED",
+        "version": 1,
+        "transitionDate": "2024-12-03T15:26:29.891856",
+        "varyVersion": 0,
+        "additionalConditionsVersion": 2,
+        "standardConditionsVersion": null,
+        "deletedAt": "2025-01-14T16:11:39.624579",
+        "licenceInCvl": false,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": {
+              "addressLine1": "102 Petty France",
+              "addressLine2": "",
+              "addressTown": "London",
+              "postCode": "SW1H 9AJ",
+              "bassAccepted": "Yes"
+            },
+            "bassRequest": {
+              "bassRequested": "Yes"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": {
+              "approvedPremisesRequiredYesNo": "No"
+            }
+          },
+          "proposedAddress": {
+            "curfewAddress": null
+          },
+          "curfew": {
+            "firstNight": {
+              "firstNightFrom": "15:00:00",
+              "firstNightUntil": "07:00:00"
+            },
+            "curfewHours": {
+              "mondayFrom": "19:00",
+              "mondayUntil": "07:00",
+              "tuesdayFrom": "19:00",
+              "tuesdayUntil": "07:00",
+              "wednesdayFrom": "19:00",
+              "wednesdayUntil": "07:00",
+              "thursdayFrom": "19:00",
+              "thursdayUntil": "07:00",
+              "fridayFrom": "19:00",
+              "fridayUntil": "07:00",
+              "saturdayFrom": "19:00",
+              "saturdayUntil": "07:00",
+              "sundayFrom": "19:00",
+              "sundayUntil": "07:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": null
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "Yes",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Jeremy Fisher",
+              "postcode": "SW1H 9AJ",
+              "telephone": "0123456789",
+              "townOrCity": "London",
+              "organisation": "NPS",
+              "reportingDate": "13/12/2024",
+              "reportingTime": "14:00",
+              "buildingAndStreet1": "102 Petty France",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": [],
+            "standard": {
+              "additionalConditionsRequired": "Yes"
+            },
+            "additional": {
+              "ALCOHOL_MONITORING": null,
+              "ALLOW_POLICE_SEARCH": null,
+              "attendAll": null,
+              "ATTENDDEPENDENCY": null,
+              "attendDependencyInDrugsSection": null,
+              "ATTEND_SAMPLE": null,
+              "CAMERA_APPROVAL": {},
+              "complyRequirements": null,
+              "confineAddress": null,
+              "CURFEW_UNTIL_INSTALLATION": null,
+              "DONT_HAMPER_DRUG_TESTING": null,
+              "DRUG_TESTING": null,
+              "ELECTRONIC_MONITORING_INSTALLATION": null,
+              "ELECTRONIC_MONITORING_TRAIL": null,
+              "exclusionAddress": null,
+              "exclusionArea": null,
+              "homeVisits": null,
+              "intimateRelationship": null,
+              "NO_CAMERA": {},
+              "noCameraPhone": {},
+              "noChildrenArea": null,
+              "noCommunicateVictim": null,
+              "NO_CONTACT_ASSOCIATE": null,
+              "noContactNamed": null,
+              "noContactPrisoner": null,
+              "NO_CONTACT_SEX_OFFENDER": null,
+              "noInternet": null,
+              "noReside": null,
+              "notifyPassport": null,
+              "notifyRelationship": null,
+              "noUnsupervisedContact": null,
+              "noWorkWithAge": null,
+              "onePhone": {},
+              "POLICE_ESCORT": null,
+              "POLYGRAPH": null,
+              "remainAddress": null,
+              "reportTo": null,
+              "RESIDE_AT_SPECIFIC_PLACE": null,
+              "RETURN_TO_UK": null,
+              "SPECIFIC_ITEM": null,
+              "surrenderPassport": null,
+              "usageHistory": null,
+              "vehicleDetails": null
+            },
+            "conditionsSummary": {
+              "additionalConditionsJustification": "No pictures"
+            }
+          },
+          "document": {
+            "template": {
+              "decision": "hdc_ap",
+              "offenceCommittedBeforeFeb2015": "No"
+            }
+          },
+          "approval": {
+            "release": {
+              "decision": "Yes",
+              "decisionMaker": "Approval User",
+              "reasonForDecision": ""
+            }
+          },
+          "finalChecks": {
+            "onRemand": {
+              "decision": "No"
+            },
+            "seriousOffence": {
+              "decision": "No"
+            },
+            "confiscationOrder": {
+              "decision": "No"
+            }
+          }
+        }
+      },
+      {
+        "id": 1705,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "PROCESSING_CA",
+        "version": 1,
+        "transitionDate": "2024-11-20T13:37:53.575868",
+        "varyVersion": 0,
+        "additionalConditionsVersion": null,
+        "standardConditionsVersion": null,
+        "deletedAt": "2024-12-03T14:17:56.085898",
+        "licenceInCvl": false,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": null,
+            "bassRequest": {
+              "bassRequested": "No"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": null
+          },
+          "proposedAddress": {
+            "curfewAddress": {
+              "addressLine1": "12 Mayfield",
+              "addressLine2": "",
+              "addressTown": "aaaaa",
+              "postCode": "YO15 3LE"
+            }
+          },
+          "curfew": {
+            "firstNight": null,
+            "curfewHours": {
+              "mondayFrom": "19:00",
+              "mondayUntil": "07:00",
+              "tuesdayFrom": "19:00",
+              "tuesdayUntil": "07:00",
+              "wednesdayFrom": "19:00",
+              "wednesdayUntil": "07:00",
+              "thursdayFrom": "19:00",
+              "thursdayUntil": "07:00",
+              "fridayFrom": "19:00",
+              "fridayUntil": "07:00",
+              "saturdayFrom": "19:00",
+              "saturdayUntil": "07:00",
+              "sundayFrom": "19:00",
+              "sundayUntil": "07:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": {
+              "required": "No"
+            }
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "jkbkjhkj",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Jeremy Fisher",
+              "postcode": "SW1H 9AJ",
+              "telephone": "0123456789",
+              "townOrCity": "London",
+              "organisation": "NPS",
+              "reportingDate": "25/11/2024",
+              "reportingTime": "14:00",
+              "buildingAndStreet1": "102 Petty France",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": null,
+            "standard": {
+              "additionalConditionsRequired": "No"
+            },
+            "additional": null,
+            "conditionsSummary": null
+          },
+          "document": null,
+          "approval": null,
+          "finalChecks": null
+        }
+      },
+      {
+        "id": 1737,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "DECIDED",
+        "version": 1,
+        "transitionDate": "2025-01-15T11:45:21.891021",
+        "varyVersion": 0,
+        "additionalConditionsVersion": null,
+        "standardConditionsVersion": null,
+        "deletedAt": "2025-01-15T11:48:52.223251",
+        "licenceInCvl": false,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": null,
+            "bassRequest": {
+              "bassRequested": "No"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": null
+          },
+          "proposedAddress": {
+            "curfewAddress": {
+              "addressLine1": "Test Street",
+              "addressLine2": "",
+              "addressTown": "Test Town",
+              "postCode": "B1 2TJ"
+            }
+          },
+          "curfew": {
+            "firstNight": null,
+            "curfewHours": {
+              "mondayFrom": "21:00",
+              "mondayUntil": "09:00",
+              "tuesdayFrom": "21:00",
+              "tuesdayUntil": "09:00",
+              "wednesdayFrom": "21:00",
+              "wednesdayUntil": "09:00",
+              "thursdayFrom": "21:00",
+              "thursdayUntil": "09:00",
+              "fridayFrom": "21:00",
+              "fridayUntil": "09:00",
+              "saturdayFrom": "21:00",
+              "saturdayUntil": "09:00",
+              "sundayFrom": "21:00",
+              "sundayUntil": "09:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": {
+              "required": "No"
+            }
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Test Person",
+              "postcode": "B1 2TJ",
+              "telephone": "00000000001",
+              "townOrCity": "Test",
+              "organisation": "Test",
+              "reportingDate": "01/02/2026",
+              "reportingTime": "09:00",
+              "buildingAndStreet1": "Test Street",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": null,
+            "standard": {
+              "additionalConditionsRequired": "No"
+            },
+            "additional": null,
+            "conditionsSummary": null
+          },
+          "document": null,
+          "approval": {
+            "release": {
+              "decision": "Yes",
+              "decisionMaker": "Gurps Singh",
+              "reasonForDecision": ""
+            }
+          },
+          "finalChecks": {
+            "onRemand": {
+              "decision": "No"
+            },
+            "seriousOffence": {
+              "decision": "No"
+            },
+            "confiscationOrder": {
+              "decision": "No"
+            }
+          }
+        }
+      },
+      {
+        "id": 1738,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "DECIDED",
+        "version": 1,
+        "transitionDate": "2025-01-15T11:52:27.310444",
+        "varyVersion": 0,
+        "additionalConditionsVersion": null,
+        "standardConditionsVersion": null,
+        "deletedAt": "2025-01-15T11:58:57.749768",
+        "licenceInCvl": false,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": null,
+            "bassRequest": {
+              "bassRequested": "No"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": null
+          },
+          "proposedAddress": {
+            "curfewAddress": {
+              "addressLine1": "Test Street",
+              "addressLine2": "",
+              "addressTown": "Test Town",
+              "postCode": "B1 2TJ"
+            }
+          },
+          "curfew": {
+            "firstNight": null,
+            "curfewHours": {
+              "mondayFrom": "20:00",
+              "mondayUntil": "08:00",
+              "tuesdayFrom": "19:00",
+              "tuesdayUntil": "07:00",
+              "wednesdayFrom": "19:00",
+              "wednesdayUntil": "07:00",
+              "thursdayFrom": "19:00",
+              "thursdayUntil": "07:00",
+              "fridayFrom": "19:00",
+              "fridayUntil": "07:00",
+              "saturdayFrom": "19:00",
+              "saturdayUntil": "07:00",
+              "sundayFrom": "19:00",
+              "sundayUntil": "07:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": {
+              "required": "No"
+            }
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Test Person",
+              "postcode": "B1 2TJ",
+              "telephone": "00000000001",
+              "townOrCity": "Test",
+              "organisation": "Test",
+              "reportingDate": "01/02/2025",
+              "reportingTime": "09:00",
+              "buildingAndStreet1": "Test Street",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": null,
+            "standard": {
+              "additionalConditionsRequired": "No"
+            },
+            "additional": null,
+            "conditionsSummary": null
+          },
+          "document": null,
+          "approval": {
+            "release": {
+              "decision": "Yes",
+              "decisionMaker": "Gurps Singh",
+              "reasonForDecision": ""
+            }
+          },
+          "finalChecks": {
+            "onRemand": {
+              "decision": "No"
+            },
+            "seriousOffence": {
+              "decision": "No"
+            },
+            "confiscationOrder": {
+              "decision": "No"
+            }
+          }
+        }
+      },
+      {
+        "id": 1739,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "MODIFIED",
+        "version": 1,
+        "transitionDate": "2025-01-15T12:47:34.205005",
+        "varyVersion": 0,
+        "additionalConditionsVersion": null,
+        "standardConditionsVersion": null,
+        "deletedAt": "2025-01-17T10:04:43.294291",
+        "licenceInCvl": false,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": null,
+            "bassRequest": {
+              "bassRequested": "No"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": null
+          },
+          "proposedAddress": {
+            "curfewAddress": {
+              "addressLine1": "Test Street",
+              "addressLine2": "",
+              "addressTown": "Test Town",
+              "postCode": "B1 2TJ"
+            }
+          },
+          "curfew": {
+            "firstNight": {
+              "firstNightFrom": "15:00:00",
+              "firstNightUntil": "07:00:00"
+            },
+            "curfewHours": {
+              "mondayFrom": "19:00",
+              "mondayUntil": "07:00",
+              "tuesdayFrom": "19:00",
+              "tuesdayUntil": "07:00",
+              "wednesdayFrom": "19:00",
+              "wednesdayUntil": "07:00",
+              "thursdayFrom": "19:00",
+              "thursdayUntil": "07:00",
+              "fridayFrom": "19:00",
+              "fridayUntil": "07:00",
+              "saturdayFrom": "19:00",
+              "saturdayUntil": "07:00",
+              "sundayFrom": "19:00",
+              "sundayUntil": "07:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": {
+              "required": "No"
+            }
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Test Person",
+              "postcode": "B1 2TJ",
+              "telephone": "00000000001",
+              "townOrCity": "Test",
+              "organisation": "Test",
+              "reportingDate": "01/01/2026",
+              "reportingTime": "09:00",
+              "buildingAndStreet1": "Test Street",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": null,
+            "standard": {
+              "additionalConditionsRequired": "No"
+            },
+            "additional": null,
+            "conditionsSummary": null
+          },
+          "document": {
+            "template": {
+              "decision": "hdc_ap",
+              "offenceCommittedBeforeFeb2015": "No"
+            }
+          },
+          "approval": {
+            "release": {
+              "decision": "Yes",
+              "decisionMaker": "Gurps Singh",
+              "reasonForDecision": "test"
+            }
+          },
+          "finalChecks": {
+            "onRemand": {
+              "decision": "No"
+            },
+            "seriousOffence": {
+              "decision": "No"
+            },
+            "confiscationOrder": {
+              "decision": "No"
+            }
+          }
+        }
+      },
+      {
+        "id": 1746,
+        "prisonNumber": "A8971EA",
+        "bookingId": 1222125,
+        "stage": "DECIDED",
+        "version": 1,
+        "transitionDate": "2025-01-24T16:48:08.481513",
+        "varyVersion": 0,
+        "additionalConditionsVersion": null,
+        "standardConditionsVersion": null,
+        "deletedAt": null,
+        "licenceInCvl": false,
+        "licence": {
+          "eligibility": {
+            "crdTime": {
+              "decision": "No"
+            },
+            "excluded": {
+              "decision": "No"
+            },
+            "suitability": {
+              "decision": "No"
+            }
+          },
+          "bassReferral": {
+            "bassOffer": null,
+            "bassRequest": {
+              "bassRequested": "No"
+            },
+            "approvedPremisesAddress": null,
+            "bassAreaCheck": null
+          },
+          "proposedAddress": {
+            "curfewAddress": {
+              "addressLine1": "Test Street",
+              "addressLine2": "",
+              "addressTown": "Test Town",
+              "postCode": "B1 2TJ"
+            }
+          },
+          "curfew": {
+            "firstNight": null,
+            "curfewHours": {
+              "mondayFrom": "19:00",
+              "mondayUntil": "07:00",
+              "tuesdayFrom": "19:00",
+              "tuesdayUntil": "07:00",
+              "wednesdayFrom": "19:00",
+              "wednesdayUntil": "07:00",
+              "thursdayFrom": "19:00",
+              "thursdayUntil": "07:00",
+              "fridayFrom": "19:00",
+              "fridayUntil": "07:00",
+              "saturdayFrom": "19:00",
+              "saturdayUntil": "07:00",
+              "sundayFrom": "19:00",
+              "sundayUntil": "07:00"
+            },
+            "approvedPremisesAddress": null,
+            "approvedPremises": {
+              "required": "No"
+            }
+          },
+          "risk": {
+            "riskManagement": {
+              "version": "3",
+              "emsInformation": "No",
+              "pomConsultation": "Yes",
+              "mentalHealthPlan": "No",
+              "manageInTheCommunity": "Yes",
+              "unsuitableReason": "",
+              "hasConsideredChecks": "Yes",
+              "emsInformationDetails": "",
+              "riskManagementDetails": "",
+              "proposedAddressSuitable": "Yes",
+              "awaitingOtherInformation": "No",
+              "nonDisclosableInformation": "No",
+              "nonDisclosableInformationDetails": "",
+              "manageInTheCommunityNotPossibleReason": ""
+            }
+          },
+          "reporting": {
+            "reportingInstructions": {
+              "name": "Test Person",
+              "postcode": "B1 2TJ",
+              "telephone": "00000000001",
+              "townOrCity": "Test",
+              "organisation": "Test",
+              "reportingDate": "01/01/2026",
+              "reportingTime": "09:00",
+              "buildingAndStreet1": "Test Street",
+              "buildingAndStreet2": ""
+            }
+          },
+          "victim": {
+            "victimLiaison": {
+              "decision": "No"
+            }
+          },
+          "licenceConditions": {
+            "bespoke": null,
+            "standard": {
+              "additionalConditionsRequired": "No"
+            },
+            "additional": null,
+            "conditionsSummary": null
+          },
+          "document": null,
+          "approval": {
+            "release": {
+              "decision": "Yes",
+              "decisionMaker": "Gurps Singh",
+              "reasonForDecision": "test"
+            }
+          },
+          "finalChecks": {
+            "onRemand": {
+              "decision": "No"
+            },
+            "seriousOffence": {
+              "decision": "No"
+            },
+            "confiscationOrder": {
+              "decision": "No"
+            }
+          }
+        }
+      }
+    ],
+    "licenceVersions": [],
+    "auditEvents": [
+      {
+        "id": 42026,
+        "timestamp": "2025-01-24T16:48:08.485634",
+        "user": "cpxUKKZdbW",
+        "action": "SEND",
+        "details": {
+          "source": {
+            "type": "prison",
+            "agencyId": "MDI"
+          },
+          "target": {
+            "type": "prison",
+            "agencyId": "MDI"
+          },
+          "bookingId": "1222125",
+          "transitionType": "dmToCa",
+          "submissionTarget": {
+            "city": "Doncaster",
+            "phones": {
+              "ext": "334",
+              "type": "BUS",
+              "number": "0114 2345232"
+            },
+            "country": "England",
+            "premise": "Moorland Prison",
+            "agencyId": "MDI",
+            "locality": "Brincliffe",
+            "postCode": "LI1 5TH",
+            "addresses": [
+              {
+                "mail": false,
+                "town": "Doncaster",
+                "county": "South Yorkshire",
+                "phones": [
+                  {
+                    "ext": "334",
+                    "type": "BUS",
+                    "number": "0114 2345232",
+                    "phoneId": 1324316
+                  }
+                ],
+                "street": "Flower Street",
+                "comment": "This is a comment text",
+                "country": "England",
+                "premise": "Moorland Prison",
+                "primary": true,
+                "locality": "Brincliffe",
+                "townCode": "25159",
+                "addressId": 5623019,
+                "startDate": "2020-05-12",
+                "countyCode": "S.YORKSHIRE",
+                "postalCode": "LI1 5TH",
+                "addressType": "Business Address",
+                "countryCode": "ENG",
+                "addressUsages": [],
+                "noFixedAddress": false
+              }
+            ],
+            "addressType": "BUS",
+            "description": "Moorland (HMP & YOI)",
+            "formattedDescription": "Moorland (HMP & YOI)"
+          }
+        }
+      },
+      {
+        "id": 42025,
+        "timestamp": "2025-01-24T16:48:06.872808",
+        "user": "cpxUKKZdbW",
+        "action": "UPDATE_SECTION",
+        "details": {
+          "path": "/hdc/approval/release/1222125",
+          "bookingId": "1222125",
+          "userInput": {
+            "reason": "outOfTime",
+            "decision": "Yes",
+            "decisionMaker": "Gurps Singh",
+            "reasonForDecision": "test"
+          }
+        }
+      }
+    ]
+  }
+}

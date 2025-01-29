@@ -5,40 +5,26 @@
         <h3>Licence</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Prison number</td>
-                <td class="data-column-75"></td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue prisonNumber }}</td>
-                <td></td>
-            </tr>
-        </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-25">Stage</td>
-                <td class="data-column-25">Version</td>
-                <td class="data-column-25">Transition date</td>
-                <td class="data-column-25"></td>
+                <td class="data-column-30">Stage</td>
+                <td class="data-column-30">Version</td>
+                <td class="data-column-30">Vary version</td>
             </tr>
             <tr>
                 <td>{{ optionalValue stage }}</td>
                 <td>{{ optionalValue version }}</td>
-                <td>{{ optionalValue (formatDate transitionDate) }}</td>
-                <td></td>
+                <td>{{ optionalValue varyVersion }}</td>
             </tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Vary version</td>
-                <td class="data-column-25">Additional conditions version</td>
-                <td class="data-column-25">Standard conditions version</td>
-                <td class="data-column-25">Deleted at</td>
+                <td class="data-column-30">Transition date</td>
+                <td class="data-column-30">Additional conditions version</td>
+                <td class="data-column-30">Standard conditions version</td>
             </tr>
             <tr>
-                <td>{{ optionalValue varyVersion }}</td>
+                <td>{{ optionalValue (formatDate transitionDate) }}</td>
                 <td>{{ optionalValue additionalConditionsVersion }}</td>
                 <td>{{ optionalValue standardConditionsVersion }}</td>
-                <td>{{ optionalValue (formatDate deletedAt) }}</td>
             </tr>
         </table>
 
@@ -74,37 +60,34 @@
                 {{#bassRequest}}
                     <table class="data-table">
                         <tr>
-                            <td class="data-column-25">Specific area</td>
-                            <td class="data-column-25">Bass requested</td>
-                            <td class="data-column-50">Additional information</td>
+                            <td class="data-column-50">Specific area</td>
+                            <td class="data-column-50">Bass requested</td>
                         </tr>
                         <tr>
                             <td>{{ optionalValue specificArea }}</td>
                             <td>{{ optionalValue bassRequested }}</td>
-                            <td>{{ optionalValue additionalInformation }}</td>
                         </tr>
+                    </table>
+                    <table class="summary-list">
+                        <tr><td>Additional information</td><td>{{ optionalValue additionalInformation }}</td></tr>
                     </table>
                 {{/bassRequest}}
             {{/bassReferral}}
 
             <br>
             <h4>Proposed address</h4>
+            {{#proposedAddress}}
             <table class="data-table">
                 <tr>
                     <td class="data-column-25">Opt out</td>
                     <td class="data-column-75">Address proposed</td>
                 </tr>
-                {{#proposedAddress}}
-                    <tr>
-                        {{#optOut}}
-                            <td>{{ optionalValue decision }}</td>
-                        {{/optOut}}
-                        {{#addressProposed}}
-                            <td>{{ optionalValue decision }}</td>
-                        {{/addressProposed}}
-                    </tr>
-                {{/proposedAddress}}
+                <tr>
+                    <td>{{ optionalValue optOut.decision }}</td>
+                    <td>{{ optionalValue addressProposed.decision }}</td>
+                </tr>
             </table>
+            {{/proposedAddress}}
         {{/licence}}
 
     {{/licences}}
@@ -115,30 +98,16 @@
         <h3>Licence version</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Prison number</td>
                 <td class="data-column-25">Timestamp</td>
-                <td class="data-column-25"></td>
-                <td class="data-column-25"></td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue prisonNumber }}</td>
-                <td>{{ optionalValue (formatDate timestamp) }}</td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
-        <table class="data-table">
-            <tr>
                 <td class="data-column-25">Version</td>
                 <td class="data-column-25">Template</td>
                 <td class="data-column-25">Vary version</td>
-                <td class="data-column-25">Deleted at</td>
             </tr>
             <tr>
+                <td>{{ optionalValue (formatDate timestamp) }}</td>
                 <td>{{ optionalValue version }}</td>
                 <td>{{ optionalValue template }}</td>
                 <td>{{ optionalValue varyVersion }}</td>
-                <td>{{ optionalValue (formatDate deletedAt) }}</td>
             </tr>
         </table>
         <br>
