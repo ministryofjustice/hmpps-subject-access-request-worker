@@ -2,27 +2,158 @@
   "content": {
     "licences": [
       {
-        "kind": "CRD",
         "id": 241,
-        "typeCode": "AP",
-        "version": "3.0",
-        "statusCode": "ACTIVE",
+        "typeCode": "All purpose",
+        "statusCode": "Inactive",
         "nomsId": "G7500UN",
         "bookingId": 1167389,
-        "appointmentPerson": "Appointment User",
+        "appointmentPerson": "Joan Willis",
         "appointmentTime": null,
-        "appointmentTimeType": "IMMEDIATE_UPON_RELEASE",
+        "appointmentTimeType": "Immediate upon release",
         "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
         "appointmentContact": "01899767993",
         "approvedDate": "19/11/2024 17:26:59",
-        "approvedByUsername": "APPROVER_USER",
+        "approvedByUsername": "CVL_APPROVER",
         "submittedDate": "19/11/2024 17:24:08",
         "approvedByName": "Approval User",
-        "supersededDate": null,
+        "supersededDate": "29/11/2024 10:33:13",
         "dateCreated": "19/11/2024 17:20:40",
-        "createdByUsername": "TEST_USER",
-        "dateLastUpdated": "19/11/2024 17:26:59",
-        "updatedByUsername": "APPROVER_USER",
+        "createdByUsername": "CVL_COM",
+        "dateLastUpdated": "29/11/2024 10:33:13",
+        "updatedByUsername": "CVL_COM",
+        "standardLicenceConditions": [
+          {
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+          },
+          {
+            "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+            "text": "Not commit any offence."
+          },
+          {
+            "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+            "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+          },
+          {
+            "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+            "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+          },
+          {
+            "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+            "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+          },
+          {
+            "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+            "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+          },
+          {
+            "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+            "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+          },
+          {
+            "code": "88069445-08cb-4f16-915f-5a162d085c26",
+            "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+          },
+          {
+            "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+            "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+          }
+        ],
+        "standardPssConditions": [
+          {
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of generally good behaviour"
+          }
+        ],
+        "additionalLicenceConditions": [
+          {
+            "code": "meetingAddress",
+            "version": "2.1",
+            "category": "Freedom of movement",
+            "text": "You must not enter the location Tesco Superstore",
+            "uploadSummary": [
+              {
+                "filename": "exclusion-zone.pdf",
+                "fileType": "application/pdf",
+                "fileSize": 27566,
+                "uploadedTime": "2025-01-15T15:00:37.289Z",
+                "description": "A description of the exclusion zone boundaries"
+              }
+            ]
+          },
+          {
+            "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+            "version": "3.0",
+            "category": "Residence at a specific place",
+            "text": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
+            "version": "3.0",
+            "category": "Items and documents",
+            "text": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
+            "version": "3.0",
+            "category": "Disclosure of information",
+            "text": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "uploadSummary": []
+          },
+          {
+            "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
+            "version": "3.0",
+            "category": "Serious organised crime",
+            "text": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "uploadSummary": []
+          }
+        ],
+        "additionalPssConditions": [
+          {
+            "code": "meetingAddress",
+            "version": "2.1",
+            "category": "Freedom of movement",
+            "text": "You must not enter the location Tesco Superstore",
+            "uploadSummary": [
+              {
+                "filename": "exclusion-zone.pdf",
+                "fileType": "application/pdf",
+                "fileSize": 27566,
+                "uploadedTime": "2025-01-15T15:00:37.289Z",
+                "description": "A description of the exclusion zone boundaries"
+              }
+            ]
+          }
+        ],
+        "bespokeConditions": [
+          "Do not enter the school on your street",
+          "Do not enter the nursery on your street"
+        ],
+        "createdByFullName": "CVL COM",
+        "licenceVersion": "1.0"
+      },
+      {
+        "id": 257,
+        "typeCode": "All purpose",
+        "statusCode": "Inactive",
+        "nomsId": "G7500UN",
+        "bookingId": 1167389,
+        "appointmentPerson": "Joan Willis",
+        "appointmentTime": null,
+        "appointmentTimeType": "Immediate upon release",
+        "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
+        "appointmentContact": "01899767993",
+        "approvedDate": "29/11/2024 10:31:35",
+        "approvedByUsername": "CVL_ACO",
+        "submittedDate": "29/11/2024 10:29:37",
+        "approvedByName": "Tim Harrison",
+        "supersededDate": "29/11/2024 13:46:31",
+        "dateCreated": "29/11/2024 10:17:21",
+        "createdByUsername": "CVL_COM",
+        "dateLastUpdated": "29/11/2024 13:46:31",
+        "updatedByUsername": "CVL_COM",
         "standardLicenceConditions": [
           {
             "code": "9ce9d594-e346-4785-9642-c87e764bee37",
@@ -67,241 +198,1160 @@
             "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
             "version": "3.0",
             "category": "Residence at a specific place",
-            "expandedText": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
-            "data": [
-              {
-                "field": "probationRegion",
-                "value": "Greater Manchester"
-              }
-            ],
-            "uploadSummary": [],
-            "readyToSubmit": true
+            "text": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "uploadSummary": []
           },
           {
             "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
             "version": "3.0",
             "category": "Items and documents",
-            "expandedText": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
-            "data": [],
-            "uploadSummary": [],
-            "readyToSubmit": true
+            "text": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "uploadSummary": []
           },
           {
             "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
             "version": "3.0",
             "category": "Disclosure of information",
-            "expandedText": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
-            "data": [
-              {
-                "field": "accountTypes",
-                "value": "crypto currency accounts or wallets"
-              }
-            ],
-            "uploadSummary": [],
-            "readyToSubmit": true
+            "text": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "uploadSummary": []
+          },
+          {
+            "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+            "version": "3.0",
+            "category": "Curfew arrangement",
+            "text": "Confine yourself to an address approved by your supervising officer between the hours of 07:00 pm and 07:00 am daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a weekly basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately.",
+            "uploadSummary": []
+          },
+          {
+            "code": "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your curfew and location monitoring licence condition(s) unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on Wednesday 14th January 2026, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "86e6f2a9-bb60-40f8-9ac4-310ebc72ac2f",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You must stay at 102 Petty France, London, SW1H 9AJ between 5pm and midnight every day until your electronic tag is installed unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
           },
           {
             "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
             "version": "3.0",
             "category": "Serious organised crime",
-            "expandedText": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
-            "data": [],
-            "uploadSummary": [],
-            "readyToSubmit": true
+            "text": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "uploadSummary": []
           }
         ],
         "additionalPssConditions": [],
         "bespokeConditions": [
+          "Do not enter the school on your street"
+        ],
+        "createdByFullName": "CVL COM",
+        "licenceVersion": "2.0"
+      },
+      {
+        "id": 261,
+        "typeCode": "All purpose",
+        "statusCode": "Inactive",
+        "nomsId": "G7500UN",
+        "bookingId": 1167389,
+        "appointmentPerson": "Joan Willis",
+        "appointmentTime": null,
+        "appointmentTimeType": "Immediate upon release",
+        "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
+        "appointmentContact": "01899767993",
+        "approvedDate": "10/01/2025 15:31:50",
+        "approvedByUsername": "CVL_ACO",
+        "submittedDate": "10/01/2025 15:31:31",
+        "approvedByName": "Tim Harrison",
+        "supersededDate": "10/01/2025 15:45:29",
+        "dateCreated": "29/11/2024 15:11:46",
+        "createdByUsername": "CVL_COM",
+        "dateLastUpdated": "10/01/2025 15:45:29",
+        "updatedByUsername": "CVL_COM",
+        "standardLicenceConditions": [
           {
-            "text": "Do not enter the school on your street"
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+          },
+          {
+            "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+            "text": "Not commit any offence."
+          },
+          {
+            "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+            "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+          },
+          {
+            "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+            "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+          },
+          {
+            "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+            "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+          },
+          {
+            "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+            "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+          },
+          {
+            "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+            "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+          },
+          {
+            "code": "88069445-08cb-4f16-915f-5a162d085c26",
+            "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+          },
+          {
+            "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+            "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
           }
         ],
-        "createdByFullName": "TEST USER",
-        "licenceVersion": "1.0"
+        "standardPssConditions": [],
+        "additionalLicenceConditions": [
+          {
+            "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+            "version": "3.0",
+            "category": "Residence at a specific place",
+            "text": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "9ae2a336-3491-4667-aaed-dd852b09b4b9",
+            "version": "3.0",
+            "category": "Contact with a person",
+            "text": "Receive home visits from a Mental Health Worker.",
+            "uploadSummary": []
+          },
+          {
+            "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
+            "version": "3.0",
+            "category": "Items and documents",
+            "text": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
+            "version": "3.0",
+            "category": "Disclosure of information",
+            "text": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "uploadSummary": []
+          },
+          {
+            "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+            "version": "3.0",
+            "category": "Curfew arrangement",
+            "text": "Confine yourself to an address approved by your supervising officer between the hours of 09:00 pm and 09:00 am daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a weekly basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately.",
+            "uploadSummary": []
+          },
+          {
+            "code": "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your curfew and location monitoring licence condition(s) unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on Wednesday 14th January 2026, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "86e6f2a9-bb60-40f8-9ac4-310ebc72ac2f",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You must stay at 102 Petty France, London, SW1H 9AJ between 5pm and midnight every day until your electronic tag is installed unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
+            "version": "3.0",
+            "category": "Serious organised crime",
+            "text": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "uploadSummary": []
+          }
+        ],
+        "additionalPssConditions": [],
+        "bespokeConditions": [
+          "Do not enter the school on your street"
+        ],
+        "createdByFullName": "CVL COM",
+        "licenceVersion": "4.0"
+      },
+      {
+        "id": 258,
+        "typeCode": "All purpose",
+        "statusCode": "Inactive",
+        "nomsId": "G7500UN",
+        "bookingId": 1167389,
+        "appointmentPerson": "Joan Willis",
+        "appointmentTime": null,
+        "appointmentTimeType": "Immediate upon release",
+        "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
+        "appointmentContact": "01899767993",
+        "approvedDate": "29/11/2024 13:45:39",
+        "approvedByUsername": "CVL_ACO",
+        "submittedDate": "29/11/2024 13:37:12",
+        "approvedByName": "Tim Harrison",
+        "supersededDate": "10/01/2025 15:32:08",
+        "dateCreated": "29/11/2024 10:37:58",
+        "createdByUsername": "CVL_COM",
+        "dateLastUpdated": "10/01/2025 15:32:08",
+        "updatedByUsername": "CVL_COM",
+        "standardLicenceConditions": [
+          {
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+          },
+          {
+            "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+            "text": "Not commit any offence."
+          },
+          {
+            "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+            "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+          },
+          {
+            "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+            "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+          },
+          {
+            "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+            "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+          },
+          {
+            "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+            "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+          },
+          {
+            "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+            "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+          },
+          {
+            "code": "88069445-08cb-4f16-915f-5a162d085c26",
+            "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+          },
+          {
+            "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+            "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+          }
+        ],
+        "standardPssConditions": [],
+        "additionalLicenceConditions": [
+          {
+            "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+            "version": "3.0",
+            "category": "Residence at a specific place",
+            "text": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
+            "version": "3.0",
+            "category": "Items and documents",
+            "text": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
+            "version": "3.0",
+            "category": "Disclosure of information",
+            "text": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "uploadSummary": []
+          },
+          {
+            "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+            "version": "3.0",
+            "category": "Curfew arrangement",
+            "text": "Confine yourself to an address approved by your supervising officer between the hours of 09:00 pm and 09:00 am daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a weekly basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately.",
+            "uploadSummary": []
+          },
+          {
+            "code": "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your curfew and location monitoring licence condition(s) unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on Wednesday 14th January 2026, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "86e6f2a9-bb60-40f8-9ac4-310ebc72ac2f",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You must stay at 102 Petty France, London, SW1H 9AJ between 5pm and midnight every day until your electronic tag is installed unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
+            "version": "3.0",
+            "category": "Serious organised crime",
+            "text": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "uploadSummary": []
+          }
+        ],
+        "additionalPssConditions": [],
+        "bespokeConditions": [
+          "Do not enter the school on your street"
+        ],
+        "createdByFullName": "CVL COM",
+        "licenceVersion": "3.0"
+      },
+      {
+        "id": 277,
+        "typeCode": "All purpose",
+        "statusCode": "Active",
+        "nomsId": "G7500UN",
+        "bookingId": 1167389,
+        "appointmentPerson": "Joan Willis",
+        "appointmentTime": null,
+        "appointmentTimeType": "Immediate upon release",
+        "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
+        "appointmentContact": "01899767993",
+        "approvedDate": "10/01/2025 15:42:20",
+        "approvedByUsername": "CVL_ACO",
+        "submittedDate": "10/01/2025 15:41:31",
+        "approvedByName": "Tim Harrison",
+        "supersededDate": null,
+        "dateCreated": "10/01/2025 15:34:48",
+        "createdByUsername": "CVL_COM",
+        "dateLastUpdated": "10/01/2025 15:45:29",
+        "updatedByUsername": "CVL_COM",
+        "standardLicenceConditions": [
+          {
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+          },
+          {
+            "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+            "text": "Not commit any offence."
+          },
+          {
+            "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+            "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+          },
+          {
+            "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+            "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+          },
+          {
+            "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+            "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+          },
+          {
+            "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+            "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+          },
+          {
+            "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+            "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+          },
+          {
+            "code": "88069445-08cb-4f16-915f-5a162d085c26",
+            "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+          },
+          {
+            "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+            "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+          }
+        ],
+        "standardPssConditions": [],
+        "additionalLicenceConditions": [
+          {
+            "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+            "version": "3.0",
+            "category": "Residence at a specific place",
+            "text": "You must reside overnight within Yorkshire and Humberside probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "9ae2a336-3491-4667-aaed-dd852b09b4b9",
+            "version": "3.0",
+            "category": "Contact with a person",
+            "text": "Receive home visits from a Mental Health Worker.",
+            "uploadSummary": []
+          },
+          {
+            "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
+            "version": "3.0",
+            "category": "Items and documents",
+            "text": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
+            "version": "3.0",
+            "category": "Disclosure of information",
+            "text": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "uploadSummary": []
+          },
+          {
+            "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+            "version": "3.0",
+            "category": "Curfew arrangement",
+            "text": "Confine yourself to an address approved by your supervising officer between the hours of 09:00 pm and 09:00 am daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a weekly basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately.",
+            "uploadSummary": []
+          },
+          {
+            "code": "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your curfew and location monitoring licence condition(s) unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on Wednesday 14th January 2026, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "86e6f2a9-bb60-40f8-9ac4-310ebc72ac2f",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You must stay at 102 Petty France, London, SW1H 9AJ between 5pm and midnight every day until your electronic tag is installed unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
+            "version": "3.0",
+            "category": "Serious organised crime",
+            "text": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "uploadSummary": []
+          }
+        ],
+        "additionalPssConditions": [],
+        "bespokeConditions": [
+          "Do not enter the school on your street"
+        ],
+        "createdByFullName": "CVL COM",
+        "licenceVersion": "5.0"
+      },
+      {
+        "id": 309,
+        "typeCode": "All purpose",
+        "statusCode": "Variation in progress",
+        "nomsId": "G7500UN",
+        "bookingId": 1167389,
+        "appointmentPerson": "Joan Willis",
+        "appointmentTime": null,
+        "appointmentTimeType": "Immediate upon release",
+        "appointmentAddress": "Probation Office, Main Street, Exeter, Devon, A98 5RE",
+        "appointmentContact": "01899767993",
+        "approvedDate": null,
+        "approvedByUsername": null,
+        "submittedDate": null,
+        "approvedByName": null,
+        "supersededDate": null,
+        "dateCreated": "29/01/2025 16:34:41",
+        "createdByUsername": "CVL_COM",
+        "dateLastUpdated": null,
+        "updatedByUsername": null,
+        "standardLicenceConditions": [
+          {
+            "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+            "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+          },
+          {
+            "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+            "text": "Not commit any offence."
+          },
+          {
+            "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+            "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+          },
+          {
+            "code": "9fc04065-df29-4bda-9b1d-bced8335c356",
+            "text": "Receive visits from the supervising officer in accordance with any instructions given by the supervising officer."
+          },
+          {
+            "code": "e670ac69-eda2-4b04-a0a1-a3c8492fe1e6",
+            "text": "Reside permanently at an address approved by the supervising officer and obtain the prior permission of the supervising officer for any stay of one or more nights at a different address."
+          },
+          {
+            "code": "78A5F860-4791-48F2-B707-D6D4413850EE",
+            "text": "Tell the supervising officer if you use a name which is different to the name or names which appear on your licence."
+          },
+          {
+            "code": "6FA6E492-F0AB-4E76-B868-63813DB44696",
+            "text": "Tell the supervising officer if you change or add any contact details, including phone number or email."
+          },
+          {
+            "code": "88069445-08cb-4f16-915f-5a162d085c26",
+            "text": "Not undertake work, or a particular type of work, unless it is approved by the supervising officer and notify the supervising officer in advance of any proposal to undertake work or a particular type of work."
+          },
+          {
+            "code": "7d416906-0e94-4fde-ae86-8339d339ccb7",
+            "text": "Not travel outside the United Kingdom, the Channel Islands or the Isle of Man except with the prior permission of the supervising officer or for the purposes of immigration deportation or removal."
+          }
+        ],
+        "standardPssConditions": [],
+        "additionalLicenceConditions": [
+          {
+            "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+            "version": "3.0",
+            "category": "Residence at a specific place",
+            "text": "You must reside overnight within Yorkshire and Humberside probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "9ae2a336-3491-4667-aaed-dd852b09b4b9",
+            "version": "3.0",
+            "category": "Contact with a person",
+            "text": "Receive home visits from a Mental Health Worker.",
+            "uploadSummary": []
+          },
+          {
+            "code": "bfbc693c-ab65-4042-920e-ddb085bc7aba",
+            "version": "3.0",
+            "category": "Items and documents",
+            "text": "Not to use or access any computer or device which is internet enabled without the prior approval of your supervising officer; and only for the purpose, and only at a specific location, as specified by that officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "8686a815-b7f0-43b6-9886-f01df6a48773",
+            "version": "3.0",
+            "category": "Disclosure of information",
+            "text": "Provide your supervising officer with the details of any crypto currency accounts or wallets to which you have access or control over, including those held by a third party. You must also notify your supervising officer when you have access or control over any new accounts/wallets, and provide the details.",
+            "uploadSummary": []
+          },
+          {
+            "code": "0a370862-5426-49c1-b6d4-3d074d78a81a",
+            "version": "3.0",
+            "category": "Curfew arrangement",
+            "text": "Confine yourself to an address approved by your supervising officer between the hours of 09:00 pm and 09:00 am daily unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a weekly basis and may be amended or removed if it is felt that the level of risk that you present has reduced appropriately.",
+            "uploadSummary": []
+          },
+          {
+            "code": "fd129172-bdd3-4d97-a4a0-efd7b47a49d4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your curfew and location monitoring licence condition(s) unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "524f2fd6-ad53-47dd-8edc-2161d3dd2ed4",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on Wednesday 14th January 2026, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "86e6f2a9-bb60-40f8-9ac4-310ebc72ac2f",
+            "version": "3.0",
+            "category": "Electronic monitoring",
+            "text": "You must stay at 102 Petty France, London, SW1H 9AJ between 5pm and midnight every day until your electronic tag is installed unless otherwise authorised by your supervising officer.",
+            "uploadSummary": []
+          },
+          {
+            "code": "62e035ff-e755-472b-8047-3c5ea1d5b74e",
+            "version": "3.0",
+            "category": "Serious organised crime",
+            "text": "Provide your supervising officer with details of any money transfers which you initiate or receive.",
+            "uploadSummary": []
+          }
+        ],
+        "additionalPssConditions": [],
+        "bespokeConditions": [
+          "Do not enter the school on your street"
+        ],
+        "createdByFullName": "CVL COM",
+        "licenceVersion": "6.0"
       }
     ],
     "auditEvents": [
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:20:40",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Licence created for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0 kind CRD"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:20:51",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated initial appointment details for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:21:04",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated initial appointment details for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:21:12",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated initial appointment details for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:21:34",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated initial appointment details for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:22:21",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated additional conditions for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:22:29",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated additional condition data for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:22:32",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated additional condition data for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:23:29",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated bespoke conditions for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:23:49",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Updated initial appointment details for Osjteregun Lerif",
         "detail": "ID 241 type AP status IN_PROGRESS version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:24:08",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Licence submitted for approval for Osjteregun Lerif",
         "detail": "ID 241 type AP status SUBMITTED version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:25:17",
-        "username": "TEST_OMU",
+        "username": "CVL_OMU",
         "fullName": "Omu User",
-        "eventType": "USER_EVENT",
+        "eventType": "User event",
         "summary": "Licence viewed for Osjteregun Lerif",
         "detail": "ID 241 type AP status SUBMITTED version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:26:12",
-        "username": "APPROVER_USER",
+        "username": "CVL_APPROVER",
         "fullName": "Approval User",
-        "eventType": "USER_EVENT",
+        "eventType": "User event",
         "summary": "Licence viewed for approval for Osjteregun Lerif",
         "detail": "ID 241 type AP status SUBMITTED version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:26:59",
-        "username": "APPROVER_USER",
+        "username": "CVL_APPROVER",
         "fullName": "Approval User",
-        "eventType": "USER_EVENT",
+        "eventType": "User event",
         "summary": "Licence approved for Osjteregun Lerif",
         "detail": "ID 241 type AP status APPROVED version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:27:43",
-        "username": "TEST_OMU",
+        "username": "CVL_OMU",
         "fullName": "Omu User",
-        "eventType": "USER_EVENT",
+        "eventType": "User event",
         "summary": "Licence viewed for Osjteregun Lerif",
         "detail": "ID 241 type AP status APPROVED version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "19/11/2024 17:27:52",
-        "username": "TEST_OMU",
+        "username": "CVL_OMU",
         "fullName": "Omu User",
-        "eventType": "USER_EVENT",
+        "eventType": "User event",
         "summary": "Licence printed for Osjteregun Lerif (PDF)",
         "detail": "ID 241 type AP status APPROVED version 3.0"
       },
       {
         "licenceId": 241,
         "eventTime": "20/11/2024 16:29:58",
-        "username": "TEST_USER",
-        "fullName": "TEST USER",
-        "eventType": "USER_EVENT",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
         "summary": "Licence printed for Osjteregun Lerif (PDF)",
         "detail": "ID 241 type AP status ACTIVE version 3.0"
-      }
-    ],
-    "licencesEvents": [
-      {
-        "licenceId": 241,
-        "eventType": "CREATED",
-        "username": "TEST_USER",
-        "forenames": "TEST",
-        "surname": "USER",
-        "eventDescription": "Licence created for Osjteregun Lerif",
-        "eventTime": "19/11/2024 17:20:40"
       },
       {
         "licenceId": 241,
-        "eventType": "SUBMITTED",
-        "username": "TEST_USER",
-        "forenames": "TEST",
-        "surname": "USER",
-        "eventDescription": "Licence submitted for approval for Osjteregun Lerif",
-        "eventTime": "19/11/2024 17:24:08"
+        "eventTime": "21/11/2024 10:56:04",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence printed for Osjteregun Lerif (PDF)",
+        "detail": "ID 241 type AP status ACTIVE version 3.0"
       },
       {
         "licenceId": 241,
-        "eventType": "APPROVED",
-        "username": "APPROVER_USER",
-        "forenames": "Approval",
-        "surname": "User",
-        "eventDescription": "Licence updated to APPROVED for Osjteregun Lerif",
-        "eventTime": "19/11/2024 17:26:59"
+        "eventTime": "21/11/2024 10:56:15",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence printed for Osjteregun Lerif (PDF)",
+        "detail": "ID 241 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "22/11/2024 12:26:34",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence printed for Osjteregun Lerif (PDF)",
+        "detail": "ID 241 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "27/11/2024 16:25:34",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence printed for Osjteregun Lerif (PDF)",
+        "detail": "ID 241 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "29/11/2024 10:17:21",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence varied for Osjteregun Lerif",
+        "detail": "Old ID 241, new ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 241,
+        "eventTime": "29/11/2024 10:33:13",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to INACTIVE for Osjteregun Lerif",
+        "detail": "ID 241 type AP status INACTIVE version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:24:34",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional conditions for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:26:22",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional conditions for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:26:22",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition of the same type for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:26:23",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:29:37",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence submitted for approval for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:31:28",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:31:35",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approved for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_APPROVED version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:27:04",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:27:51",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:28:46",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 257 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:33:13",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to ACTIVE for Osjteregun Lerif",
+        "detail": "ID 257 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 10:37:58",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence varied for Osjteregun Lerif",
+        "detail": "Old ID 257, new ID 258 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 257,
+        "eventTime": "29/11/2024 13:46:31",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to INACTIVE for Osjteregun Lerif",
+        "detail": "ID 257 type AP status INACTIVE version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 15:11:47",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence varied for Osjteregun Lerif",
+        "detail": "Old ID 258, new ID 261 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:36:08",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional conditions for Osjteregun Lerif",
+        "detail": "ID 258 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:36:08",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition of the same type for Osjteregun Lerif",
+        "detail": "ID 258 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:36:08",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 258 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:37:12",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence submitted for approval for Osjteregun Lerif",
+        "detail": "ID 258 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:45:33",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 258 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:45:39",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approved for Osjteregun Lerif",
+        "detail": "ID 258 type AP status VARIATION_APPROVED version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "29/11/2024 13:46:31",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to ACTIVE for Osjteregun Lerif",
+        "detail": "ID 258 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 258,
+        "eventTime": "10/01/2025 15:32:08",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to INACTIVE for Osjteregun Lerif",
+        "detail": "ID 258 type AP status INACTIVE version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "29/11/2024 15:11:56",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional conditions for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "29/11/2024 15:12:16",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence submitted for approval for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "29/11/2024 15:12:28",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "02/12/2024 11:43:03",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "13/12/2024 13:31:40",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:31:15",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence variation changed to in progress for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:31:31",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence submitted for approval for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:31:48",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:31:50",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approved for Osjteregun Lerif",
+        "detail": "ID 261 type AP status VARIATION_APPROVED version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:34:48",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence varied for Osjteregun Lerif",
+        "detail": "Old ID 261, new ID 277 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:32:08",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to ACTIVE for Osjteregun Lerif",
+        "detail": "ID 261 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 261,
+        "eventTime": "10/01/2025 15:45:29",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to INACTIVE for Osjteregun Lerif",
+        "detail": "ID 261 type AP status INACTIVE version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "10/01/2025 15:41:31",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence submitted for approval for Osjteregun Lerif",
+        "detail": "ID 277 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "10/01/2025 15:42:20",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approved for Osjteregun Lerif",
+        "detail": "ID 277 type AP status VARIATION_APPROVED version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "10/01/2025 15:37:24",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Updated additional condition data for Osjteregun Lerif",
+        "detail": "ID 277 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "10/01/2025 15:42:18",
+        "username": "CVL_ACO",
+        "fullName": "Tim Harrison",
+        "eventType": "User event",
+        "summary": "Licence variation approval viewed for Osjteregun Lerif",
+        "detail": "ID 277 type AP status VARIATION_SUBMITTED version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "10/01/2025 15:45:29",
+        "username": "CVL_COM",
+        "fullName": "Cvl Com",
+        "eventType": "User event",
+        "summary": "Licence set to ACTIVE for Osjteregun Lerif",
+        "detail": "ID 277 type AP status ACTIVE version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "10/01/2025 16:28:27",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence varied for Osjteregun Lerif",
+        "detail": "Old ID 277, new ID 278 type AP status VARIATION_IN_PROGRESS version 3.0"
+      },
+      {
+        "licenceId": 277,
+        "eventTime": "29/01/2025 16:34:41",
+        "username": "CVL_COM",
+        "fullName": "CVL COM",
+        "eventType": "User event",
+        "summary": "Licence varied for Osjteregun Lerif",
+        "detail": "Old ID 277, new ID 309 type AP status VARIATION_IN_PROGRESS version 3.0"
       }
     ]
   }
