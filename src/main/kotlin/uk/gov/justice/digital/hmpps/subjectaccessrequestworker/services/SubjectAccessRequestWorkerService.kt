@@ -16,10 +16,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationA
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ConfigOrderHelper
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 
@@ -32,7 +30,7 @@ class SubjectAccessRequestWorkerService(
   @Autowired val generatePdfService: GeneratePdfService,
   @Autowired val prisonApiClient: PrisonApiClient,
   @Autowired val probationApiClient: ProbationApiClient,
-  @Autowired val configOrderHelper: ConfigOrderHelper,
+  @Autowired val serviceConfigurationService: ServiceConfigurationService,
   private val subjectAccessRequestService: SubjectAccessRequestService,
   private val telemetryClient: TelemetryClient,
 ) {
@@ -136,7 +134,7 @@ class SubjectAccessRequestWorkerService(
     val stopWatch = StopWatch.createStarted()
     telemetryClient.trackSarEvent("DoReportStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
 
-    val selectedServices = getServiceDetails(subjectAccessRequest)
+    val selectedServices = serviceConfigurationService.getSelectedServices(subjectAccessRequest)
 
     log.info("${subjectAccessRequest.id} creating report..")
     telemetryClient.trackSarEvent(
@@ -256,42 +254,42 @@ class SubjectAccessRequestWorkerService(
     }
   }
 
-  fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
-    val services = subjectAccessRequest.services
-    val serviceMap = mutableMapOf<String, String>()
+//  fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
+//    val services = subjectAccessRequest.services
+//    val serviceMap = mutableMapOf<String, String>()
+//
+//    val serviceNames =
+//      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
+//    val serviceUrls =
+//      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
+//
+//    for (serviceName in serviceNames) {
+//      serviceMap[serviceName] = serviceUrls[serviceNames.indexOf(serviceName)]
+//    }
+//    return serviceMap
+//  }
 
-    val serviceNames =
-      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
-    val serviceUrls =
-      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
-
-    for (serviceName in serviceNames) {
-      serviceMap[serviceName] = serviceUrls[serviceNames.indexOf(serviceName)]
-    }
-    return serviceMap
-  }
-
-  fun getServiceDetails(
-    subjectAccessRequest: SubjectAccessRequest,
-  ): List<DpsService> {
-    val servicesMap = getServicesMap(subjectAccessRequest)
-
-    val selectedServices = configOrderHelper.getDpsServices(servicesMap)
-
-    val serviceConfigObject = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
-
-    for (service in selectedServices) {
-      if (serviceConfigObject != null) {
-        for (configService in serviceConfigObject.dpsServices) {
-          if (configService.name == service.name) {
-            service.businessName = configService.businessName
-            service.orderPosition = configService.orderPosition
-          }
-        }
-      }
-    }
-    return selectedServices
-  }
+//  fun getServiceDetails(
+//    subjectAccessRequest: SubjectAccessRequest,
+//  ): List<DpsService> {
+//    val servicesMap = getServicesMap(subjectAccessRequest)
+//
+//    val selectedServices = configOrderHelper.getDpsServices(servicesMap)
+//
+//    val serviceConfigObject = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
+//
+//    for (service in selectedServices) {
+//      if (serviceConfigObject != null) {
+//        for (configService in serviceConfigObject.dpsServices) {
+//          if (configService.name == service.name) {
+//            service.businessName = configService.businessName
+//            service.orderPosition = configService.orderPosition
+//          }
+//        }
+//      }
+//    }
+//    return selectedServices
+//  }
 
   fun getSubjectName(subjectAccessRequest: SubjectAccessRequest, prisonId: String?, probationId: String?): String {
     if (prisonId !== null) {
