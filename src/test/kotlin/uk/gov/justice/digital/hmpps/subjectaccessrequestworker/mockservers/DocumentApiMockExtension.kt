@@ -221,31 +221,32 @@ class DocumentApiMockServer : WireMockServer(8084) {
     fileSize: Int,
     fileContent: ByteArray,
     metadata: Any?,
-  ): String {
-    return Gson().toJson(
-      DocumentStorageClient.PostDocumentResponse(
-        documentUuid = subjectAccessRequestId,
-        documentType = "Subject Access Request",
-        documentFilename = "Subject Access Request - $subjectAccessRequestId",
-        filename = "Subject Access Request - $subjectAccessRequestId.pdf",
-        fileExtension = "pdf",
-        fileSize = fileSize,
-        fileHash = fileHash(fileContent),
-        mimeType = "pdf",
-        metadata = metadata,
-        createdTime = "2024-10-29T16:15:58.590Z",
-        createdByServiceName = SERVICE_NAME_HEADER,
-        createdByUsername = "Robert Bobby",
-      ),
-    )
-  }
+  ): String = Gson().toJson(
+    DocumentStorageClient.PostDocumentResponse(
+      documentUuid = subjectAccessRequestId,
+      documentType = "Subject Access Request",
+      documentFilename = "Subject Access Request - $subjectAccessRequestId",
+      filename = "Subject Access Request - $subjectAccessRequestId.pdf",
+      fileExtension = "pdf",
+      fileSize = fileSize,
+      fileHash = fileHash(fileContent),
+      mimeType = "pdf",
+      metadata = metadata,
+      createdTime = "2024-10-29T16:15:58.590Z",
+      createdByServiceName = SERVICE_NAME_HEADER,
+      createdByUsername = "Robert Bobby",
+    ),
+  )
 
   fun verifyNeverCalled() {
     verify(0, anyRequestedFor(anyUrl()))
   }
 }
 
-class DocumentApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+class DocumentApiExtension :
+  BeforeAllCallback,
+  AfterAllCallback,
+  BeforeEachCallback {
   companion object {
     @JvmField
     val documentApi = DocumentApiMockServer()

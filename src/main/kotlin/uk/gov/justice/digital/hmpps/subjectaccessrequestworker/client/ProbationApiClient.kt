@@ -24,54 +24,52 @@ class ProbationApiClient(
     private val emptyResponse = GetOffenderDetailsResponse(NameDetails(surname = "", forename = ""))
   }
 
-  fun getOffenderName(subjectAccessRequest: SubjectAccessRequest, subjectId: String): String {
-    return try {
-      val response = probationApiWebClient
-        .get()
-        .uri("/probation-case/$subjectId")
-        .retrieve()
-        .onStatus(
-          { status -> status.isSameCodeAs(HttpStatus.NOT_FOUND) },
-          { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
-        )
-        .onStatus(
-          webClientRetriesSpec.is4xxStatus(),
-          webClientRetriesSpec.throw4xxStatusFatalError(
-            GET_OFFENDER_NAME,
-            subjectAccessRequest,
-            mapOf(
-              "subjectId" to subjectId,
-              "uri" to "/probation-case/$subjectId",
-            ),
+  fun getOffenderName(subjectAccessRequest: SubjectAccessRequest, subjectId: String): String = try {
+    val response = probationApiWebClient
+      .get()
+      .uri("/probation-case/$subjectId")
+      .retrieve()
+      .onStatus(
+        { status -> status.isSameCodeAs(HttpStatus.NOT_FOUND) },
+        { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
+      )
+      .onStatus(
+        webClientRetriesSpec.is4xxStatus(),
+        webClientRetriesSpec.throw4xxStatusFatalError(
+          GET_OFFENDER_NAME,
+          subjectAccessRequest,
+          mapOf(
+            "subjectId" to subjectId,
+            "uri" to "/probation-case/$subjectId",
           ),
-        )
-        .bodyToMono(GetOffenderDetailsResponse::class.java)
-        .retryWhen(
-          webClientRetriesSpec.retry5xxAndClientRequestErrors(
-            GET_OFFENDER_NAME,
-            subjectAccessRequest,
-            mapOf("subjectId" to subjectId),
-          ),
-        )
-        // Return valid empty response when not found
-        .onErrorReturn(
-          SubjectNotFoundException::class.java,
-          emptyResponse,
-        )
-        .block()
-
-      formatName(response?.nameDetails?.forename, response?.nameDetails?.surname)
-    } catch (ex: ClientAuthorizationException) {
-      throw FatalSubjectAccessRequestException(
-        message = "probationApiClient error authorization exception",
-        cause = ex,
-        event = ACQUIRE_AUTH_TOKEN,
-        subjectAccessRequest = subjectAccessRequest,
-        params = mapOf(
-          "cause" to ex.cause?.message,
         ),
       )
-    }
+      .bodyToMono(GetOffenderDetailsResponse::class.java)
+      .retryWhen(
+        webClientRetriesSpec.retry5xxAndClientRequestErrors(
+          GET_OFFENDER_NAME,
+          subjectAccessRequest,
+          mapOf("subjectId" to subjectId),
+        ),
+      )
+      // Return valid empty response when not found
+      .onErrorReturn(
+        SubjectNotFoundException::class.java,
+        emptyResponse,
+      )
+      .block()
+
+    formatName(response?.nameDetails?.forename, response?.nameDetails?.surname)
+  } catch (ex: ClientAuthorizationException) {
+    throw FatalSubjectAccessRequestException(
+      message = "probationApiClient error authorization exception",
+      cause = ex,
+      event = ACQUIRE_AUTH_TOKEN,
+      subjectAccessRequest = subjectAccessRequest,
+      params = mapOf(
+        "cause" to ex.cause?.message,
+      ),
+    )
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)

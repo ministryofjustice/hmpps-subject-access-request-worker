@@ -71,7 +71,10 @@ class ProbationApiMockServer : WireMockServer(4002) {
   }
 }
 
-class ProbationApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+class ProbationApiExtension :
+  BeforeAllCallback,
+  AfterAllCallback,
+  BeforeEachCallback {
   companion object {
     @JvmField
     val probationApi = ProbationApiMockServer()

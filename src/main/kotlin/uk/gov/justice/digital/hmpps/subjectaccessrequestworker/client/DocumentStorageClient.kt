@@ -37,9 +37,7 @@ class DocumentStorageClient(
   }
 
   private fun contentAsResource(docBody: ByteArrayOutputStream) = object : ByteArrayResource(docBody.toByteArray()) {
-    override fun getFilename(): String {
-      return SAR_FILENAME
-    }
+    override fun getFilename(): String = SAR_FILENAME
   }
 
   private fun executeStoreDocumentRequest(

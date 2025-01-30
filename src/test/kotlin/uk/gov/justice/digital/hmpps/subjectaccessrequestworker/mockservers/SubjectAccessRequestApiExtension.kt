@@ -51,9 +51,10 @@ class SubjectAccessRequestApiExtension :
   }
 }
 
-class SubjectAccessRequestApiMockServer : WireMockServer(
-  WireMockConfiguration.wireMockConfig().port(4000),
-) {
+class SubjectAccessRequestApiMockServer :
+  WireMockServer(
+    WireMockConfiguration.wireMockConfig().port(4000),
+  ) {
 
   companion object {
     const val UNCLAIMED_SAR_BODY = """

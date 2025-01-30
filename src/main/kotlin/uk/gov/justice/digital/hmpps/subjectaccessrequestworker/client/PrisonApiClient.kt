@@ -27,51 +27,49 @@ class PrisonApiClient(
     )
   }
 
-  fun getOffenderName(subjectAccessRequest: SubjectAccessRequest, subjectId: String): String {
-    return try {
-      val response = prisonApiWebClient
-        .get()
-        .uri("/api/offenders/$subjectId")
-        .retrieve()
-        .onStatus(
-          { code: HttpStatusCode -> code.isSameCodeAs(HttpStatus.NOT_FOUND) },
-          { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
-        )
-        .onStatus(
-          webClientRetriesSpec.is4xxStatus(),
-          webClientRetriesSpec.throw4xxStatusFatalError(
-            GET_OFFENDER_NAME,
-            subjectAccessRequest,
-            mapOf("subjectId" to subjectId),
-          ),
-        )
-        .bodyToMono(GetOffenderDetailsResponse::class.java)
-        .retryWhen(
-          webClientRetriesSpec.retry5xxAndClientRequestErrors(
-            GET_OFFENDER_NAME,
-            subjectAccessRequest,
-            mapOf("subjectId" to subjectId),
-          ),
-        )
-        // Return valid empty response when not found
-        .onErrorReturn(
-          SubjectNotFoundException::class.java,
-          emptyResponse,
-        )
-        .block()
-
-      formatName(response?.firstName, response?.lastName)
-    } catch (ex: ClientAuthorizationException) {
-      throw FatalSubjectAccessRequestException(
-        message = "prisonApiClient error authorization exception",
-        cause = ex,
-        event = ACQUIRE_AUTH_TOKEN,
-        subjectAccessRequest = subjectAccessRequest,
-        params = mapOf(
-          "cause" to ex.cause?.message,
+  fun getOffenderName(subjectAccessRequest: SubjectAccessRequest, subjectId: String): String = try {
+    val response = prisonApiWebClient
+      .get()
+      .uri("/api/offenders/$subjectId")
+      .retrieve()
+      .onStatus(
+        { code: HttpStatusCode -> code.isSameCodeAs(HttpStatus.NOT_FOUND) },
+        { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
+      )
+      .onStatus(
+        webClientRetriesSpec.is4xxStatus(),
+        webClientRetriesSpec.throw4xxStatusFatalError(
+          GET_OFFENDER_NAME,
+          subjectAccessRequest,
+          mapOf("subjectId" to subjectId),
         ),
       )
-    }
+      .bodyToMono(GetOffenderDetailsResponse::class.java)
+      .retryWhen(
+        webClientRetriesSpec.retry5xxAndClientRequestErrors(
+          GET_OFFENDER_NAME,
+          subjectAccessRequest,
+          mapOf("subjectId" to subjectId),
+        ),
+      )
+      // Return valid empty response when not found
+      .onErrorReturn(
+        SubjectNotFoundException::class.java,
+        emptyResponse,
+      )
+      .block()
+
+    formatName(response?.firstName, response?.lastName)
+  } catch (ex: ClientAuthorizationException) {
+    throw FatalSubjectAccessRequestException(
+      message = "prisonApiClient error authorization exception",
+      cause = ex,
+      event = ACQUIRE_AUTH_TOKEN,
+      subjectAccessRequest = subjectAccessRequest,
+      params = mapOf(
+        "cause" to ex.cause?.message,
+      ),
+    )
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
