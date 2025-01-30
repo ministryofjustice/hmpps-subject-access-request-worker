@@ -3,9 +3,7 @@
     <h2>Licence</h2>
     <br>
     <table class="summary-list">
-        <tr><td>Kind</td><td>{{ optionalValue kind }}</td></tr>
         <tr><td>Type</td><td>{{ optionalValue typeCode }}</td></tr>
-        <tr><td>Version</td><td>{{ optionalValue version }}</td></tr>
         <tr><td>Status</td><td>{{{ optionalValue statusCode }}}</td></tr>
         <tr><td>Appointment person</td><td>{{ optionalValue appointmentPerson }}</td></tr>
         <tr><td>Appointment time</td><td>{{ optionalValue appointmentTime }}</td></tr>
@@ -65,9 +63,20 @@
         <table class="summary-list">
             <tr><td>Category</td><td>{{ optionalValue category }}</td></tr>
             <tr><td>Expanded text</td><td>{{ optionalValue expandedText }}</td></tr>
-            <tr><td>Data</td><td>{{#data}}{{optionalValue field}} = {{ optionalValue value }}{{/data}}{{^data}}No Data Held{{/data}}</td></tr>
-            <tr><td>Upload summary</td><td>{{#uploadSummary}}{{ . }}{{#unless @last}}, {{/unless}}{{/uploadSummary}}{{^uploadSummary}}No Data Held{{/uploadSummary}}</td></tr>
         </table>
+        <h3>Upload summary</h3>
+        {{#uploadSummary}}
+            <table class="summary-list">
+                <tr><td>Filename</td><td>{{ optionalValue filename }}</td></tr>
+                <tr><td>File type</td><td>{{ optionalValue fileType }}</td></tr>
+                <tr><td>File size</td><td>{{ optionalValue fileSize }}</td></tr>
+                <tr><td>Uploaded time</td><td>{{ optionalValue (formatDate uploadedTime) }}</td></tr>
+                <tr><td>Description</td><td>{{ optionalValue description }}</td></tr>
+            </table>
+        {{/uploadSummary}}
+        {{^uploadSummary}}
+            <p>No Data Held</p>
+        {{/uploadSummary}}
     {{/additionalLicenceConditions}}
 
     {{#additionalPssConditions}}
@@ -77,9 +86,20 @@
         <table class="summary-list">
             <tr><td>Category</td><td>{{ optionalValue category }}</td></tr>
             <tr><td>Expanded text</td><td>{{ optionalValue expandedText }}</td></tr>
-            <tr><td>Data</td><td>{{#data}}{{optionalValue field}} = {{ optionalValue value }}{{/data}}{{^data}}No Data Held{{/data}}</td></tr>
-            <tr><td>Upload summary</td><td>{{{ optionalValue uploadSummary }}}</td></tr>
         </table>
+        <h3>Upload summary</h3>
+        {{#uploadSummary}}
+            <table class="summary-list">
+                <tr><td>Filename</td><td>{{ optionalValue filename }}</td></tr>
+                <tr><td>File type</td><td>{{ optionalValue fileType }}</td></tr>
+                <tr><td>File size</td><td>{{ optionalValue fileSize }}</td></tr>
+                <tr><td>Uploaded time</td><td>{{ optionalValue (formatDate uploadedTime) }}</td></tr>
+                <tr><td>Description</td><td>{{ optionalValue description }}</td></tr>
+            </table>
+        {{/uploadSummary}}
+        {{^uploadSummary}}
+            <p>No Data Held</p>
+        {{/uploadSummary}}
     {{/additionalPssConditions}}
 
     <br>
@@ -88,7 +108,7 @@
     <table class="data-table">
         <tr><td></td></tr>
         {{#bespokeConditions}}
-            <tr><td>{{{ optionalValue text }}}</td></tr>
+            <tr><td>{{{ optionalValue . }}}</td></tr>
         {{/bespokeConditions}}
         {{^bespokeConditions}}
             <tr><td>No Data Held</td></tr>
