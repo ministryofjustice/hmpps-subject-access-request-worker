@@ -134,13 +134,9 @@ class GeneratePdfService(
     return pdfStream
   }
 
-  fun getPdfWriter(stream: ByteArrayOutputStream): PdfWriter {
-    return PdfWriter(stream)
-  }
+  fun getPdfWriter(stream: ByteArrayOutputStream): PdfWriter = PdfWriter(stream)
 
-  fun createPdfStream(): ByteArrayOutputStream {
-    return ByteArrayOutputStream()
-  }
+  fun createPdfStream(): ByteArrayOutputStream = ByteArrayOutputStream()
 
   fun addRearPage(pdfDocument: PdfDocument, document: Document, numPages: Int) {
     document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
@@ -383,9 +379,7 @@ class GeneratePdfService(
     return processValue(input)
   }
 
-  fun processKey(key: String): String {
-    return ProcessDataHelper.camelToSentence(key)
-  }
+  fun processKey(key: String): String = ProcessDataHelper.camelToSentence(key)
 
   fun processValue(input: Any?): Any? {
     // Handle null values
@@ -404,9 +398,7 @@ class GeneratePdfService(
 }
 
 class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {
-  override fun getNextRenderer(): IRenderer {
-    return CodeRenderer(getModelElement() as Text)
-  }
+  override fun getNextRenderer(): IRenderer = CodeRenderer(getModelElement() as Text)
 
   override fun trimFirst() {}
 }

@@ -17,7 +17,9 @@ import java.util.*
 const val LOCK_TIMEOUT = "3000"
 
 @Repository
-interface SubjectAccessRequestRepository : JpaRepository<SubjectAccessRequest, UUID>, JpaSpecificationExecutor<SubjectAccessRequest> {
+interface SubjectAccessRequestRepository :
+  JpaRepository<SubjectAccessRequest, UUID>,
+  JpaSpecificationExecutor<SubjectAccessRequest> {
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = LOCK_TIMEOUT)])

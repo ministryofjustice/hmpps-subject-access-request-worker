@@ -23,33 +23,32 @@ class DynamicServicesClient(
     dateFrom: LocalDate? = null,
     dateTo: LocalDate? = null,
     subjectAccessRequest: SubjectAccessRequest? = null,
-  ): ResponseEntity<Map<*, *>>? =
-    dynamicApiWebClient.mutate().baseUrl(serviceUrl).build()
-      .get()
-      .uri {
-        it.path("/subject-access-request")
-          .queryParamIfPresent("prn", Optional.ofNullable(prn))
-          .queryParamIfPresent("crn", Optional.ofNullable(crn))
-          .queryParam("fromDate", dateFrom)
-          .queryParam("toDate", dateTo)
-          .build()
-      }
-      .retrieve()
-      .onStatus(
-        webClientRetriesSpec.is4xxStatus(),
-        webClientRetriesSpec.throw4xxStatusFatalError(
-          GET_SAR_DATA,
-          subjectAccessRequest,
+  ): ResponseEntity<Map<*, *>>? = dynamicApiWebClient.mutate().baseUrl(serviceUrl).build()
+    .get()
+    .uri {
+      it.path("/subject-access-request")
+        .queryParamIfPresent("prn", Optional.ofNullable(prn))
+        .queryParamIfPresent("crn", Optional.ofNullable(crn))
+        .queryParam("fromDate", dateFrom)
+        .queryParam("toDate", dateTo)
+        .build()
+    }
+    .retrieve()
+    .onStatus(
+      webClientRetriesSpec.is4xxStatus(),
+      webClientRetriesSpec.throw4xxStatusFatalError(
+        GET_SAR_DATA,
+        subjectAccessRequest,
+      ),
+    )
+    .toEntity(Map::class.java)
+    .retryWhen(
+      webClientRetriesSpec.retry5xxAndClientRequestErrors(
+        GET_SAR_DATA,
+        subjectAccessRequest,
+        mapOf(
+          "uri" to serviceUrl,
         ),
-      )
-      .toEntity(Map::class.java)
-      .retryWhen(
-        webClientRetriesSpec.retry5xxAndClientRequestErrors(
-          GET_SAR_DATA,
-          subjectAccessRequest,
-          mapOf(
-            "uri" to serviceUrl,
-          ),
-        ),
-      ).block()
+      ),
+    ).block()
 }

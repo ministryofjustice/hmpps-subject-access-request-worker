@@ -60,8 +60,7 @@ class TemplateHelpers(
     return formatDate(format("%s-%s-%s", leftPad(year, 4, "0"), leftPad(month, 2, "0"), leftPad(day, 2, "0")))
   }
 
-  fun buildDateNumber(year: Number?, month: Number?, day: Number?): String =
-    buildDate(year?.toInt()?.toString(), month?.toInt()?.toString(), day?.toInt()?.toString())
+  fun buildDateNumber(year: Number?, month: Number?, day: Number?): String = buildDate(year?.toInt()?.toString(), month?.toInt()?.toString(), day?.toInt()?.toString())
 
   fun eq(input: String?, value: String?): Boolean = input == value
 

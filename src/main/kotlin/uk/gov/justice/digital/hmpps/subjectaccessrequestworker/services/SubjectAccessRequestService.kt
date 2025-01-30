@@ -14,16 +14,14 @@ class SubjectAccessRequestService(
 ) {
 
   @Transactional
-  fun findUnclaimed(): List<SubjectAccessRequest?> =
-    subjectAccessRequestRepository.findUnclaimed(LocalDateTime.now().minusMinutes(30))
+  fun findUnclaimed(): List<SubjectAccessRequest?> = subjectAccessRequestRepository.findUnclaimed(LocalDateTime.now().minusMinutes(30))
 
   @Transactional
-  fun updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(id: UUID) =
-    subjectAccessRequestRepository.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(
-      id,
-      LocalDateTime.now().minusMinutes(30),
-      LocalDateTime.now(),
-    )
+  fun updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(id: UUID) = subjectAccessRequestRepository.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(
+    id,
+    LocalDateTime.now().minusMinutes(30),
+    LocalDateTime.now(),
+  )
 
   @Transactional
   fun updateStatus(id: UUID, status: Status) {

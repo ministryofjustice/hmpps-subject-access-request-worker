@@ -4,9 +4,7 @@ import java.util.Locale
 
 class HeadingHelper {
   companion object {
-    fun format(heading: String): String {
-      return heading.replace("-", " ")
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-    }
+    fun format(heading: String): String = heading.replace("-", " ")
+      .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
   }
 }

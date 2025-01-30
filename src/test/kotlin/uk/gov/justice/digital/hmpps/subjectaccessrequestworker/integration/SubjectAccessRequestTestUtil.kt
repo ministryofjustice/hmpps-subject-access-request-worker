@@ -10,13 +10,12 @@ import java.security.MessageDigest
 const val HASH_ALGORITHM = "SHA-512"
 const val HEX_RADIX = 16
 
-fun fileHash(bytes: ByteArray): String =
-  BigInteger(
-    1,
-    MessageDigest
-      .getInstance(HASH_ALGORITHM)
-      .digest(bytes),
-  ).toString(HEX_RADIX)
+fun fileHash(bytes: ByteArray): String = BigInteger(
+  1,
+  MessageDigest
+    .getInstance(HASH_ALGORITHM)
+    .digest(bytes),
+).toString(HEX_RADIX)
 
 fun <T : Throwable?> assertExpectedSubjectAccessRequestException(
   actual: SubjectAccessRequestException,

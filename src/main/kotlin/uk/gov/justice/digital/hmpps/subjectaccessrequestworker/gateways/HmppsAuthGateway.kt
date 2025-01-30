@@ -38,18 +38,17 @@ class HmppsAuthGateway(
     }
   }
 
-  private fun subjectAccessRequestWebClientResponseEx(cause: WebClientResponseException): SubjectAccessRequestException =
-    SubjectAccessRequestException(
-      message = "authGateway get auth token WebclientResponseException",
-      cause = cause,
-      event = ACQUIRE_AUTH_TOKEN,
-      subjectAccessRequest = null,
-      params = mapOf(
-        "authority" to cause.request?.uri?.authority,
-        "httpStatus" to cause.statusCode.value(),
-        "body" to cause.responseBodyAsString,
-      ),
-    )
+  private fun subjectAccessRequestWebClientResponseEx(cause: WebClientResponseException): SubjectAccessRequestException = SubjectAccessRequestException(
+    message = "authGateway get auth token WebclientResponseException",
+    cause = cause,
+    event = ACQUIRE_AUTH_TOKEN,
+    subjectAccessRequest = null,
+    params = mapOf(
+      "authority" to cause.request?.uri?.authority,
+      "httpStatus" to cause.statusCode.value(),
+      "body" to cause.responseBodyAsString,
+    ),
+  )
 
   private fun subjectAccessRequestGeneralException(cause: Exception) = SubjectAccessRequestException(
     message = "authGateway get auth token unexpected error",

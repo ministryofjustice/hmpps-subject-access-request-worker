@@ -384,32 +384,28 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     return baos
   }
 
-  fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse {
-    return objectMapper.readValue(
-      documentApi.documentUploadSuccessResponseJson(
-        subjectAccessRequestId.toString(),
-        fileSize ?: content.size,
-        content,
-      ),
-      DocumentStorageClient.PostDocumentResponse::class.java,
-    )
-  }
+  fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse = objectMapper.readValue(
+    documentApi.documentUploadSuccessResponseJson(
+      subjectAccessRequestId.toString(),
+      fileSize ?: content.size,
+      content,
+    ),
+    DocumentStorageClient.PostDocumentResponse::class.java,
+  )
 
   fun expectedSuccessResponseWithMetadata(
     fileSize: Int? = null,
     content: ByteArray,
     metadata: Any?,
-  ): DocumentStorageClient.PostDocumentResponse {
-    return objectMapper.readValue(
-      documentApi.documentUploadSuccessResponseJsonWithMetadata(
-        subjectAccessRequestId.toString(),
-        fileSize ?: content.size,
-        content,
-        metadata,
-      ),
-      DocumentStorageClient.PostDocumentResponse::class.java,
-    )
-  }
+  ): DocumentStorageClient.PostDocumentResponse = objectMapper.readValue(
+    documentApi.documentUploadSuccessResponseJsonWithMetadata(
+      subjectAccessRequestId.toString(),
+      fileSize ?: content.size,
+      content,
+      metadata,
+    ),
+    DocumentStorageClient.PostDocumentResponse::class.java,
+  )
 
   fun verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest: SubjectAccessRequest, content: ByteArray) {
     val props = mapOf(

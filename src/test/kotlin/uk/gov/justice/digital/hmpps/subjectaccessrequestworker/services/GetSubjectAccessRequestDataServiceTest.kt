@@ -233,7 +233,7 @@ class GetSubjectAccessRequestDataServiceTest {
   }
 
   @Nested
-  inner class GetSubjectAccessRequestDataTelemetryTest()
+  inner class GetSubjectAccessRequestDataTelemetryTest
 
   @Test
   fun `get subject access request data success`() {

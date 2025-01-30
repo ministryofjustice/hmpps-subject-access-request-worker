@@ -78,7 +78,10 @@ class PrisonApiMockServer : WireMockServer(8079) {
   )
 }
 
-class PrisonApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+class PrisonApiExtension :
+  BeforeAllCallback,
+  AfterAllCallback,
+  BeforeEachCallback {
   companion object {
     @JvmField
     val prisonApi = PrisonApiMockServer()

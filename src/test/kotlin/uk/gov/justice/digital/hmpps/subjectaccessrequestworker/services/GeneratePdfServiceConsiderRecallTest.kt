@@ -536,11 +536,13 @@ class GeneratePdfServiceConsiderRecallTest {
           "localDeliveryUnit" to "delivery",
         ),
         "revocationOrderRecipients" to arrayListOf(
-          "string", "another string",
+          "string",
+          "another string",
         ),
         "decisionDateTime" to "2023-09-01T09:40:29.810Z",
         "ppcsQueryEmails" to arrayListOf(
-          "string", "another string",
+          "string",
+          "another string",
         ),
         "prisonOffender" to mapOf(
           "locationDescription" to "desc",
@@ -666,7 +668,8 @@ class GeneratePdfServiceConsiderRecallTest {
           "failed" to true,
           "failedMessage" to "string",
           "uploaded" to arrayListOf(
-            "string1", "string2",
+            "string1",
+            "string2",
           ),
         ),
         "isOver18" to true,

@@ -23,12 +23,10 @@ class WebClientConfiguration(
 ) {
 
   @Bean
-  fun hmppsAuthHealthWebClient(builder: WebClient.Builder): WebClient =
-    builder.healthWebClient(hmppsAuthBaseUri, healthTimeout)
+  fun hmppsAuthHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(hmppsAuthBaseUri, healthTimeout)
 
   @Bean
-  fun documentStoreApiHealthWebClient(builder: WebClient.Builder): WebClient =
-    builder.healthWebClient(documentStorageApiBaseUri, healthTimeout)
+  fun documentStoreApiHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(documentStorageApiBaseUri, healthTimeout)
 
   @Bean
   fun documentStorageWebClient(
@@ -38,31 +36,24 @@ class WebClientConfiguration(
     .authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = documentStorageApiBaseUri, documentStoreTimeout)
 
   @Bean
-  fun prisonApiHealthWebClient(builder: WebClient.Builder): WebClient =
-    builder.healthWebClient(prisonApiBaseUri, healthTimeout)
+  fun prisonApiHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(prisonApiBaseUri, healthTimeout)
 
   @Bean
-  fun prisonApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient =
-    builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = prisonApiBaseUri, timeout)
+  fun prisonApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = prisonApiBaseUri, timeout)
 
   @Bean
-  fun probationApiHealthWebClient(builder: WebClient.Builder): WebClient =
-    builder.healthWebClient(probationApiBaseUri, healthTimeout)
+  fun probationApiHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(probationApiBaseUri, healthTimeout)
 
   @Bean
-  fun probationApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient =
-    builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = probationApiBaseUri, timeout)
+  fun probationApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = probationApiBaseUri, timeout)
 
   @Bean
-  fun dynamicWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient =
-    builder.codecs { configurer -> configurer.defaultCodecs().maxInMemorySize(100 * 1024 * 1024) }
-      .authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = "http", timeout = timeout)
+  fun dynamicWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.codecs { configurer -> configurer.defaultCodecs().maxInMemorySize(100 * 1024 * 1024) }
+    .authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = "http", timeout = timeout)
 
   private var backOffDuration: Duration = Duration.parse(backOff)
 
   fun getBackoffDuration() = backOffDuration
 
-  override fun toString(): String {
-    return "WebClientConfiguration(maxRetries=$maxRetries, backOff=$backOff)"
-  }
+  override fun toString(): String = "WebClientConfiguration(maxRetries=$maxRetries, backOff=$backOff)"
 }

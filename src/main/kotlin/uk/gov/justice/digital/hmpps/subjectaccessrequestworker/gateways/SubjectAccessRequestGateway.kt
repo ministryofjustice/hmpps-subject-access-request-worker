@@ -19,9 +19,7 @@ class SubjectAccessRequestGateway(
     return WebClient.create(url) // TODO what other config does this need?
   }
 
-  fun getClientTokenFromHmppsAuth(): String {
-    return hmppsAuthGateway.getClientToken()
-  }
+  fun getClientTokenFromHmppsAuth(): String = hmppsAuthGateway.getClientToken()
 
   fun getUnclaimed(client: WebClient): Array<SubjectAccessRequest>? {
     val token = this.getClientTokenFromHmppsAuth()
