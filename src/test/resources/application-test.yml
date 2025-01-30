@@ -2,7 +2,7 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/sar,db/sar/dev/data
+    locations: classpath:db/sar,db/sar_{vendor}
     baseline-on-migrate: true
 
   datasource:

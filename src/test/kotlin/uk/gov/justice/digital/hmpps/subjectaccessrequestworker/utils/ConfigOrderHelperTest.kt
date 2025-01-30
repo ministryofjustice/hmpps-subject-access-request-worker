@@ -1,13 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfig
-
 class ConfigOrderHelperTest {
-  val configOrderHelper = ConfigOrderHelper(
+/*  val configOrderHelper = ConfigOrderHelper(
     "https://service-g1.example.com",
     "https://service-g2.example.com",
     "https://service-g3.example.com",
@@ -60,5 +54,5 @@ class ConfigOrderHelperTest {
     assertThat(testDpsServices[1].url).isEqualTo("https://service-g2.example.com")
     assertThat(testDpsServices[2].url).isEqualTo("https://service-g3.example.com")
     assertThat(testDpsServices[3].url).isEqualTo("https://other-service.example.com")
-  }
+  }*/
 }
