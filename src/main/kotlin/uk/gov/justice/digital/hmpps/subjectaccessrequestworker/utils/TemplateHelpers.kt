@@ -37,9 +37,9 @@ class TemplateHelpers(
     if (this.size > index) {
       val listValue = this[index]
       return when (listValue) {
-          is Number -> listValue.toInt()
-          is String -> listValue.toInt()
-          else -> default
+        is Number -> listValue.toInt()
+        is String -> listValue.toInt()
+        else -> default
       }
     }
     return default

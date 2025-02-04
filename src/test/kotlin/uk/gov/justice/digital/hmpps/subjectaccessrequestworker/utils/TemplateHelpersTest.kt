@@ -76,7 +76,7 @@ class TemplateHelpersTest {
 
     @ParameterizedTest
     @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpersTest#dateArrayValues")
-    fun `formatDate returns formatted date for valid array input`(input: List<*>, expectedValue: String ) {
+    fun `formatDate returns formatted date for valid array input`(input: List<*>, expectedValue: String) {
       val response = templateHelpers.formatDate(input)
       assertThat(response).isEqualTo(expectedValue)
     }
