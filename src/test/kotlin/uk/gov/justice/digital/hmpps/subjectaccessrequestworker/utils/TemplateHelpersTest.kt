@@ -4,7 +4,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.mock
@@ -13,6 +15,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDeta
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
+import java.util.stream.Stream
 
 class TemplateHelpersTest {
 
@@ -58,6 +61,7 @@ class TemplateHelpersTest {
 
   @Nested
   inner class FormatDateTest {
+
     @Test
     fun `formatDate returns empty string if input is null`() {
       val response = templateHelpers.formatDate(null)
@@ -65,10 +69,44 @@ class TemplateHelpersTest {
     }
 
     @Test
-    fun `formatDate returns formatted date for valid input`() {
+    fun `formatDate returns formatted date for valid string input`() {
       val response = templateHelpers.formatDate("2023-10-01")
       assertThat(response).isEqualTo("01 October 2023")
     }
+
+    @ParameterizedTest
+    @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpersTest#dateArrayValues")
+    fun `formatDate returns formatted date for valid array input`(input: List<*>, expectedValue: String ) {
+      val response = templateHelpers.formatDate(input)
+      assertThat(response).isEqualTo(expectedValue)
+    }
+  }
+
+  companion object {
+    @JvmStatic fun dateArrayValues(): Stream<Arguments> = Stream.of(
+      Arguments.of(listOf(2023, 3, 24, 13, 59, 16, 133644), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023, 3, 24, 13, 59, 16), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023, 3, 24, 13, 59), "24 March 2023, 1:59 pm"),
+      Arguments.of(listOf(2023, 3, 24, 13), "24 March 2023, 1:00 pm"),
+      Arguments.of(listOf(2023, 3, 24), "24 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023, 3), "01 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023), "01 January 2023, 12:00 am"),
+      Arguments.of(emptyList<Int>(), "01 January 0001, 12:00 am"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0, 16.0, 133644.0), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0, 16.0), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0), "24 March 2023, 1:59 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0), "24 March 2023, 1:00 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0), "24 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023.0, 3.0), "01 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023.0), "01 January 2023, 12:00 am"),
+      Arguments.of(listOf("2023", "3", "24", "13", "59", "16", "133644"), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf("2023", "3", "24", "13", "59", "16"), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf("2023", "3", "24", "13", "59"), "24 March 2023, 1:59 pm"),
+      Arguments.of(listOf("2023", "3", "24", "13"), "24 March 2023, 1:00 pm"),
+      Arguments.of(listOf("2023", "3", "24"), "24 March 2023, 12:00 am"),
+      Arguments.of(listOf("2023", "3"), "01 March 2023, 12:00 am"),
+      Arguments.of(listOf("2023"), "01 January 2023, 12:00 am"),
+    )
   }
 
   @Nested

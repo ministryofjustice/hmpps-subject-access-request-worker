@@ -7,15 +7,42 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import java.lang.String.format
+import java.time.LocalDateTime
 
 @Service
 class TemplateHelpers(
   private val prisonDetailsRepository: PrisonDetailsRepository,
   private val userDetailsRepository: UserDetailsRepository,
 ) {
-  fun formatDate(input: String?): String {
+  fun formatDate(input: Any?): String {
     if (input == null) return ""
-    return DateConversionHelper().convertDates(input)
+    return when (input) {
+      is String -> DateConversionHelper().convertDates(input)
+      is List<*> -> DateConversionHelper().convertDates(
+        LocalDateTime.of(
+          input.getOrDefault(0, 1),
+          input.getOrDefault(1, 1),
+          input.getOrDefault(2, 1),
+          input.getOrDefault(3),
+          input.getOrDefault(4),
+          input.getOrDefault(5),
+        ).toString(),
+      )
+
+      else -> input.toString()
+    }
+  }
+
+  fun List<*>.getOrDefault(index: Int, default: Int = 0): Int {
+    if (this.size > index) {
+      val listValue = this[index]
+      return when (listValue) {
+          is Number -> listValue.toInt()
+          is String -> listValue.toInt()
+          else -> default
+      }
+    }
+    return default
   }
 
   fun optionalValue(input: Any?): Any {
