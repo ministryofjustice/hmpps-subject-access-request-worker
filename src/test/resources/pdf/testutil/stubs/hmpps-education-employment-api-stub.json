@@ -19,11 +19,49 @@
     ],
     "profileData": {
       "status": "SUPPORT_NEEDED",
-      "statusChange": null,
-      "statusChangeDate": null,
-      "prisonName": null,
-      "statusChangeType": null,
-      "supportDeclined_history": [],
+      "statusChange": false,
+      "statusChangeDate": [
+        2023,
+        5,
+        8,
+        13,
+        59,
+        16
+      ],
+      "prisonName": "Moorland",
+      "statusChangeType": "NEW",
+      "supportDeclined_history": [
+        {
+          "modifiedDateTime": [
+            2023,
+            11,
+            15,
+            18,
+            14,
+            4,
+            936899979
+          ],
+          "supportToWorkDeclinedReason": ["FULL_TIME_CARER", "HEALTH"],
+          "supportToWorkDeclinedReasonOther": "other reason",
+          "circumstanceChangesRequiredToWork":  ["DEPENDENCY_SUPPORT", "MENTAL_HEALTH_SUPPORT"],
+          "circumstanceChangesRequiredToWorkOther": "other changes"
+        },
+        {
+          "modifiedDateTime": [
+            2023,
+            10,
+            13,
+            13,
+            11,
+            34,
+            936899979
+          ],
+          "supportToWorkDeclinedReason": ["OTHER"],
+          "supportToWorkDeclinedReasonOther": "other reason",
+          "circumstanceChangesRequiredToWork":  ["OTHER"],
+          "circumstanceChangesRequiredToWorkOther": "other changes"
+        }
+      ],
       "supportAccepted_history": [
         {
           "modifiedDateTime": [
@@ -623,7 +661,21 @@
           }
         }
       ],
-      "supportDeclined": null,
+      "supportDeclined": {
+        "modifiedDateTime": [
+          2023,
+          11,
+          15,
+          18,
+          14,
+          4,
+          936899979
+        ],
+        "supportToWorkDeclinedReason": ["FULL_TIME_CARER", "HEALTH"],
+        "supportToWorkDeclinedReasonOther": "other reason",
+        "circumstanceChangesRequiredToWork":  ["DEPENDENCY_SUPPORT", "MENTAL_HEALTH_SUPPORT"],
+        "circumstanceChangesRequiredToWorkOther": "other changes"
+      },
       "supportAccepted": {
         "modifiedDateTime": [
           2023,
@@ -649,7 +701,7 @@
               "todoItem": "BANK_ACCOUNT",
               "status": "COMPLETED",
               "other": null,
-              "id": null
+              "id": ["BIRTH_CERTIFICATE", "PASSPORT"]
             },
             {
               "todoItem": "CV_AND_COVERING_LETTER",
