@@ -1,19 +1,19 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models
 
 import com.itextpdf.io.font.constants.StandardFonts
-import com.itextpdf.kernel.events.Event
-import com.itextpdf.kernel.events.IEventHandler
-import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.properties.TextAlignment
 
-class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val subjectIdLine: String, private val subjectName: String) : IEventHandler {
+class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Document, private val subjectIdLine: String, private val subjectName: String) : AbstractPdfDocumentEventHandler() {
 
-  override fun handleEvent(currentEvent: Event) {
+  override fun onAcceptedEvent(currentEvent: AbstractPdfDocumentEvent) {
     val docEvent = currentEvent as PdfDocumentEvent
     val leftHeaderText: String
     val rightHeaderText: String
@@ -43,13 +43,13 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
         leftCoord,
         headerY,
         TextAlignment.LEFT,
-      ).setBold()
+      ).simulateBold()
       .showTextAligned(
         rightHeaderText,
         rightCoord,
         headerY,
         TextAlignment.RIGHT,
-      ).setBold()
+      ).simulateBold()
       .showTextAligned(
         "Official Sensitive",
         midCoord,
