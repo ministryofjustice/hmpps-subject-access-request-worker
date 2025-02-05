@@ -1,0 +1,802 @@
+{
+  "content": {
+    "offenderId": "G1481GR",
+    "createdDateTime": [
+      2023,
+      3,
+      24,
+      13,
+      59,
+      16
+    ],
+    "modifiedDateTime": [
+      2023,
+      3,
+      25,
+      18,
+      14,
+      28
+    ],
+    "profileData": {
+      "status": "SUPPORT_NEEDED",
+      "statusChange": false,
+      "statusChangeDate": [
+        2023,
+        5,
+        8,
+        13,
+        59,
+        16
+      ],
+      "prisonName": "Moorland",
+      "statusChangeType": "NEW",
+      "supportDeclined_history": [
+        {
+          "modifiedDateTime": [
+            2023,
+            11,
+            15,
+            18,
+            14,
+            4,
+            936899979
+          ],
+          "supportToWorkDeclinedReason": ["FULL_TIME_CARER", "HEALTH"],
+          "supportToWorkDeclinedReasonOther": "other reason",
+          "circumstanceChangesRequiredToWork":  ["DEPENDENCY_SUPPORT", "MENTAL_HEALTH_SUPPORT"],
+          "circumstanceChangesRequiredToWorkOther": "other changes"
+        },
+        {
+          "modifiedDateTime": [
+            2023,
+            10,
+            13,
+            13,
+            11,
+            34,
+            936899979
+          ],
+          "supportToWorkDeclinedReason": ["OTHER"],
+          "supportToWorkDeclinedReasonOther": "other reason",
+          "circumstanceChangesRequiredToWork":  ["OTHER"],
+          "circumstanceChangesRequiredToWorkOther": "other changes"
+        }
+      ],
+      "supportAccepted_history": [
+        {
+          "modifiedDateTime": [
+            2023,
+            3,
+            25,
+            18,
+            14,
+            4,
+            936899979
+          ],
+          "actionsRequired": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              25,
+              18,
+              14,
+              4,
+              832000000
+            ],
+            "actions": [
+              {
+                "todoItem": "BANK_ACCOUNT",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "CV_AND_COVERING_LETTER",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "EMAIL",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "PHONE",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "ID",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": []
+              },
+              {
+                "todoItem": "DISCLOSURE_LETTER",
+                "status": "IN_PROGRESS",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "HOUSING",
+                "status": "IN_PROGRESS",
+                "other": null,
+                "id": null
+              }
+            ]
+          },
+          "workImpacts": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              59,
+              844000000
+            ],
+            "abilityToWorkImpactedBy": [
+              "FAMILY_ISSUES",
+              "PHYSICAL_HEALTH_ISSUES"
+            ],
+            "caringResponsibilitiesFullTime": false,
+            "ableToManageMentalHealth": false,
+            "ableToManageDependencies": false
+          },
+          "workInterests": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              14,
+              0,
+              29,
+              221000000
+            ],
+            "workTypesOfInterest": [
+              "OUTDOOR",
+              "BEAUTY",
+              "RETAIL"
+            ],
+            "workTypesOfInterestOther": "",
+            "jobOfParticularInterest": ""
+          },
+          "workExperience": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "previousWorkOrVolunteering": "",
+            "qualificationsAndTraining": [
+              "FIRST_AID",
+              "FOOD_HYGIENE",
+              "DRIVING_LICENSE"
+            ],
+            "qualificationsAndTrainingOther": ""
+          }
+        },
+        {
+          "modifiedDateTime": [
+            2023,
+            3,
+            24,
+            14,
+            0,
+            29,
+            239133088
+          ],
+          "actionsRequired": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              27,
+              622000000
+            ],
+            "actions": [
+              {
+                "todoItem": "BANK_ACCOUNT",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "CV_AND_COVERING_LETTER",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "EMAIL",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "PHONE",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "HOUSING",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "ID",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": []
+              },
+              {
+                "todoItem": "DISCLOSURE_LETTER",
+                "status": "IN_PROGRESS",
+                "other": null,
+                "id": null
+              }
+            ]
+          },
+          "workImpacts": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              59,
+              844000000
+            ],
+            "abilityToWorkImpactedBy": [
+              "FAMILY_ISSUES",
+              "PHYSICAL_HEALTH_ISSUES"
+            ],
+            "caringResponsibilitiesFullTime": false,
+            "ableToManageMentalHealth": false,
+            "ableToManageDependencies": false
+          },
+          "workInterests": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              14,
+              0,
+              29,
+              221000000
+            ],
+            "workTypesOfInterest": [
+              "OUTDOOR",
+              "BEAUTY",
+              "RETAIL"
+            ],
+            "workTypesOfInterestOther": "",
+            "jobOfParticularInterest": ""
+          },
+          "workExperience": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "previousWorkOrVolunteering": "",
+            "qualificationsAndTraining": [
+              "FIRST_AID",
+              "FOOD_HYGIENE",
+              "DRIVING_LICENSE"
+            ],
+            "qualificationsAndTrainingOther": ""
+          }
+        },
+        {
+          "modifiedDateTime": [
+            2023,
+            3,
+            24,
+            13,
+            59,
+            59,
+            867778447
+          ],
+          "actionsRequired": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              27,
+              622000000
+            ],
+            "actions": [
+              {
+                "todoItem": "BANK_ACCOUNT",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "CV_AND_COVERING_LETTER",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "EMAIL",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "PHONE",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "HOUSING",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "ID",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": []
+              },
+              {
+                "todoItem": "DISCLOSURE_LETTER",
+                "status": "IN_PROGRESS",
+                "other": null,
+                "id": null
+              }
+            ]
+          },
+          "workImpacts": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              59,
+              844000000
+            ],
+            "abilityToWorkImpactedBy": [
+              "FAMILY_ISSUES",
+              "PHYSICAL_HEALTH_ISSUES"
+            ],
+            "caringResponsibilitiesFullTime": false,
+            "ableToManageMentalHealth": false,
+            "ableToManageDependencies": false
+          },
+          "workInterests": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "workTypesOfInterest": [
+              "OUTDOOR",
+              "BEAUTY"
+            ],
+            "workTypesOfInterestOther": "",
+            "jobOfParticularInterest": ""
+          },
+          "workExperience": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "previousWorkOrVolunteering": "",
+            "qualificationsAndTraining": [
+              "FIRST_AID",
+              "FOOD_HYGIENE",
+              "DRIVING_LICENSE"
+            ],
+            "qualificationsAndTrainingOther": ""
+          }
+        },
+        {
+          "modifiedDateTime": [
+            2023,
+            3,
+            24,
+            13,
+            59,
+            27,
+            640091489
+          ],
+          "actionsRequired": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              27,
+              622000000
+            ],
+            "actions": [
+              {
+                "todoItem": "BANK_ACCOUNT",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "CV_AND_COVERING_LETTER",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "EMAIL",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "PHONE",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "HOUSING",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "ID",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": []
+              },
+              {
+                "todoItem": "DISCLOSURE_LETTER",
+                "status": "IN_PROGRESS",
+                "other": null,
+                "id": null
+              }
+            ]
+          },
+          "workImpacts": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "abilityToWorkImpactedBy": [
+              "FAMILY_ISSUES",
+              "DEPENDENCY_ISSUES"
+            ],
+            "caringResponsibilitiesFullTime": false,
+            "ableToManageMentalHealth": false,
+            "ableToManageDependencies": false
+          },
+          "workInterests": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "workTypesOfInterest": [
+              "OUTDOOR",
+              "BEAUTY"
+            ],
+            "workTypesOfInterestOther": "",
+            "jobOfParticularInterest": ""
+          },
+          "workExperience": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "previousWorkOrVolunteering": "",
+            "qualificationsAndTraining": [
+              "FIRST_AID",
+              "FOOD_HYGIENE",
+              "DRIVING_LICENSE"
+            ],
+            "qualificationsAndTrainingOther": ""
+          }
+        },
+        {
+          "modifiedDateTime": [
+            2023,
+            3,
+            24,
+            13,
+            59,
+            16,
+            149298446
+          ],
+          "actionsRequired": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "actions": [
+              {
+                "todoItem": "BANK_ACCOUNT",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "CV_AND_COVERING_LETTER",
+                "status": "COMPLETED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "DISCLOSURE_LETTER",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "EMAIL",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "PHONE",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "HOUSING",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": null
+              },
+              {
+                "todoItem": "ID",
+                "status": "NOT_STARTED",
+                "other": null,
+                "id": []
+              }
+            ]
+          },
+          "workImpacts": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "abilityToWorkImpactedBy": [
+              "FAMILY_ISSUES",
+              "DEPENDENCY_ISSUES"
+            ],
+            "caringResponsibilitiesFullTime": false,
+            "ableToManageMentalHealth": false,
+            "ableToManageDependencies": false
+          },
+          "workInterests": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "workTypesOfInterest": [
+              "OUTDOOR",
+              "BEAUTY"
+            ],
+            "workTypesOfInterestOther": "",
+            "jobOfParticularInterest": ""
+          },
+          "workExperience": {
+            "modifiedDateTime": [
+              2023,
+              3,
+              24,
+              13,
+              59,
+              16,
+              121000000
+            ],
+            "previousWorkOrVolunteering": "",
+            "qualificationsAndTraining": [
+              "FIRST_AID",
+              "FOOD_HYGIENE",
+              "DRIVING_LICENSE"
+            ],
+            "qualificationsAndTrainingOther": ""
+          }
+        }
+      ],
+      "supportDeclined": {
+        "modifiedDateTime": [
+          2023,
+          11,
+          15,
+          18,
+          14,
+          4,
+          936899979
+        ],
+        "supportToWorkDeclinedReason": ["FULL_TIME_CARER", "HEALTH"],
+        "supportToWorkDeclinedReasonOther": "other reason",
+        "circumstanceChangesRequiredToWork":  ["DEPENDENCY_SUPPORT", "MENTAL_HEALTH_SUPPORT"],
+        "circumstanceChangesRequiredToWorkOther": "other changes"
+      },
+      "supportAccepted": {
+        "modifiedDateTime": [
+          2023,
+          3,
+          25,
+          18,
+          14,
+          28,
+          677543359
+        ],
+        "actionsRequired": {
+          "modifiedDateTime": [
+            2023,
+            3,
+            25,
+            18,
+            14,
+            4,
+            832000000
+          ],
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "COMPLETED",
+              "other": null,
+              "id": ["BIRTH_CERTIFICATE", "PASSPORT"]
+            },
+            {
+              "todoItem": "CV_AND_COVERING_LETTER",
+              "status": "COMPLETED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "EMAIL",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "PHONE",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": []
+            },
+            {
+              "todoItem": "DISCLOSURE_LETTER",
+              "status": "IN_PROGRESS",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "IN_PROGRESS",
+              "other": null,
+              "id": null
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedDateTime": [
+            2023,
+            3,
+            25,
+            18,
+            14,
+            28,
+            571000000
+          ],
+          "abilityToWorkImpactedBy": [
+            "FAMILY_ISSUES",
+            "CARING_RESPONSIBILITIES",
+            "PHYSICAL_HEALTH_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": false,
+          "ableToManageMentalHealth": false,
+          "ableToManageDependencies": true
+        },
+        "workInterests": {
+          "modifiedDateTime": [
+            2023,
+            3,
+            24,
+            14,
+            0,
+            29,
+            221000000
+          ],
+          "workTypesOfInterest": [
+            "OUTDOOR",
+            "BEAUTY",
+            "RETAIL"
+          ],
+          "workTypesOfInterestOther": "",
+          "jobOfParticularInterest": ""
+        },
+        "workExperience": {
+          "modifiedDateTime": [
+            2023,
+            3,
+            24,
+            13,
+            59,
+            16,
+            121000000
+          ],
+          "previousWorkOrVolunteering": "",
+          "qualificationsAndTraining": [
+            "FIRST_AID",
+            "FOOD_HYGIENE",
+            "DRIVING_LICENSE"
+          ],
+          "qualificationsAndTrainingOther": ""
+        }
+      }
+    }
+  }
+}
