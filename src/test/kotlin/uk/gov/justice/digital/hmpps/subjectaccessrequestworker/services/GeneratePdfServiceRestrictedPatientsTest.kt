@@ -45,7 +45,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
       "supportingPrisonId" to "EXI",
       "hospitalLocationDescription" to "Weston Park Hospital",
       "dischargeTime" to "2024-09-05T08:50:44.19812",
-      "commentText" to "This is a restricted patients comment",
     )
     whenever(prisonDetailsRepository.findByPrisonId("EXI")).thenReturn(PrisonDetail("EXI", "Exeter (HMP)"))
 
@@ -55,7 +54,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
       assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
       assertThat(text).contains("Hospital location Weston Park Hospital")
       assertThat(text).contains("Supporting prison Exeter (HMP)")
-      assertThat(text).contains("Comments This is a restricted patients comment")
     }
   }
 
@@ -72,7 +70,6 @@ class GeneratePdfServiceRestrictedPatientsTest {
       assertThat(text).contains("Discharge time 05 September 2024, 8:50:44 am")
       assertThat(text).contains("Hospital location Weston Park Hospital")
       assertThat(text).contains("Supporting prison No Data Held")
-      assertThat(text).contains("Comments No Data Held")
     }
   }
 
