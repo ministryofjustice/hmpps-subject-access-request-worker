@@ -188,15 +188,11 @@ class SubjectAccessRequestWorkerService(
     )
 
     val pdfStream = generatePdfService.execute(
-      dpsServiceList,
-      subjectAccessRequest.nomisId,
-      subjectAccessRequest.ndeliusCaseReferenceId,
-      subjectAccessRequest.sarCaseReferenceNumber,
-      subjectName,
-      subjectAccessRequest.dateFrom,
-      subjectAccessRequest.dateTo,
-      subjectAccessRequest,
+      services = dpsServiceList,
+      subjectName = subjectName,
+      sar = subjectAccessRequest
     )
+
     log.info("${subjectAccessRequest.id} created PDF")
 
     val fileSize = pdfStream.size().toString()
@@ -253,43 +249,6 @@ class SubjectAccessRequestWorkerService(
       )
     }
   }
-
-//  fun getServicesMap(subjectAccessRequest: SubjectAccessRequest): MutableMap<String, String> {
-//    val services = subjectAccessRequest.services
-//    val serviceMap = mutableMapOf<String, String>()
-//
-//    val serviceNames =
-//      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 == 0 }
-//    val serviceUrls =
-//      services.split(',').map { splitService -> splitService.trim() }.filterIndexed { index, _ -> index % 2 != 0 }
-//
-//    for (serviceName in serviceNames) {
-//      serviceMap[serviceName] = serviceUrls[serviceNames.indexOf(serviceName)]
-//    }
-//    return serviceMap
-//  }
-
-//  fun getServiceDetails(
-//    subjectAccessRequest: SubjectAccessRequest,
-//  ): List<DpsService> {
-//    val servicesMap = getServicesMap(subjectAccessRequest)
-//
-//    val selectedServices = configOrderHelper.getDpsServices(servicesMap)
-//
-//    val serviceConfigObject = configOrderHelper.extractServicesConfig("servicesConfig.yaml")
-//
-//    for (service in selectedServices) {
-//      if (serviceConfigObject != null) {
-//        for (configService in serviceConfigObject.dpsServices) {
-//          if (configService.name == service.name) {
-//            service.businessName = configService.businessName
-//            service.orderPosition = configService.orderPosition
-//          }
-//        }
-//      }
-//    }
-//    return selectedServices
-//  }
 
   fun getSubjectName(subjectAccessRequest: SubjectAccessRequest, prisonId: String?, probationId: String?): String {
     if (prisonId !== null) {

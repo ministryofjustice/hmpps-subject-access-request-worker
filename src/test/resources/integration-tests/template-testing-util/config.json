@@ -1,0 +1,9 @@
+{
+  "outputDir": "/Users/david.llewellyn/development/hmpps-subject-access-request-worker/src/test/resources/integration-tests/expected-pdfs",
+  "services": [
+    {
+      "name": "hmpps-resettlement-passport-api",
+      "businessName": "Prepare Someone for Release"
+    }
+  ]
+}

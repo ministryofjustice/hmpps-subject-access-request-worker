@@ -127,13 +127,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     whenever(
       generatePdfService.execute(
         services = dpsServicesList,
-        nomisId = null,
-        ndeliusCaseReferenceId = "1",
-        sarCaseReferenceNumber = "1234abc",
         subjectName = "TEST, Name",
-        dateFrom = dateFromFormatted,
-        dateTo = dateToFormatted,
-        subjectAccessRequest = sampleSAR,
+        sar = sampleSAR,
       ),
     ).thenReturn(byteArrayOutputStream)
 
@@ -184,13 +179,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(
         generatePdfService.execute(
           services = dpsServicesList,
-          nomisId = null,
-          ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
-          dateTo = dateToFormatted,
-          dateFrom = dateFromFormatted,
-          sarCaseReferenceNumber = "1234abc",
-          subjectAccessRequest = sampleSAR,
+          sar = sampleSAR,
         ),
       ).thenReturn(byteArrayOutputStream)
       whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream)).thenReturn(postDocumentResponse)
@@ -258,13 +248,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(
         generatePdfService.execute(
           services = dpsServicesList,
-          nomisId = null,
-          ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
-          dateTo = dateToFormatted,
-          dateFrom = dateFromFormatted,
-          sarCaseReferenceNumber = "1234abc",
-          subjectAccessRequest = sampleSAR,
+          sar = sampleSAR,
         ),
       )
         .thenReturn(byteArrayOutputStream)
@@ -303,13 +288,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(
         generatePdfService.execute(
           services = dpsServicesList,
-          nomisId = null,
-          ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
-          dateTo = dateToFormatted,
-          dateFrom = dateFromFormatted,
-          sarCaseReferenceNumber = "1234abc",
-          subjectAccessRequest = sampleSAR,
+          sar = sampleSAR,
         ),
       ).thenReturn(byteArrayOutputStream)
       whenever(
@@ -322,11 +302,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
 
       verify(generatePdfService, times(1)).execute(
-        anyOrNull(),
-        anyOrNull(),
-        anyOrNull(),
-        anyOrNull(),
-        anyOrNull(),
         anyOrNull(),
         anyOrNull(),
         anyOrNull(),
@@ -355,13 +330,8 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(
         generatePdfService.execute(
           services = dpsServicesList,
-          nomisId = null,
-          ndeliusCaseReferenceId = "1",
           subjectName = "TEST, Name",
-          dateTo = dateToFormatted,
-          dateFrom = dateFromFormatted,
-          sarCaseReferenceNumber = "1234abc",
-          subjectAccessRequest = sampleSAR,
+          sar = sampleSAR,
         ),
       )
         .thenReturn(byteArrayOutputStream)
@@ -377,36 +347,36 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
     }
   }
 
-  @Nested
-  inner class GetServiceDetails {
-    private val sampleSAR = SubjectAccessRequest(
-      id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
-      status = Status.Pending,
-      dateFrom = dateFromFormatted,
-      dateTo = dateToFormatted,
-      sarCaseReferenceNumber = "1234abc",
-      services = "test-dps-service-2, https://test-dps-service-2.prison.service.justice.gov.uk,test-dps-service-1, https://test-dps-service-1.prison.service.justice.gov.uk",
-      nomisId = null,
-      ndeliusCaseReferenceId = "1",
-      requestedBy = "aName",
-      requestDateTime = LocalDateTime.now(),
-      claimAttempts = 0,
-    )
-
-    private val selectedDpsServices = mutableListOf(
-      DpsService(
-        name = "test-dps-service-2",
-        url = "https://test-dps-service-2.prison.service.justice.gov.uk",
-        businessName = null,
-        orderPosition = null,
-      ),
-      DpsService(
-        name = "test-dps-service-1",
-        url = "https://test-dps-service-1.prison.service.justice.gov.uk",
-        businessName = null,
-        orderPosition = null,
-      ),
-    )
+//  @Nested
+//  inner class GetServiceDetails {
+//    private val sampleSAR = SubjectAccessRequest(
+//      id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+//      status = Status.Pending,
+//      dateFrom = dateFromFormatted,
+//      dateTo = dateToFormatted,
+//      sarCaseReferenceNumber = "1234abc",
+//      services = "test-dps-service-2, https://test-dps-service-2.prison.service.justice.gov.uk,test-dps-service-1, https://test-dps-service-1.prison.service.justice.gov.uk",
+//      nomisId = null,
+//      ndeliusCaseReferenceId = "1",
+//      requestedBy = "aName",
+//      requestDateTime = LocalDateTime.now(),
+//      claimAttempts = 0,
+//    )
+//
+//    private val selectedDpsServices = mutableListOf(
+//      DpsService(
+//        name = "test-dps-service-2",
+//        url = "https://test-dps-service-2.prison.service.justice.gov.uk",
+//        businessName = null,
+//        orderPosition = null,
+//      ),
+//      DpsService(
+//        name = "test-dps-service-1",
+//        url = "https://test-dps-service-1.prison.service.justice.gov.uk",
+//        businessName = null,
+//        orderPosition = null,
+//      ),
+//    )
 
 //    private val serviceConfigObject = ServiceConfig(
 //      dpsServices =
@@ -456,5 +426,5 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 //      assertThat(detailedSelectedServices[0].orderPosition).isEqualTo(2)
 //      assertThat(detailedSelectedServices.size).isEqualTo(2)
 //    }
-  }
+//  }
 }

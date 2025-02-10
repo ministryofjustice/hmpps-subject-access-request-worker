@@ -54,13 +54,8 @@ class GeneratePdfService(
 
   fun execute(
     services: List<DpsService>,
-    nomisId: String?,
-    ndeliusCaseReferenceId: String?,
-    sarCaseReferenceNumber: String,
     subjectName: String,
-    dateFrom: LocalDate? = null,
-    dateTo: LocalDate? = null,
-    subjectAccessRequest: SubjectAccessRequest? = null,
+    sar: SubjectAccessRequest,
     pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
@@ -70,33 +65,33 @@ class GeneratePdfService(
     val document = Document(pdfDocument)
 
     log.info("Started writing to PDF")
-    telemetryClient.trackSarEvent("PDFContentGenerationStarted", subjectAccessRequest, "numServices" to services.size.toString())
+    telemetryClient.trackSarEvent("PDFContentGenerationStarted", sar, "numServices" to services.size.toString())
     addInternalContentsPage(pdfDocument, document, services)
     addExternalCoverPage(
       pdfDocument,
       document,
       subjectName,
-      nomisId,
-      ndeliusCaseReferenceId,
-      sarCaseReferenceNumber,
-      dateFrom,
-      dateTo,
+      sar.nomisId,
+      sar.ndeliusCaseReferenceId,
+      sar.sarCaseReferenceNumber,
+      sar.dateFrom,
+      sar.dateTo,
     )
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
       CustomHeaderEventHandler(
         pdfDocument,
         document,
-        getSubjectIdLine(nomisId, ndeliusCaseReferenceId),
+        getSubjectIdLine(sar.nomisId, sar.ndeliusCaseReferenceId),
         subjectName,
       ),
     )
     document.setMargins(50F, 35F, 70F, 35F)
-    addData(pdfDocument, document, services, subjectAccessRequest)
+    addData(pdfDocument, document, services, sar)
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
 
-    telemetryClient.trackSarEvent("PDFContentGenerationComplete", subjectAccessRequest, "numPages" to numPages.toString())
+    telemetryClient.trackSarEvent("PDFContentGenerationComplete", sar, "numPages" to numPages.toString())
 
     log.info("Finished writing report")
     document.close()
@@ -107,11 +102,11 @@ class GeneratePdfService(
     addInternalCoverPage(
       coverPageDocument,
       subjectName,
-      nomisId,
-      ndeliusCaseReferenceId,
-      sarCaseReferenceNumber,
-      dateFrom,
-      dateTo,
+      sar.nomisId,
+      sar.ndeliusCaseReferenceId,
+      sar.sarCaseReferenceNumber,
+      sar.dateFrom,
+      sar.dateTo,
       numPages,
     )
     coverPageDocument.close()
@@ -121,10 +116,10 @@ class GeneratePdfService(
     val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
     val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
 
-    telemetryClient.trackSarEvent("PDFMergingStarted", subjectAccessRequest)
+    telemetryClient.trackSarEvent("PDFMergingStarted", sar)
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
-    telemetryClient.trackSarEvent("PDFMergingComplete", subjectAccessRequest, "numPages" to fullDocument.numberOfPages.toString())
+    telemetryClient.trackSarEvent("PDFMergingComplete", sar, "numPages" to fullDocument.numberOfPages.toString())
 
     cover.close()
     mainContent.close()
