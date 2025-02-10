@@ -5,7 +5,7 @@
       "creationDateTime": "2024-02-27T11:57:18.083934",
       "type": "Aardvark Ordering Test 2",
       "subType": "Report to Headmaster",
-      "text": "Test",
+      "text": "Test <test.user@justice.gov.uk> Text",
       "authorUsername": "TEST_USER",
       "amendments": []
     },
