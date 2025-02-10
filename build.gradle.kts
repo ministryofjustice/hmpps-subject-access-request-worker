@@ -25,7 +25,6 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.1.1")
   implementation("commons-io:commons-io:2.18.0")
 
-
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")
   runtimeOnly("org.postgresql:postgresql:42.7.4")
