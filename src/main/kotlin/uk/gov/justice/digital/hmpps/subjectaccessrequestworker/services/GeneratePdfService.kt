@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
@@ -276,17 +277,7 @@ class GeneratePdfService(
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
-    document.add(
-      Paragraph(
-        "Report generation date: ${
-          LocalDate.now().format(
-            DateTimeFormatter.ofLocalizedDate(
-              FormatStyle.LONG,
-            ),
-          )
-        }",
-      ).setTextAlignment(TextAlignment.CENTER),
-    )
+    document.add(Paragraph("Report generation date: ${dateNow()}").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
@@ -390,6 +381,10 @@ class GeneratePdfService(
 
     return input
   }
+
+  private fun dateNow() = LocalDate.now().format(
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.UK),
+  )
 }
 
 class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {
