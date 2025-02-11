@@ -18,44 +18,41 @@ class ServiceConfigurationService(
   @Value("\${G3-api.url}") private val g3ApiUrl: String,
 ) {
 
-  fun getSelectedServices(subjectAccessRequest: SubjectAccessRequest): List<DpsService> {
-    return subjectAccessRequest.services
-      .split(",")
-      .filter { it.isNotBlank() }
-      .map { serviceName ->
-        serviceConfigurationRepository.findByServiceName(serviceName.trim())?.let {
-          DpsService(
-            name = it.serviceName,
-            businessName = it.label,
-            url = resolveUrlPlaceHolder(it),
-            orderPosition = it.order,
-            content = null,
-          )
-        } ?: throw serviceNameNotFoundException(
-          subjectAccessRequest,
-          serviceName,
+  fun getSelectedServices(subjectAccessRequest: SubjectAccessRequest): List<DpsService> = subjectAccessRequest.services
+    .split(",")
+    .filter { it.isNotBlank() }
+    .map { serviceName ->
+      serviceConfigurationRepository.findByServiceName(serviceName.trim())?.let {
+        DpsService(
+          name = it.serviceName,
+          businessName = it.label,
+          url = resolveUrlPlaceHolder(it),
+          orderPosition = it.order,
+          content = null,
         )
-      }.sortedBy { it.orderPosition }
-  }
+      } ?: throw serviceNameNotFoundException(
+        subjectAccessRequest,
+        serviceName,
+      )
+    }.sortedBy { it.orderPosition }
 
-  private fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration) =
-    when (serviceConfiguration.serviceName) {
+  private fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration): String {
+    val apiUrl = when (serviceConfiguration.serviceName) {
       "G1" -> g1ApiUrl
       "G2" -> g2ApiUrl
       "G3" -> g3ApiUrl
       else -> serviceConfiguration.url
     }
+    return apiUrl
+  }
 
   private fun serviceNameNotFoundException(
     subjectAccessRequest: SubjectAccessRequest,
     serviceName: String,
-  ): SubjectAccessRequestException {
-    throw FatalSubjectAccessRequestException(
-      message = "service with name '$serviceName' not found",
-      event = ProcessingEvent.GET_SERVICE_CONFIGURATION,
-      subjectAccessRequest = subjectAccessRequest,
-      params = mapOf("serviceName" to serviceName),
-    )
-  }
-
+  ): SubjectAccessRequestException = throw FatalSubjectAccessRequestException(
+    message = "service with name '$serviceName' not found",
+    event = ProcessingEvent.GET_SERVICE_CONFIGURATION,
+    subjectAccessRequest = subjectAccessRequest,
+    params = mapOf("serviceName" to serviceName),
+  )
 }

@@ -75,7 +75,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
         .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
         .withMultipartRequestBody(
           aMultipart()
-            .withName("file")
+            .withName("file"),
         )
         .willReturn(
           aResponse()
@@ -288,7 +288,10 @@ class DocumentApiMockServer : WireMockServer(8084) {
   }
 }
 
-class DocumentApiExtension : BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+class DocumentApiExtension :
+  BeforeAllCallback,
+  AfterAllCallback,
+  BeforeEachCallback {
   companion object {
     @JvmField
     val documentApi = DocumentApiMockServer()

@@ -10,11 +10,7 @@ class DpsService(
   var businessName: String? = null,
   var content: Any? = null,
 ) {
-  override fun equals(other: Any?): Boolean {
-    return EqualsBuilder.reflectionEquals(this, other)
-  }
+  override fun equals(other: Any?): Boolean = EqualsBuilder.reflectionEquals(this, other)
 
-  override fun hashCode(): Int {
-    return HashCodeBuilder.reflectionHashCode(this)
-  }
+  override fun hashCode(): Int = HashCodeBuilder.reflectionHashCode(this)
 }

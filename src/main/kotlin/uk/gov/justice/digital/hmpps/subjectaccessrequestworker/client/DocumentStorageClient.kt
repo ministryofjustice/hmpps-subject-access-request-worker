@@ -147,18 +147,16 @@ class DocumentStorageClient(
   fun multipartBody(
     subjectAccessRequest: SubjectAccessRequest,
     contentsAsResource: ByteArrayResource,
-  ): MultiValueMap<String, HttpEntity<*>> {
-    return MultipartBodyBuilder().apply {
-      part("file", contentsAsResource)
-      part(
-        "metadata",
-        listOf<Pair<String, Any?>>(
-          Pair("sarCaseReferenceNumber", subjectAccessRequest.sarCaseReferenceNumber),
-          Pair("requestedDate", subjectAccessRequest.requestDateTime.toString()),
-        ),
-      )
-    }.build()
-  }
+  ): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
+    part("file", contentsAsResource)
+    part(
+      "metadata",
+      listOf<Pair<String, Any?>>(
+        Pair("sarCaseReferenceNumber", subjectAccessRequest.sarCaseReferenceNumber),
+        Pair("requestedDate", subjectAccessRequest.requestDateTime.toString()),
+      ),
+    )
+  }.build()
 
   data class PostDocumentResponse(
     val documentUuid: String? = null,

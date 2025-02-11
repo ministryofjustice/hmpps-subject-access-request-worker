@@ -238,9 +238,7 @@ class ServiceConfigurationServiceTest {
     val expectedServiceConfiguration: ServiceConfiguration? = null,
     val expectedResult: DpsService,
   ) {
-    override fun toString(): String {
-      return this.description
-    }
+    override fun toString(): String = this.description
   }
 
   data class SensitiveServiceTestCase(

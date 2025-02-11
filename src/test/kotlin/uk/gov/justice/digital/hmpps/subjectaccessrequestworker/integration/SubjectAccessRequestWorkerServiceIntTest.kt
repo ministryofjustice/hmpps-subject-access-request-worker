@@ -5,7 +5,6 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
-import org.apache.commons.io.IOUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
@@ -93,8 +92,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
 
   fun `Prison API returns Prisoner name for`(nomisId: String) = prisonApi.stubGetOffenderDetails(nomisId)
 
-  fun `Document API upload request is successful for`(subjectAccessRequestId: String) =
-    documentApi.stubUploadFileSuccess(subjectAccessRequestId)
+  fun `Document API upload request is successful for`(subjectAccessRequestId: String) = documentApi.stubUploadFileSuccess(subjectAccessRequestId)
 
   fun `the PDF uploaded to the Document store contains the expected content`(testCase: TestCase) {
     val expected = getPreGeneratedPdfDocument(testCase.expectedPdf)
@@ -126,20 +124,14 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
     return pdfDocumentFromInputStream(inputStream!!)
   }
 
-  private fun getUploadedPdfDocument(): PdfDocument {
-    return pdfDocumentFromInputStream(ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()))
-  }
+  private fun getUploadedPdfDocument(): PdfDocument = pdfDocumentFromInputStream(ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()))
 
-  private fun pdfDocumentFromInputStream(inputStream: InputStream): PdfDocument {
-    return PdfDocument(PdfReader(inputStream))
-  }
+  private fun pdfDocumentFromInputStream(inputStream: InputStream): PdfDocument = PdfDocument(PdfReader(inputStream))
 
-  private fun getSarResponseStub(filename: String): String {
-    return SubjectAccessRequestWorkerServiceIntTest.javaClass
-      .getResourceAsStream("$SAR_STUB_RESPONSES_DIR/$filename").use { input ->
-        InputStreamReader(input).readText()
-      }
-  }
+  private fun getSarResponseStub(filename: String): String = SubjectAccessRequestWorkerServiceIntTest.javaClass
+    .getResourceAsStream("$SAR_STUB_RESPONSES_DIR/$filename").use { input ->
+      InputStreamReader(input).readText()
+    }
 
   companion object {
     const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"

@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.tes
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.microsoft.applicationinsights.TelemetryClient
-import com.nimbusds.jose.shaded.gson.Gson
-import com.nimbusds.jose.shaded.gson.GsonBuilder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService

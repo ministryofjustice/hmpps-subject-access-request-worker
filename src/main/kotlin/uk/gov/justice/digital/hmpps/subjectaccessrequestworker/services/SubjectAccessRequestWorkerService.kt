@@ -190,7 +190,7 @@ class SubjectAccessRequestWorkerService(
     val pdfStream = generatePdfService.execute(
       services = dpsServiceList,
       subjectName = subjectName,
-      sar = subjectAccessRequest
+      sar = subjectAccessRequest,
     )
 
     log.info("${subjectAccessRequest.id} created PDF")
