@@ -1,0 +1,70 @@
+{
+  "prn": "A1234AA",
+  "content": [
+    {
+      "allocatedAt": "2021-04-21T14:46:59.282213",
+      "allocationExpiredAt": "2022-10-03T14:07:33.620725",
+      "prisonCode": "MDI",
+      "allocationType": "Automatic",
+      "allocationReason": "Automatic",
+      "deallocationReason": "Keyworker status changed",
+      "keyworker": {
+        "firstName": "ANDY",
+        "lastName": "MARKE"
+      },
+      "activeAllocation": false
+    },
+    {
+      "allocatedAt": "2021-01-13T13:44:34.219412",
+      "allocationExpiredAt": "2021-04-21T14:46:49.008134",
+      "prisonCode": "MDI",
+      "allocationType": "Automatic",
+      "allocationReason": "Automatic",
+      "deallocationReason": "Keyworker status changed",
+      "keyworker": {
+        "firstName": "JAMIE",
+        "lastName": "DRAPER"
+      },
+      "activeAllocation": false
+    },
+    {
+      "allocatedAt": "2019-12-03T11:00:58.21264",
+      "allocationExpiredAt": "2020-12-02T16:31:01",
+      "prisonCode": "MDI",
+      "allocationType": "Manual",
+      "allocationReason": "Manual",
+      "deallocationReason": "Released",
+      "keyworker": {
+        "firstName": "JAMIE",
+        "lastName": "DRAPER"
+      },
+      "activeAllocation": false
+    },
+    {
+      "allocatedAt": "2019-12-03T11:00:58.113357",
+      "allocationExpiredAt": "2019-12-03T11:00:58.212619",
+      "prisonCode": "MDI",
+      "allocationType": "Manual",
+      "allocationReason": "Manual",
+      "deallocationReason": "Overridden",
+      "keyworker": {
+        "firstName": "JAMIE",
+        "lastName": "DRAPER"
+      },
+      "activeAllocation": false
+    },
+    {
+      "allocatedAt": "2019-12-03T11:00:37.131683",
+      "allocationExpiredAt": "2019-12-03T11:00:58.113341",
+      "prisonCode": "MDI",
+      "allocationType": "Automatic",
+      "allocationReason": "Automatic",
+      "deallocationReason": "Overridden",
+      "keyworker": {
+        "firstName": "ANDY",
+        "lastName": "MARKE"
+      },
+      "activeAllocation": false
+    }
+  ]
+}

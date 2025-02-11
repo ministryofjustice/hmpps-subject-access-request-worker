@@ -4,7 +4,7 @@ spring:
     username: admin
     password: admin_password
   flyway:
-    locations: classpath:db/sar,db/sar/dev/data
+    locations: classpath:db/sar,db/sar_{vendor},db/dev/data/sar
     enabled: true
     url: jdbc:postgresql://localhost:5432/sar-db?sslmode=prefer
     user: admin

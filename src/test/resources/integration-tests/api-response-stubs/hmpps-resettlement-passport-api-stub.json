@@ -1,0 +1,790 @@
+{
+  "content": {
+    "prisoner": {
+      "id": 3,
+      "nomsId": "A8731DY",
+      "creationDate": "2023-11-17T14:49:58.308566",
+      "crn": "U328968",
+      "prisonId": "MDI"
+    },
+    "assessment": {
+      "id": 518,
+      "prisonerId": 3,
+      "creationDate": "2024-03-19T15:32:57.283459",
+      "assessmentDate": "2023-01-08T00:00:00",
+      "isBankAccountRequired": false,
+      "isIdRequired": true,
+      "idDocuments": [
+        {
+          "id": 8,
+          "name": "Deed poll certificate"
+        },
+        {
+          "id": 2,
+          "name": "Marriage certificate"
+        },
+        {
+          "id": 7,
+          "name": "Biometric residence permit"
+        }
+      ],
+      "isDeleted": false,
+      "deletionDate": null
+    },
+    "bankApplication": null,
+    "deliusContact": [
+      {
+        "caseNoteId": "db-2",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2023-12-13T12:33:30.514175",
+        "occurenceDateTime": "2023-12-13T12:33:30.514175",
+        "createdBy": "Test User",
+        "text": "Resettlement status set to: Support not required. This is a case note from Delius"
+      },
+      {
+        "caseNoteId": "db-3",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2023-12-13T12:44:47.497336",
+        "occurenceDateTime": "2023-12-13T12:44:47.497336",
+        "createdBy": "Test User",
+        "text": "Resettlement status set to: Done. Delius case note test."
+      },
+      {
+        "caseNoteId": "db-4",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2023-12-13T15:06:01.373261",
+        "occurenceDateTime": "2023-12-13T15:06:01.373261",
+        "createdBy": "Test User",
+        "text": "Resettlement status set to: In progress. Delius user setting to In Progress.\r\n\r\ncase note here...."
+      },
+      {
+        "caseNoteId": "db-5",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2023-12-13T16:10:15.982503",
+        "occurenceDateTime": "2023-12-13T16:10:15.982503",
+        "createdBy": "Test User",
+        "text": "Resettlement status set to: Done. line1\r\nline2\r\nline3"
+      },
+      {
+        "caseNoteId": "db-1",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2023-12-05T17:44:30.091",
+        "occurenceDateTime": "2023-12-05T17:44:30.091",
+        "createdBy": "Test User",
+        "text": "This is some case note text."
+      },
+      {
+        "caseNoteId": "db-35",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-02-07T21:11:54.313953",
+        "occurenceDateTime": "2024-02-07T21:11:54.313953",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-36",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-02-07T21:11:54.716011",
+        "occurenceDateTime": "2024-02-07T21:11:54.716011",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-37",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-02-07T21:11:54.998165",
+        "occurenceDateTime": "2024-02-07T21:11:54.998165",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-38",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-02-07T21:11:55.187096",
+        "occurenceDateTime": "2024-02-07T21:11:55.187096",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-39",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-02-07T21:11:55.353005",
+        "occurenceDateTime": "2024-02-07T21:11:55.353005",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-40",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-02-07T21:11:55.550033",
+        "occurenceDateTime": "2024-02-07T21:11:55.550033",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-41",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-02-07T21:11:55.727722",
+        "occurenceDateTime": "2024-02-07T21:11:55.727722",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-46",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-02-12T16:02:38.118548",
+        "occurenceDateTime": "2024-02-12T16:02:38.118548",
+        "createdBy": "Test User",
+        "text": "case"
+      },
+      {
+        "caseNoteId": "db-47",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-02-12T16:02:38.386746",
+        "occurenceDateTime": "2024-02-12T16:02:38.386746",
+        "createdBy": "Test User",
+        "text": "case notes"
+      },
+      {
+        "caseNoteId": "db-48",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-02-12T16:02:38.588665",
+        "occurenceDateTime": "2024-02-12T16:02:38.588665",
+        "createdBy": "Test User",
+        "text": "case"
+      },
+      {
+        "caseNoteId": "db-49",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-02-12T16:02:38.772958",
+        "occurenceDateTime": "2024-02-12T16:02:38.772958",
+        "createdBy": "Test User",
+        "text": "case"
+      },
+      {
+        "caseNoteId": "db-50",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-02-12T16:02:38.931875",
+        "occurenceDateTime": "2024-02-12T16:02:38.931875",
+        "createdBy": "Test User",
+        "text": "case"
+      },
+      {
+        "caseNoteId": "db-51",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-02-12T16:02:39.090404",
+        "occurenceDateTime": "2024-02-12T16:02:39.090404",
+        "createdBy": "Test User",
+        "text": "case"
+      },
+      {
+        "caseNoteId": "db-52",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-02-12T16:02:39.273908",
+        "occurenceDateTime": "2024-02-12T16:02:39.273908",
+        "createdBy": "Test User",
+        "text": "case"
+      },
+      {
+        "caseNoteId": "db-67",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-02-14T14:10:55.377441",
+        "occurenceDateTime": "2024-02-14T14:10:55.377441",
+        "createdBy": "Test User",
+        "text": "This is my case note for Accommodation."
+      },
+      {
+        "caseNoteId": "db-68",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-02-14T14:10:55.913664",
+        "occurenceDateTime": "2024-02-14T14:10:55.913664",
+        "createdBy": "Test User",
+        "text": "Show and tell - Test case note for ATB assessment."
+      },
+      {
+        "caseNoteId": "db-69",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-02-14T14:10:56.246139",
+        "occurenceDateTime": "2024-02-14T14:10:56.246139",
+        "createdBy": "Test User",
+        "text": "Show and tell - Test case note for CFC assessment."
+      },
+      {
+        "caseNoteId": "db-70",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-02-14T14:10:56.452904",
+        "occurenceDateTime": "2024-02-14T14:10:56.452904",
+        "createdBy": "Test User",
+        "text": "Show and tell - Test case note for Drugs and alcohol assessment."
+      },
+      {
+        "caseNoteId": "db-71",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-02-14T14:10:56.67009",
+        "occurenceDateTime": "2024-02-14T14:10:56.67009",
+        "createdBy": "Test User",
+        "text": "Show and tell - Test case note for ESW assessment."
+      },
+      {
+        "caseNoteId": "db-185",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-15T17:04:18.011997",
+        "occurenceDateTime": "2024-03-15T17:04:18.011997",
+        "createdBy": "Test User",
+        "text": "oy8"
+      },
+      {
+        "caseNoteId": "db-186",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-15T17:04:18.182299",
+        "occurenceDateTime": "2024-03-15T17:04:18.182299",
+        "createdBy": "Test User",
+        "text": "upo;j"
+      },
+      {
+        "caseNoteId": "db-187",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-15T17:04:18.343083",
+        "occurenceDateTime": "2024-03-15T17:04:18.343083",
+        "createdBy": "Test User",
+        "text": "ugik"
+      },
+      {
+        "caseNoteId": "db-188",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-15T17:04:18.542375",
+        "occurenceDateTime": "2024-03-15T17:04:18.542375",
+        "createdBy": "Test User",
+        "text": "guyj"
+      },
+      {
+        "caseNoteId": "db-189",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-15T17:04:18.691228",
+        "occurenceDateTime": "2024-03-15T17:04:18.691228",
+        "createdBy": "Test User",
+        "text": "ry"
+      },
+      {
+        "caseNoteId": "db-72",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-02-14T14:10:56.846985",
+        "occurenceDateTime": "2024-02-14T14:10:56.846985",
+        "createdBy": "Test User",
+        "text": "Show and tell - Test case note for Finance and ID assessment."
+      },
+      {
+        "caseNoteId": "db-73",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-02-14T14:10:57.010553",
+        "occurenceDateTime": "2024-02-14T14:10:57.010553",
+        "createdBy": "Test User",
+        "text": "Show and tell - Test case note for Health assessment."
+      },
+      {
+        "caseNoteId": "db-91",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-02-22T11:44:17.039212",
+        "occurenceDateTime": "2024-02-22T11:44:17.039212",
+        "createdBy": "Test User",
+        "text": "will try again"
+      },
+      {
+        "caseNoteId": "db-92",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-02-22T11:44:17.238213",
+        "occurenceDateTime": "2024-02-22T11:44:17.238213",
+        "createdBy": "Test User",
+        "text": "Testing"
+      },
+      {
+        "caseNoteId": "db-93",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-02-22T11:44:17.433536",
+        "occurenceDateTime": "2024-02-22T11:44:17.433536",
+        "createdBy": "Test User",
+        "text": "Testing"
+      },
+      {
+        "caseNoteId": "db-94",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-02-22T11:44:17.60211",
+        "occurenceDateTime": "2024-02-22T11:44:17.60211",
+        "createdBy": "Test User",
+        "text": "Testing"
+      },
+      {
+        "caseNoteId": "db-95",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-02-22T11:44:17.777306",
+        "occurenceDateTime": "2024-02-22T11:44:17.777306",
+        "createdBy": "Test User",
+        "text": "Testing"
+      },
+      {
+        "caseNoteId": "db-96",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-02-22T11:44:17.964861",
+        "occurenceDateTime": "2024-02-22T11:44:17.964861",
+        "createdBy": "Test User",
+        "text": "Testing"
+      },
+      {
+        "caseNoteId": "db-97",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-02-22T11:44:18.15237",
+        "occurenceDateTime": "2024-02-22T11:44:18.15237",
+        "createdBy": "Test User",
+        "text": "Testing"
+      },
+      {
+        "caseNoteId": "db-124",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-01T17:17:54.859729",
+        "occurenceDateTime": "2024-03-01T17:17:54.859729",
+        "createdBy": "Test User",
+        "text": "test1"
+      },
+      {
+        "caseNoteId": "db-125",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-01T17:17:55.170259",
+        "occurenceDateTime": "2024-03-01T17:17:55.170259",
+        "createdBy": "Test User",
+        "text": "test2"
+      },
+      {
+        "caseNoteId": "db-126",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-01T17:17:55.410639",
+        "occurenceDateTime": "2024-03-01T17:17:55.410639",
+        "createdBy": "Test User",
+        "text": "test3"
+      },
+      {
+        "caseNoteId": "db-127",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-01T17:17:55.602014",
+        "occurenceDateTime": "2024-03-01T17:17:55.602014",
+        "createdBy": "Test User",
+        "text": "test4"
+      },
+      {
+        "caseNoteId": "db-128",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-01T17:17:55.789266",
+        "occurenceDateTime": "2024-03-01T17:17:55.789266",
+        "createdBy": "Test User",
+        "text": "test5"
+      },
+      {
+        "caseNoteId": "db-129",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-01T17:17:55.955733",
+        "occurenceDateTime": "2024-03-01T17:17:55.955733",
+        "createdBy": "Test User",
+        "text": "test6"
+      },
+      {
+        "caseNoteId": "db-130",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-01T17:17:56.104653",
+        "occurenceDateTime": "2024-03-01T17:17:56.104653",
+        "createdBy": "Test User",
+        "text": "test7"
+      },
+      {
+        "caseNoteId": "db-162",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-12T11:31:06.915366",
+        "occurenceDateTime": "2024-03-12T11:31:06.915366",
+        "createdBy": "Test User",
+        "text": "N/A"
+      },
+      {
+        "caseNoteId": "db-163",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-12T11:31:07.197449",
+        "occurenceDateTime": "2024-03-12T11:31:07.197449",
+        "createdBy": "Test User",
+        "text": "testing notes"
+      },
+      {
+        "caseNoteId": "db-164",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-12T11:31:07.421199",
+        "occurenceDateTime": "2024-03-12T11:31:07.421199",
+        "createdBy": "Test User",
+        "text": "testing notes"
+      },
+      {
+        "caseNoteId": "db-165",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-12T11:31:07.603067",
+        "occurenceDateTime": "2024-03-12T11:31:07.603067",
+        "createdBy": "Test User",
+        "text": "testing notes"
+      },
+      {
+        "caseNoteId": "db-166",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-12T11:31:07.756943",
+        "occurenceDateTime": "2024-03-12T11:31:07.756943",
+        "createdBy": "Test User",
+        "text": "N/A"
+      },
+      {
+        "caseNoteId": "db-167",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-12T11:31:07.957313",
+        "occurenceDateTime": "2024-03-12T11:31:07.957313",
+        "createdBy": "Test User",
+        "text": "testing"
+      },
+      {
+        "caseNoteId": "db-168",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-12T11:31:08.117843",
+        "occurenceDateTime": "2024-03-12T11:31:08.117843",
+        "createdBy": "Test User",
+        "text": "N/A"
+      },
+      {
+        "caseNoteId": "db-176",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-13T16:04:03.537441",
+        "occurenceDateTime": "2024-03-13T16:04:03.537441",
+        "createdBy": "Test User",
+        "text": "iyh"
+      },
+      {
+        "caseNoteId": "db-177",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-13T16:04:03.825963",
+        "occurenceDateTime": "2024-03-13T16:04:03.825963",
+        "createdBy": "Test User",
+        "text": "hj"
+      },
+      {
+        "caseNoteId": "db-178",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-13T16:04:04.020823",
+        "occurenceDateTime": "2024-03-13T16:04:04.020823",
+        "createdBy": "Test User",
+        "text": "gjb"
+      },
+      {
+        "caseNoteId": "db-179",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-13T16:04:04.210283",
+        "occurenceDateTime": "2024-03-13T16:04:04.210283",
+        "createdBy": "Test User",
+        "text": "req"
+      },
+      {
+        "caseNoteId": "db-180",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-13T16:04:04.378537",
+        "occurenceDateTime": "2024-03-13T16:04:04.378537",
+        "createdBy": "Test User",
+        "text": "h"
+      },
+      {
+        "caseNoteId": "db-181",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-13T16:04:04.549518",
+        "occurenceDateTime": "2024-03-13T16:04:04.549518",
+        "createdBy": "Test User",
+        "text": "hkn"
+      },
+      {
+        "caseNoteId": "db-182",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-13T16:04:04.720618",
+        "occurenceDateTime": "2024-03-13T16:04:04.720618",
+        "createdBy": "Test User",
+        "text": "jbm"
+      },
+      {
+        "caseNoteId": "db-183",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-15T17:04:16.464017",
+        "occurenceDateTime": "2024-03-15T17:04:16.464017",
+        "createdBy": "Test User",
+        "text": "t\r\ne\r\nssss\r\nt"
+      },
+      {
+        "caseNoteId": "db-184",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-15T17:04:17.403392",
+        "occurenceDateTime": "2024-03-15T17:04:17.403392",
+        "createdBy": "Test User",
+        "text": "ou"
+      },
+      {
+        "caseNoteId": "db-204",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-18T13:37:53.377806",
+        "occurenceDateTime": "2024-03-18T13:37:53.377806",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-205",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-18T13:37:53.635811",
+        "occurenceDateTime": "2024-03-18T13:37:53.635811",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-206",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-18T13:37:53.918781",
+        "occurenceDateTime": "2024-03-18T13:37:53.918781",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-207",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-18T13:37:54.100563",
+        "occurenceDateTime": "2024-03-18T13:37:54.100563",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-208",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-18T13:37:54.276376",
+        "occurenceDateTime": "2024-03-18T13:37:54.276376",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-209",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-18T13:37:54.452967",
+        "occurenceDateTime": "2024-03-18T13:37:54.452967",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-210",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-18T13:37:54.620649",
+        "occurenceDateTime": "2024-03-18T13:37:54.620649",
+        "createdBy": "Test User",
+        "text": "a note"
+      },
+      {
+        "caseNoteId": "db-211",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-19T15:06:07.729945",
+        "occurenceDateTime": "2024-03-19T15:06:07.729945",
+        "createdBy": "Test User",
+        "text": "y"
+      },
+      {
+        "caseNoteId": "db-212",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-19T15:06:07.97572",
+        "occurenceDateTime": "2024-03-19T15:06:07.97572",
+        "createdBy": "Test User",
+        "text": "ui"
+      },
+      {
+        "caseNoteId": "db-213",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-19T15:06:08.212556",
+        "occurenceDateTime": "2024-03-19T15:06:08.212556",
+        "createdBy": "Test User",
+        "text": "k"
+      },
+      {
+        "caseNoteId": "db-214",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-19T15:06:08.413357",
+        "occurenceDateTime": "2024-03-19T15:06:08.413357",
+        "createdBy": "Test User",
+        "text": "y"
+      },
+      {
+        "caseNoteId": "db-215",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-19T15:06:08.575172",
+        "occurenceDateTime": "2024-03-19T15:06:08.575172",
+        "createdBy": "Test User",
+        "text": "jol\r\nte\r\nst\r\nft"
+      },
+      {
+        "caseNoteId": "db-216",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-19T15:06:08.74087",
+        "occurenceDateTime": "2024-03-19T15:06:08.74087",
+        "createdBy": "Test User",
+        "text": "iu"
+      },
+      {
+        "caseNoteId": "db-217",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-19T15:06:08.907361",
+        "occurenceDateTime": "2024-03-19T15:06:08.907361",
+        "createdBy": "Test User",
+        "text": "j"
+      },
+      {
+        "caseNoteId": "db-225",
+        "pathway": "ACCOMMODATION",
+        "creationDateTime": "2024-03-21T10:44:52.414203",
+        "occurenceDateTime": "2024-03-21T10:44:52.414203",
+        "createdBy": "Test User",
+        "text": "ui"
+      },
+      {
+        "caseNoteId": "db-226",
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "creationDateTime": "2024-03-21T10:44:52.79264",
+        "occurenceDateTime": "2024-03-21T10:44:52.79264",
+        "createdBy": "Test User",
+        "text": "l"
+      },
+      {
+        "caseNoteId": "db-227",
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "creationDateTime": "2024-03-21T10:44:53.032651",
+        "occurenceDateTime": "2024-03-21T10:44:53.032651",
+        "createdBy": "Test User",
+        "text": "o"
+      },
+      {
+        "caseNoteId": "db-228",
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "creationDateTime": "2024-03-21T10:44:53.21548",
+        "occurenceDateTime": "2024-03-21T10:44:53.21548",
+        "createdBy": "Test User",
+        "text": "u8"
+      },
+      {
+        "caseNoteId": "db-229",
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "creationDateTime": "2024-03-21T10:44:53.384284",
+        "occurenceDateTime": "2024-03-21T10:44:53.384284",
+        "createdBy": "Test User",
+        "text": "nk"
+      },
+      {
+        "caseNoteId": "db-230",
+        "pathway": "FINANCE_AND_ID",
+        "creationDateTime": "2024-03-21T10:44:53.539268",
+        "occurenceDateTime": "2024-03-21T10:44:53.539268",
+        "createdBy": "Test User",
+        "text": "hik"
+      },
+      {
+        "caseNoteId": "db-231",
+        "pathway": "HEALTH",
+        "creationDateTime": "2024-03-21T10:44:53.702249",
+        "occurenceDateTime": "2024-03-21T10:44:53.702249",
+        "createdBy": "Test User",
+        "text": "yu"
+      }
+    ],
+    "idApplication": {
+      "id": 2159,
+      "prisonerId": 3,
+      "idType": {
+        "id": 7,
+        "name": "Biometric residence permit"
+      },
+      "creationDate": "2024-07-23T11:49:07.136436",
+      "applicationSubmittedDate": "2023-12-01T00:00:00",
+      "isPriorityApplication": false,
+      "costOfApplication": 1,
+      "refundAmount": 4564564,
+      "haveGro": null,
+      "isUkNationalBornOverseas": null,
+      "countryBornIn": null,
+      "caseNumber": null,
+      "courtDetails": null,
+      "driversLicenceType": null,
+      "driversLicenceApplicationMadeAt": null,
+      "isAddedToPersonalItems": null,
+      "addedToPersonalItemsDate": null,
+      "status": "Rejected",
+      "statusUpdateDate": "2024-10-30T10:34:44.493661",
+      "isDeleted": false,
+      "deletionDate": null,
+      "dateIdReceived": null
+    },
+    "statusSummary": [
+      {
+        "type": "BCST2",
+        "pathwayStatus": [
+          {
+            "pathway": "ACCOMMODATION",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "DRUGS_AND_ALCOHOL",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "EDUCATION_SKILLS_AND_WORK",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "FINANCE_AND_ID",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "HEALTH",
+            "assessmentStatus": "NOT_STARTED"
+          }
+        ]
+      },
+      {
+        "type": "RESETTLEMENT_PLAN",
+        "pathwayStatus": [
+          {
+            "pathway": "ACCOMMODATION",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "DRUGS_AND_ALCOHOL",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "EDUCATION_SKILLS_AND_WORK",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "FINANCE_AND_ID",
+            "assessmentStatus": "NOT_STARTED"
+          },
+          {
+            "pathway": "HEALTH",
+            "assessmentStatus": "NOT_STARTED"
+          }
+        ]
+      }
+    ],
+    "resettlementAssessment": []
+  }
+}

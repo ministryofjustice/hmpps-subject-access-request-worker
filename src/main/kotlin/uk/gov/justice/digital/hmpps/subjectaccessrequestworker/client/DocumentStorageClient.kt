@@ -3,9 +3,11 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.HttpEntity
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
+import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
@@ -48,18 +50,7 @@ class DocumentStorageClient(
     try {
       return documentStorageWebClient.post().uri("$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId")
         .header("Service-Name", "DPS-Subject-Access-Requests")
-        .bodyValue(
-          MultipartBodyBuilder().apply {
-            part("file", contentsAsResource)
-            part(
-              "metadata",
-              listOf<Pair<String, Any?>>(
-                Pair("sarCaseReferenceNumber", subjectAccessRequest.sarCaseReferenceNumber),
-                Pair("requestedDate", subjectAccessRequest.requestDateTime.toString()),
-              ),
-            )
-          }.build(),
-        )
+        .bodyValue(multipartBody(subjectAccessRequest, contentsAsResource))
         .retrieve()
         .onStatus(
           webClientRetriesSpec.is409Conflict(),
@@ -151,6 +142,22 @@ class DocumentStorageClient(
       "documentFileHash" to postDocumentResponse.fileHash.toString(),
     )
     return postDocumentResponse
+  }
+
+  fun multipartBody(
+    subjectAccessRequest: SubjectAccessRequest,
+    contentsAsResource: ByteArrayResource,
+  ): MultiValueMap<String, HttpEntity<*>> {
+    return MultipartBodyBuilder().apply {
+      part("file", contentsAsResource)
+      part(
+        "metadata",
+        listOf<Pair<String, Any?>>(
+          Pair("sarCaseReferenceNumber", subjectAccessRequest.sarCaseReferenceNumber),
+          Pair("requestedDate", subjectAccessRequest.requestDateTime.toString()),
+        ),
+      )
+    }.build()
   }
 
   data class PostDocumentResponse(
