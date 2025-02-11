@@ -37,7 +37,6 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
