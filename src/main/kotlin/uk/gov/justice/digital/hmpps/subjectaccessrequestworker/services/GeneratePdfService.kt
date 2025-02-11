@@ -50,7 +50,7 @@ class GeneratePdfService(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     var dateConversionHelper = DateConversionHelper()
-    val reportDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+    val reportDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   }
 
   fun execute(
@@ -335,10 +335,10 @@ class GeneratePdfService(
   }
 
   fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
-    val formattedDateTo = dateTo!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+    val formattedDateTo = dateTo!!.format(reportDateFormat)
     val formattedDateFrom: String
     if (dateFrom != null) {
-      formattedDateFrom = dateFrom.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+      formattedDateFrom = dateFrom.format(reportDateFormat)
     } else {
       formattedDateFrom = "Start of record"
     }
