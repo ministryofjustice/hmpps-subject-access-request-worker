@@ -51,6 +51,7 @@ class GeneratePdfService(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     var dateConversionHelper = DateConversionHelper()
+    val reportDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
   }
 
   fun execute(
@@ -382,9 +383,7 @@ class GeneratePdfService(
     return input
   }
 
-  private fun dateNow() = LocalDate.now().format(
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.UK),
-  )
+  private fun dateNow() = LocalDate.now().format(reportDateFormat)
 }
 
 class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {
