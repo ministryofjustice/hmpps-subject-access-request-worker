@@ -125,7 +125,7 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Has considered checks</td>")
     assertThat(renderedStyleTemplate).contains("<tr><td>First night from</td><td>15:00</td></tr>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-15\">Friday from</td>")
-    assertThat(renderedStyleTemplate).contains("<td>Decision maker</td><td>Louise Norris</td>")
+    assertThat(renderedStyleTemplate).contains("<td>Decision maker</td><td>Test User</td>")
     assertThat(renderedStyleTemplate).contains("<td>Offence committed before Feb 2015</td><td>No</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Telephone</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Curfew address line 1</td>")
@@ -674,7 +674,7 @@ class TemplateRenderServiceTest {
             "approval" to mapOf(
               "release" to mapOf(
                 "decision" to "Yes",
-                "decisionMaker" to "Louise Norris",
+                "decisionMaker" to "Test User",
                 "reasonForDecision" to "",
               ),
             ),

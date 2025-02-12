@@ -291,7 +291,7 @@
           },
           "reporting": {
             "reportingInstructions": {
-              "name": "Jeremy Fisher",
+              "name": "Test User",
               "postcode": "SW1H 9AJ",
               "telephone": "0123456789",
               "townOrCity": "London",
@@ -470,7 +470,7 @@
           },
           "reporting": {
             "reportingInstructions": {
-              "name": "Jeremy Fisher",
+              "name": "Test User",
               "postcode": "SW1H 9AJ",
               "telephone": "0123456789",
               "townOrCity": "London",
@@ -3525,31 +3525,31 @@
           "bookingId": "1222125",
           "notifications": [
             {
-              "email": "andrew.lee@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW",
               "personalisation": {
                 "date": "Thursday 6th February",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Test Offender"
               }
             },
             {
-              "email": "louise.norris@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW_COPY",
               "personalisation": {
                 "date": "Thursday 6th February",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Test Offender"
               }
             }
           ],
@@ -3574,19 +3574,19 @@
           "bookingId": "1222125",
           "transitionType": "caToRo",
           "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
             "lduCode": "N07NPSA",
             "deliusId": "N07A338",
             "teamCode": "N07T01",
-            "username": "ALEELICENCES",
+            "username": "USERLICENCES",
             "nomsNumber": "A8971EA",
             "isAllocated": true,
             "organisation": "N07 Division (N07NPSA)",
             "lduDescription": "N07 Division",
             "staffIdentifier": 2500078225,
             "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
+            "functionalMailbox": "test.user@digital.justice.gov.uk",
             "isUnlinkedAccount": false,
             "probationAreaCode": "N07",
             "probationAreaDescription": "London"
@@ -4192,31 +4192,31 @@
           "bookingId": "1222125",
           "notifications": [
             {
-              "email": "andrew.lee@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW",
               "personalisation": {
                 "date": "Friday 31st January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Test Offender"
               }
             },
             {
-              "email": "louise.norris@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW_COPY",
               "personalisation": {
                 "date": "Friday 31st January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             }
           ],
@@ -4241,19 +4241,19 @@
           "bookingId": "1222125",
           "transitionType": "caToRo",
           "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
             "lduCode": "N07NPSA",
             "deliusId": "N07A338",
             "teamCode": "N07T01",
-            "username": "ALEELICENCES",
+            "username": "TESTLICENCES",
             "nomsNumber": "A8971EA",
             "isAllocated": true,
             "organisation": "N07 Division (N07NPSA)",
             "lduDescription": "N07 Division",
             "staffIdentifier": 2500078225,
             "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
+            "functionalMailbox": "test.user@digital.justice.gov.uk",
             "isUnlinkedAccount": false,
             "probationAreaCode": "N07",
             "probationAreaDescription": "London"
@@ -4814,31 +4814,31 @@
           "bookingId": "1222125",
           "notifications": [
             {
-              "email": "andrew.lee@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW",
               "personalisation": {
                 "date": "Wednesday 29th January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             },
             {
-              "email": "louise.norris@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW_COPY",
               "personalisation": {
                 "date": "Wednesday 29th January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             }
           ],
@@ -4863,19 +4863,19 @@
           "bookingId": "1222125",
           "transitionType": "caToRo",
           "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
             "lduCode": "N07NPSA",
             "deliusId": "N07A338",
             "teamCode": "N07T01",
-            "username": "ALEELICENCES",
+            "username": "TESTLICENCES",
             "nomsNumber": "A8971EA",
             "isAllocated": true,
             "organisation": "N07 Division (N07NPSA)",
             "lduDescription": "N07 Division",
             "staffIdentifier": 2500078225,
             "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
+            "functionalMailbox": "test.user@digital.justice.gov.uk",
             "isUnlinkedAccount": false,
             "probationAreaCode": "N07",
             "probationAreaDescription": "London"
@@ -5434,31 +5434,31 @@
           "bookingId": "1222125",
           "notifications": [
             {
-              "email": "andrew.lee@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW",
               "personalisation": {
                 "date": "Wednesday 29th January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             },
             {
-              "email": "louise.norris@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW_COPY",
               "personalisation": {
                 "date": "Wednesday 29th January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             }
           ],
@@ -5483,19 +5483,19 @@
           "bookingId": "1222125",
           "transitionType": "caToRo",
           "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
             "lduCode": "N07NPSA",
             "deliusId": "N07A338",
             "teamCode": "N07T01",
-            "username": "ALEELICENCES",
+            "username": "TESTLICENCES",
             "nomsNumber": "A8971EA",
             "isAllocated": true,
             "organisation": "N07 Division (N07NPSA)",
             "lduDescription": "N07 Division",
             "staffIdentifier": 2500078225,
             "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
+            "functionalMailbox": "test.user@digital.justice.gov.uk",
             "isUnlinkedAccount": false,
             "probationAreaCode": "N07",
             "probationAreaDescription": "London"
@@ -6055,31 +6055,31 @@
           "bookingId": "1222125",
           "notifications": [
             {
-              "email": "andrew.lee@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW",
               "personalisation": {
                 "date": "Wednesday 29th January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "Test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             },
             {
-              "email": "louise.norris@digital.justice.gov.uk",
+              "email": "test.user@digital.justice.gov.uk",
               "templateName": "RO_NEW_COPY",
               "personalisation": {
                 "date": "Wednesday 29th January",
                 "domain": "https://licences-dev.prison.service.justice.gov.uk",
                 "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
+                "ro_name": "test User",
                 "booking_id": "1222125",
                 "offenderNo": "A8971EA",
                 "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
+                "offender_name": "Offender User"
               }
             }
           ],
@@ -6104,19 +6104,19 @@
           "bookingId": "1222125",
           "transitionType": "caToRo",
           "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
+            "name": "Test User",
+            "email": "test.user@digital.justice.gov.uk",
             "lduCode": "N07NPSA",
             "deliusId": "N07A338",
             "teamCode": "N07T01",
-            "username": "ALEELICENCES",
+            "username": "TESTLICENCES",
             "nomsNumber": "A8971EA",
             "isAllocated": true,
             "organisation": "N07 Division (N07NPSA)",
             "lduDescription": "N07 Division",
             "staffIdentifier": 2500078225,
             "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
+            "functionalMailbox": "test.user@digital.justice.gov.uk",
             "isUnlinkedAccount": false,
             "probationAreaCode": "N07",
             "probationAreaDescription": "London"
@@ -6282,7 +6282,7 @@
           "path": "/hdc/reporting/reportingInstructions/1222125",
           "bookingId": "1222125",
           "userInput": {
-            "name": "Jeremy Fisher",
+            "name": "Test User",
             "postcode": "SW1H 9AJ",
             "telephone": "0123456789",
             "townOrCity": "London",
@@ -6630,7 +6630,7 @@
           "path": "/hdc/reporting/reportingInstructions/1222125",
           "bookingId": "1222125",
           "userInput": {
-            "name": "Jeremy Fisher",
+            "name": "Test User",
             "postcode": "SW1H 9AJ",
             "telephone": "0123456789",
             "townOrCity": "London",
@@ -6769,678 +6769,6 @@
             "bassAreaCheckSeen": "true",
             "approvedPremisesRequiredYesNo": "No"
           }
-        }
-      },
-      {
-        "id": 41229,
-        "timestamp": "2024-12-03T14:24:04.457017",
-        "user": "cpxUKKZdbW",
-        "action": "NOTIFY",
-        "details": {
-          "bookingId": "1222125",
-          "notifications": [
-            {
-              "email": "andrew.lee@digital.justice.gov.uk",
-              "templateName": "RO_NEW",
-              "personalisation": {
-                "date": "Tuesday 17th December",
-                "domain": "https://licences-dev.prison.service.justice.gov.uk",
-                "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
-                "booking_id": "1222125",
-                "offenderNo": "A8971EA",
-                "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
-              }
-            },
-            {
-              "email": "louise.norris@digital.justice.gov.uk",
-              "templateName": "RO_NEW_COPY",
-              "personalisation": {
-                "date": "Tuesday 17th December",
-                "domain": "https://licences-dev.prison.service.justice.gov.uk",
-                "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
-                "booking_id": "1222125",
-                "offenderNo": "A8971EA",
-                "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
-              }
-            }
-          ],
-          "notificationType": "RO_NEW"
-        }
-      },
-      {
-        "id": 41228,
-        "timestamp": "2024-12-03T14:24:04.443107",
-        "user": "cpxUKKZdbW",
-        "action": "SEND",
-        "details": {
-          "source": {
-            "type": "prison",
-            "agencyId": "MDI"
-          },
-          "target": {
-            "type": "probation",
-            "lduCode": "N07NPSA",
-            "probationAreaCode": "N07"
-          },
-          "bookingId": "1222125",
-          "transitionType": "caToRo",
-          "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
-            "lduCode": "N07NPSA",
-            "deliusId": "N07A338",
-            "teamCode": "N07T01",
-            "username": "ALEELICENCES",
-            "nomsNumber": "A8971EA",
-            "isAllocated": true,
-            "organisation": "N07 Division (N07NPSA)",
-            "lduDescription": "N07 Division",
-            "staffIdentifier": 2500078225,
-            "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
-            "isUnlinkedAccount": false,
-            "probationAreaCode": "N07",
-            "probationAreaDescription": "London"
-          }
-        }
-      },
-      {
-        "id": 41227,
-        "timestamp": "2024-12-03T14:23:15.809343",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/bassReferral/bassRequest/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1733222253495",
-            "specificArea": "No",
-            "bassRequested": "Yes"
-          }
-        }
-      },
-      {
-        "id": 41226,
-        "timestamp": "2024-12-03T14:22:45.384577",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/proposedAddress/curfewAddressChoice/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1733222253495",
-            "decision": "Bass"
-          }
-        }
-      },
-      {
-        "id": 41225,
-        "timestamp": "2024-12-03T14:22:00.299057",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/proposedAddress/curfewAddressChoice/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1733222253495",
-            "decision": "Address"
-          }
-        }
-      },
-      {
-        "id": 41224,
-        "timestamp": "2024-12-03T14:20:44.335712",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/eligibility/crdTime/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1733222252468",
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 41223,
-        "timestamp": "2024-12-03T14:20:39.042385",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/eligibility/suitability/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1733222252468",
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 41222,
-        "timestamp": "2024-12-03T14:20:33.480549",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/eligibility/excluded/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1733222252468",
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 41221,
-        "timestamp": "2024-12-03T14:20:26.2777",
-        "user": "cpxUKKZdbW",
-        "action": "LICENCE_RECORD_STARTED",
-        "details": {
-          "bookingId": "1222125"
-        }
-      },
-      {
-        "id": 41219,
-        "timestamp": "2024-12-03T14:17:56.127099",
-        "user": "cpxUKKZdbW",
-        "action": "RESET",
-        "details": {
-          "bookingId": "1222125"
-        }
-      },
-      {
-        "id": 41088,
-        "timestamp": "2024-11-20T13:37:53.579232",
-        "user": "cpxUKKZdbW",
-        "action": "SEND",
-        "details": {
-          "source": {
-            "type": "probation",
-            "lduCode": "N07NPSA",
-            "probationAreaCode": "N07"
-          },
-          "target": {
-            "type": "prison",
-            "agencyId": "MDI"
-          },
-          "bookingId": "1222125",
-          "transitionType": "roToCa",
-          "submissionTarget": {
-            "city": "Doncaster",
-            "phones": {
-              "ext": "334",
-              "type": "BUS",
-              "number": "0114 2345232"
-            },
-            "country": "England",
-            "premise": "Moorland Prison",
-            "agencyId": "MDI",
-            "locality": "Brincliffe",
-            "postCode": "LI1 5TH",
-            "addresses": [
-              {
-                "mail": false,
-                "town": "Doncaster",
-                "county": "South Yorkshire",
-                "phones": [
-                  {
-                    "ext": "334",
-                    "type": "BUS",
-                    "number": "0114 2345232",
-                    "phoneId": 1324316
-                  }
-                ],
-                "street": "Flower Street",
-                "comment": "This is a comment text",
-                "country": "England",
-                "premise": "Moorland Prison",
-                "primary": true,
-                "locality": "Brincliffe",
-                "addressId": 5623019,
-                "startDate": "2020-05-12",
-                "postalCode": "LI1 5TH",
-                "addressType": "Business Address",
-                "addressUsages": [],
-                "noFixedAddress": false
-              }
-            ],
-            "addressType": "BUS",
-            "description": "Moorland (HMP & YOI)",
-            "formattedDescription": "Moorland (HMP & YOI)"
-          }
-        }
-      },
-      {
-        "id": 41087,
-        "timestamp": "2024-11-20T13:37:38.065286",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/reporting/reportingInstructions/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "name": "Jeremy Fisher",
-            "postcode": "SW1H 9AJ",
-            "telephone": "0123456789",
-            "townOrCity": "London",
-            "organisation": "NPS",
-            "reportingDay": "25",
-            "reportingTime": "14:00",
-            "reportingYear": "2024",
-            "reportingMonth": "11",
-            "buildingAndStreet1": "102 Petty France"
-          }
-        }
-      },
-      {
-        "id": 41086,
-        "timestamp": "2024-11-20T13:37:16.346531",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/licenceConditions/standard/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "additionalConditionsRequired": "No"
-          }
-        }
-      },
-      {
-        "id": 41085,
-        "timestamp": "2024-11-20T13:37:11.38658",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/curfew/curfewHours/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "allFrom": "19:00",
-            "allUntil": "07:00",
-            "fridayFrom": "19:00",
-            "mondayFrom": "19:00",
-            "sundayFrom": "19:00",
-            "fridayUntil": "07:00",
-            "mondayUntil": "07:00",
-            "sundayUntil": "07:00",
-            "tuesdayFrom": "19:00",
-            "saturdayFrom": "19:00",
-            "thursdayFrom": "19:00",
-            "tuesdayUntil": "07:00",
-            "saturdayUntil": "07:00",
-            "thursdayUntil": "07:00",
-            "wednesdayFrom": "19:00",
-            "wednesdayUntil": "07:00",
-            "daySpecificInputs": "No"
-          }
-        }
-      },
-      {
-        "id": 41084,
-        "timestamp": "2024-11-20T13:36:47.635286",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/victim/victimLiaison/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 41083,
-        "timestamp": "2024-11-20T13:36:42.879073",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/risk/riskManagement/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "3",
-            "emsInformation": "No",
-            "pomConsultation": "Yes",
-            "mentalHealthPlan": "No",
-            "hasConsideredChecks": "Yes",
-            "manageInTheCommunity": "Yes",
-            "riskManagementDetails": "jkbkjhkj",
-            "proposedAddressSuitable": "Yes",
-            "awaitingOtherInformation": "No",
-            "nonDisclosableInformation": "No"
-          }
-        }
-      },
-      {
-        "id": 41082,
-        "timestamp": "2024-11-20T13:36:08.525494",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/curfew/curfewAddressReview/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "2",
-            "electricity": "Yes",
-            "homeVisitConducted": "Yes",
-            "addressReviewComments": "sdadas"
-          }
-        }
-      },
-      {
-        "id": 41081,
-        "timestamp": "2024-11-20T13:36:03.790342",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/curfew/approvedPremises/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "required": "No"
-          }
-        }
-      },
-      {
-        "id": 40622,
-        "timestamp": "2024-11-01T11:19:36.92764",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/curfew/curfewAddressReview/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "2",
-            "electricity": "No",
-            "homeVisitConducted": "No",
-            "addressReviewComments": "sdadas"
-          }
-        }
-      },
-      {
-        "id": 40621,
-        "timestamp": "2024-11-01T11:19:18.966293",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/curfew/approvedPremises/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "required": "No"
-          }
-        }
-      },
-      {
-        "id": 40620,
-        "timestamp": "2024-11-01T11:19:01.480949",
-        "user": "cpxUKKZdbW",
-        "action": "NOTIFY",
-        "details": {
-          "bookingId": "1222125",
-          "notifications": [
-            {
-              "email": "andrew.lee@digital.justice.gov.uk",
-              "templateName": "RO_NEW",
-              "personalisation": {
-                "date": "Friday 15th November",
-                "domain": "https://licences-dev.prison.service.justice.gov.uk",
-                "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
-                "booking_id": "1222125",
-                "offenderNo": "A8971EA",
-                "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
-              }
-            },
-            {
-              "email": "louise.norris@digital.justice.gov.uk",
-              "templateName": "RO_NEW_COPY",
-              "personalisation": {
-                "date": "Friday 15th November",
-                "domain": "https://licences-dev.prison.service.justice.gov.uk",
-                "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
-                "booking_id": "1222125",
-                "offenderNo": "A8971EA",
-                "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
-              }
-            }
-          ],
-          "notificationType": "RO_NEW"
-        }
-      },
-      {
-        "id": 40619,
-        "timestamp": "2024-11-01T11:19:01.47518",
-        "user": "cpxUKKZdbW",
-        "action": "SEND",
-        "details": {
-          "source": {
-            "type": "prison",
-            "agencyId": "MDI"
-          },
-          "target": {
-            "type": "probation",
-            "lduCode": "N07NPSA",
-            "probationAreaCode": "N07"
-          },
-          "bookingId": "1222125",
-          "transitionType": "caToRo",
-          "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
-            "lduCode": "N07NPSA",
-            "deliusId": "N07A338",
-            "teamCode": "N07T01",
-            "username": "ALEELICENCES",
-            "nomsNumber": "A8971EA",
-            "isAllocated": true,
-            "organisation": "N07 Division (N07NPSA)",
-            "lduDescription": "N07 Division",
-            "staffIdentifier": 2500078225,
-            "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
-            "isUnlinkedAccount": false,
-            "probationAreaCode": "N07",
-            "probationAreaDescription": "London"
-          }
-        }
-      },
-      {
-        "id": 40618,
-        "timestamp": "2024-11-01T11:19:00.668978",
-        "user": "cpxUKKZdbW",
-        "action": "NOTIFY",
-        "details": {
-          "bookingId": "1222125",
-          "notifications": [
-            {
-              "email": "andrew.lee@digital.justice.gov.uk",
-              "templateName": "RO_NEW",
-              "personalisation": {
-                "date": "Friday 15th November",
-                "domain": "https://licences-dev.prison.service.justice.gov.uk",
-                "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
-                "booking_id": "1222125",
-                "offenderNo": "A8971EA",
-                "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
-              }
-            },
-            {
-              "email": "louise.norris@digital.justice.gov.uk",
-              "templateName": "RO_NEW_COPY",
-              "personalisation": {
-                "date": "Friday 15th November",
-                "domain": "https://licences-dev.prison.service.justice.gov.uk",
-                "prison": "Moorland Prison",
-                "ro_name": "Andy Lee",
-                "booking_id": "1222125",
-                "offenderNo": "A8971EA",
-                "organisation": "N07 Division (N07NPSA)",
-                "offender_name": "Shaun Wehner"
-              }
-            }
-          ],
-          "notificationType": "RO_NEW"
-        }
-      },
-      {
-        "id": 40617,
-        "timestamp": "2024-11-01T11:19:00.654401",
-        "user": "cpxUKKZdbW",
-        "action": "SEND",
-        "details": {
-          "source": {
-            "type": "prison",
-            "agencyId": "MDI"
-          },
-          "target": {
-            "type": "probation",
-            "lduCode": "N07NPSA",
-            "probationAreaCode": "N07"
-          },
-          "bookingId": "1222125",
-          "transitionType": "caToRo",
-          "submissionTarget": {
-            "name": "Andy Lee",
-            "email": "andrew.lee@digital.justice.gov.uk",
-            "lduCode": "N07NPSA",
-            "deliusId": "N07A338",
-            "teamCode": "N07T01",
-            "username": "ALEELICENCES",
-            "nomsNumber": "A8971EA",
-            "isAllocated": true,
-            "organisation": "N07 Division (N07NPSA)",
-            "lduDescription": "N07 Division",
-            "staffIdentifier": 2500078225,
-            "teamDescription": "OMU A",
-            "functionalMailbox": "louise.norris@digital.justice.gov.uk",
-            "isUnlinkedAccount": false,
-            "probationAreaCode": "N07",
-            "probationAreaDescription": "London"
-          }
-        }
-      },
-      {
-        "id": 40616,
-        "timestamp": "2024-11-01T11:18:47.347882",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/proposedAddress/curfewAddress/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "occupier": {
-              "name": "aaaaaa",
-              "isOffender": "Yes",
-              "relationship": ""
-            },
-            "postCode": "YO15 3LE",
-            "residents": [
-              {
-                "age": "",
-                "name": "",
-                "relationship": ""
-              },
-              {
-                "age": "",
-                "name": "",
-                "relationship": ""
-              },
-              {
-                "age": "",
-                "name": "",
-                "relationship": ""
-              }
-            ],
-            "telephone": "01262673009",
-            "addressTown": "aaaaa",
-            "addressLine1": "12 Mayfield",
-            "additionalInformation": "cddsfsdfdsf",
-            "cautionedAgainstResident": "No"
-          }
-        }
-      },
-      {
-        "id": 40615,
-        "timestamp": "2024-11-01T11:18:41.044911",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/proposedAddress/curfewAddressChoice/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1729528368350",
-            "decision": "Address"
-          }
-        }
-      },
-      {
-        "id": 40614,
-        "timestamp": "2024-11-01T09:40:07.676328",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/proposedAddress/curfewAddressChoice/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1729528368350",
-            "decision": "Address"
-          }
-        }
-      },
-      {
-        "id": 40605,
-        "timestamp": "2024-10-30T08:52:15.81563",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/eligibility/crdTime/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1729528368350",
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 40604,
-        "timestamp": "2024-10-30T08:52:14.545833",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/eligibility/suitability/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1729528368350",
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 40603,
-        "timestamp": "2024-10-30T08:52:13.177444",
-        "user": "cpxUKKZdbW",
-        "action": "UPDATE_SECTION",
-        "details": {
-          "path": "/hdc/eligibility/excluded/1222125",
-          "bookingId": "1222125",
-          "userInput": {
-            "version": "1729728090343",
-            "decision": "No"
-          }
-        }
-      },
-      {
-        "id": 40602,
-        "timestamp": "2024-10-30T08:52:10.645034",
-        "user": "cpxUKKZdbW",
-        "action": "LICENCE_RECORD_STARTED",
-        "details": {
-          "bookingId": "1222125"
         }
       }
     ]
