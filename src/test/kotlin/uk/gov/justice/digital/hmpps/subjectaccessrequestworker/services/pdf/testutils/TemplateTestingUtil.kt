@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDeta
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.GeneratePdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.TemplateRenderService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -46,7 +47,7 @@ class TemplateTestingUtil {
   private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
-  private val pdfService: GeneratePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+  private val pdfService: GeneratePdfService = GeneratePdfService(templateRenderService, telemetryClient, DateService())
 
   init {
     whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(

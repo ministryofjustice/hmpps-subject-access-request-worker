@@ -43,12 +43,13 @@ const val DATA_LINE_SPACING = 16f
 
 @Service
 class GeneratePdfService(
-  var templateRenderService: TemplateRenderService,
-  var telemetryClient: TelemetryClient,
+  val templateRenderService: TemplateRenderService,
+  val telemetryClient: TelemetryClient,
+  val dateService: DateService = DateService(),
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-    var dateConversionHelper = DateConversionHelper()
+    private val dateConverter: DateConversionHelper = DateConversionHelper()
     val reportDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   }
 
@@ -276,7 +277,11 @@ class GeneratePdfService(
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
-    document.add(Paragraph("Report generation date: ${dateNow()}").setTextAlignment(TextAlignment.CENTER))
+    document.add(
+      Paragraph("Report generation date: ${dateService.now().format(reportDateFormat)}").setTextAlignment(
+        TextAlignment.CENTER,
+      ),
+    )
     document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
@@ -374,14 +379,12 @@ class GeneratePdfService(
     // Handle dates/times
     if (input is String) {
       var processedValue = input
-      processedValue = dateConversionHelper.convertDates(processedValue)
+      processedValue = dateConverter.convertDates(processedValue)
       return processedValue
     }
 
     return input
   }
-
-  private fun dateNow() = LocalDate.now().format(reportDateFormat)
 }
 
 class CodeRenderer(textElement: Text?) : TextRenderer(textElement) {

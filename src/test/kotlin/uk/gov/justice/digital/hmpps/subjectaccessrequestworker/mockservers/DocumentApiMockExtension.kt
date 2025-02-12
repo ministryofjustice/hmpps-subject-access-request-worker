@@ -174,6 +174,37 @@ class DocumentApiMockServer : WireMockServer(8084) {
     )
   }
 
+  fun stubUploadFileFailsWithStatus(
+    subjectAccessRequestId: String,
+    status: Int,
+  ) {
+    stubFor(
+      post(
+        urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"),
+      )
+        .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("file"),
+        ).willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(status)
+            .withBody(
+              """
+            {
+              "status": $status,
+              "errorCode": 10001,
+              "userMessage": "something went wrong",
+              "developerMessage": "something went wrong",
+              "moreInfo": "its broken"
+            }
+              """.trimIndent(),
+            ),
+        ),
+    )
+  }
+
   fun stubUploadFileFailsWithStatusThenSucceedsOnRetry(
     subjectAccessRequestId: String,
     expectedFileContent: ByteArray,

@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSubjectAccessRequestParams
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension.Companion.serviceTwoMockApi
@@ -166,10 +167,3 @@ class DynamicServiceClientIntTest : BaseClientIntTest() {
     }"
   }
 }
-
-data class GetSubjectAccessRequestParams(
-  val prn: String? = null,
-  val crn: String? = null,
-  val dateFrom: LocalDate? = null,
-  val dateTo: LocalDate? = null,
-)

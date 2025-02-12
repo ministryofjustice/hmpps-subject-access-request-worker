@@ -7,18 +7,27 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.GetSubjectAccessRequestParams
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSubjectAccessRequestParams
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestWorkerService
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -37,6 +46,9 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
   @Autowired
   private lateinit var prisonDetailsRepository: PrisonDetailsRepository
 
+  @MockitoBean
+  private var dateService: DateService = mock()
+
   @BeforeEach
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the documentStore API.
@@ -52,7 +64,8 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
   @MethodSource("testCases")
   fun `SAR worker generates and uploads the expected PDF to the document store`(testCase: TestCase) {
     // Given
-    val subjectAccessRequest = `A subject access request for service`(testCase.serviceName)
+    val subjectAccessRequest = newSubjectAccessRequestFor(service = testCase.serviceName)
+    whenever(dateService.now()).thenReturn(testCase.reportGenerationDate)
 
     // And
     `Subject Access Request service endpoint returns JSON data`(testCase.sarDataJson)
@@ -67,7 +80,87 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
     `expected service calls are made`()
   }
 
-  fun `A subject access request for service`(service: String) = SubjectAccessRequest(
+  @Test
+  fun `should throw exception if requested service does not exist`() {
+    val serviceName = "this-service-does-not-exist"
+    val subjectAccessRequest = newSubjectAccessRequestFor(service = serviceName)
+
+    val actual = assertThrows<FatalSubjectAccessRequestException> {
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+    }
+
+    assertThat(actual.event).isEqualTo(ProcessingEvent.GET_SERVICE_CONFIGURATION)
+    assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+    assertThat(actual.params).containsExactlyEntriesOf(mapOf("serviceName" to serviceName))
+    assertThat(actual.message).contains("service with name '$serviceName' not found")
+
+    documentApi.verifyNeverCalled()
+    serviceOneMockApi.verifyNeverCalled()
+    prisonApi.verifyNeverCalled()
+  }
+
+  @Test
+  fun `should throw exception if request to service API is unsuccessful`() {
+    val subjectAccessRequest = newSubjectAccessRequestFor(service = "keyworker-api")
+
+    serviceOneMockApi.stubSubjectAccessRequestErrorResponse(
+      status = 500,
+      params = GetSubjectAccessRequestParams(
+        prn = subjectAccessRequest.nomisId,
+        crn = subjectAccessRequest.ndeliusCaseReferenceId,
+        dateFrom = subjectAccessRequest.dateFrom,
+        dateTo = subjectAccessRequest.dateTo,
+      ),
+    )
+
+    val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+    }
+
+    assertThat(actual.event).isEqualTo(ProcessingEvent.GET_SAR_DATA)
+    assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+    assertThat(actual.params).containsExactlyEntriesOf(mapOf("uri" to "http://localhost:4100"))
+    assertThat(actual.message).contains("subjectAccessRequest failed and max retry attempts (2) exhausted")
+    assertThat(actual.cause).isNotNull()
+    assertThat(actual.cause!!.message).contains("500 Internal Server Error from GET http://localhost:${serviceOneMockApi.port()}/subject-access-request")
+
+    serviceOneMockApi.verifyApiCalled(3)
+    documentApi.verifyNeverCalled()
+    prisonApi.verifyNeverCalled()
+  }
+
+  @Test
+  fun `should throw exception if document api request is unsuccessful`() {
+    val subjectAccessRequest = newSubjectAccessRequestFor(service = "keyworker-api")
+    whenever(dateService.now()).thenReturn(LocalDate.now())
+
+    serviceOneMockApi.stubResponseFor(
+      ResponseDefinitionBuilder()
+        .withStatus(200)
+        .withHeader("Content-Type", "application/json")
+        .withBody(getSarResponseStub("keyworker-api-stub.json")),
+      expectedSubjectAccessRequestParameters,
+    )
+
+    documentApi.stubUploadFileFailsWithStatus(subjectAccessRequest.id.toString(), 500)
+
+    val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
+      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+    }
+
+    assertThat(actual.event).isEqualTo(ProcessingEvent.STORE_DOCUMENT)
+    assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+    assertThat(actual.params).containsExactlyEntriesOf(mapOf("uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/${subjectAccessRequest.id}"))
+    assertThat(actual.message).contains("subjectAccessRequest failed and max retry attempts (2) exhausted")
+    assertThat(actual.cause).isNotNull()
+    assertThat(actual.cause!!.message).contains("500 Internal Server Error from POST http://localhost:${documentApi.port()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/${subjectAccessRequest.id}")
+
+    serviceOneMockApi.verifyApiCalled(1)
+    documentApi.verifyStoreDocumentIsCalled(3, subjectAccessRequest.id.toString())
+    prisonApi.verifyApiCalled(1, subjectAccessRequest.nomisId!!)
+  }
+
+  fun newSubjectAccessRequestFor(service: String) = SubjectAccessRequest(
     id = subjectAccessRequestId,
     dateFrom = dateFrom,
     dateTo = dateTo,
@@ -92,7 +185,8 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
 
   fun `Prison API returns Prisoner name for`(nomisId: String) = prisonApi.stubGetOffenderDetails(nomisId)
 
-  fun `Document API upload request is successful for`(subjectAccessRequestId: String) = documentApi.stubUploadFileSuccess(subjectAccessRequestId)
+  fun `Document API upload request is successful for`(subjectAccessRequestId: String) = documentApi
+    .stubUploadFileSuccess(subjectAccessRequestId)
 
   fun `the PDF uploaded to the Document store contains the expected content`(testCase: TestCase) {
     val expected = getPreGeneratedPdfDocument(testCase.expectedPdf)
@@ -124,7 +218,9 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
     return pdfDocumentFromInputStream(inputStream!!)
   }
 
-  private fun getUploadedPdfDocument(): PdfDocument = pdfDocumentFromInputStream(ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()))
+  private fun getUploadedPdfDocument(): PdfDocument = pdfDocumentFromInputStream(
+    ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
+  )
 
   private fun pdfDocumentFromInputStream(inputStream: InputStream): PdfDocument = PdfDocument(PdfReader(inputStream))
 
@@ -157,33 +253,42 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
         serviceLabel = "Key Worker",
         sarDataJson = "keyworker-api-stub.json",
         expectedPdf = "keyworker-api-reference.pdf",
+        reportGenerationDate = LocalDate.of(2025, 2, 11),
       ),
       TestCase(
         serviceName = "court-case-service",
         serviceLabel = "Prepare a Case for Sentence",
         sarDataJson = "court-case-service-stub.json",
         expectedPdf = "court-case-service-reference.pdf",
+        reportGenerationDate = LocalDate.of(2025, 2, 11),
       ),
       TestCase(
         serviceName = "hmpps-offender-categorisation-api",
         serviceLabel = "Categorisation Tool",
         sarDataJson = "hmpps-offender-categorisation-api-stub.json",
         expectedPdf = "hmpps-offender-categorisation-api-reference.pdf",
+        reportGenerationDate = LocalDate.of(2025, 2, 11),
       ),
       TestCase(
         serviceName = "hmpps-resettlement-passport-api",
         serviceLabel = "Prepare Someone for Release",
         sarDataJson = "hmpps-resettlement-passport-api-stub.json",
         expectedPdf = "hmpps-resettlement-passport-api-reference.pdf",
+        reportGenerationDate = LocalDate.of(2025, 2, 11),
       ),
     )
   }
 
+  /**
+   * Important: The Report Generation Date value is used to mock which date value is returned during the test.This
+   * MUST match the value in the corresponding reference PDF (see - resources/integration-tests/reference-pdfs)
+   */
   data class TestCase(
     val serviceName: String,
     val serviceLabel: String,
     val sarDataJson: String,
     val expectedPdf: String,
+    val reportGenerationDate: LocalDate,
   ) {
     override fun toString() = "SAR request for '$serviceLabel' data generates the expected PDF"
   }

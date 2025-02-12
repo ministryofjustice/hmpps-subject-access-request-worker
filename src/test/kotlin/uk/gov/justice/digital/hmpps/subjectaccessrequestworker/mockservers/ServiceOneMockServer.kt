@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.GetSubjectAccessRequestParams
 
 class ServiceOneMockServer : WireMockServer(4100) {
 
@@ -31,7 +30,7 @@ class ServiceOneMockServer : WireMockServer(4100) {
     """
   }
 
-  fun verifyZeroInteractions() {
+  fun verifyNeverCalled() {
     verify(0, anyRequestedFor(anyUrl()))
   }
 

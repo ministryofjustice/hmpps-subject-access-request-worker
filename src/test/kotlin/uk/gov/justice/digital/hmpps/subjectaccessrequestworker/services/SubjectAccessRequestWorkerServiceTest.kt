@@ -6,7 +6,6 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
@@ -161,73 +160,6 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
 
   @Nested
   inner class CreateSubjectAccessRequestReport {
-    @Test
-    fun `doReport calls getSubjectAccessRequestDataService with chosenSar details`() {
-      whenever(serviceConfigurationService.getSelectedServices(any())).thenReturn(selectedDpsServices)
-      whenever(
-        getSubjectAccessRequestDataService.requestDataFromServices(
-          selectedDpsServices,
-          null,
-          "1",
-          dateFromFormatted,
-          dateToFormatted,
-          sampleSAR,
-        ),
-      ).thenReturn(dpsServicesList)
-      whenever(generatePdfService.getPdfWriter(byteArrayOutputStream)).thenReturn(pdfWriter)
-      whenever(probationApiClient.getOffenderName(sampleSAR, "1")).thenReturn("TEST, Name")
-      whenever(
-        generatePdfService.execute(
-          services = dpsServicesList,
-          subjectName = "TEST, Name",
-          sar = sampleSAR,
-        ),
-      ).thenReturn(byteArrayOutputStream)
-      whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream)).thenReturn(postDocumentResponse)
-
-      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
-
-      verify(getSubjectAccessRequestDataService, times(1)).requestDataFromServices(
-        services = selectedDpsServices,
-        null,
-        "1",
-        dateFromFormatted,
-        dateToFormatted,
-        sampleSAR,
-      )
-    }
-
-    @Test
-    fun `createSubjectAccessRequestReport throws exception if an error occurs during attempt to retrieve upstream API info`() {
-      val selectedServicesList = mutableListOf(
-        DpsService(
-          name = "test-dps-service-2",
-          businessName = "Test DPS Service 2",
-          orderPosition = 1,
-          url = null,
-        ),
-      )
-
-      whenever(serviceConfigurationService.getSelectedServices(any()))
-        .thenReturn(selectedServicesList)
-
-      whenever(
-        getSubjectAccessRequestDataService.requestDataFromServices(
-          services = selectedServicesList,
-          null,
-          "1",
-          dateFromFormatted,
-          dateToFormatted,
-          sampleSAR,
-        ),
-      ).thenThrow(RuntimeException())
-
-      val exception = assertThrows<RuntimeException> {
-        subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
-      }
-
-      assertThat(exception.message).isNull()
-    }
 
     @Test
     fun `doReport calls GetSubjectAccessRequestDataService execute`() {
@@ -346,85 +278,4 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       )
     }
   }
-
-//  @Nested
-//  inner class GetServiceDetails {
-//    private val sampleSAR = SubjectAccessRequest(
-//      id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
-//      status = Status.Pending,
-//      dateFrom = dateFromFormatted,
-//      dateTo = dateToFormatted,
-//      sarCaseReferenceNumber = "1234abc",
-//      services = "test-dps-service-2, https://test-dps-service-2.prison.service.justice.gov.uk,test-dps-service-1, https://test-dps-service-1.prison.service.justice.gov.uk",
-//      nomisId = null,
-//      ndeliusCaseReferenceId = "1",
-//      requestedBy = "aName",
-//      requestDateTime = LocalDateTime.now(),
-//      claimAttempts = 0,
-//    )
-//
-//    private val selectedDpsServices = mutableListOf(
-//      DpsService(
-//        name = "test-dps-service-2",
-//        url = "https://test-dps-service-2.prison.service.justice.gov.uk",
-//        businessName = null,
-//        orderPosition = null,
-//      ),
-//      DpsService(
-//        name = "test-dps-service-1",
-//        url = "https://test-dps-service-1.prison.service.justice.gov.uk",
-//        businessName = null,
-//        orderPosition = null,
-//      ),
-//    )
-
-//    private val serviceConfigObject = ServiceConfig(
-//      dpsServices =
-//      mutableListOf(
-//        DpsService(name = "test-dps-service-2", url = null, businessName = "Test DPS Service 2", orderPosition = 2),
-//        DpsService(name = "test-dps-service-1", url = null, businessName = "Test DPS Service 1", orderPosition = 1),
-//      ),
-//    )
-
-//    @Test
-//    fun `getServiceDetails returns a list of DPS Service objects`() = runTest {
-//      whenever(serviceConfigurationService.getSelectedServices(any())).thenReturn(selectedDpsServices)
-//
-//      whenever(
-//        configOrderHelper.getDpsServices(
-//          mapOf(
-//            "test-dps-service-2" to "https://test-dps-service-2.prison.service.justice.gov.uk",
-//            "test-dps-service-1" to "https://test-dps-service-1.prison.service.justice.gov.uk",
-//          ),
-//        ),
-//      ).thenReturn(selectedDpsServices)
-//      whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-//
-//      val detailedSelectedServices = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
-//
-//      assertThat(detailedSelectedServices).isInstanceOf(List::class.java)
-//      assertThat(detailedSelectedServices[0]).isInstanceOf(DpsService::class.java)
-//    }
-
-//    @Test
-//    fun `getServiceDetails extracts the correct details for the given SAR`() = runTest {
-//      whenever(
-//        configOrderHelper.getDpsServices(
-//          mapOf(
-//            "test-dps-service-2" to "https://test-dps-service-2.prison.service.justice.gov.uk",
-//            "test-dps-service-1" to "https://test-dps-service-1.prison.service.justice.gov.uk",
-//          ),
-//        ),
-//      ).thenReturn(selectedDpsServices)
-//      whenever(configOrderHelper.extractServicesConfig("servicesConfig.yaml")).thenReturn(serviceConfigObject)
-//
-//      val detailedSelectedServices = subjectAccessRequestWorkerService.getServiceDetails(sampleSAR)
-//
-//      assertThat(detailedSelectedServices[0].name).isEqualTo("test-dps-service-2")
-//      assertThat(detailedSelectedServices[0].businessName).isEqualTo("Test DPS Service 2")
-//      assertThat(detailedSelectedServices[0].url).isEqualTo("https://test-dps-service-2.prison.service.justice.gov.uk")
-//      assertThat(detailedSelectedServices[0].orderPosition).isEqualTo(2)
-//      assertThat(detailedSelectedServices.size).isEqualTo(2)
-//    }
-//  }
 }

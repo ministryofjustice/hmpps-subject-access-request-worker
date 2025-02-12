@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestInstancePostProcessor
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.GetSubjectAccessRequestParams
 
 class ServiceTwoMockServer : WireMockServer(4200) {
 
