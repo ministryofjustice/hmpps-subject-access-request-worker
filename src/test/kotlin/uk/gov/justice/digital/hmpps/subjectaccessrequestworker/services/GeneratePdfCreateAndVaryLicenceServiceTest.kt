@@ -1,39 +1,26 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfCreateAndVaryLicenceServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfCreateAndVaryLicenceServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Create and Vary a License Service`() {
-    val serviceList =
-      listOf(DpsService(name = "create-and-vary-a-licence-api", content = testCreateAndVaryLicenceServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-cvl-template.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-cvl-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-    assertThat(text).contains("Create and vary a licence")
+    val serviceList = listOf(
+      DpsService(
+        name = "create-and-vary-a-licence-api",
+        content = testCreateAndVaryLicenceServiceData,
+      ),
+    )
+    generateSubjectAccessRequestPdf("dummy-cvl-template.pdf", serviceList)
+
+    getGeneratedPdfDocument("dummy-cvl-template.pdf").use { pdfDocument ->
+      val text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(2))
+      assertThat(text).contains("Create and vary a licence")
+    }
   }
 
   private val testCreateAndVaryLicenceServiceData = mapOf(

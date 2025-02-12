@@ -1,39 +1,21 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfCourtCaseServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfCourtCaseServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Court Case Service`() {
     val serviceList = listOf(DpsService(name = "court-case-service", content = courtCaseServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-template-court-case.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
+    generateSubjectAccessRequestPdf("dummy-template-court-case.pdf", serviceList)
 
-    val reader = PdfDocument(PdfReader("dummy-template-court-case.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-    assertThat(text).contains("Prepare a Case for Sentence")
+    getGeneratedPdfDocument("dummy-template-court-case.pdf").use { doc ->
+      val text = PdfTextExtractor.getTextFromPage(doc.getPage(2))
+      assertThat(text).contains("Prepare a Case for Sentence")
+    }
   }
 
   private val courtCaseServiceData = mapOf(

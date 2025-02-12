@@ -1,38 +1,21 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfHomDetentionCurfewServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfHomDetentionCurfewServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Home Detention Curfew Service`() {
     val serviceList = listOf(DpsService(name = "hmpps-hdc-api", content = homeDetentionCurfewServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-hdc-template.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-hdc-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-    assertThat(text).contains("Home Detention Curfew")
+    generateSubjectAccessRequestPdf("dummy-hdc-template.pdf", serviceList)
+
+    getGeneratedPdfDocument("dummy-hdc-template.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+      assertThat(text).contains("Home Detention Curfew")
+    }
   }
 
   private val homeDetentionCurfewServiceData: Map<Any, Any> = mapOf(

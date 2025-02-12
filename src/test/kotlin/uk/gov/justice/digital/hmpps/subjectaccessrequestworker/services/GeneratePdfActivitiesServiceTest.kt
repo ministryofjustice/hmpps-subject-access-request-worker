@@ -1,52 +1,37 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfActivitiesServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfActivitiesServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders a template given an activities template`() {
     val serviceList = listOf(DpsService(name = "hmpps-activities-management-api", content = activitiesServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-activities-template.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-activities-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+    generateSubjectAccessRequestPdf("dummy-activities-template.pdf", serviceList)
 
-    assertThat(text).contains("Activities")
+    getGeneratedPdfDocument("dummy-activities-template.pdf").use { doc ->
+      val text = PdfTextExtractor.getTextFromPage(doc.getPage(2))
+      assertThat(text).contains("Activities")
+    }
   }
 
   @Test
   fun `generatePdfService renders a template given an activities template with missing data`() {
-    val serviceList = listOf(DpsService(name = "hmpps-activities-management-api", content = activitiesServicePartialData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-activities-template-incomplete.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-activities-template-incomplete.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+    val serviceList = listOf(
+      DpsService(
+        name = "hmpps-activities-management-api",
+        content = activitiesServicePartialData,
+      ),
+    )
+    generateSubjectAccessRequestPdf("dummy-activities-template-incomplete.pdf", serviceList)
 
-    assertThat(text).contains("Activities")
+    getGeneratedPdfDocument("dummy-activities-template-incomplete.pdf").use { reader ->
+      val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+      assertThat(text).contains("Activities")
+    }
   }
 
   private val activitiesServiceData: ArrayList<Any> = arrayListOf(

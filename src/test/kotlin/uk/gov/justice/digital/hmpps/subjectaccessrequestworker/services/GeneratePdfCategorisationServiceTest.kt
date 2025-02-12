@@ -1,52 +1,34 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import wiremock.com.google.common.base.Verify.verify
-import java.io.FileOutputStream
 
-class GeneratePdfCategorisationServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfCategorisationServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Categorisation Service`() {
-    whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
+    whenever(prisonDetailsRepository.findByPrisonId("MDI"))
+      .thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
+
     val serviceList = listOf(DpsService(name = "hmpps-offender-categorisation-api", content = categoryServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-categorisation-api-template.pdf")))
-    val document = Document(pdfDocument)
+    generateSubjectAccessRequestPdf("dummy-categorisation-api-template.pdf", serviceList)
 
-    generatePdfService.addData(pdfDocument, document, serviceList)
+    getGeneratedPdfDocument("dummy-categorisation-api-template.pdf").use { doc ->
+      val text = PdfTextExtractor.getTextFromPage(doc.getPage(2))
 
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-categorisation-api-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+      assertThat(text).contains("Prisoner categorisation")
+      assertThat(text).contains("Moorland (HMP & YOI)")
 
-    assertThat(text).contains("Prisoner categorisation")
-    assertThat(text).contains("Moorland (HMP & YOI)")
-
-    verify(prisonDetailsRepository, times(1)).findByPrisonId("MDI")
-    verifyNoMoreInteractions(prisonDetailsRepository)
+      verify(prisonDetailsRepository, times(1)).findByPrisonId("MDI")
+      verifyNoMoreInteractions(prisonDetailsRepository)
+    }
   }
 
   private val categoryServiceData: Map<Any, Any> = mapOf(

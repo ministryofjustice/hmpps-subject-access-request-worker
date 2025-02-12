@@ -1,39 +1,21 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfServiceManagePrisonOffenderManagerCasesTest {
-
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfServiceManagePrisonOffenderManagerCasesTest : BaseGeneratePdfTest() {
 
   private fun writeAndThenReadPdf(
     testInput: Map<String, Any?>?,
   ): PdfDocument {
     val testFileName = "dummy-template-moic.pdf"
     val testResponseObject = listOf(DpsService(name = "offender-management-allocation-manager", content = testInput))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream(testFileName)))
-    Document(pdfDocument).use {
-      generatePdfService.addData(pdfDocument, it, testResponseObject)
-    }
-    return PdfDocument(PdfReader(testFileName))
+    generateSubjectAccessRequestPdf(testFileName, testResponseObject)
+
+    return getGeneratedPdfDocument(testFileName)
   }
 
   @Test

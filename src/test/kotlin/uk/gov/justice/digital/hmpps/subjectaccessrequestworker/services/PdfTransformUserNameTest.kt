@@ -1,33 +1,17 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class PdfTransformUserNameTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class PdfTransformUserNameTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for prison Name when caseload id supplied`() {
@@ -35,25 +19,22 @@ class PdfTransformUserNameTest {
     whenever(userDetailsRepository.findByUsername("BB123LM")).thenReturn(UserDetail("BB123LM", "Reacher"))
 
     val serviceList = listOf(DpsService(name = "replace-username", content = serviceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-username-template.pdf")))
-    val document = Document(pdfDocument)
+    generateSubjectAccessRequestPdf("dummy-username-template.pdf", serviceList)
 
-    generatePdfService.addData(pdfDocument, document, serviceList)
+    getGeneratedPdfDocument("dummy-username-template.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
 
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-username-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+      assertThat(text).contains("User PDF")
+      assertThat(text).contains("optionalValue")
+      assertThat(text).contains("getUserLastName")
+      assertThat(text).contains("Reacher")
 
-    assertThat(text).contains("User PDF")
-    assertThat(text).contains("optionalValue")
-    assertThat(text).contains("getUserLastName")
-    assertThat(text).contains("Reacher")
+      // Check that the user_id is  present in the pdf when the user_id is not present in the user repository
+      assertThat(text).contains("XD888XT")
 
-    // Check that the user_id is  present in the pdf when the user_id is not present in the user repository
-    assertThat(text).contains("XD888XT")
-
-    verify(userDetailsRepository, times(3)).findByUsername(anyString())
-    verifyNoInteractions(prisonDetailsRepository)
+      verify(userDetailsRepository, times(3)).findByUsername(anyString())
+      verifyNoInteractions(prisonDetailsRepository)
+    }
   }
 
   private val serviceData: Map<Any, Any> = mapOf(
