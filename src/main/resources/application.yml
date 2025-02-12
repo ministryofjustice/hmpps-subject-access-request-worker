@@ -16,6 +16,11 @@ spring:
   flyway:
     enabled: false
 
+  profiles:
+    group:
+      dev:
+        - "dev"
+
   datasource:
     url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=verify-full'
     username: ${DATABASE_USERNAME}

@@ -17,6 +17,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiC
 
 class PrisonApiMockServer : WireMockServer(8079) {
 
+  fun verifyNeverCalled() {
+    verify(0, anyRequestedFor(anyUrl()))
+  }
+
   fun stubHealthPing(status: Int) {
     stubFor(
       get("/health/ping").willReturn(

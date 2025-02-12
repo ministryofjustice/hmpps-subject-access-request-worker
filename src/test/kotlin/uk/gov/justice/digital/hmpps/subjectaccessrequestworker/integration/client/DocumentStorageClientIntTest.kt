@@ -11,11 +11,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.times
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.core.codec.DecodingException
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
@@ -52,7 +52,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   private val contextId = UUID.randomUUID()
   private val subjectAccessRequest = SubjectAccessRequest(id = subjectAccessRequestId, contextId = contextId)
 
-  @MockBean
+  @MockitoBean
   private lateinit var telemetryClient: TelemetryClient
 
   companion object {
@@ -93,7 +93,12 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val fileSize = expectedFileContent.toByteArray().size
 
-    documentApi.stubUploadFileSuccess(subjectAccessRequestId.toString(), fileSize, FILE_CONTENT.toByteArray(), 1)
+    documentApi.stubUploadFileSuccessWithMetadata(
+      subjectAccessRequestId.toString(),
+      fileSize,
+      FILE_CONTENT.toByteArray(),
+      1,
+    )
 
     val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
 
@@ -286,7 +291,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val incorrectFileSize = expectedFileContent.toByteArray().size * 2
 
-    documentApi.stubUploadFileSuccess(
+    documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
       incorrectFileSize,
       FILE_CONTENT.toByteArray(),
@@ -356,7 +361,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val fileSize = expectedFileContent.toByteArray().size
 
-    documentApi.stubUploadFileSuccess(
+    documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
       fileSize = fileSize,
       expectedFileContent = FILE_CONTENT.toByteArray(),

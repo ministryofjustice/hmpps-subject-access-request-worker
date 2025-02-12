@@ -1,0 +1,83 @@
+{
+  "content": {
+    "categorisationTool": {
+      "catForm": {
+        "form_response": {
+          "recat": {
+            "decision": {
+              "category": "C"
+            },
+            "oasysInput": {
+              "date": "10/10/2021",
+              "oasysRelevantInfo": "No"
+            },
+            "securityInput": {
+              "securityInputNeeded": "No"
+            },
+            "nextReviewDate": {
+              "date": "12/10/2023",
+              "indeterminate": "false"
+            },
+            "riskAssessment": {
+              "lowerCategory": "dffbxcvb",
+              "otherRelevant": "No",
+              "higherCategory": "xcbxcb",
+              "otherRelevantText": ""
+            },
+            "prisonerBackground": {
+              "offenceDetails": "zcvcxb"
+            }
+          },
+          "openConditionsRequested": false
+        },
+        "status": "STARTED",
+        "risk_profile": {
+          "offences": [],
+          "socProfile": {},
+          "escapeProfile": {
+            "nomsId": "G9979UV",
+            "riskType": "ESCAPE",
+            "provisionalCategorisation": "C"
+          },
+          "violenceProfile": {
+            "nomsId": "G9979UV",
+            "riskType": "VIOLENCE",
+            "numberOfAssaults": 0,
+            "notifySafetyCustodyLead": false,
+            "numberOfSeriousAssaults": 0,
+            "numberOfNonSeriousAssaults": 0,
+            "provisionalCategorisation": "C",
+            "veryHighRiskViolentOffender": false
+          },
+          "extremismProfile": {}
+        },
+        "prison_id": "LEI",
+        "offender_no": "G9979UV",
+        "start_date": "2022-06-13 16:21:40.688179+01",
+        "cat_type": "RECAT",
+        "review_reason": "DUE",
+        "due_by_date": "2017-04-27"
+      },
+      "riskChange": [],
+      "security": [],
+      "nextReviewChangeHistory": []
+    },
+    "riskProfiler": {
+      "offender_no": "G9979UV",
+      "escape": {},
+      "extremism": {},
+      "soc": {},
+      "violence": {
+        "nomsId": "G9979UV",
+        "riskType": "VIOLENCE",
+        "numberOfAssaults": 0,
+        "notifySafetyCustodyLead": false,
+        "numberOfSeriousAssaults": 0,
+        "numberOfNonSeriousAssaults": 0,
+        "provisionalCategorisation": "C",
+        "veryHighRiskViolentOffender": false
+      },
+      "execute_date_time": "2021-07-27T02:17:50.908363Z"
+    }
+  }
+}

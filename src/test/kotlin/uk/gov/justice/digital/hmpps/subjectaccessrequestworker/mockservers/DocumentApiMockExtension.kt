@@ -12,6 +12,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.google.gson.Gson
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -38,7 +39,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
     )
   }
 
-  fun stubUploadFileSuccess(
+  fun stubUploadFileSuccessWithMetadata(
     subjectAccessRequestId: String,
     fileSize: Int,
     expectedFileContent: ByteArray,
@@ -66,6 +67,50 @@ class DocumentApiMockServer : WireMockServer(8084) {
             ),
         ),
     )
+  }
+
+  fun stubUploadFileSuccess(subjectAccessRequestId: String) {
+    stubFor(
+      post(urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"))
+        .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("file"),
+        )
+        .willReturn(
+          aResponse()
+            .withTransformers("response-template")
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody(
+              """
+              {
+                "documentUuid": "{{request.pathSegments.2}}",
+                "documentType": "Subject Access Request",
+                "documentFilename": "Subject Access Request - {{request.pathSegments.2}}",
+                "filename": "Subject Access Request - {{request.pathSegments.2}}.pdf",
+                "fileExtension": "pdf",
+                "fileSize": {{request.parts.file.headers.content-length.0}},
+                "fileHash": "12345",
+                "mimeType": "pdf",
+                "metadata": null,
+                "createdTime": "2024-10-29T16:15:58.590Z",
+                "createdByServiceName": "DPS-Subject-Access-Requests",
+                "createdByUsername": "Robert Bobby III"
+              }
+              """.trimIndent(),
+            ),
+        ),
+    )
+  }
+
+  fun getRequestBodyAsByteArray(): ByteArray {
+    assertThat(serveEvents).isNotNull
+    assertThat(serveEvents.requests).hasSize(1)
+    assertThat(serveEvents.requests[0]).isNotNull
+    assertThat(serveEvents.requests[0].request).isNotNull
+    assertThat(serveEvents.requests[0].request.body).isNotNull
+    return serveEvents.requests[0].request.body
   }
 
   fun verifyStoreDocumentIsCalled(times: Int, subjectAccessRequestId: String) {
@@ -110,6 +155,37 @@ class DocumentApiMockServer : WireMockServer(8084) {
             .withBody(
               binaryEqualTo(expectedFileContent),
             ),
+        ).willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(status)
+            .withBody(
+              """
+            {
+              "status": $status,
+              "errorCode": 10001,
+              "userMessage": "something went wrong",
+              "developerMessage": "something went wrong",
+              "moreInfo": "its broken"
+            }
+              """.trimIndent(),
+            ),
+        ),
+    )
+  }
+
+  fun stubUploadFileFailsWithStatus(
+    subjectAccessRequestId: String,
+    status: Int,
+  ) {
+    stubFor(
+      post(
+        urlPathEqualTo("/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId"),
+      )
+        .withHeader("Service-Name", equalTo(SERVICE_NAME_HEADER))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("file"),
         ).willReturn(
           aResponse()
             .withHeader("Content-Type", "application/json")
