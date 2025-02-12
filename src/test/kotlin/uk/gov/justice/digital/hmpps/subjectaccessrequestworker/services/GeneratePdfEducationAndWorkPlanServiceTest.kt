@@ -1,41 +1,26 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfEducationAndWorkPlanServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfEducationAndWorkPlanServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Education and Work Plan Service`() {
-    val serviceList =
-      listOf(DpsService(name = "hmpps-education-and-work-plan-api", content = educationAndWorkPlanServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-template-hmpps-education-and-work-plan-api.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
+    val serviceList = listOf(
+      DpsService(
+        name = "hmpps-education-and-work-plan-api",
+        content = educationAndWorkPlanServiceData,
+      ),
+    )
+    generateSubjectAccessRequestPdf("dummy-template-hmpps-education-and-work-plan-api.pdf", serviceList)
 
-    val reader = PdfDocument(PdfReader("dummy-template-hmpps-education-and-work-plan-api.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-
-    assertThat(text).contains("Personal Learning Plan")
+    getGeneratedPdfDocument("dummy-template-hmpps-education-and-work-plan-api.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+      assertThat(text).contains("Personal Learning Plan")
+    }
   }
 
   private val educationAndWorkPlanServiceData: Any = mapOf(

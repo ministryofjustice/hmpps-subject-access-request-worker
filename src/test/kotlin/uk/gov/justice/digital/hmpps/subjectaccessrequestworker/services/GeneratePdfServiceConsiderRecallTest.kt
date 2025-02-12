@@ -1,45 +1,29 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfServiceConsiderRecallTest {
-
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfServiceConsiderRecallTest : BaseGeneratePdfTest() {
 
   private fun writeAndThenReadPdf(
     testInput: Map<String, Any?>?,
   ): PdfDocument {
-    whenever(userDetailsRepository.findByUsername("USERA_ADM")).thenReturn(UserDetail("USERA_ADM", "Reacher"))
+    whenever(userDetailsRepository.findByUsername("USERA_ADM"))
+      .thenReturn(UserDetail("USERA_ADM", "Reacher"))
+
     val testFileName = "dummy-template-recall.pdf"
     val serviceList = listOf(DpsService(name = "make-recall-decision-api", content = testInput))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream(testFileName)))
-    Document(pdfDocument).use {
-      generatePdfService.addData(pdfDocument, it, serviceList)
-    }
-    return PdfDocument(PdfReader(testFileName))
+    generateSubjectAccessRequestPdf(testFileName, serviceList)
+
+    return getGeneratedPdfDocument(testFileName)
   }
 
   @Test

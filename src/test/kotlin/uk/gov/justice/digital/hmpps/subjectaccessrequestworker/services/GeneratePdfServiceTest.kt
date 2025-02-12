@@ -10,10 +10,8 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.AreaBreakType
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import java.io.ByteArrayInputStream
@@ -21,14 +19,11 @@ import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.time.LocalDate
 
-class GeneratePdfServiceTest {
-  private val templateRenderService: TemplateRenderService = mock()
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService adds rear page with correct text`() {
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy.pdf")))
+    val pdfDocument = createPdfDocument("dummy.pdf")
     val document = Document(pdfDocument)
 
     document.add(Paragraph("This page represents the upstream data pages"))
@@ -39,33 +34,36 @@ class GeneratePdfServiceTest {
     val numberOfPagesWithRearAndCoverPage = pdfDocument.numberOfPages
     document.close()
 
-    val reader = PdfDocument(PdfReader("dummy.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(3))
-
-    assertThat(numberOfPagesWithoutRearAndCoverPage).isEqualTo(1)
-    assertThat(numberOfPagesWithRearAndCoverPage).isEqualTo(3)
-    assertThat(text).contains("End of Subject Access Request Report")
-    assertThat(text).contains("Total pages: 3")
+    getGeneratedPdfDocument("dummy.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(3))
+      assertThat(numberOfPagesWithoutRearAndCoverPage).isEqualTo(1)
+      assertThat(numberOfPagesWithRearAndCoverPage).isEqualTo(3)
+      assertThat(text).contains("End of Subject Access Request Report")
+      assertThat(text).contains("Total pages: 3")
+    }
   }
 
   @Test
   fun `generatePdfService writes data to a PDF`() {
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy.pdf")))
+    val pdfDocument = createPdfDocument("dummy.pdf")
     val document = Document(pdfDocument)
     document.setMargins(50F, 50F, 100F, 50F)
     generatePdfService.addData(pdfDocument, document, serviceList)
     document.close()
-    val reader = PdfDocument(PdfReader("dummy.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-    val text2 = PdfTextExtractor.getTextFromPage(reader.getPage(3))
 
-    assertThat(text).contains("Service for testing")
-    assertThat(text2).contains("Service for testing 2")
+    getGeneratedPdfDocument("dummy.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+      val text2 = PdfTextExtractor.getTextFromPage(pdf.getPage(3))
+
+      assertThat(text).contains("Service for testing")
+      assertThat(text2).contains("Service for testing 2")
+    }
   }
 
   @Test
   fun `generatePdfService adds internal cover page to a PDF`() {
-    val fullDocumentWriter = PdfWriter(FileOutputStream("dummy.pdf"))
+    val fullDocumentWriter = PdfWriter(FileOutputStream(resolveTempFilePath("dummy.pdf")))
+
     val mainPdfStream = ByteArrayOutputStream()
     val pdfDocument = PdfDocument(PdfWriter(mainPdfStream))
     val document = Document(pdfDocument)
@@ -102,33 +100,36 @@ class GeneratePdfServiceTest {
     assertThat(numberOfPagesWithoutCoverpage).isEqualTo(1)
     assertThat(fullDocument.numberOfPages).isEqualTo(2)
     fullDocument.close()
-    val reader = PdfDocument(PdfReader("dummy.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(1))
-    assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
-    assertThat(text).contains("NOMIS ID: nomisNumber")
-    assertThat(text).contains("Name: LASTNAME, Firstname")
-    assertThat(text).contains("Total Pages: 3")
+
+    getGeneratedPdfDocument("dummy.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(1))
+      assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+      assertThat(text).contains("NOMIS ID: nomisNumber")
+      assertThat(text).contains("Name: LASTNAME, Firstname")
+      assertThat(text).contains("Total Pages: 3")
+    }
   }
 
   @Test
   fun `generatePdfService adds internal contents page to a PDF`() {
-    val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+    val writer = PdfWriter(FileOutputStream(resolveTempFilePath("dummy.pdf")))
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
 
     generatePdfService.addInternalContentsPage(pdfDocument, document, serviceList)
 
     document.close()
-    val reader = PdfDocument(PdfReader("dummy.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(1))
+    getGeneratedPdfDocument("dummy.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(1))
 
-    assertThat(text).contains("CONTENTS")
-    assertThat(text).contains("INTERNAL ONLY")
+      assertThat(text).contains("CONTENTS")
+      assertThat(text).contains("INTERNAL ONLY")
+    }
   }
 
   @Test
   fun `generatePdfService adds external coverpage for recipient to a PDF`() {
-    val writer = PdfWriter(FileOutputStream("dummy.pdf"))
+    val writer = PdfWriter(FileOutputStream(resolveTempFilePath("dummy.pdf")))
     val pdfDocument = PdfDocument(writer)
     val document = Document(pdfDocument)
     generatePdfService.addExternalCoverPage(
@@ -143,49 +144,49 @@ class GeneratePdfServiceTest {
     )
     document.close()
 
-    val reader = PdfDocument(PdfReader("dummy.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+    getGeneratedPdfDocument("dummy.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
 
-    assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
-    assertThat(text).contains("NOMIS ID: nomisNumber")
-    assertThat(text).contains("Name: LASTNAME, FIRSTNAME")
+      assertThat(text).contains("SUBJECT ACCESS REQUEST REPORT")
+      assertThat(text).contains("NOMIS ID: nomisNumber")
+      assertThat(text).contains("Name: LASTNAME, FIRSTNAME")
+    }
   }
 
   @Test
   fun `generatePdfService converts data to YAML format in the event of no template`() {
     val testResponseObject = listOf(DpsService(name = "yaml-service-name", content = noTemplateServiceYaml))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-yaml.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, testResponseObject)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-yaml.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+    generateSubjectAccessRequestPdf("dummy-yaml.pdf", testResponseObject)
 
-    assertThat(text).contains("Yaml service name")
-    assertThat(text).contains("Test date text: \"Test\"")
-    assertThat(text).contains("Test data number: 99")
-    assertThat(text).contains("Test data array: \n  - 1 \n  - 2 \n  - 3 \n  - 4 \n  - 5 ")
-    assertThat(text).contains("Test data map: \n  A: \"1\" \n  B: \"2\" ")
-    assertThat(text).contains(
-      "Test data nested: \n" +
-        "  A: \"test\" \n" +
-        "  B: 2 \n" +
-        "  C: \n    - \"alpha\" \n    - \"beta\" \n    - \"gamma\" \n    - \"delta\" \n" +
-        "  D: \n    X: 1 \n    Z: 2 ",
-    )
-    assertThat(text).contains(
-      "Test data deep nested: \n" +
-        "  A: \n" +
-        "    B: \n" +
-        "      C: \n" +
-        "        D: \n" +
-        "          E: \n" +
-        "            F: \n" +
-        "              G: \n" +
-        "                H: \n" +
-        "                  I: \n" +
-        "                    J: \"k\" ",
-    )
+    getGeneratedPdfDocument("dummy-yaml.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+
+      assertThat(text).contains("Yaml service name")
+      assertThat(text).contains("Test date text: \"Test\"")
+      assertThat(text).contains("Test data number: 99")
+      assertThat(text).contains("Test data array: \n  - 1 \n  - 2 \n  - 3 \n  - 4 \n  - 5 ")
+      assertThat(text).contains("Test data map: \n  A: \"1\" \n  B: \"2\" ")
+      assertThat(text).contains(
+        "Test data nested: \n" +
+          "  A: \"test\" \n" +
+          "  B: 2 \n" +
+          "  C: \n    - \"alpha\" \n    - \"beta\" \n    - \"gamma\" \n    - \"delta\" \n" +
+          "  D: \n    X: 1 \n    Z: 2 ",
+      )
+      assertThat(text).contains(
+        "Test data deep nested: \n" +
+          "  A: \n" +
+          "    B: \n" +
+          "      C: \n" +
+          "        D: \n" +
+          "          E: \n" +
+          "            F: \n" +
+          "              G: \n" +
+          "                H: \n" +
+          "                  I: \n" +
+          "                    J: \"k\" ",
+      )
+    }
   }
 
   private val noTemplateServiceYaml = mapOf(
@@ -287,7 +288,8 @@ class GeneratePdfServiceTest {
       numPages = numPages,
     )
     coverPageDocument.close()
-    val fullDocument = PdfDocument(PdfWriter(FileOutputStream("dummy.pdf")))
+
+    val fullDocument = createPdfDocument("dummy.pdf")
     val merger = PdfMerger(fullDocument)
     val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
     val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
@@ -299,15 +301,16 @@ class GeneratePdfServiceTest {
     // Test
     assertThat(fullDocument.numberOfPages).isEqualTo(5)
     fullDocument.close()
-    val reader = PdfDocument(PdfReader("dummy.pdf"))
 
-    val coverPageText = PdfTextExtractor.getTextFromPage(reader.getPage(1))
-    val dataPageText = PdfTextExtractor.getTextFromPage(reader.getPage(4))
+    getGeneratedPdfDocument("dummy.pdf").use { pdf ->
+      val coverPageText = PdfTextExtractor.getTextFromPage(pdf.getPage(1))
+      val dataPageText = PdfTextExtractor.getTextFromPage(pdf.getPage(4))
 
-    assertThat(coverPageText).contains("SUBJECT ACCESS REQUEST REPORT")
-    assertThat(coverPageText).contains("NOMIS ID: nomisNumber")
-    assertThat(dataPageText).contains("Name: LASTNAME, Firstname")
-    assertThat(dataPageText).contains("NOMIS ID: nomisNumber")
+      assertThat(coverPageText).contains("SUBJECT ACCESS REQUEST REPORT")
+      assertThat(coverPageText).contains("NOMIS ID: nomisNumber")
+      assertThat(dataPageText).contains("Name: LASTNAME, Firstname")
+      assertThat(dataPageText).contains("NOMIS ID: nomisNumber")
+    }
   }
 
   private val fullReportServiceData = mapOf(

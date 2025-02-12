@@ -1,39 +1,26 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfAdjudicationServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfAdjudicationServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService  renders for Adjudications service`() {
-    val serviceList =
-      listOf(DpsService(name = "hmpps-manage-adjudications-api", content = testAdjudicationsServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-template-adjudications.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-template-adjudications.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-    assertThat(text).contains("Manage Adjudications")
+    val serviceList = listOf(
+      DpsService(
+        name = "hmpps-manage-adjudications-api",
+        content = testAdjudicationsServiceData,
+      ),
+    )
+    generateSubjectAccessRequestPdf("dummy-template-adjudications.pdf", serviceList)
+
+    getGeneratedPdfDocument("dummy-template-adjudications.pdf").use { doc ->
+      val text = PdfTextExtractor.getTextFromPage(doc.getPage(2))
+      assertThat(text).contains("Manage Adjudications")
+    }
   }
 
   private val testAdjudicationsServiceData: ArrayList<Any> =
