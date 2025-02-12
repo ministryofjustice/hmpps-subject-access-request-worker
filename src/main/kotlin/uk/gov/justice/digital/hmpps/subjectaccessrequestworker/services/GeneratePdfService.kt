@@ -36,7 +36,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
@@ -44,23 +43,20 @@ const val DATA_LINE_SPACING = 16f
 
 @Service
 class GeneratePdfService(
-  var templateRenderService: TemplateRenderService,
-  var telemetryClient: TelemetryClient,
+  val templateRenderService: TemplateRenderService,
+  val telemetryClient: TelemetryClient,
+  val dateService: DateService = DateService(),
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-    var dateConversionHelper = DateConversionHelper()
+    private val dateConverter: DateConversionHelper = DateConversionHelper()
+    val reportDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   }
 
   fun execute(
     services: List<DpsService>,
-    nomisId: String?,
-    ndeliusCaseReferenceId: String?,
-    sarCaseReferenceNumber: String,
     subjectName: String,
-    dateFrom: LocalDate? = null,
-    dateTo: LocalDate? = null,
-    subjectAccessRequest: SubjectAccessRequest? = null,
+    sar: SubjectAccessRequest,
     pdfStream: ByteArrayOutputStream = createPdfStream(),
   ): ByteArrayOutputStream {
     log.info("Saving report..")
@@ -70,33 +66,33 @@ class GeneratePdfService(
     val document = Document(pdfDocument)
 
     log.info("Started writing to PDF")
-    telemetryClient.trackSarEvent("PDFContentGenerationStarted", subjectAccessRequest, "numServices" to services.size.toString())
+    telemetryClient.trackSarEvent("PDFContentGenerationStarted", sar, "numServices" to services.size.toString())
     addInternalContentsPage(pdfDocument, document, services)
     addExternalCoverPage(
       pdfDocument,
       document,
       subjectName,
-      nomisId,
-      ndeliusCaseReferenceId,
-      sarCaseReferenceNumber,
-      dateFrom,
-      dateTo,
+      sar.nomisId,
+      sar.ndeliusCaseReferenceId,
+      sar.sarCaseReferenceNumber,
+      sar.dateFrom,
+      sar.dateTo,
     )
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
       CustomHeaderEventHandler(
         pdfDocument,
         document,
-        getSubjectIdLine(nomisId, ndeliusCaseReferenceId),
+        getSubjectIdLine(sar.nomisId, sar.ndeliusCaseReferenceId),
         subjectName,
       ),
     )
     document.setMargins(50F, 35F, 70F, 35F)
-    addData(pdfDocument, document, services, subjectAccessRequest)
+    addData(pdfDocument, document, services, sar)
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
 
-    telemetryClient.trackSarEvent("PDFContentGenerationComplete", subjectAccessRequest, "numPages" to numPages.toString())
+    telemetryClient.trackSarEvent("PDFContentGenerationComplete", sar, "numPages" to numPages.toString())
 
     log.info("Finished writing report")
     document.close()
@@ -107,11 +103,11 @@ class GeneratePdfService(
     addInternalCoverPage(
       coverPageDocument,
       subjectName,
-      nomisId,
-      ndeliusCaseReferenceId,
-      sarCaseReferenceNumber,
-      dateFrom,
-      dateTo,
+      sar.nomisId,
+      sar.ndeliusCaseReferenceId,
+      sar.sarCaseReferenceNumber,
+      sar.dateFrom,
+      sar.dateTo,
       numPages,
     )
     coverPageDocument.close()
@@ -121,10 +117,10 @@ class GeneratePdfService(
     val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
     val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
 
-    telemetryClient.trackSarEvent("PDFMergingStarted", subjectAccessRequest)
+    telemetryClient.trackSarEvent("PDFMergingStarted", sar)
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
-    telemetryClient.trackSarEvent("PDFMergingComplete", subjectAccessRequest, "numPages" to fullDocument.numberOfPages.toString())
+    telemetryClient.trackSarEvent("PDFMergingComplete", sar, "numPages" to fullDocument.numberOfPages.toString())
 
     cover.close()
     mainContent.close()
@@ -282,15 +278,9 @@ class GeneratePdfService(
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
     document.add(
-      Paragraph(
-        "Report generation date: ${
-          LocalDate.now().format(
-            DateTimeFormatter.ofLocalizedDate(
-              FormatStyle.LONG,
-            ),
-          )
-        }",
-      ).setTextAlignment(TextAlignment.CENTER),
+      Paragraph("Report generation date: ${dateService.now().format(reportDateFormat)}").setTextAlignment(
+        TextAlignment.CENTER,
+      ),
     )
     document.add(Paragraph("\nTotal Pages: ${numPages + 2}").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
     document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
@@ -349,10 +339,10 @@ class GeneratePdfService(
   }
 
   fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
-    val formattedDateTo = dateTo!!.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+    val formattedDateTo = dateTo!!.format(reportDateFormat)
     val formattedDateFrom: String
     if (dateFrom != null) {
-      formattedDateFrom = dateFrom.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+      formattedDateFrom = dateFrom.format(reportDateFormat)
     } else {
       formattedDateFrom = "Start of record"
     }
@@ -389,7 +379,7 @@ class GeneratePdfService(
     // Handle dates/times
     if (input is String) {
       var processedValue = input
-      processedValue = dateConversionHelper.convertDates(processedValue)
+      processedValue = dateConverter.convertDates(processedValue)
       return processedValue
     }
 

@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+
+  sar-db:
+    image: postgres:15
+    networks:
+      - hmpps
+    container_name: sar-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=admin_password
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=sar-db
+
+networks:
+  hmpps:
