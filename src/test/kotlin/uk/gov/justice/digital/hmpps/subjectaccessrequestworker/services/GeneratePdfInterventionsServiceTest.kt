@@ -1,41 +1,21 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfInterventionsServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfInterventionsServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Interventions Service`() {
     val serviceList = listOf(DpsService(name = "hmpps-interventions-service", content = interventionsServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-interventions-service-template.pdf")))
-    val document = Document(pdfDocument)
+    generateSubjectAccessRequestPdf("dummy-interventions-service-template.pdf", serviceList)
 
-    generatePdfService.addData(pdfDocument, document, serviceList)
-
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-interventions-service-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-
-    assertThat(text).contains("Refer and monitor an intervention")
+    getGeneratedPdfDocument("dummy-interventions-service-template.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+      assertThat(text).contains("Refer and monitor an intervention")
+    }
   }
 
   private val interventionsServiceData: Map<Any, Any> = mapOf(

@@ -1,14 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
@@ -16,58 +10,62 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfUseOfForceServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfUseOfForceServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Use of Force Service`() {
     whenever(userDetailsRepository.findByUsername("USERAL_ADM")).thenReturn(UserDetail("USERAL_ADM", "Reacher"))
     whenever(userDetailsRepository.findByUsername("USERAZ_ADM")).thenReturn(UserDetail("USERAZ_ADM", "Dixon"))
-    whenever(userDetailsRepository.findByUsername("REPORTERUSER_ADM")).thenReturn(UserDetail("REPORTERUSER_ADM", "Smith"))
-    whenever(userDetailsRepository.findByUsername("STATEMENTUSER_ADM")).thenReturn(UserDetail("STATEMENTUSER_ADM", "Jones"))
-    whenever(userDetailsRepository.findByUsername("STATEMENTUSER2_ADM")).thenReturn(UserDetail("STATEMENTUSER2_ADM", "Walker"))
+    whenever(userDetailsRepository.findByUsername("REPORTERUSER_ADM")).thenReturn(
+      UserDetail(
+        "REPORTERUSER_ADM",
+        "Smith",
+      ),
+    )
+    whenever(userDetailsRepository.findByUsername("STATEMENTUSER_ADM")).thenReturn(
+      UserDetail(
+        "STATEMENTUSER_ADM",
+        "Jones",
+      ),
+    )
+    whenever(userDetailsRepository.findByUsername("STATEMENTUSER2_ADM")).thenReturn(
+      UserDetail(
+        "STATEMENTUSER2_ADM",
+        "Walker",
+      ),
+    )
     whenever(userDetailsRepository.findByUsername("AND_USER")).thenReturn(UserDetail("AND_USER", "O'Donnell"))
     whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(PrisonDetail("MDI", "Moorland (HMP & YOI)"))
     whenever(prisonDetailsRepository.findByPrisonId("ACI")).thenReturn(PrisonDetail("ACI", "Altcourse (HMP & YOI)"))
+
     val serviceList = listOf(DpsService(name = "hmpps-uof-data-api", content = useOfForceServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-uof-template.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-uof-template.pdf"))
+    generateSubjectAccessRequestPdf("dummy-uof-template.pdf", serviceList)
 
-    val pageTwoText = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-    assertThat(pageTwoText).contains("Use of force")
-    assertThat(pageTwoText).contains("Dixon")
-    assertThat(pageTwoText).contains("O'Donnell")
-    assertThat(pageTwoText).contains("Smith")
-    assertThat(pageTwoText).contains("Moorland (HMP & YOI)")
-    assertThat(pageTwoText).contains("Altcourse (HMP & YOI)")
+    getGeneratedPdfDocument("dummy-uof-template.pdf").use { pdf ->
+      val pageTwoText = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+      assertThat(pageTwoText).contains("Use of force")
+      assertThat(pageTwoText).contains("Dixon")
+      assertThat(pageTwoText).contains("O'Donnell")
+      assertThat(pageTwoText).contains("Smith")
+      assertThat(pageTwoText).contains("Moorland (HMP & YOI)")
+      assertThat(pageTwoText).contains("Altcourse (HMP & YOI)")
 
-    val pageFourText = PdfTextExtractor.getTextFromPage(reader.getPage(4))
-    assertThat(pageFourText).contains("Jones")
-    assertThat(pageFourText).contains("Walker")
+      val pageFourText = PdfTextExtractor.getTextFromPage(pdf.getPage(4))
+      assertThat(pageFourText).contains("Jones")
+      assertThat(pageFourText).contains("Walker")
 
-    verify(userDetailsRepository, times(0)).findByUsername("USERAL_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("USERAZ_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("AND_USER")
-    verify(userDetailsRepository, times(1)).findByUsername("REPORTERUSER_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("STATEMENTUSER_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("STATEMENTUSER2_ADM")
-    verify(prisonDetailsRepository).findByPrisonId("MDI")
-    verify(prisonDetailsRepository).findByPrisonId("ACI")
-    verifyNoMoreInteractions(userDetailsRepository)
-    verifyNoMoreInteractions(prisonDetailsRepository)
+      verify(userDetailsRepository, times(0)).findByUsername("USERAL_ADM")
+      verify(userDetailsRepository, times(1)).findByUsername("USERAZ_ADM")
+      verify(userDetailsRepository, times(1)).findByUsername("AND_USER")
+      verify(userDetailsRepository, times(1)).findByUsername("REPORTERUSER_ADM")
+      verify(userDetailsRepository, times(1)).findByUsername("STATEMENTUSER_ADM")
+      verify(userDetailsRepository, times(1)).findByUsername("STATEMENTUSER2_ADM")
+      verify(prisonDetailsRepository).findByPrisonId("MDI")
+      verify(prisonDetailsRepository).findByPrisonId("ACI")
+      verifyNoMoreInteractions(userDetailsRepository)
+      verifyNoMoreInteractions(prisonDetailsRepository)
+    }
   }
 
   private val useOfForceServiceData: ArrayList<Any> = arrayListOf(

@@ -1,42 +1,26 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfPrepareSomeoneForReleaseServiceTest {
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfPrepareSomeoneForReleaseServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Prepare Someone for Release service`() {
-    val serviceList =
-      listOf(DpsService(name = "hmpps-resettlement-passport-api", content = prepareSomeoneForReleaseServiceData))
+    val serviceList = listOf(
+      DpsService(
+        name = "hmpps-resettlement-passport-api",
+        content = prepareSomeoneForReleaseServiceData,
+      ),
+    )
+    generateSubjectAccessRequestPdf("dummy-resettlement-template.pdf", serviceList)
 
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-resettlement-template.pdf")))
-    val document = Document(pdfDocument)
-    generatePdfService.addData(pdfDocument, document, serviceList)
-    document.close()
-
-    val reader = PdfDocument(PdfReader("dummy-resettlement-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
-
-    assertThat(text).contains("Prepare Someone for Release")
+    getGeneratedPdfDocument("dummy-resettlement-template.pdf").use { pdf ->
+      val text = PdfTextExtractor.getTextFromPage(pdf.getPage(2))
+      assertThat(text).contains("Prepare Someone for Release")
+    }
   }
 
   private val prepareSomeoneForReleaseServiceData: Map<Any, Any> = mapOf(

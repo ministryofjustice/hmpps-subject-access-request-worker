@@ -1,14 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
-import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.layout.Document
-import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
@@ -16,19 +10,8 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
-import java.io.FileOutputStream
 
-class GeneratePdfAccreditedProgrammesServiceTest {
-
-  private val prisonDetailsRepository: PrisonDetailsRepository = mock()
-  private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val telemetryClient: TelemetryClient = mock()
-  private val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+class GeneratePdfAccreditedProgrammesServiceTest : BaseGeneratePdfTest() {
 
   @Test
   fun `generatePdfService renders for Accredited Programmes Service`() {
@@ -38,34 +21,36 @@ class GeneratePdfAccreditedProgrammesServiceTest {
     whenever(prisonDetailsRepository.findByPrisonId("WTI")).thenReturn(PrisonDetail("WTI", "Whatton (HMP)"))
     whenever(prisonDetailsRepository.findByPrisonId("AYI")).thenReturn(PrisonDetail("AYI", "Aylesbury (HMP)"))
     whenever(prisonDetailsRepository.findByPrisonId("Example Location")).thenReturn(null)
-    val serviceList =
-      listOf(DpsService(name = "hmpps-accredited-programmes-api", content = accreditedProgrammesServiceData))
-    val pdfDocument = PdfDocument(PdfWriter(FileOutputStream("dummy-accredited-programmes-template.pdf")))
-    val document = Document(pdfDocument)
+    val serviceList = listOf(
+      DpsService(
+        name = "hmpps-accredited-programmes-api",
+        content = accreditedProgrammesServiceData,
+      ),
+    )
 
-    generatePdfService.addData(pdfDocument, document, serviceList)
+    generateSubjectAccessRequestPdf("dummy-accredited-programmes-template.pdf", serviceList)
 
-    document.close()
-    val reader = PdfDocument(PdfReader("dummy-accredited-programmes-template.pdf"))
-    val text = PdfTextExtractor.getTextFromPage(reader.getPage(2))
+    getGeneratedPdfDocument("dummy-accredited-programmes-template.pdf").use { doc ->
+      val text = PdfTextExtractor.getTextFromPage(doc.getPage(2))
 
-    assertThat(text).contains("Accredited programmes")
-    assertThat(text).contains("Referral")
-    assertThat(text).contains("March-Phillips")
-    assertThat(text).contains("Appleyard")
-    assertThat(text).contains("Lassen")
-    assertThat(text).contains("Whatton (HMP)")
-    assertThat(text).contains("Aylesbury (HMP)")
-    assertThat(text).contains("Example Location")
+      assertThat(text).contains("Accredited programmes")
+      assertThat(text).contains("Referral")
+      assertThat(text).contains("March-Phillips")
+      assertThat(text).contains("Appleyard")
+      assertThat(text).contains("Lassen")
+      assertThat(text).contains("Whatton (HMP)")
+      assertThat(text).contains("Aylesbury (HMP)")
+      assertThat(text).contains("Example Location")
 
-    verify(userDetailsRepository, times(3)).findByUsername("ADMINA_ADM")
-    verify(userDetailsRepository, times(1)).findByUsername("USERA_GEN")
-    verify(userDetailsRepository, times(2)).findByUsername("USERC_GEN")
-    verifyNoMoreInteractions(userDetailsRepository)
-    verify(prisonDetailsRepository).findByPrisonId("WTI")
-    verify(prisonDetailsRepository).findByPrisonId("AYI")
-    verify(prisonDetailsRepository).findByPrisonId("Example Location")
-    verifyNoMoreInteractions(prisonDetailsRepository)
+      verify(userDetailsRepository, times(3)).findByUsername("ADMINA_ADM")
+      verify(userDetailsRepository, times(1)).findByUsername("USERA_GEN")
+      verify(userDetailsRepository, times(2)).findByUsername("USERC_GEN")
+      verifyNoMoreInteractions(userDetailsRepository)
+      verify(prisonDetailsRepository).findByPrisonId("WTI")
+      verify(prisonDetailsRepository).findByPrisonId("AYI")
+      verify(prisonDetailsRepository).findByPrisonId("Example Location")
+      verifyNoMoreInteractions(prisonDetailsRepository)
+    }
   }
 
   private val accreditedProgrammesServiceData: Map<Any, Any> = mapOf(
