@@ -121,17 +121,15 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Specific area</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Vary version</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Has considered checks</td>")
-    assertThat(renderedStyleTemplate).contains("<tr><td>First night from</td><td>No Data Held</td></tr>")
+    assertThat(renderedStyleTemplate).contains("<tr><td>First night from</td><td>15:00</td></tr>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-15\">Friday from</td>")
-    assertThat(renderedStyleTemplate).contains("<td>Decision maker</td><td>Louise Norris</td>")
+    assertThat(renderedStyleTemplate).contains("<td>Decision maker</td><td>Test User</td>")
     assertThat(renderedStyleTemplate).contains("<td>Offence committed before Feb 2015</td><td>No</td>")
     assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Telephone</td>")
-    assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Address line 1</td>")
-    assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Bass requested</td>")
-    assertThat(renderedStyleTemplate).contains("<td>Bass area check seen</td><td>true</td>")
+    assertThat(renderedStyleTemplate).contains("<td class=\"data-column-25\">Curfew address line 1</td>")
+    assertThat(renderedStyleTemplate).contains("<tr><td>Bass requested</td><td>Yes</td></tr>")
     assertThat(renderedStyleTemplate).contains("<td>Additional conditions required</td><td>No</td>")
   }
 
@@ -590,18 +588,106 @@ class TemplateRenderServiceTest {
             ),
             "bassReferral" to mapOf(
               "bassRequest" to mapOf(
-                "specificArea" to "No",
                 "bassRequested" to "Yes",
-                "additionalInformation" to "",
               ),
             ),
             "proposedAddress" to mapOf(
-              "optOut" to mapOf(
+              "curfewAddress" to mapOf(
+                "addressLine1" to "Test Street",
+                "addressLine2" to "",
+                "addressTown" to "Test Town",
+                "postCode" to "B1 2TJ",
+              ),
+            ),
+            "curfew" to mapOf(
+              "firstNight" to mapOf(
+                "firstNightFrom" to "15:00",
+                "firstNightUntil" to "07:00",
+              ),
+            ),
+            "curfewHours" to mapOf(
+              "allFrom" to "19:00",
+              "allUntil" to "07:00",
+              "fridayFrom" to "19:00",
+              "mondayFrom" to "19:00",
+              "sundayFrom" to "19:00",
+              "fridayUntil" to "07:00",
+              "mondayUntil" to "07:00",
+              "sundayUntil" to "07:00",
+              "tuesdayFrom" to "19:00",
+              "saturdayFrom" to "19:00",
+              "thursdayFrom" to "19:00",
+              "tuesdayUntil" to "07:00",
+              "saturdayUntil" to "07:00",
+              "thursdayUntil" to "07:00",
+              "wednesdayFrom" to "19:00",
+              "wednesdayUntil" to "07:00",
+              "daySpecificInputs" to "No",
+            ),
+            "risk" to mapOf(
+              "riskManagement" to mapOf(
+                "version" to "3",
+                "emsInformation" to "No",
+                "pomConsultation" to "Yes",
+                "mentalHealthPlan" to "No",
+                "unsuitableReason" to "",
+                "hasConsideredChecks" to "Yes",
+                "manageInTheCommunity" to "Yes",
+                "emsInformationDetails" to "",
+                "riskManagementDetails" to "",
+                "proposedAddressSuitable" to "Yes",
+                "awaitingOtherInformation" to "No",
+                "nonDisclosableInformation" to "No",
+                "nonDisclosableInformationDetails" to "",
+                "manageInTheCommunityNotPossibleReason" to "",
+              ),
+            ),
+            "reporting" to mapOf(
+              "reportingInstructions" to mapOf(
+                "name" to "sam",
+                "postcode" to "S3 8RD",
+                "telephone" to "47450",
+                "townOrCity" to "Sheffield",
+                "organisation" to "crc",
+                "reportingDate" to "12/12/2024",
+                "reportingTime" to "12:12",
+                "buildingAndStreet1" to "10",
+                "buildingAndStreet2" to "street",
+              ),
+            ),
+            "victim" to mapOf(
+              "victimLiaison" to mapOf(
                 "decision" to "No",
               ),
             ),
-            "addressProposed" to mapOf(
-              "decision" to "No",
+            "licenceConditions" to mapOf(
+              "standard" to mapOf(
+                "additionalConditionsRequired" to "No",
+              ),
+            ),
+            "document" to mapOf(
+              "template" to mapOf(
+                "decision" to "hdc_ap",
+                "offenceCommittedBeforeFeb2015" to "No",
+              ),
+            ),
+            "approval" to mapOf(
+              "release" to mapOf(
+                "decision" to "Yes",
+                "decisionMaker" to "Test User",
+                "reasonForDecision" to "",
+              ),
+            ),
+            "finalChecks" to mapOf(
+              "onRemand" to mapOf(
+                "decision" to "No",
+              ),
+              "seriousOffence" to mapOf(
+                "decision" to "No",
+              ),
+              "confiscationOrder" to mapOf(
+                "decision" to "No",
+              ),
             ),
           ),
         ),

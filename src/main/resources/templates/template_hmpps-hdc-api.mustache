@@ -31,6 +31,7 @@
         {{#licence}}
             <br>
             <h4>Licence eligibility</h4>
+            {{#eligibility}}
             <table class="data-table">
                 <tr>
                     <td class="data-column-25">CRD time</td>
@@ -38,40 +39,43 @@
                     <td class="data-column-25">Suitability</td>
                     <td class="data-column-25"></td>
                 </tr>
-                {{#eligibility}}
                 <tr>
-                    {{#crdTime}}
-                        <td>{{ optionalValue decision }}</td>
-                    {{/crdTime}}
-                    {{#excluded}}
-                        <td>{{ optionalValue decision }}</td>
-                    {{/excluded}}
-                    {{#suitability}}
-                        <td>{{ optionalValue decision }}</td>
-                    {{/suitability}}
-                        <td></td>
+                    <td>{{ optionalValue crdTime.decision }}</td>
+                    <td>{{ optionalValue excluded.decision }}</td>
+                    <td>{{ optionalValue suitability.decision }}</td>
+                    <td></td>
                 </tr>
-                {{/eligibility}}
             </table>
+            {{/eligibility}}
+            {{^eligibility}}
+                <p>No Data Held</p>
+            {{/eligibility}}
 
+            <br>
+            <h4>Bass referral</h4>
             {{#bassReferral}}
-                <br>
-                <h4>Bass referral: Bass request</h4>
-                {{#bassRequest}}
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-50">Specific area</td>
-                            <td class="data-column-50">Bass requested</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue specificArea }}</td>
-                            <td>{{ optionalValue bassRequested }}</td>
-                        </tr>
-                    </table>
-                    <table class="summary-list">
-                        <tr><td>Additional information</td><td>{{ optionalValue additionalInformation }}</td></tr>
-                    </table>
-                {{/bassRequest}}
+                <table class="summary-list">
+                    <tr><td>Bass requested</td><td>{{ optionalValue bassRequest.bassRequested }}</td></tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-20">Bass offer accepted</td>
+                        <td class="data-column-20">Bass offer address line 1</td>
+                        <td class="data-column-20">Bass offer address line 2</td>
+                        <td class="data-column-20">Bass offer address town</td>
+                        <td class="data-column-20">Bass offer postcode</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue bassOffer.bassAccepted }}</td>
+                        <td>{{ optionalValue bassOffer.addressLine1 }}</td>
+                        <td>{{ optionalValue bassOffer.addressLine2 }}</td>
+                        <td>{{ optionalValue bassOffer.addressTown }}</td>
+                        <td>{{ optionalValue bassOffer.postCode }}</td>
+                    </tr>
+                </table>
+            {{/bassReferral}}
+            {{^bassReferral}}
+                <p>No Data Held</p>
             {{/bassReferral}}
 
             <br>
@@ -79,15 +83,297 @@
             {{#proposedAddress}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Opt out</td>
-                    <td class="data-column-75">Address proposed</td>
+                    <td class="data-column-25">Curfew address line 1</td>
+                    <td class="data-column-25">Curfew address line 2</td>
+                    <td class="data-column-25">Curfew address town</td>
+                    <td class="data-column-25">Curfew address postcode</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue optOut.decision }}</td>
-                    <td>{{ optionalValue addressProposed.decision }}</td>
+                    <td>{{ optionalValue curfewAddress.addressLine1 }}</td>
+                    <td>{{ optionalValue curfewAddress.addressLine2 }}</td>
+                    <td>{{ optionalValue curfewAddress.addressTown }}</td>
+                    <td>{{ optionalValue curfewAddress.postCode }}</td>
                 </tr>
             </table>
             {{/proposedAddress}}
+            {{^proposedAddress}}
+                <p>No Data Held</p>
+            {{/proposedAddress}}
+
+            <br>
+            <h4>Curfew</h4>
+            {{#curfew}}
+                <table class="summary-list">
+                    <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNight.firstNightFrom) }}</td></tr>
+                    <tr><td>First night until</td><td>{{ optionalValue (formatDate firstNight.firstNightUntil) }}</td></tr>
+                </table>
+
+                <h5>Curfew hours</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-15">Monday from</td>
+                        <td class="data-column-15">Tuesday from</td>
+                        <td class="data-column-20">Wednesday from</td>
+                        <td class="data-column-15">Thursday from</td>
+                        <td class="data-column-15">Friday from</td>
+                        <td class="data-column-15">Saturday from</td>
+                        <td class="data-column-15">Sunday from</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue curfewHours.mondayFrom }}</td>
+                        <td>{{ optionalValue curfewHours.tuesdayFrom }}</td>
+                        <td>{{ optionalValue curfewHours.wednesdayFrom }}</td>
+                        <td>{{ optionalValue curfewHours.thursdayFrom }}</td>
+                        <td>{{ optionalValue curfewHours.fridayFrom }}</td>
+                        <td>{{ optionalValue curfewHours.saturdayFrom }}</td>
+                        <td>{{ optionalValue curfewHours.sundayFrom }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-15">Monday until</td>
+                        <td class="data-column-15">Tuesday until</td>
+                        <td class="data-column-20">Wednesday until</td>
+                        <td class="data-column-15">Thursday until</td>
+                        <td class="data-column-15">Friday until</td>
+                        <td class="data-column-15">Saturday until</td>
+                        <td class="data-column-15">Sunday until</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue curfewHours.mondayUntil }}</td>
+                        <td>{{ optionalValue curfewHours.tuesdayUntil }}</td>
+                        <td>{{ optionalValue curfewHours.wednesdayUntil }}</td>
+                        <td>{{ optionalValue curfewHours.thursdayUntil }}</td>
+                        <td>{{ optionalValue curfewHours.fridayUntil }}</td>
+                        <td>{{ optionalValue curfewHours.saturdayUntil }}</td>
+                        <td>{{ optionalValue curfewHours.sundayUntil }}</td>
+                    </tr>
+                </table>
+
+                <h5>Approved Premises</h5>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-20">Approved premises required</td>
+                        <td class="data-column-20">Approved premises address line 1</td>
+                        <td class="data-column-20">Approved premises address line 2</td>
+                        <td class="data-column-20">Approved premises address town</td>
+                        <td class="data-column-20">Approved premises address postcode</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue approvedPremises.required }}</td>
+                        <td>{{ optionalValue approvedPremisesAddress.addressLine1 }}</td>
+                        <td>{{ optionalValue approvedPremisesAddress.addressLine2 }}</td>
+                        <td>{{ optionalValue approvedPremisesAddress.addressTown }}</td>
+                        <td>{{ optionalValue approvedPremisesAddress.postCode }}</td>
+                    </tr>
+                </table>
+            {{/curfew}}
+            {{^curfew}}
+                <p>No Data Held</p>
+            {{/curfew}}
+
+            <br>
+            <h4>Risk</h4>
+            {{#risk}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Version</td>
+                        <td class="data-column-25">EMS information</td>
+                        <td class="data-column-50">EMS information details</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskManagement.version }}</td>
+                        <td>{{ optionalValue riskManagement.emsInformation }}</td>
+                        <td>{{ optionalValue riskManagement.emsInformationDetails }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Has considered checks</td>
+                        <td class="data-column-25">Awaiting other information</td>
+                        <td class="data-column-50">Risk management details</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskManagement.hasConsideredChecks }}</td>
+                        <td>{{ optionalValue riskManagement.awaitingOtherInformation }}</td>
+                        <td>{{ optionalValue riskManagement.riskManagementDetails }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">POM consultation</td>
+                        <td class="data-column-25">Non-disclosable information</td>
+                        <td class="data-column-50">Non-disclosable information details</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskManagement.pomConsultation }}</td>
+                        <td>{{ optionalValue riskManagement.nonDisclosableInformation }}</td>
+                        <td>{{ optionalValue riskManagement.nonDisclosableInformationDetails }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Mental health plan</td>
+                        <td class="data-column-25">Proposed address suitable</td>
+                        <td class="data-column-50">Unsuitable reason</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskManagement.mentalHealthPlan }}</td>
+                        <td>{{ optionalValue riskManagement.proposedAddressSuitable }}</td>
+                        <td>{{ optionalValue riskManagement.unsuitableReason }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Manage in the community</td>
+                        <td class="data-column-50">Manage in the community not possible reason</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue riskManagement.manageInTheCommunity }}</td>
+                        <td>{{ optionalValue riskManagement.manageInTheCommunityNotPossibleReason }}</td>
+                        <td></td>
+                    </tr>
+                </table>
+            {{/risk}}
+            {{^risk}}
+                <p>No Data Held</p>
+            {{/risk}}
+
+            <br>
+            <h4>Reporting instructions</h4>
+            {{#reporting}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Name</td>
+                        <td class="data-column-25">Telephone</td>
+                        <td class="data-column-50">Organisation</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue reportingInstructions.name }}</td>
+                        <td>{{ optionalValue reportingInstructions.telephone }}</td>
+                        <td>{{ optionalValue reportingInstructions.organisation }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Building and street 1</td>
+                        <td class="data-column-25">Town/city</td>
+                        <td class="data-column-50">Reporting date</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue reportingInstructions.buildingAndStreet1 }}</td>
+                        <td>{{ optionalValue (formatDate reportingInstructions.reportingDate) }}</td>
+                        <td>{{ optionalValue reportingInstructions.townOrCity }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-25">Building and street 2</td>
+                        <td class="data-column-25">Postcode</td>
+                        <td class="data-column-50">Reporting time</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue reportingInstructions.buildingAndStreet2 }}</td>
+                        <td>{{ optionalValue reportingInstructions.postcode }}</td>
+                        <td>{{ optionalValue (formatDate reportingInstructions.reportingTime) }}</td>
+                    </tr>
+                </table>
+            {{/reporting}}
+            {{^reporting}}
+                <p>No Data Held</p>
+            {{/reporting}}
+
+            <br>
+            <h4>Victim Liaison</h4>
+            {{#victim}}
+                <table class="summary-list">
+                    <tr><td>Decision</td><td>{{ optionalValue victimLiaison.decision }}</td></tr>
+                </table>
+            {{/victim}}
+            {{^victim}}
+                <p>No Data Held</p>
+            {{/victim}}
+
+            <br>
+            <h4>Licence conditions</h4>
+            {{#licenceConditions}}
+                <table class="summary-list">
+                    <tr><td>Bespoke conditions</td><td>{{#bespoke}}{{.}}{{#unless @last}}, {{/unless}}{{/bespoke}}{{^bespoke}}No Data Held{{/bespoke}}</td></tr>
+                    <tr><td>Additional conditions required</td><td>{{ optionalValue standard.additionalConditionsRequired }}</td></tr>
+                    <tr><td>Additional conditions justification</td><td>{{ optionalValue conditionsSummary.additionalConditionsJustification }}</td></tr>
+                </table>
+                <h5>Additional conditions</h5>
+                {{#additional}}
+                    {{#each .}}
+                        <br>
+                        <b>{{ @key }}</b>
+                        {{#this}}
+                            <table class="summary-list">
+                                {{#each .}}
+                                <tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>
+                                {{else}}
+                                <div>No Data Held</div>
+                                {{/each}}
+                            </table>
+                        {{/this}}
+                        {{^this}}
+                            <p>No Data Held</p>
+                        {{/this}}
+                    {{/each}}
+                {{/additional}}
+                {{^additional}}
+                    <p>No Data Held</p>
+                {{/additional}}
+            {{/licenceConditions}}
+            {{^licenceConditions}}
+                <p>No Data Held</p>
+            {{/licenceConditions}}
+
+            <br>
+            <h4>Document Template</h4>
+            {{#document}}
+                <table class="summary-list">
+                    <tr><td>Decision</td><td>{{ optionalValue template.decision }}</td></tr>
+                    <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue template.offenceCommittedBeforeFeb2015 }}</td></tr>
+                </table>
+            {{/document}}
+            {{^document}}
+                <p>No Data Held</p>
+            {{/document}}
+
+            <br>
+            <h4>Approval: Release</h4>
+            {{#approval}}
+                <table class="summary-list">
+                    <tr><td>Decision</td><td>{{ optionalValue release.decision }}</td></tr>
+                    <tr><td>Decision maker</td><td>{{ optionalValue release.decisionMaker }}</td></tr>
+                    <tr><td>Reason for decision</td><td>{{ optionalValue release.reasonForDecision }}</td></tr>
+                </table>
+            {{/approval}}
+            {{^approval}}
+                <p>No Data Held</p>
+            {{/approval}}
+
+            <br>
+            <h4>Final checks</h4>
+            {{#finalChecks}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-20">On remand decision</td>
+                    <td class="data-column-20">Serious offence decision</td>
+                    <td class="data-column-20">Confiscation order decision</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue onRemand.decision }}</td>
+                    <td>{{ optionalValue seriousOffence.decision }}</td>
+                    <td>{{ optionalValue confiscationOrder.decision }}</td>
+                </tr>
+            </table>
+            {{/finalChecks}}
+            {{^finalChecks}}
+                <p>No Data Held</p>
+            {{/finalChecks}}
+
         {{/licence}}
 
     {{/licences}}
@@ -110,222 +396,10 @@
                 <td>{{ optionalValue varyVersion }}</td>
             </tr>
         </table>
-        <br>
-        <h4>Licence: Risk management</h4>
-        <br>
+
         {{#licence}}
-            {{#risk}}
-                {{#riskManagement}}
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Version</td>
-                            <td class="data-column-25">EMS information</td>
-                            <td class="data-column-50">EMS information details</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue version }}</td>
-                            <td>{{ optionalValue emsInformation }}</td>
-                            <td>{{ optionalValue emsInformationDetails }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Has considered checks</td>
-                            <td class="data-column-25">Awaiting other information</td>
-                            <td class="data-column-50">Risk management details</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue hasConsideredChecks }}</td>
-                            <td>{{ optionalValue awaitingOtherInformation }}</td>
-                            <td>{{ optionalValue riskManagementDetails }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">POM consultation</td>
-                            <td class="data-column-25">Non-disclosable information</td>
-                            <td class="data-column-50">Non-disclosable information details</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue pomConsultation }}</td>
-                            <td>{{ optionalValue nonDisclosableInformation }}</td>
-                            <td>{{ optionalValue nonDisclosableInformationDetails }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Mental health plan</td>
-                            <td class="data-column-25">Proposed address suitable</td>
-                            <td class="data-column-50">Unsuitable reason</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue mentalHealthPlan }}</td>
-                            <td>{{ optionalValue proposedAddressSuitable }}</td>
-                            <td>{{ optionalValue unsuitableReason }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Manage in the community</td>
-                            <td class="data-column-50">Manage in the community not possible reason</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue manageInTheCommunity }}</td>
-                            <td>{{ optionalValue manageInTheCommunityNotPossibleReason }}</td>
-                            <td></td>
-                        </tr>
-                    </table>
-                {{/riskManagement}}
-            {{/risk}}
-
-            {{#curfew}}
-                <br>
-                <h4>Curfew</h4>
-                <br>
-                {{#firstNight}}
-                    <table class="summary-list">
-                        <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
-                        <tr><td>First night until</td><td>{{ optionalValue (formatDate firstNightUntil) }}</td></tr>
-                    </table>
-                {{/firstNight}}
-                {{#curfewHours}}
-                    <br>
-                    <h5>Curfew hours</h5>
-                    <br>
-                    <table class="summary-list">
-                        <tr><td>All from</td><td>{{ optionalValue (formatDate allFrom) }}</td></tr>
-                        <tr><td>All until</td><td>{{ optionalValue (formatDate allUntil) }}</td></tr>
-                        <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNightFrom) }}</td></tr>
-                        <tr><td>Day specific inputs</td><td>{{ optionalValue (formatDate daySpecificInputs) }}</td></tr>
-                    </table>
-                    <br>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-15">Monday from</td>
-                            <td class="data-column-15">Tuesday from</td>
-                            <td class="data-column-20">Wednesday from</td>
-                            <td class="data-column-15">Thursday from</td>
-                            <td class="data-column-15">Friday from</td>
-                            <td class="data-column-15">Saturday from</td>
-                            <td class="data-column-15">Sunday from</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue mondayFrom }}</td>
-                            <td>{{ optionalValue tuesdayFrom }}</td>
-                            <td>{{ optionalValue wednesdayFrom }}</td>
-                            <td>{{ optionalValue thursdayFrom }}</td>
-                            <td>{{ optionalValue fridayFrom }}</td>
-                            <td>{{ optionalValue saturdayFrom }}</td>
-                            <td>{{ optionalValue sundayFrom }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-15">Monday until</td>
-                            <td class="data-column-15">Tuesday until</td>
-                            <td class="data-column-20">Wednesday until</td>
-                            <td class="data-column-15">Thursday until</td>
-                            <td class="data-column-15">Friday until</td>
-                            <td class="data-column-15">Saturday until</td>
-                            <td class="data-column-15">Sunday until</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue mondayUntil }}</td>
-                            <td>{{ optionalValue tuesdayUntil }}</td>
-                            <td>{{ optionalValue wednesdayUntil }}</td>
-                            <td>{{ optionalValue thursdayUntil }}</td>
-                            <td>{{ optionalValue fridayUntil }}</td>
-                            <td>{{ optionalValue saturdayUntil }}</td>
-                            <td>{{ optionalValue sundayUntil }}</td>
-                        </tr>
-                    </table>
-                {{/curfewHours}}
-            {{/curfew}}
-
-            {{#victim}}
-                {{#victimLiaison}}
-                    <br>
-                    <h4>Victim Liaison</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/victimLiaison}}
-            {{/victim}}
-
-            {{#approval}}
-                {{#release}}
-                    <br>
-                    <h4>Approval: Release</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                        <tr><td>Decision maker</td><td>{{ optionalValue decisionMaker }}</td></tr>
-                        <tr><td>Reason for decision</td><td>{{ optionalValue reasonForDecision }}</td></tr>
-                    </table>
-                {{/release}}
-                {{#consideration}}
-                    <h4>Approval: Consideration</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                    </table>
-                {{/consideration}}
-            {{/approval}}
-
-            {{#document}}
-                {{#template}}
-                    <h4>Document Template</h4>
-                    <table class="summary-list">
-                        <tr><td>Decision</td><td>{{ optionalValue decision }}</td></tr>
-                        <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue offenceCommittedBeforeFeb2015 }}</td></tr>
-                    </table>
-                {{/template}}
-            {{/document}}
-
-            {{#reporting}}
-                {{#reportingInstructions}}
-                    <br>
-                    <h4>Reporting instructions</h4>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Name</td>
-                            <td class="data-column-25">Telephone</td>
-                            <td class="data-column-50">Organisation</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue name }}</td>
-                            <td>{{ optionalValue telephone }}</td>
-                            <td>{{ optionalValue organisation }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Building and street 1</td>
-                            <td class="data-column-25">Town/city</td>
-                            <td class="data-column-50">Reporting date</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue buildingAndStreet1 }}</td>
-                            <td>{{ optionalValue (formatDate reportingDate) }}</td>
-                            <td>{{ optionalValue townOrCity }}</td>
-                        </tr>
-                    </table>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Building and street 2</td>
-                            <td class="data-column-25">Postcode</td>
-                            <td class="data-column-50">Reporting time</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue buildingAndStreet2 }}</td>
-                            <td>{{ optionalValue postcode }}</td>
-                            <td>{{ optionalValue (formatDate reportingTime) }}</td>
-                        </tr>
-                    </table>
-                {{/reportingInstructions}}
-            {{/reporting}}
-
-            <br>
-            <h4>Licence eligibility</h4>
-            <br>
+        <h4>Licence eligibility</h4>
+        {{#eligibility}}
             <table class="data-table">
                 <tr>
                     <td class="data-column-25">CRD time</td>
@@ -333,152 +407,343 @@
                     <td class="data-column-25">Suitability</td>
                     <td class="data-column-25"></td>
                 </tr>
-                {{#eligibility}}
-                    <tr>
-                        {{#crdTime}}
-                            <td>{{ optionalValue decision }}</td>
-                        {{/crdTime}}
-                        {{#excluded}}
-                            <td>{{ optionalValue decision }}</td>
-                        {{/excluded}}
-                        {{#suitability}}
-                            <td>{{ optionalValue decision }}</td>
-                        {{/suitability}}
-                        <td></td>
-                    </tr>
-                {{/eligibility}}
+                <tr>
+                    <td>{{ optionalValue crdTime.decision }}</td>
+                    <td>{{ optionalValue excluded.decision }}</td>
+                    <td>{{ optionalValue suitability.decision }}</td>
+                    <td></td>
+                </tr>
             </table>
+        {{/eligibility}}
+        {{^eligibility}}
+            <p>No Data Held</p>
+        {{/eligibility}}
 
-            <br>
-            <h4>Final checks</h4>
-            <br>
+        <br>
+        <h4>Bass referral</h4>
+        {{#bassReferral}}
+            <table class="summary-list">
+                <tr><td>Bass requested</td><td>{{ optionalValue bassRequest.bassRequested }}</td></tr>
+            </table>
             <table class="data-table">
                 <tr>
-                    <td class="data-column-20">On remand</td>
-                    <td class="data-column-20">Segregation</td>
-                    <td class="data-column-20">Serious offence</td>
-                    <td class="data-column-20">Confiscation order</td>
-                    <td class="data-column-20">Unduly lenient sentence</td>
+                    <td class="data-column-20">Bass offer accepted</td>
+                    <td class="data-column-20">Bass offer address line 1</td>
+                    <td class="data-column-20">Bass offer address line 2</td>
+                    <td class="data-column-20">Bass offer address town</td>
+                    <td class="data-column-20">Bass offer postcode</td>
                 </tr>
-                {{#finalChecks}}
                 <tr>
-                {{#onRemand}}
-                    <td>{{ optionalValue decision }}</td>
-                {{/onRemand}}
-                {{#segregation}}
-                    <td>{{ optionalValue decision }}</td>
-                {{/segregation}}
-                {{#seriousOffence}}
-                    <td>{{ optionalValue decision }}</td>
-                {{/seriousOffence}}
-                {{#confiscationOrder}}
-                    <td>{{ optionalValue decision }}</td>
-                {{/confiscationOrder}}
-                {{#undulyLenientSentence}}
-                    <td>{{ optionalValue decision }}</td>
-                {{/undulyLenientSentence}}
+                    <td>{{ optionalValue bassOffer.bassAccepted }}</td>
+                    <td>{{ optionalValue bassOffer.addressLine1 }}</td>
+                    <td>{{ optionalValue bassOffer.addressLine2 }}</td>
+                    <td>{{ optionalValue bassOffer.addressTown }}</td>
+                    <td>{{ optionalValue bassOffer.postCode }}</td>
                 </tr>
-                {{/finalChecks}}
             </table>
+        {{/bassReferral}}
+        {{^bassReferral}}
+            <p>No Data Held</p>
+        {{/bassReferral}}
 
-            {{#bassReferral}}
-                {{#bassOffer}}
-                    <br>
-                    <h4>Bass referral: Bass offer</h4>
-                    <br>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Bass area</td>
-                            <td class="data-column-25">Telephone</td>
-                            <td class="data-column-25">Bass accepted</td>
-                            <td class="data-column-25">Bass offer details</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue bassArea }}</td>
-                            <td>{{ optionalValue telephone }}</td>
-                            <td>{{ optionalValue bassAccepted }}</td>
-                            <td>{{ optionalValue bassOfferDetails }}</td>
-                        </tr>
-                    </table>
-                    <br>
-                    <h5>Address</h5>
-                    <br>
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Address line 1</td>
-                            <td class="data-column-25">Address line 2</td>
-                            <td class="data-column-25">Address town</td>
-                            <td class="data-column-25">Postcode</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue addressLine1 }}</td>
-                            <td>{{ optionalValue addressLine2 }}</td>
-                            <td>{{ optionalValue addressTown }}</td>
-                            <td>{{ optionalValue postCode }}</td>
-                        </tr>
-                    </table>
-                {{/bassOffer}}
-                <br>
-                <h4>Bass referral: Bass request</h4>
-                <br>
-                {{#bassRequest}}
-                    <table class="data-table">
-                        <tr>
-                            <td class="data-column-25">Specific area</td>
-                            <td class="data-column-25">Bass requested</td>
-                            <td class="data-column-50">Additional information</td>
-                        </tr>
-                        <tr>
-                            <td>{{ optionalValue specificArea }}</td>
-                            <td>{{ optionalValue bassRequested }}</td>
-                            <td>{{ optionalValue additionalInformation }}</td>
-                        </tr>
-                    </table>
-                {{/bassRequest}}
-                {{#bassAreaCheck}}
-                    <br>
-                    <h4>Bass area check</h4>
-                    <br>
-                    <table class="summary-list">
-                        <tr><td>Bass area reason</td><td>{{ optionalValue bassAreaReason }}</td></tr>
-                        <tr><td>Bass area check seen</td><td>{{ optionalValue bassAreaCheckSeen }}</td></tr>
-                        <tr><td>Approved premises required (Y/N)</td><td>{{ optionalValue approvedPremisesRequiredYesNo }}</td></tr>
-                    </table>
-                {{/bassAreaCheck}}
-            {{/bassReferral}}
-
-            <br>
-            <h4>Proposed address</h4>
-            <br>
+        <br>
+        <h4>Proposed address</h4>
+        {{#proposedAddress}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-25">Opt out</td>
-                    <td class="data-column-75">Address proposed</td>
+                    <td class="data-column-25">Curfew address line 1</td>
+                    <td class="data-column-25">Curfew address line 2</td>
+                    <td class="data-column-25">Curfew address town</td>
+                    <td class="data-column-25">Curfew address postcode</td>
                 </tr>
-                {{#proposedAddress}}
-                    <tr>
-                    {{#optOut}}
-                            <td>{{ optionalValue decision }}</td>
-                    {{/optOut}}
-                    {{#addressProposed}}
-                            <td>{{ optionalValue decision }}</td>
-                    {{/addressProposed}}
-                    </tr>
-                {{/proposedAddress}}
+                <tr>
+                    <td>{{ optionalValue curfewAddress.addressLine1 }}</td>
+                    <td>{{ optionalValue curfewAddress.addressLine2 }}</td>
+                    <td>{{ optionalValue curfewAddress.addressTown }}</td>
+                    <td>{{ optionalValue curfewAddress.postCode }}</td>
+                </tr>
+            </table>
+        {{/proposedAddress}}
+        {{^proposedAddress}}
+            <p>No Data Held</p>
+        {{/proposedAddress}}
+
+        <br>
+        <h4>Curfew</h4>
+        {{#curfew}}
+            <table class="summary-list">
+                <tr><td>First night from</td><td>{{ optionalValue (formatDate firstNight.firstNightFrom) }}</td></tr>
+                <tr><td>First night until</td><td>{{ optionalValue (formatDate firstNight.firstNightUntil) }}</td></tr>
             </table>
 
-            {{#licenceConditions}}
-                <br>
-                <h4>Licence conditions</h4>
-                {{#standard}}
-                    <h4>Standard</h4>
-                    <table class="summary-list">
-                        <tr><td>Additional conditions required</td><td>{{ optionalValue additionalConditionsRequired }}</td></tr>
-                    </table>
-                {{/standard}}
-            {{/licenceConditions}}
+            <h5>Curfew hours</h5>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-15">Monday from</td>
+                    <td class="data-column-15">Tuesday from</td>
+                    <td class="data-column-20">Wednesday from</td>
+                    <td class="data-column-15">Thursday from</td>
+                    <td class="data-column-15">Friday from</td>
+                    <td class="data-column-15">Saturday from</td>
+                    <td class="data-column-15">Sunday from</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue curfewHours.mondayFrom }}</td>
+                    <td>{{ optionalValue curfewHours.tuesdayFrom }}</td>
+                    <td>{{ optionalValue curfewHours.wednesdayFrom }}</td>
+                    <td>{{ optionalValue curfewHours.thursdayFrom }}</td>
+                    <td>{{ optionalValue curfewHours.fridayFrom }}</td>
+                    <td>{{ optionalValue curfewHours.saturdayFrom }}</td>
+                    <td>{{ optionalValue curfewHours.sundayFrom }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-15">Monday until</td>
+                    <td class="data-column-15">Tuesday until</td>
+                    <td class="data-column-20">Wednesday until</td>
+                    <td class="data-column-15">Thursday until</td>
+                    <td class="data-column-15">Friday until</td>
+                    <td class="data-column-15">Saturday until</td>
+                    <td class="data-column-15">Sunday until</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue curfewHours.mondayUntil }}</td>
+                    <td>{{ optionalValue curfewHours.tuesdayUntil }}</td>
+                    <td>{{ optionalValue curfewHours.wednesdayUntil }}</td>
+                    <td>{{ optionalValue curfewHours.thursdayUntil }}</td>
+                    <td>{{ optionalValue curfewHours.fridayUntil }}</td>
+                    <td>{{ optionalValue curfewHours.saturdayUntil }}</td>
+                    <td>{{ optionalValue curfewHours.sundayUntil }}</td>
+                </tr>
+            </table>
+
+            <h5>Approved Premises</h5>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-20">Approved premises required</td>
+                    <td class="data-column-20">Approved premises address line 1</td>
+                    <td class="data-column-20">Approved premises address line 2</td>
+                    <td class="data-column-20">Approved premises address town</td>
+                    <td class="data-column-20">Approved premises address postcode</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue approvedPremises.required }}</td>
+                    <td>{{ optionalValue approvedPremisesAddress.addressLine1 }}</td>
+                    <td>{{ optionalValue approvedPremisesAddress.addressLine2 }}</td>
+                    <td>{{ optionalValue approvedPremisesAddress.addressTown }}</td>
+                    <td>{{ optionalValue approvedPremisesAddress.postCode }}</td>
+                </tr>
+            </table>
+        {{/curfew}}
+        {{^curfew}}
+            <p>No Data Held</p>
+        {{/curfew}}
+
+        <br>
+        <h4>Risk</h4>
+        {{#risk}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Version</td>
+                    <td class="data-column-25">EMS information</td>
+                    <td class="data-column-50">EMS information details</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskManagement.version }}</td>
+                    <td>{{ optionalValue riskManagement.emsInformation }}</td>
+                    <td>{{ optionalValue riskManagement.emsInformationDetails }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Has considered checks</td>
+                    <td class="data-column-25">Awaiting other information</td>
+                    <td class="data-column-50">Risk management details</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskManagement.hasConsideredChecks }}</td>
+                    <td>{{ optionalValue riskManagement.awaitingOtherInformation }}</td>
+                    <td>{{ optionalValue riskManagement.riskManagementDetails }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">POM consultation</td>
+                    <td class="data-column-25">Non-disclosable information</td>
+                    <td class="data-column-50">Non-disclosable information details</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskManagement.pomConsultation }}</td>
+                    <td>{{ optionalValue riskManagement.nonDisclosableInformation }}</td>
+                    <td>{{ optionalValue riskManagement.nonDisclosableInformationDetails }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Mental health plan</td>
+                    <td class="data-column-25">Proposed address suitable</td>
+                    <td class="data-column-50">Unsuitable reason</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskManagement.mentalHealthPlan }}</td>
+                    <td>{{ optionalValue riskManagement.proposedAddressSuitable }}</td>
+                    <td>{{ optionalValue riskManagement.unsuitableReason }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Manage in the community</td>
+                    <td class="data-column-50">Manage in the community not possible reason</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue riskManagement.manageInTheCommunity }}</td>
+                    <td>{{ optionalValue riskManagement.manageInTheCommunityNotPossibleReason }}</td>
+                    <td></td>
+                </tr>
+            </table>
+        {{/risk}}
+        {{^risk}}
+            <p>No Data Held</p>
+        {{/risk}}
+
+        <br>
+        <h4>Reporting instructions</h4>
+        {{#reporting}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Name</td>
+                    <td class="data-column-25">Telephone</td>
+                    <td class="data-column-50">Organisation</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue reportingInstructions.name }}</td>
+                    <td>{{ optionalValue reportingInstructions.telephone }}</td>
+                    <td>{{ optionalValue reportingInstructions.organisation }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Building and street 1</td>
+                    <td class="data-column-25">Town/city</td>
+                    <td class="data-column-50">Reporting date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue reportingInstructions.buildingAndStreet1 }}</td>
+                    <td>{{ optionalValue (formatDate reportingInstructions.reportingDate) }}</td>
+                    <td>{{ optionalValue reportingInstructions.townOrCity }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-25">Building and street 2</td>
+                    <td class="data-column-25">Postcode</td>
+                    <td class="data-column-50">Reporting time</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue reportingInstructions.buildingAndStreet2 }}</td>
+                    <td>{{ optionalValue reportingInstructions.postcode }}</td>
+                    <td>{{ optionalValue (formatDate reportingInstructions.reportingTime) }}</td>
+                </tr>
+            </table>
+        {{/reporting}}
+        {{^reporting}}
+            <p>No Data Held</p>
+        {{/reporting}}
+
+        <br>
+        <h4>Victim Liaison</h4>
+        {{#victim}}
+            <table class="summary-list">
+                <tr><td>Decision</td><td>{{ optionalValue victimLiaison.decision }}</td></tr>
+            </table>
+        {{/victim}}
+        {{^victim}}
+            <p>No Data Held</p>
+        {{/victim}}
+
+        <br>
+        <h4>Licence conditions</h4>
+        {{#licenceConditions}}
+            <table class="summary-list">
+                <tr><td>Bespoke conditions</td><td>{{#bespoke}}{{.}}{{#unless @last}}, {{/unless}}{{/bespoke}}{{^bespoke}}No Data Held{{/bespoke}}</td></tr>
+                <tr><td>Additional conditions required</td><td>{{ optionalValue standard.additionalConditionsRequired }}</td></tr>
+                <tr><td>Additional conditions justification</td><td>{{ optionalValue conditionsSummary.additionalConditionsJustification }}</td></tr>
+            </table>
+            <h5>Additional conditions</h5>
+            {{#additional}}
+                {{#each .}}
+                    <br>
+                    <b>{{ @key }}</b>
+                    {{#this}}
+                        <table class="summary-list">
+                            {{#each .}}
+                                <tr><td>{{ @key }}</td><td>{{ optionalValue this }}</td></tr>
+                            {{else}}
+                                <div>No Data Held</div>
+                            {{/each}}
+                        </table>
+                    {{/this}}
+                    {{^this}}
+                        <p>No Data Held</p>
+                    {{/this}}
+                {{/each}}
+            {{/additional}}
+            {{^additional}}
+                <p>No Data Held</p>
+            {{/additional}}
+        {{/licenceConditions}}
+        {{^licenceConditions}}
+            <p>No Data Held</p>
+        {{/licenceConditions}}
+
+        <br>
+        <h4>Document Template</h4>
+        {{#document}}
+            <table class="summary-list">
+                <tr><td>Decision</td><td>{{ optionalValue template.decision }}</td></tr>
+                <tr><td>Offence committed before Feb 2015</td><td>{{ optionalValue template.offenceCommittedBeforeFeb2015 }}</td></tr>
+            </table>
+        {{/document}}
+        {{^document}}
+            <p>No Data Held</p>
+        {{/document}}
+
+        <br>
+        <h4>Approval: Release</h4>
+        {{#approval}}
+            <table class="summary-list">
+                <tr><td>Decision</td><td>{{ optionalValue release.decision }}</td></tr>
+                <tr><td>Decision maker</td><td>{{ optionalValue release.decisionMaker }}</td></tr>
+                <tr><td>Reason for decision</td><td>{{ optionalValue release.reasonForDecision }}</td></tr>
+            </table>
+        {{/approval}}
+        {{^approval}}
+            <p>No Data Held</p>
+        {{/approval}}
+
+        <br>
+        <h4>Final checks</h4>
+        {{#finalChecks}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-20">On remand decision</td>
+                    <td class="data-column-20">Serious offence decision</td>
+                    <td class="data-column-20">Confiscation order decision</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue onRemand.decision }}</td>
+                    <td>{{ optionalValue seriousOffence.decision }}</td>
+                    <td>{{ optionalValue confiscationOrder.decision }}</td>
+                </tr>
+            </table>
+        {{/finalChecks}}
+        {{^finalChecks}}
+            <p>No Data Held</p>
+        {{/finalChecks}}
 
         {{/licence}}
+
     {{/licenceVersions}}
     <br>
 {{/.}}
