@@ -1,0 +1,82 @@
+outputDir: <PATH TO WRITE GENERATED PDF TO>
+targetServices:
+  - <LIST OF SERVICE NAMES TO INCLUDE IN REPORT>
+services:
+  - name: keyworker-api
+    businessName: Keyworker
+    order: 1
+  - name: offender-case-notes
+    businessName: Sensitive Case Notes
+    order: 2
+  - name: court-case-service
+    businessName: Prepare a Case for Sentence
+    order: 3
+  - name: hmpps-restricted-patients-api
+    businessName: Restricted Patients
+    order: 4
+  - name: hmpps-accredited-programmes-api
+    businessName: Accredited Programmes
+    order: 5
+  - name: hmpps-complexity-of-need
+    businessName: Complexity Of Need
+    order: 6
+  - name: offender-management-allocation-manager
+    businessName: Manage Prison Offender Manager Cases
+    order: 7
+  - name: hmpps-book-secure-move-api
+    businessName: Book a Secure Move
+    order: 8
+  - name: hmpps-education-and-work-plan-api
+    businessName: Personal Learning Plan
+    order: 9
+  - name: hmpps-non-associations-api
+    businessName: Non-associations
+    order: 10
+  - name: hmpps-incentives-api
+    businessName: Incentives
+    order: 11
+  - name: hmpps-manage-adjudications-api
+    businessName: Manage Adjudications
+    order: 12
+  - name: hmpps-offender-categorisation-api
+    businessName: Categorisation Tool
+    order: 13
+  - name: make-recall-decision-api
+    businessName: Consider a Recall
+    order: 14
+  - name: hmpps-hdc-api
+    businessName: Home Detention Curfew
+    order: 15
+  - name: create-and-vary-a-licence-api
+    businessName: Create and Vary a Licence
+    order: 16
+  - name: hmpps-uof-data-api
+    businessName: Use of Force
+    order: 17
+  - name: hmpps-activities-management-api
+    businessName: Manage Activities and Appointments
+    order: 18
+  - name: hmpps-interventions-service
+    businessName: Refer and Monitor an Intervention
+    order: 19
+  - name: hmpps-resettlement-passport-api
+    businessName: Prepare Someone for Release
+    order: 20
+  - name: hmpps-approved-premises-api
+    businessName: Approved Premises
+    order: 21
+  - name: hmpps-education-employment-api
+    businessName: Education Employment
+    order: 22
+  - name: launchpad-auth
+    businessName: Launchpad
+    order: 24
+  - name: G1
+    businessName: G1
+    order: 25
+  - name: G2
+    businessName: G2
+    order: 26
+  - name: G3
+    businessName: G3
+    order: 27

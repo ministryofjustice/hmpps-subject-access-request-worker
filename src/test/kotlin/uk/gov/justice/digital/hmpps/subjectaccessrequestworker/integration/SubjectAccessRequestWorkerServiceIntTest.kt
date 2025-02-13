@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestWorkerService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -60,17 +61,27 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
     hmppsAuth.stubGrantToken()
   }
 
+  /**
+   * Generates a SAR report from static data then compare the content of the output PDF document to a pre-generated
+   * reference PDF file for the requested service - see: src/test/resources/integration-tests/reference-pdfs.
+   *
+   * NOTE: If the template/response data changes you may need to generate an updated reference pdf for affected service.
+   * See the [uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil] readme
+   * for details.
+   */
   @ParameterizedTest
-  @MethodSource("testCases")
+  @MethodSource("generateReportTestCases")
   fun `SAR worker generates and uploads the expected PDF to the document store`(testCase: TestCase) {
+    /**
+     * Ensure test generated reports have the same 'report generation date' as pre-generated reference reports.
+     */
+    whenever(dateService.now()).thenReturn(TemplateTestingUtil.reportGenerationDate)
+
     // Given
     val subjectAccessRequest = newSubjectAccessRequestFor(service = testCase.serviceName)
-    whenever(dateService.now()).thenReturn(testCase.reportGenerationDate)
-
-    // And
-    `Subject Access Request service endpoint returns JSON data`(testCase.sarDataJson)
+    `Subject Access Request service endpoint returns JSON data`(testCase.dataJsonFile)
     `Prison API returns Prisoner name for`(testNomisId)
-    `Document API upload request is successful for`(subjectAccessRequestId.toString())
+    `Document API upload request is successful for`(subjectAccessRequest.id.toString())
 
     // When
     subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
@@ -189,7 +200,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
     .stubUploadFileSuccess(subjectAccessRequestId)
 
   fun `the PDF uploaded to the Document store contains the expected content`(testCase: TestCase) {
-    val expected = getPreGeneratedPdfDocument(testCase.expectedPdf)
+    val expected = getPreGeneratedPdfDocument(testCase.referencePdf)
     val actual = getUploadedPdfDocument()
 
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
@@ -247,48 +258,91 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
     )
 
     @JvmStatic
-    fun testCases() = listOf(
+    fun generateReportTestCases() = listOf(
       TestCase(
         serviceName = "keyworker-api",
         serviceLabel = "Key Worker",
-        sarDataJson = "keyworker-api-stub.json",
-        expectedPdf = "keyworker-api-reference.pdf",
-        reportGenerationDate = LocalDate.of(2025, 2, 11),
+      ),
+      TestCase(
+        serviceName = "offender-case-notes",
+        serviceLabel = "Sensitive Case Notes",
       ),
       TestCase(
         serviceName = "court-case-service",
         serviceLabel = "Prepare a Case for Sentence",
-        sarDataJson = "court-case-service-stub.json",
-        expectedPdf = "court-case-service-reference.pdf",
-        reportGenerationDate = LocalDate.of(2025, 2, 11),
+      ),
+      TestCase(
+        serviceName = "hmpps-restricted-patients-api",
+        serviceLabel = "Restricted Patients",
+      ),
+      TestCase(
+        serviceName = "hmpps-accredited-programmes-api",
+        serviceLabel = "Accredited Programmes",
+      ),
+      TestCase(
+        serviceName = "hmpps-complexity-of-need",
+        serviceLabel = "Complexity Of Need",
+      ),
+      TestCase(
+        serviceName = "offender-management-allocation-manager",
+        serviceLabel = "Manage Prison Offender Manager Cases",
+      ),
+      TestCase(
+        serviceName = "hmpps-book-secure-move-api",
+        serviceLabel = "Book a Secure Move",
+      ),
+      TestCase(
+        serviceName = "hmpps-non-associations-api",
+        serviceLabel = "Non-associations",
+      ),
+      TestCase(
+        serviceName = "hmpps-incentives-api",
+        serviceLabel = "Incentives",
+      ),
+      TestCase(
+        serviceName = "hmpps-manage-adjudications-api",
+        serviceLabel = "Manage Adjudications",
       ),
       TestCase(
         serviceName = "hmpps-offender-categorisation-api",
         serviceLabel = "Categorisation Tool",
-        sarDataJson = "hmpps-offender-categorisation-api-stub.json",
-        expectedPdf = "hmpps-offender-categorisation-api-reference.pdf",
-        reportGenerationDate = LocalDate.of(2025, 2, 11),
+      ),
+      TestCase(
+        serviceName = "hmpps-hdc-api",
+        serviceLabel = "Home Detention Curfew",
+      ),
+      TestCase(
+        serviceName = "create-and-vary-a-licence-api",
+        serviceLabel = "Create and Vary a Licence",
+      ),
+      TestCase(
+        serviceName = "hmpps-uof-data-api",
+        serviceLabel = "Use of Force",
+      ),
+      TestCase(
+        serviceName = "hmpps-activities-management-api",
+        serviceLabel = "Manage Activities and Appointments",
       ),
       TestCase(
         serviceName = "hmpps-resettlement-passport-api",
         serviceLabel = "Prepare Someone for Release",
-        sarDataJson = "hmpps-resettlement-passport-api-stub.json",
-        expectedPdf = "hmpps-resettlement-passport-api-reference.pdf",
-        reportGenerationDate = LocalDate.of(2025, 2, 11),
+      ),
+      TestCase(
+        serviceName = "hmpps-approved-premises-api",
+        serviceLabel = "Approved Premises",
+      ),
+      TestCase(
+        serviceName = "hmpps-education-employment-api",
+        serviceLabel = "Education Employment",
       ),
     )
   }
 
-  /**
-   * Important: The Report Generation Date value is used to mock which date value is returned during the test.This
-   * MUST match the value in the corresponding reference PDF (see - resources/integration-tests/reference-pdfs)
-   */
   data class TestCase(
     val serviceName: String,
     val serviceLabel: String,
-    val sarDataJson: String,
-    val expectedPdf: String,
-    val reportGenerationDate: LocalDate,
+    val dataJsonFile: String = "$serviceName-stub.json",
+    val referencePdf: String = "$serviceName-reference.pdf",
   ) {
     override fun toString() = "SAR request for '$serviceLabel' data generates the expected PDF"
   }
