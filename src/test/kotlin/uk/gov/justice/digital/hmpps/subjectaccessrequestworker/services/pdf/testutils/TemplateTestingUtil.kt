@@ -109,7 +109,7 @@ class TemplateTestingUtil {
     baos.use {
       val outputFile = Paths
         .get(config.outputDir)
-        .resolve("${getFilename()}.pdf")
+        .resolve("sar-${getFilename()}.pdf")
       Files.write(outputFile, baos.toByteArray())
       println("Generated pdf: $outputFile")
     }

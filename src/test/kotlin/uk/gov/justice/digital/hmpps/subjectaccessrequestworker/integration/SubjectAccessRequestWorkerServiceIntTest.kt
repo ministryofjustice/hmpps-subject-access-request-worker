@@ -341,8 +341,8 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
   data class TestCase(
     val serviceName: String,
     val serviceLabel: String,
-    val dataJsonFile: String = "${serviceName}-stub.json",
-    val referencePdf: String = "${serviceName}-reference.pdf",
+    val dataJsonFile: String = "$serviceName-stub.json",
+    val referencePdf: String = "$serviceName-reference.pdf",
   ) {
     override fun toString() = "SAR request for '$serviceLabel' data generates the expected PDF"
   }
