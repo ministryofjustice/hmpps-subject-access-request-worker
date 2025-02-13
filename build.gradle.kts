@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "7.1.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "7.1.2"
   kotlin("plugin.spring") version "2.1.10"
 }
 
@@ -24,9 +24,9 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.4.0")
   implementation("org.apache.commons:commons-lang3:3.17.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2")
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.1.0")
-  implementation("io.sentry:sentry-logback:8.1.0")
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.2.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.2.0")
+  implementation("io.sentry:sentry-logback:8.2.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.2.1")
   implementation("commons-io:commons-io:2.18.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
@@ -34,8 +34,8 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.5")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.2.0")
-  testImplementation("org.wiremock:wiremock-standalone:3.11.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.2.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.12.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.google.code.gson:gson:2.12.1")
 }
