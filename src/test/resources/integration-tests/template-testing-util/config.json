@@ -1,9 +1,0 @@
-{
-  "outputDir": "<PATH TO OUTPUT GENERATED PDF>",
-  "services": [
-    {
-      "name": "<THE SERVICE NAME - SEE 'service_configuration' table>",
-      "businessName": "<SERVICE LABEL - SEE 'service_configuration' table>"
-    }
-  ]
-}

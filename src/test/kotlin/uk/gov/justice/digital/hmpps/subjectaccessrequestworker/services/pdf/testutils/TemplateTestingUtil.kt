@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.microsoft.applicationinsights.TelemetryClient
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -15,6 +17,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.Template
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
 import java.io.ByteArrayOutputStream
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -28,9 +31,15 @@ fun main(args: Array<String>) {
 class TemplateTestingUtil {
 
   companion object {
-    const val CONFIG_PATH = "/integration-tests/template-testing-util/config.json"
+    const val CONFIG_PATH = "/integration-tests/template-testing-util/template-testing-config.yml"
     const val DATA_STUBS_PATH = "/integration-tests/api-response-stubs"
     const val SUBJECT_NAME = "REACHER, Joe"
+
+    /**
+     * Use a fixed date in all generated reports.
+     */
+    @JvmStatic
+    val reportGenerationDate: LocalDate = LocalDate.of(2025, 1, 1)
 
     val subjectAccessRequest = SubjectAccessRequest(
       id = UUID.fromString("83f1f9af-1036-4273-8252-633f6c7cc1d6"),
@@ -47,7 +56,8 @@ class TemplateTestingUtil {
   private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
   private val templateRenderService = TemplateRenderService(templateHelpers)
   private val telemetryClient: TelemetryClient = mock()
-  private val pdfService: GeneratePdfService = GeneratePdfService(templateRenderService, telemetryClient, DateService())
+  private val dateService: DateService = mock()
+  private val pdfService: GeneratePdfService = GeneratePdfService(templateRenderService, telemetryClient, dateService)
 
   init {
     whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(
@@ -62,6 +72,8 @@ class TemplateTestingUtil {
         prisonName = "LEEDS (HMP)",
       ),
     )
+
+    whenever(dateService.now()).thenReturn(reportGenerationDate)
   }
 
   fun generatePdfStream(
@@ -69,13 +81,17 @@ class TemplateTestingUtil {
     subjectName: String,
     subjectAccessRequest: SubjectAccessRequest,
   ): ByteArrayOutputStream {
-    val dpsServices = config.services.map { s ->
-      DpsService(
-        name = s.name,
-        businessName = s.businessName,
-        content = s.getContent()?.get("content"),
-      )
-    }
+    val targetServices = config.targetServices
+
+    val dpsServices = config.services
+      .filter { s -> targetServices.contains(s.name) }
+      .map { s ->
+        DpsService(
+          name = s.name,
+          businessName = s.businessName,
+          content = s.getContent()?.get("content"),
+        )
+      }
 
     return pdfService.execute(
       dpsServices,
@@ -85,46 +101,54 @@ class TemplateTestingUtil {
   }
 
   fun generatePdfFile() {
-    val config = loadConfig()
+    val config = readConfig()
     writePdf(config, generatePdfStream(config, SUBJECT_NAME, subjectAccessRequest))
-  }
-
-  private fun loadConfig(): Config {
-    val configJson =
-      TemplateTestingUtil::class.java.getResource(CONFIG_PATH)?.readText(Charsets.UTF_8)
-        ?: throw RuntimeException("$CONFIG_PATH not found")
-    return ObjectMapper().readValue(configJson, Config::class.java)
   }
 
   private fun writePdf(config: Config, baos: ByteArrayOutputStream) {
     baos.use {
-      val outputFile = Paths.get(config.outputDir)
-        .resolve("sar-pdf-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"))}.pdf")
+      val outputFile = Paths
+        .get(config.outputDir)
+        .resolve("sar-${getFilename()}.pdf")
       Files.write(outputFile, baos.toByteArray())
       println("Generated pdf: $outputFile")
+    }
+  }
+
+  private fun getFilename(): String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmss"))
+
+  private fun readConfig(): Config {
+    val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
+    return TemplateTestingUtil::class.java.getResourceAsStream(CONFIG_PATH).use { inputStream ->
+      mapper.readValue(inputStream, Config::class.java)
     }
   }
 
   data class Config(
     var services: List<Service>,
     var outputDir: String,
+    var targetServices: List<String>,
   ) {
-    constructor() : this(services = mutableListOf(), outputDir = "")
+    constructor() : this(services = mutableListOf(), outputDir = "", targetServices = mutableListOf())
   }
 
   data class Service(
     val name: String,
     val businessName: String,
+    var order: Int,
   ) {
 
-    constructor() : this("", "")
+    constructor() : this("", "", -1)
 
     fun getContent(): Map<*, *>? {
-      val path = Paths.get(DATA_STUBS_PATH).resolve("$name-stub.json")
-      val stub = TemplateTestingUtil::class.java.getResource(path.toString())?.readText(Charsets.UTF_8)
+      val path = getDataJsonStubPath()
+      val stub = TemplateTestingUtil::class.java.getResource(path.toString())
+        ?.readText(Charsets.UTF_8)
         ?: throw RuntimeException("$path not found")
 
       return ObjectMapper().readValue(stub, Map::class.java)
     }
+
+    private fun getDataJsonStubPath(): Path = Paths.get(DATA_STUBS_PATH).resolve("$name-stub.json")
   }
 }
