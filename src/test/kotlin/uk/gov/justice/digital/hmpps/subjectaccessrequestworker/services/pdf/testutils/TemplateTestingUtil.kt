@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateServ
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.GeneratePdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.TemplateRenderService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateResources
 import java.io.ByteArrayOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -54,7 +55,11 @@ class TemplateTestingUtil {
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val userDetailsRepository: UserDetailsRepository = mock()
   private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  private val templateRenderService = TemplateRenderService(templateHelpers)
+  private val templateResources = TemplateResources(
+    templatesDirectory = "/templates",
+    mandatoryServiceTemplates = listOf("G1", "G2", "G3"),
+  )
+  private val templateRenderService = TemplateRenderService(templateHelpers, templateResources)
   private val telemetryClient: TelemetryClient = mock()
   private val dateService: DateService = mock()
   private val pdfService: GeneratePdfService = GeneratePdfService(templateRenderService, telemetryClient, dateService)

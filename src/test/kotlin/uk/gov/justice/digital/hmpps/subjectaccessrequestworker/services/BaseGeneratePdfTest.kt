@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateResources
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,7 +21,11 @@ abstract class BaseGeneratePdfTest {
   protected val prisonDetailsRepository: PrisonDetailsRepository = mock()
   protected val userDetailsRepository: UserDetailsRepository = mock()
   protected val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
-  protected val templateRenderService = TemplateRenderService(templateHelpers)
+  protected val templateResources: TemplateResources = TemplateResources(
+    templatesDirectory = "/templates",
+    mandatoryServiceTemplates = listOf("G1", "G2", "G3"),
+  )
+  protected val templateRenderService = TemplateRenderService(templateHelpers, templateResources)
   protected val telemetryClient: TelemetryClient = mock()
   protected val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
 
