@@ -15,6 +15,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
@@ -36,6 +37,13 @@ import java.io.InputStreamReader
 import java.time.LocalDate
 import java.util.UUID
 
+@TestPropertySource(
+  properties = [
+    "G1-api.url=http://localhost:4100",
+    "G2-api.url=http://localhost:4100",
+    "G3-api.url=http://localhost:4100",
+  ],
+)
 class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
 
   @Autowired
@@ -209,8 +217,9 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
       val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
 
-      assertThat(actualPageN).isEqualTo(expectedPageN)
-        .withFailMessage("actual page: $i did not match expected")
+      assertThat(actualPageN)
+        .isEqualTo(expectedPageN)
+        .withFailMessage("actual page: $i did not match expected.")
     }
   }
 
@@ -334,6 +343,18 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       TestCase(
         serviceName = "hmpps-education-employment-api",
         serviceLabel = "Education Employment",
+      ),
+      TestCase(
+        serviceName = "G1",
+        serviceLabel = "G1",
+      ),
+      TestCase(
+        serviceName = "G2",
+        serviceLabel = "G2",
+      ),
+      TestCase(
+        serviceName = "G3",
+        serviceLabel = "G3",
       ),
     )
   }
