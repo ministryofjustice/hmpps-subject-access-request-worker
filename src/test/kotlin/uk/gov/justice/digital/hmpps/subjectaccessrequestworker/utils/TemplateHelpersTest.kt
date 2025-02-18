@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
@@ -80,33 +82,6 @@ class TemplateHelpersTest {
       val response = templateHelpers.formatDate(input)
       assertThat(response).isEqualTo(expectedValue)
     }
-  }
-
-  companion object {
-    @JvmStatic fun dateArrayValues(): Stream<Arguments> = Stream.of(
-      Arguments.of(listOf(2023, 3, 24, 13, 59, 16, 133644), "24 March 2023, 1:59:16 pm"),
-      Arguments.of(listOf(2023, 3, 24, 13, 59, 16), "24 March 2023, 1:59:16 pm"),
-      Arguments.of(listOf(2023, 3, 24, 13, 59), "24 March 2023, 1:59 pm"),
-      Arguments.of(listOf(2023, 3, 24, 13), "24 March 2023, 1:00 pm"),
-      Arguments.of(listOf(2023, 3, 24), "24 March 2023, 12:00 am"),
-      Arguments.of(listOf(2023, 3), "01 March 2023, 12:00 am"),
-      Arguments.of(listOf(2023), "01 January 2023, 12:00 am"),
-      Arguments.of(emptyList<Int>(), "01 January 0001, 12:00 am"),
-      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0, 16.0, 133644.0), "24 March 2023, 1:59:16 pm"),
-      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0, 16.0), "24 March 2023, 1:59:16 pm"),
-      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0), "24 March 2023, 1:59 pm"),
-      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0), "24 March 2023, 1:00 pm"),
-      Arguments.of(listOf(2023.0, 3.0, 24.0), "24 March 2023, 12:00 am"),
-      Arguments.of(listOf(2023.0, 3.0), "01 March 2023, 12:00 am"),
-      Arguments.of(listOf(2023.0), "01 January 2023, 12:00 am"),
-      Arguments.of(listOf("2023", "3", "24", "13", "59", "16", "133644"), "24 March 2023, 1:59:16 pm"),
-      Arguments.of(listOf("2023", "3", "24", "13", "59", "16"), "24 March 2023, 1:59:16 pm"),
-      Arguments.of(listOf("2023", "3", "24", "13", "59"), "24 March 2023, 1:59 pm"),
-      Arguments.of(listOf("2023", "3", "24", "13"), "24 March 2023, 1:00 pm"),
-      Arguments.of(listOf("2023", "3", "24"), "24 March 2023, 12:00 am"),
-      Arguments.of(listOf("2023", "3"), "01 March 2023, 12:00 am"),
-      Arguments.of(listOf("2023"), "01 January 2023, 12:00 am"),
-    )
   }
 
   @Nested
@@ -372,5 +347,73 @@ class TemplateHelpersTest {
       val response = templateHelpers.convertCamelCase(input)
       assertThat(response).isEqualTo(expectedValue)
     }
+  }
+
+  @Nested
+  inner class OptionalStringTest {
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "Data is Held       | Data is Held",
+        "SOme random String | SOme random String",
+        "''                 | No Data Held",
+        "null               | No Data Held",
+      ],
+      delimiterString = "|",
+      nullValues = ["null"],
+    )
+    fun `should return expected value`(input: String?, expectedValue: String) {
+      assertThat(templateHelpers.optionalString(input)).isEqualTo(expectedValue)
+    }
+
+    @ParameterizedTest
+    @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpersTest#nonStringValues")
+    fun `should throw expected exception if input is no String`(value: Any) {
+      val actual = assertThrows<SubjectAccessRequestTemplatingException> {
+        templateHelpers.optionalString(value)
+      }
+      assertThat(actual.message).startsWith("required type String or null, but actual type was ${value::class.simpleName}")
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    fun dateArrayValues(): Stream<Arguments> = Stream.of(
+      Arguments.of(listOf(2023, 3, 24, 13, 59, 16, 133644), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023, 3, 24, 13, 59, 16), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023, 3, 24, 13, 59), "24 March 2023, 1:59 pm"),
+      Arguments.of(listOf(2023, 3, 24, 13), "24 March 2023, 1:00 pm"),
+      Arguments.of(listOf(2023, 3, 24), "24 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023, 3), "01 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023), "01 January 2023, 12:00 am"),
+      Arguments.of(emptyList<Int>(), "01 January 0001, 12:00 am"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0, 16.0, 133644.0), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0, 16.0), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0, 59.0), "24 March 2023, 1:59 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0, 13.0), "24 March 2023, 1:00 pm"),
+      Arguments.of(listOf(2023.0, 3.0, 24.0), "24 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023.0, 3.0), "01 March 2023, 12:00 am"),
+      Arguments.of(listOf(2023.0), "01 January 2023, 12:00 am"),
+      Arguments.of(listOf("2023", "3", "24", "13", "59", "16", "133644"), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf("2023", "3", "24", "13", "59", "16"), "24 March 2023, 1:59:16 pm"),
+      Arguments.of(listOf("2023", "3", "24", "13", "59"), "24 March 2023, 1:59 pm"),
+      Arguments.of(listOf("2023", "3", "24", "13"), "24 March 2023, 1:00 pm"),
+      Arguments.of(listOf("2023", "3", "24"), "24 March 2023, 12:00 am"),
+      Arguments.of(listOf("2023", "3"), "01 March 2023, 12:00 am"),
+      Arguments.of(listOf("2023"), "01 January 2023, 12:00 am"),
+    )
+
+    @JvmStatic
+    fun nonStringValues(): List<Any> = listOf(
+      99,
+      10.0,
+      mutableMapOf("A" to "B"),
+      object {
+        val name: String = "Homer Simpson"
+      },
+      true,
+      false,
+      listOf("1", "2", "3"),
+    )
   }
 }

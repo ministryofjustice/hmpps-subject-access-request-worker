@@ -21,6 +21,7 @@ import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
 import com.microsoft.applicationinsights.TelemetryClient
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -145,7 +146,12 @@ class GeneratePdfService(
     document.add(endPageText)
   }
 
-  fun addData(pdfDocument: PdfDocument, document: Document, services: List<DpsService>, subjectAccessRequest: SubjectAccessRequest? = null) {
+  fun addData(
+    pdfDocument: PdfDocument,
+    document: Document,
+    services: List<DpsService>,
+    subjectAccessRequest: SubjectAccessRequest? = null,
+  ) {
     services.forEach { service ->
       document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
       log.info("Compiling data from ${service.businessName ?: service.name}")
@@ -163,7 +169,11 @@ class GeneratePdfService(
 
       if (service.content != "No Data Held") {
         templatingStopWatch.start()
-        val renderedTemplate = templateRenderService.renderTemplate(serviceName = service.name!!, serviceData = service.content)
+        val renderedTemplate = templateRenderService.renderTemplate(
+          subjectAccessRequest = subjectAccessRequest,
+          serviceName = service.name!!,
+          serviceData = service.content,
+        )
         templatingStopWatch.stop()
 
         telemetryClient.trackSarEvent(
@@ -173,7 +183,7 @@ class GeneratePdfService(
           "service" to (service.name ?: "unknown"),
           "htmlStringSize" to renderedTemplate?.length.toString(),
         )
-        if (renderedTemplate !== null && renderedTemplate !== "") {
+        if (StringUtils.isNotEmpty(renderedTemplate)) {
           convertingStopWatch.start()
           val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
           convertingStopWatch.stop()
@@ -183,7 +193,7 @@ class GeneratePdfService(
             subjectAccessRequest,
             "eventTime" to convertingStopWatch.formatTime(),
             "service" to (service.name ?: "unknown"),
-            "htmlStringSize" to renderedTemplate.length.toString(),
+            "htmlStringSize" to renderedTemplate!!.length.toString(),
             "elements" to htmlElement.size.toString(),
           )
 
