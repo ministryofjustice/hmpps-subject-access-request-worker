@@ -38,10 +38,8 @@ class TemplateResources(
 
   fun getStyleTemplate(): String = getResource("$templatesDirectory/main_stylesheet.mustache") ?: ""
 
-  private fun serviceTemplateIsMandatory(serviceName: String): Boolean {
-    return mandatoryServiceTemplates.contains(serviceName).also {
-      LOG.info("is mandatory service template? $it, config: ${mandatoryServiceTemplates.joinToString(",")}")
-    }
+  private fun serviceTemplateIsMandatory(serviceName: String) = mandatoryServiceTemplates.contains(serviceName).also {
+    LOG.info("is mandatory service template? $it, config: ${mandatoryServiceTemplates.joinToString(",")}")
   }
 
   private fun getResource(path: String) = this::class.java.getResource(path)?.readText()
