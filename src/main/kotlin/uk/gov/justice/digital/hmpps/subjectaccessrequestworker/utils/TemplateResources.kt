@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
@@ -14,6 +15,10 @@ class TemplateResources(
     "G3",
   ),
 ) {
+
+  companion object {
+    private val LOG = LoggerFactory.getLogger(TemplateResources::class.java)
+  }
 
   fun getServiceTemplate(subjectAccessRequest: SubjectAccessRequest?, serviceName: String): String? {
     val template = getResource("$templatesDirectory/template_$serviceName.mustache")
@@ -33,7 +38,11 @@ class TemplateResources(
 
   fun getStyleTemplate(): String = getResource("$templatesDirectory/main_stylesheet.mustache") ?: ""
 
-  private fun serviceTemplateIsMandatory(serviceName: String) = mandatoryServiceTemplates.contains(serviceName)
+  private fun serviceTemplateIsMandatory(serviceName: String): Boolean {
+    return mandatoryServiceTemplates.contains(serviceName).also {
+      LOG.info("is mandatory service template? $it, config: ${mandatoryServiceTemplates.joinToString(",")}")
+    }
+  }
 
   private fun getResource(path: String) = this::class.java.getResource(path)?.readText()
 }
