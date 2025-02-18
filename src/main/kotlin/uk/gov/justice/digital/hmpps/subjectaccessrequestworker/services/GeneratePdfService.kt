@@ -21,7 +21,7 @@ import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.renderer.IRenderer
 import com.itextpdf.layout.renderer.TextRenderer
 import com.microsoft.applicationinsights.TelemetryClient
-import io.micrometer.common.util.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
