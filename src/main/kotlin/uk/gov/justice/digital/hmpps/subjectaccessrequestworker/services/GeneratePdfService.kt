@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter
 const val DATA_HEADER_FONT_SIZE = 16f
 const val DATA_FONT_SIZE = 12f
 const val DATA_LINE_SPACING = 16f
+const val NO_DATA_HELD = "No Data Held"
 
 @Service
 class GeneratePdfService(
@@ -167,7 +168,7 @@ class GeneratePdfService(
         "service" to (service.name ?: "unknown"),
       )
 
-      if (service.content != "No Data Held") {
+      if (service.content != NO_DATA_HELD) {
         templatingStopWatch.start()
         val renderedTemplate = templateRenderService.renderTemplate(
           subjectAccessRequest = subjectAccessRequest,
@@ -217,7 +218,7 @@ class GeneratePdfService(
         }
       } else {
         // No template rendered, fallback to old YAML layout
-        addYamlLayout(document, service)
+        addNoDataHeldPage(document, service)
       }
 
       stopWatch.stop()
@@ -233,6 +234,23 @@ class GeneratePdfService(
       )
     }
     log.info("Added data to PDF")
+  }
+
+  fun addNoDataHeldPage(document: Document, service: DpsService) {
+    document.add(
+      Paragraph()
+        .setFixedLeading(DATA_LINE_SPACING)
+        .add(Text("${service.businessName ?: HeadingHelper.format(service.name!!)}\n"))
+        .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
+        .setFontSize(DATA_HEADER_FONT_SIZE),
+    )
+    document.add(
+      Paragraph()
+        .setFixedLeading(DATA_LINE_SPACING)
+        .add(Text(NO_DATA_HELD))
+        .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
+        .setFontSize(DATA_FONT_SIZE),
+    )
   }
 
   fun addYamlLayout(document: Document, service: DpsService) {

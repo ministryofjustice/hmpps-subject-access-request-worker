@@ -33,9 +33,9 @@ class GeneratePdfServiceGTest : BaseGeneratePdfTest() {
   @ParameterizedTest
   @CsvSource(
     value = [
-      "G1 | 'G1\nData is held'",
-      "G2 | 'G2\nData is held'",
-      "G3 | 'G3\nData is held'",
+      "G1 | 'G1\nNo Data Held'",
+      "G2 | 'G2\nNo Data Held'",
+      "G3 | 'G3\nNo Data Held'",
     ],
     delimiterString = "|",
   )
@@ -46,10 +46,7 @@ class GeneratePdfServiceGTest : BaseGeneratePdfTest() {
     executeTest(
       serviceName = serviceName,
       expectedContent = expectedPdfContent,
-      content = mapOf(
-        "data" to "Data is held",
-        "sensitiveInformation" to "some sensitive information that should be hidden",
-      ),
+      content = "Date Not Held",
     )
   }
 
@@ -79,31 +76,7 @@ class GeneratePdfServiceGTest : BaseGeneratePdfTest() {
     )
   }
 
-  @ParameterizedTest
-  @CsvSource(
-    value = [
-      "G1 | 'G1\nData is not held'",
-      "G2 | 'G2\nData is not held'",
-      "G3 | 'G3\nData is not held'",
-    ],
-    delimiterString = "|",
-  )
-  fun `should generate PDF with 'Data is not held' only, all other content is ignored`(
-    serviceName: String,
-    expectedPdfContent: String,
-  ) {
-    executeTest(
-      serviceName = serviceName,
-      expectedContent = expectedPdfContent,
-      content = mapOf(
-        "data" to "Data is not held",
-        "sensitiveInformation" to "some sensitive information that should be hidden",
-        "pinNumber" to 123456,
-      ),
-    )
-  }
-
-  private fun executeTest(serviceName: String, content: Map<*, *>, expectedContent: String) {
+  private fun executeTest(serviceName: String, content: Any, expectedContent: String) {
     generateSubjectAccessRequestPdf(
       filename = "$serviceName-template.pdf",
       serviceList = listOf(DpsService(name = serviceName, content = content)),
