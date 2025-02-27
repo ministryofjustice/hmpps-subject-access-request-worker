@@ -61,11 +61,12 @@ class GeneratePdfServiceConsiderRecallTest {
       val lastPageText = PdfTextExtractor.getTextFromPage(it.getPage(12))
 
       assertThat(text).contains("Consider a Recall")
-      assertThat(text).contains("CRN X098092")
+      assertThat(text).contains("Sensitive")
+      assertThat(text).contains("No")
       assertThat(text).contains("hacking the monitor")
       assertThat(text).contains("Reacher")
 
-      assertThat(thirdPageText).contains("Custody status")
+      assertThat(thirdPageText).contains("Local police contact")
       assertThat(thirdPageText).contains("If we transmit the interface")
 
       assertThat(lastPageText).contains("Booking momento")
