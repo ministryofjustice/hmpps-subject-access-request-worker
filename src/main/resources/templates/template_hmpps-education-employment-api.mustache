@@ -15,11 +15,11 @@
     <h2>Profile data</h2>
     {{#profileData}}
         <table class="summary-list">
+            <tr><td>Prison name</td><td>{{ optionalValue prisonName }}</td></tr>
             <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
             <tr><td>Status change</td><td>{{ convertBoolean statusChange }}</td></tr>
-            <tr><td>Status change date</td><td>{{ optionalValue (formatDate statusChangeDate) }}</td></tr>
-            <tr><td>Prison name</td><td>{{ optionalValue prisonName }}</td></tr>
             <tr><td>Status change type</td><td>{{ optionalValue statusChangeType }}</td></tr>
+            <tr><td>Status change date</td><td>{{ optionalValue (formatDate statusChangeDate) }}</td></tr>
         </table>
 
         <h3>Support Accepted</h3>
@@ -62,14 +62,20 @@
             {{#workImpacts}}
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-25">Modified date</td>
-                        <td class="data-column-25">Caring responsibilities full time</td>
-                        <td class="data-column-25">Able to manage mental health</td>
-                        <td class="data-column-25">Able to manage dependencies</td>
+                        <td class="data-column-50">Modified date</td>
+                        <td class="data-column-50">Caring responsibilities full time</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue (formatDate modifiedDateTime) }}</td>
                         <td>{{ convertBoolean caringResponsibilitiesFullTime }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Able to manage mental health</td>
+                        <td class="data-column-50">Able to manage dependencies</td>
+                    </tr>
+                    <tr>
                         <td>{{ convertBoolean ableToManageMentalHealth }}</td>
                         <td>{{ convertBoolean ableToManageDependencies }}</td>
                     </tr>
@@ -138,7 +144,8 @@
                 <table class="summary-list">
                     <tr><td>Modified date</td><td>{{ optionalValue (formatDate modifiedDateTime) }}</td></tr>
                 </table>
-                <h6>Actions</h6>
+                <br/>
+                <b>Actions</b>
                 {{#actions}}
                     <table class="data-table">
                         <tr>
@@ -167,14 +174,20 @@
             {{#workImpacts}}
                 <table class="data-table">
                     <tr>
-                        <td class="data-column-25">Modified date</td>
-                        <td class="data-column-25">Caring responsibilities full time</td>
-                        <td class="data-column-25">Able to manage mental health</td>
-                        <td class="data-column-25">Able to manage dependencies</td>
+                        <td class="data-column-50">Modified date</td>
+                        <td class="data-column-50">Caring responsibilities full time</td>
                     </tr>
                     <tr>
                         <td>{{ optionalValue (formatDate modifiedDateTime) }}</td>
                         <td>{{ convertBoolean caringResponsibilitiesFullTime }}</td>
+                    </tr>
+                </table>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Able to manage mental health</td>
+                        <td class="data-column-50">Able to manage dependencies</td>
+                    </tr>
+                    <tr>
                         <td>{{ convertBoolean ableToManageMentalHealth }}</td>
                         <td>{{ convertBoolean ableToManageDependencies }}</td>
                     </tr>
