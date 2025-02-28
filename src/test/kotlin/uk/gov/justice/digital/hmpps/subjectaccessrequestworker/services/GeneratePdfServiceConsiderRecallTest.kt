@@ -50,10 +50,10 @@ class GeneratePdfServiceConsiderRecallTest : BaseGeneratePdfTest() {
       assertThat(text).contains("hacking the monitor")
       assertThat(text).contains("Reacher")
 
-      assertThat(thirdPageText).contains("Local police contact")
       assertThat(thirdPageText).contains("If we transmit the interface")
+      assertThat(thirdPageText).contains("Explain the decision Created Last modified")
 
-      assertThat(lastPageText).contains("Booking momento")
+      assertThat(lastPageText).contains("Protection Arrangements")
       verify(userDetailsRepository, times(1)).findByUsername("USERA_ADM")
     }
   }

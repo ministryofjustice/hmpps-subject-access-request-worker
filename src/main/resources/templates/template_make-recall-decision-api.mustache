@@ -32,73 +32,27 @@
             <p>No Data Held</p>
         {{/recallConsideredList}}
         <br>
-        <h5>Recall type</h5>
-        {{#recallType}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-20">Recall type</td>
-                    <td class="data-column-80">Details</td>
-                </tr>
-            {{#selected}}
-                <tr>
-                    <td>{{ optionalValue value }}</td>
-                    <td>{{ optionalValue details }}</td>
-                </tr>
-            {{/selected}}
-            {{^selected}}
-                <tr>
-                    <td>No Data Held</td>
-                    <td>No Data Held</td>
-                </tr>
-            {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/recallType}}
-        {{^recallType}}
-            <p>No Data Held</p>
-        {{/recallType}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-20">Recall type</td>
+                <td class="data-column-80">Details</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue recallType.selected.value }}</td>
+                <td>{{ optionalValue recallType.selected.details }}</td>
+            </tr>
+        </table>
         <br>
-        <h5>Manager recall decision</h5>
-        {{#managerRecallDecision}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-20">Manager recall decision</td>
-                    <td class="data-column-80">Details</td>
-                </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ optionalValue value }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/managerRecallDecision}}
-        {{^managerRecallDecision}}
-            <p>No Data Held</p>
-        {{/managerRecallDecision}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Manager recall decision</td>
+                <td class="data-column-75">Details</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue managerRecallDecision.selected.value }}</td>
+                <td>{{ optionalValue managerRecallDecision.selected.details }}</td>
+            </tr>
+        </table>
         <br>
         <h5>Consideration Rationale</h5>
         {{#considerationRationale}}
@@ -123,12 +77,12 @@
         {{#custodyStatus}}
             <table class="data-table">
                 <tr>
-                    <td class="data-column-35">Code</td>
-                    <td class="data-column-65">Description</td>
+                    <td class="data-column-35">Selected</td>
+                    <td class="data-column-65">Details</td>
                 </tr>
                 <tr>
-                    <td>{{ optionalValue code }}</td>
-                    <td>{{ optionalValue description }}</td>
+                    <td>{{ convertBoolean selected }}</td>
+                    <td>{{ optionalValue details }}</td>
                 </tr>
             </table>
         {{/custodyStatus}}
@@ -193,105 +147,37 @@
             <tr><td>{{ optionalValue whatLedToRecall }}</td></tr>
         </table>
         <br>
-        <h5>Has victims in contact scheme</h5>
-        {{#hasVictimsInContactScheme}}
-            <table class="data-table">
-                <tr><td class="data-column-20">Has victims in contact scheme</td></tr>
-                {{#selected}}
-                    <tr><td>{{ optionalValue selected }}</td></tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr><td>No Data Held</td></tr>
-                {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/hasVictimsInContactScheme}}
-        {{^hasVictimsInContactScheme}}
-            <p>No Data Held</p>
-        {{/hasVictimsInContactScheme}}
+        <table class="data-table">
+            <tr><td class="data-column-20">Has victims in contact scheme</td></tr>
+            <tr><td>{{ optionalValue hasVictimsInContactScheme.selected }}</td></tr>
+        </table>
         <br>
-        <h5>Indeterminate sentence type</h5>
-        {{#indeterminateSentenceType}}
-            <table class="data-table">
-                <tr><td class="data-column-20">Indeterminate sentence type</td></tr>
-                {{#selected}}
-                    <tr><td>{{ optionalValue selected }}</td></tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr><td>No Data Held</td></tr>
-                {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/indeterminateSentenceType}}
-        {{^indeterminateSentenceType}}
-            <p>No Data Held</p>
-        {{/indeterminateSentenceType}}
+        <table class="data-table">
+            <tr><td class="data-column-20">Indeterminate sentence type</td></tr>
+            <tr><td>{{ optionalValue indeterminateSentenceType.selected }}</td></tr>
+        </table>
         <br>
-        <h5>Has arrest issues</h5>
-        {{#hasArrestIssues}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-20">Has arrest issues</td>
-                    <td class="data-column-80">Details</td>
-                </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ convertBoolean selected }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-        {{/hasArrestIssues}}
-        {{^hasArrestIssues}}
-            <p>No Data Held</p>
-        {{/hasArrestIssues}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Has arrest issues</td>
+                <td class="data-column-75">Details</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean hasArrestIssues.selected }}</td>
+                <td>{{ optionalValue hasArrestIssues.details }}</td>
+            </tr>
+        </table>
         <br>
-        <h5>Has contraband risk</h5>
-        {{#hasContrabandRisk}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-20">Has contraband risk</td>
-                    <td class="data-column-80">Details</td>
-                </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ optionalValue selected }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-        {{/hasContrabandRisk}}
-        {{^hasContrabandRisk}}
-            <p>No Data Held</p>
-        {{/hasContrabandRisk}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Has contraband risk</td>
+                <td class="data-column-75">Details</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean hasContrabandRisk.selected }}</td>
+                <td>{{ optionalValue hasContrabandRisk.details }}</td>
+            </tr>
+        </table>
         <br>
         <table class="data-table">
             <tr>
@@ -498,58 +384,47 @@
         {{^convictionDetail}}
             <p>No Data Held</p>
         {{/convictionDetail}}
-
-        <h5>Alternatives to recall tried</h5>
-        {{#alternativesToRecallTried}}
-            <table class="data-table">
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-20">Alternatives to recall tried</td>
+                <td class="data-column-80">Details</td>
+            </tr>
+            {{#alternativesToRecallTried.selected}}
                 <tr>
-                    <td class="data-column-20">Alternatives to recall tried</td>
-                    <td class="data-column-80">Details</td>
+                    <td>{{ optionalValue value }}</td>
+                    <td>{{ optionalValue details }}</td>
                 </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ optionalValue value }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/alternativesToRecallTried}}
-        {{^alternativesToRecallTried}}
-            <p>No Data Held</p>
-        {{/alternativesToRecallTried}}
+            {{/alternativesToRecallTried.selected}}
+            {{^alternativesToRecallTried.selected}}
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
+            {{/alternativesToRecallTried.selected}}
+        </table>
 
         <h5>Licence conditions breached</h5>
         {{#licenceConditionsBreached}}
-            {{#standardLicenceConditions}}
-                <table class="data-table">
-                    <tr><td class="data-column-20">Standard licence conditions</td></tr>
-                    <tr><td>{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}</td></tr>
-                </table>
-                <table class="data-table">
-                    <tr><td class="data-column-100">All options</td></tr>
-                    {{#allOptions}}
-                        <tr><td>{{ optionalValue text }}</td></tr>
-                    {{/allOptions}}
-                    {{^allOptions}}
-                        <tr><td>No Data Held</td></tr>
-                    {{/allOptions}}
-                </table>
-            {{/standardLicenceConditions}}
+            <table class="data-table">
+                <tr><td class="data-column-20">Standard licence conditions</td></tr>
+                <tr><td>{{#standardLicenceConditions.selected}}<li>{{ optionalValue . }}</li>{{/standardLicenceConditions.selected}}{{^standardLicenceConditions.selected}}No Data Held{{/standardLicenceConditions.selected}}</td></tr>
+            </table>
+            <table class="data-table">
+                <tr><td class="data-column-100">All options</td></tr>
+                {{#standardLicenceConditions.allOptions}}
+                    <tr>
+                        <td>{{ optionalValue value }}</td>
+                        <td>{{ optionalValue text }}</td>
+                    </tr>
+                {{/standardLicenceConditions.allOptions}}
+                {{^standardLicenceConditions.allOptions}}
+                    <tr>
+                        <td>No Data Held</td>
+                        <td>No Data Held</td>
+                    </tr>
+                {{/standardLicenceConditions.allOptions}}
+            </table>
             <br>
             {{#additionalLicenceConditions}}
                 <table class="data-table">
@@ -563,6 +438,13 @@
                             <td>{{#selected}}<li>{{ optionalValue . }}</li>{{/selected}}{{^selected}}No Data Held{{/selected}}</td>
                             <td>{{ optionalValue mainCatCode }}</td>
                             <td>{{ optionalValue subCatCode }}</td>
+                        </tr>
+                    {{/selectedOptions}}
+                    {{^selectedOptions}}
+                        <tr>
+                            <td>No Data Held</td>
+                            <td>No Data Held</td>
+                            <td>No Data Held</td>
                         </tr>
                     {{/selectedOptions}}
                 </table>
@@ -621,7 +503,10 @@
                 <table class="data-table">
                     <tr><td class="data-column-100">All options</td></tr>
                     {{#allOptions}}
-                        <tr><td>{{ optionalValue text }}</td></tr>
+                        <tr>
+                            <td>{{ optionalValue value }}</td>
+                            <td>{{ optionalValue text }}</td>
+                        </tr>
                     {{/allOptions}}
                     {{^allOptions}}
                         <tr><td>No Data Held</td></tr>
@@ -637,10 +522,16 @@
                 <table class="data-table">
                     <tr><td class="data-column-100">All options</td></tr>
                     {{#allOptions}}
-                        <tr><td>{{ optionalValue text }}</td></tr>
+                        <tr>
+                            <td>{{ optionalValue value }}</td>
+                            <td>{{ optionalValue text }}</td>
+                        </tr>
                     {{/allOptions}}
                     {{^allOptions}}
-                        <tr><td>No Data Held</td></tr>
+                        <tr>
+                            <td>No Data Held</td>
+                            <td>No Data Held</td>
+                        </tr>
                     {{/allOptions}}
                 </table>
             {{/additionalLicenceConditions}}
@@ -653,10 +544,16 @@
                 <table class="data-table">
                     <tr><td class="data-column-100">All options</td></tr>
                     {{#allOptions}}
-                        <tr><td>{{ optionalValue text }}</td></tr>
+                        <tr>
+                            <td>{{ optionalValue value }}</td>
+                            <td>{{ optionalValue text }}</td>
+                        </tr>
                     {{/allOptions}}
                     {{^allOptions}}
-                        <tr><td>No Data Held</td></tr>
+                        <tr>
+                            <td>No Data Held</td>
+                            <td>No Data Held</td>
+                        </tr>
                     {{/allOptions}}
                 </table>
             {{/bespokeLicenceConditions}}
@@ -664,71 +561,36 @@
         {{^cvlLicenceConditionsBreached}}
             <p>No Data Held</p>
         {{/cvlLicenceConditionsBreached}}
-
+        <br>
         <table class="data-table">
             <tr><td class="data-column-100">Additional licence conditions text</td></tr>
             <tr><td>{{ optionalValue additionalLicenceConditionsText }}</td></tr>
         </table>
-
-        <h5>Vulnerabilities</h5>
-        {{#vulnerabilities}}
-            <table class="data-table">
+        <br>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-35">Vulnerabilities</td>
+                <td class="data-column-65">Details</td>
+            </tr>
+            {{#vulnerabilities.selected}}
                 <tr>
-                    <td class="data-column-35">Vulnerabilities</td>
-                    <td class="data-column-65">Details</td>
+                    <td>{{ optionalValue value }}</td>
+                    <td>{{ optionalValue details }}</td>
                 </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ optionalValue value }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/vulnerabilities}}
-        {{^vulnerabilities}}
-            <p>No Data Held</p>
-        {{/vulnerabilities}}
-
-        <h5>Under integrated offender management</h5>
-        {{#isUnderIntegratedOffenderManagement}}
-            <table class="data-table">
-                <tr><td class="data-column-20">Under integrated offender management</td></tr>
-                {{#selected}}
-                    <tr><td>{{ optionalValue selected }}</td></tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr><td>No Data Held</td></tr>
-                {{/selected}}
-            </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
-        {{/isUnderIntegratedOffenderManagement}}
-        {{^isUnderIntegratedOffenderManagement}}
-            <p>No Data Held</p>
-        {{/isUnderIntegratedOffenderManagement}}
-
+            {{/vulnerabilities.selected}}
+            {{^vulnerabilities.selected}}
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
+            {{/vulnerabilities.selected}}
+        </table>
+        <br>
+        <table class="data-table">
+            <tr><td class="data-column-20">Under integrated offender management</td></tr>
+            <tr><td>{{ optionalValue isUnderIntegratedOffenderManagement.selected }}</td></tr>
+        </table>
+        <br>
         <table class="data-table">
             <tr><td class="data-column-100">Index offence details</td></tr>
             <tr><td>{{ optionalValue indexOffenceDetails }}</td></tr>
@@ -748,26 +610,16 @@
             </tr>
         </table>
         <br>
-        {{#fixedTermAdditionalLicenceConditions}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-35">Fixed term additional licence conditions</td>
-                    <td class="data-column-65">Details</td>
-                </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ optionalValue selected }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-        {{/fixedTermAdditionalLicenceConditions}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-35">Fixed term additional licence conditions</td>
+                <td class="data-column-65">Details</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean fixedTermAdditionalLicenceConditions.selected }}</td>
+                <td>{{ optionalValue fixedTermAdditionalLicenceConditions.details }}</td>
+            </tr>
+        </table>
         <br>
         {{#indeterminateOrExtendedSentenceDetails}}
             <table class="data-table">
@@ -788,37 +640,18 @@
                     </tr>
                 {{/selected}}
             </table>
-            <table class="data-table">
-                <tr><td class="data-column-100">All options</td></tr>
-                {{#allOptions}}
-                    <tr><td>{{ optionalValue text }}</td></tr>
-                {{/allOptions}}
-                {{^allOptions}}
-                    <tr><td>No Data Held</td></tr>
-                {{/allOptions}}
-            </table>
         {{/indeterminateOrExtendedSentenceDetails}}
         <br>
-        {{#isMainAddressWherePersonCanBeFound}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-35">Is main address where person can be found</td>
-                    <td class="data-column-65">Details</td>
-                </tr>
-                {{#selected}}
-                    <tr>
-                        <td>{{ optionalValue selected }}</td>
-                        <td>{{ optionalValue details }}</td>
-                    </tr>
-                {{/selected}}
-                {{^selected}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/selected}}
-            </table>
-        {{/isMainAddressWherePersonCanBeFound}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-35">Is main address where person can be found</td>
+                <td class="data-column-65">Details</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean isMainAddressWherePersonCanBeFound.selected }}</td>
+                <td>{{ optionalValue isMainAddressWherePersonCanBeFound.details }}</td>
+            </tr>
+        </table>
         <br>
         {{#whyConsideredRecall}}
         <table class="data-table">
@@ -833,10 +666,16 @@
         <table class="data-table">
             <tr><td class="data-column-100">All options</td></tr>
             {{#allOptions}}
-                <tr><td>{{ optionalValue text }}</td></tr>
+                <tr>
+                    <td>{{ optionalValue value }}</td>
+                    <td>{{ optionalValue text }}</td>
+                </tr>
             {{/allOptions}}
             {{^allOptions}}
-                <tr><td>No Data Held</td></tr>
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
             {{/allOptions}}
         </table>
         {{/whyConsideredRecall}}
@@ -883,10 +722,16 @@
                 <table class="data-table">
                     <tr><td class="data-column-100">All options</td></tr>
                     {{#allOptions}}
-                        <tr><td>{{ optionalValue text }}</td></tr>
+                        <tr>
+                            <td>{{ optionalValue value }}</td>
+                            <td>{{ optionalValue text }}</td>
+                        </tr>
                     {{/allOptions}}
                     {{^allOptions}}
-                        <tr><td>No Data Held</td></tr>
+                        <tr>
+                            <td>No Data Held</td>
+                            <td>No Data Held</td>
+                        </tr>
                     {{/allOptions}}
                 </table>
             {{/howWillAppointmentHappen}}

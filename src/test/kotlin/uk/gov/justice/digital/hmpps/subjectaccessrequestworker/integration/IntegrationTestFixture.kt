@@ -99,6 +99,10 @@ class IntegrationTestFixture {
         serviceLabel = "Education Employment",
       ),
       TestCase(
+        serviceName = "make-recall-decision-api",
+        serviceLabel = "Consider a Recall",
+      ),
+      TestCase(
         serviceName = "G1",
         serviceLabel = "G1",
       ),
