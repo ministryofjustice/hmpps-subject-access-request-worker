@@ -1,21 +1,82 @@
 <h1>Prepare a Case for Sentence</h1>
 {{#.}}
-    <br>
+{{#cases}}
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>{{ optionalValue caseId }}</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    {{#hearings}}
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>{{ optionalValue hearingId }}</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        {{#notes}}
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>{{ optionalValue note }}</td></tr>
+                <tr><td>Author surname</td><td>{{ optionalValue authorSurname }}</td></tr>
+            </table>
+        {{/notes}}
+        {{^notes}}
+            <p>No Data Held</p>
+        {{/notes}}
+
+        <h5>Outcomes</h5>
+        {{#outcomes}}
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue outcomeType }}</td>
+                    <td>{{ optionalValue (formatDate outcomeDate) }}</td>
+                    <td>{{ optionalValue (formatDate resultedDate) }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue state}}</td>
+                    <td>{{ getUserLastName assignedTo }}</td>
+                    <td>{{ optionalValue (formatDate createdDate) }}</td>
+                </tr>
+            </table>
+        {{/outcomes}}
+        {{^outcomes}}
+            <p>No Data Held</p>
+        {{/outcomes}}
+
+    {{/hearings}}
+    {{^hearings}}
+        <p>No Data Held</p>
+    {{/hearings}}
+
     <h3>Comments</h3>
-        {{#comments}}
-        <br>
+    {{#comments}}
+        <br/>
         <table class="data-table">
             <tr><td>Comment</td></tr>
             <tr><td>{{ optionalValue comment }}</td></tr>
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-30">Author</td>
+                <td class="data-column-30">Author surname</td>
                 <td class="data-column-30">Created</td>
                 <td class="data-column-30">Created by</td>
             </tr>
             <tr>
-                <td>{{ getUserLastName author }}</td>
+                <td>{{ getUserLastName authorSurname }}</td>
                 <td>{{ optionalValue (formatDate created) }}</td>
                 <td>{{ getUserLastName createdBy }}</td>
             </tr>
@@ -32,54 +93,18 @@
                 <td>{{ optionalValue caseNumber }}</td>
             </tr>
         </table>
-        {{/comments}}
+    {{/comments}}
+    {{^comments}}
+        <p>No Data Held</p>
+    {{/comments}}
+    <br/>
 
-    <br>
-    <h3>Hearing Outcomes</h3>
-        {{#hearingOutcomes}}
-        <br>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-30">Outcome type</td>
-                <td class="data-column-30">Outcome date</td>
-                <td class="data-column-30">Resulted date</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue outcomeType }}</td>
-                <td>{{ optionalValue (formatDate outcomeDate) }}</td>
-                <td>{{ optionalValue (formatDate resultedDate) }}</td>
-            </tr>
-        </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-30">State</td>
-                <td class="data-column-30">Assigned to</td>
-                <td class="data-column-30">Created date</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue state}}</td>
-                <td>{{ getUserLastName assignedTo }}</td>
-                <td>{{ optionalValue (formatDate createdDate) }}</td>
-            </tr>
-        </table>
-        {{/hearingOutcomes}}
+{{/cases}}
+{{^cases}}
+    <p>No Data Held</p>
+{{/cases}}
 
-    <br>
-    <h3>Hearing Notes</h3>
-    {{#hearingNotes}}
-        <br>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-30">Hearing ID</td>
-                <td class="data-column-30">Author</td>
-                <td class="data-column-30">Note</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue hearingId }}</td>
-                <td>{{ getUserLastName author }}</td>
-                <td>{{ optionalValue note }}</td>
-            </tr>
-        </table>
-    {{/hearingNotes}}
-
+{{/.}}
+{{^.}}
+    <p>No Data Held</p>
 {{/.}}
