@@ -167,9 +167,12 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<h3>Hearing Outcomes</h3>")
-    assertThat(renderedStyleTemplate).contains("Ravishankar Challapalli")
+    assertThat(renderedStyleTemplate).contains("<h5>Notes</h5>")
     assertThat(renderedStyleTemplate).contains("This is a note")
+    assertThat(renderedStyleTemplate).contains("<h5>Outcomes</h5>")
+    assertThat(renderedStyleTemplate).contains("ADJOURNED")
+    assertThat(renderedStyleTemplate).contains("<h3>Comments</h3>")
+    assertThat(renderedStyleTemplate).contains("Author One")
   }
 
   @Test
@@ -1258,54 +1261,62 @@ class TemplateRenderServiceTest {
     )
 
     private val testCourtCaseServiceData = mapOf(
-      "comments" to arrayListOf(
+      "cases" to arrayListOf(
         mapOf(
-          "comment" to "test",
-          "author" to "Ravishankar Challapalli",
-          "created" to "2023-06-21T12:11:21.355792",
-          "createdBy" to "RAVI(prepare-a-case-for-court-1)",
-          "lastUpdated" to "2023-06-21T12:11:21.355792",
-          "lastUpdatedBy" to "RAVI(prepare-a-case-for-court-1)",
-          "caseNumber" to "2106223516243653402",
-        ),
-        mapOf(
-          "comment" to "Defendant details\\r\\nName\\tJohn Marston\\r\\nGender\\tMale\\r\\nDate of birth\\t28 February 1997 (25 years old)\\r\\nPhone number\\tUnavailable\\r\\nAddress\\t14 Tottenham Court Road\\r\\nLondon Road\\r\\nEngland\\r\\nUK\\r\\nEarth\\r\\nW1T 7RJ\\r\\nComments\\r\\nAdd notes and observations about this case. Your colleagues who use Prepare a Case will be able to read them.\\r\\n\\r\\nThese comments will not be saved to NDelius.\\r\\n\\r\\n",
-          "author" to "Ravishankar Challapalli",
-          "created" to "2023-06-21T12:11:21.355792",
-          "createdBy" to "RAVI(prepare-a-case-for-court-1)",
-          "lastUpdated" to "2023-06-21T12:11:21.355792",
-          "lastUpdatedBy" to "RAVI(prepare-a-case-for-court-1)",
-          "caseNumber" to "2106223516243653402",
-        ),
-      ),
-      "hearingOutcomes" to arrayListOf(
-        mapOf(
-          "outcomeType" to "OTHER",
-          "outcomeDate" to "2023-06-22T14:12:31.396105",
-          "resultedDate" to "2023-09-12T15:30:13.558769",
-          "state" to "RESULTED",
-          "assignedTo" to "Ryan",
-          "createdDate" to "2023-06-22T14:12:31.428778",
-        ),
-        mapOf(
-          "outcomeType" to "ADJOURNED",
-          "outcomeDate" to "2023-06-22T14:12:31.396105",
-          "resultedDate" to "2023-09-12T15:30:13.558769",
-          "state" to "RESULTED",
-          "assignedTo" to "Johny Farrar",
-          "createdDate" to "2023-06-22T14:12:31.428778",
-        ),
-      ),
-      "hearingNotes" to arrayListOf(
-        mapOf(
-          "hearingId" to "605e08b9-8544-417e-84fa-39ce337ab04e",
-          "note" to "This is a note",
-          "author" to "Joana Aguia",
-        ),
-        mapOf(
-          "hearingId" to "605e08b9-8544-417e-84fa-39ce337ab04e",
-          "note" to "This is a note",
-          "author" to "Joana Aguia",
+          "caseId" to "b4a23007-beb0-4c3f-893f-3a7c80c3521c",
+          "hearings" to arrayListOf(
+            mapOf(
+              "hearingId" to "605e08b9-8544-417e-84fa-39ce337ab04e",
+              "notes" to arrayListOf(
+                mapOf(
+                  "note" to "This is a note",
+                  "authorSurname" to "Test Author",
+                ),
+                mapOf(
+                  "note" to "This is a note",
+                  "authorSurname" to "Test Author",
+                ),
+              ),
+              "outcomes" to arrayListOf(
+                mapOf(
+                  "outcomeType" to "OTHER",
+                  "outcomeDate" to "2023-06-22T14:12:31.396105",
+                  "resultedDate" to "2023-09-12T15:30:13.558769",
+                  "state" to "RESULTED",
+                  "assignedTo" to "User",
+                  "createdDate" to "2023-06-22T14:12:31.428778",
+                ),
+                mapOf(
+                  "outcomeType" to "ADJOURNED",
+                  "outcomeDate" to "2023-06-22T14:12:31.396105",
+                  "resultedDate" to "2023-09-12T15:30:13.558769",
+                  "state" to "RESULTED",
+                  "assignedTo" to "User Two",
+                  "createdDate" to "2023-06-22T14:12:31.428778",
+                ),
+              ),
+            ),
+          ),
+          "comments" to arrayListOf(
+            mapOf(
+              "comment" to "test",
+              "authorSurname" to "Author One",
+              "created" to "2023-06-21T12:11:21.355792",
+              "createdBy" to "USER(prepare-a-case-for-court-1)",
+              "lastUpdated" to "2023-06-21T12:11:21.355792",
+              "lastUpdatedBy" to "USER(prepare-a-case-for-court-1)",
+              "caseNumber" to "2106223516243653402",
+            ),
+            mapOf(
+              "comment" to "Defendant details\\r\\nName\\tJohn Marston\\r\\nGender\\tMale\\r\\nDate of birth\\t28 February 1997 (25 years old)\\r\\nPhone number\\tUnavailable\\r\\nAddress\\t14 Tottenham Court Road\\r\\nLondon Road\\r\\nEngland\\r\\nUK\\r\\nEarth\\r\\nW1T 7RJ\\r\\nComments\\r\\nAdd notes and observations about this case. Your colleagues who use Prepare a Case will be able to read them.\\r\\n\\r\\nThese comments will not be saved to NDelius.\\r\\n\\r\\n",
+              "authorSurname" to "Author One",
+              "created" to "2023-06-21T12:11:21.355792",
+              "createdBy" to "USER(prepare-a-case-for-court-1)",
+              "lastUpdated" to "2023-06-21T12:11:21.355792",
+              "lastUpdatedBy" to "USER(prepare-a-case-for-court-1)",
+              "caseNumber" to "2106223516243653402",
+            ),
+          ),
         ),
       ),
     )
