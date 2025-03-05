@@ -26,14 +26,14 @@ class GeneratePdfCategorisationServiceTest : BaseGeneratePdfTest() {
       assertThat(text).contains("Prisoner categorisation")
       assertThat(text).contains("Moorland (HMP & YOI)")
 
-      verify(prisonDetailsRepository, times(1)).findByPrisonId("MDI")
+      verify(prisonDetailsRepository, times(2)).findByPrisonId("MDI")
       verifyNoMoreInteractions(prisonDetailsRepository)
     }
   }
 
   private val categoryServiceData: Map<Any, Any> = mapOf(
-    "categorisationTool" to mapOf(
-      "catForm" to mapOf(
+    "catForm" to arrayListOf(
+      mapOf(
         "form_response" to mapOf(
           "ratings" to mapOf(
             "escapeRating" to mapOf(
@@ -105,7 +105,7 @@ class GeneratePdfCategorisationServiceTest : BaseGeneratePdfTest() {
             "provisionalCategorisation" to "example",
           ),
         ),
-        "prison_id" to "MDI",
+        "prisonId" to "MDI",
         // not included - duplicate ID:
         "offender_no" to "G2515UU",
         "start_date" to "2024-05-22 10:45:22.627786+01",
@@ -114,26 +114,26 @@ class GeneratePdfCategorisationServiceTest : BaseGeneratePdfTest() {
         "due_by_date" to "2014-06-16",
         "cancelled_date" to "exampleDate",
       ),
-      "liteCategory" to mapOf(
-        "category" to "U",
-        "supervisorCategory" to "U",
-        // not included - duplicate ID:
-        "offender_no" to "G0552UV",
-        // not included - duplicate ID:
-        "prison_id" to "MDI",
-        "created_date" to "2021-05-04T06:58:12.399139Z",
-        "approved_date" to "2021-05-04T00:00Z",
-        "assessment_committee" to "OCA",
-        "assessment_comment" to "steve test 677",
-        "next_review_date" to "2021-06-04",
-        "placement_prison_id" to "",
-        "approved_committee" to "OCA",
-        "approved_placement_prison_id" to "",
-        "approved_placement_comment" to "",
-        "approved_comment" to "steve test 677",
-        // not included - system ID:
-        "sequence" to "15",
-      ),
+    ),
+    "liteCategory" to mapOf(
+      "category" to "U",
+      "supervisorCategory" to "U",
+      // not included - duplicate ID:
+      "offender_no" to "G0552UV",
+      // not included - duplicate ID:
+      "prison_id" to "MDI",
+      "created_date" to "2021-05-04T06:58:12.399139Z",
+      "approved_date" to "2021-05-04T00:00Z",
+      "assessment_committee" to "OCA",
+      "assessment_comment" to "steve test 677",
+      "next_review_date" to "2021-06-04",
+      "placement_prison_id" to "",
+      "approved_committee" to "OCA",
+      "approved_placement_prison_id" to "",
+      "approved_placement_comment" to "",
+      "approved_comment" to "steve test 677",
+      // not included - system ID:
+      "sequence" to "15",
     ),
     "riskProfiler" to mapOf(
       // not included - system ID:
@@ -141,16 +141,14 @@ class GeneratePdfCategorisationServiceTest : BaseGeneratePdfTest() {
       "violence" to mapOf(
         // not included - duplicate ID:
         "nomsId" to "G2515UU",
-        "riskType" to "VIOLENCE",
-        "displayAssaults" to true,
         "numberOfAssaults" to 4,
-        "notifySafetyCustodyLead" to false,
+        "shouldNotifySafetyCustodyLead" to "No",
         "numberOfSeriousAssaults" to 0,
         "numberOfNonSeriousAssaults" to 0,
         "provisionalCategorisation" to "C",
-        "veryHighRiskViolentOffender" to false,
+        "isVeryHighRiskViolentOffender" to "No",
       ),
-      "execute_date_time" to "2021-07-27T02:17:48.130833Z",
+      "dateAndTimeRiskInformationLastUpdated" to "2021-07-27T02:17:48.130833Z",
     ),
   )
 }
