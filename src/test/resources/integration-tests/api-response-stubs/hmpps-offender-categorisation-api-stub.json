@@ -1,83 +1,1320 @@
 {
   "content": {
-    "categorisationTool": {
-      "catForm": {
+    "catForm": [
+      {
+        "form_response": {
+          "recat": {
+            "decision": {
+              "category": "D"
+            },
+            "securityInput": {
+              "securityInputNeeded": "No"
+            },
+            "prisonerBackground": {
+              "offenceDetails": "xccv"
+            }
+          },
+          "supervisor": {
+            "review": {
+              "proposedCategory": "C",
+              "otherInformationText": "DGDG",
+              "supervisorOverriddenCategory": "B",
+              "supervisorCategoryAppropriate": "No",
+              "supervisorOverriddenCategoryText": "DFFG",
+              "previousOverrideCategoryText": "hjkh"
+            },
+            "confirmBack": {
+              "isRead": true,
+              "messageText": "placeholder",
+              "confirmation": "Yes"
+            }
+          },
+          "openConditionsRequested": "Yes"
+        },
+        "risk_profile": {
+          "offences": [],
+          "lifeProfile": {
+            "life": true,
+            "nomsId": "G8105VR",
+            "riskType": "LIFE",
+            "provisionalCategorisation": "B"
+          },
+          "escapeProfile": {
+            "nomsId": "G8105VR",
+            "riskType": "ESCAPE",
+            "provisionalCategorisation": "C"
+          },
+          "violenceProfile": {
+            "nomsId": "G8105VR",
+            "riskType": "VIOLENCE",
+            "displayAssaults": false,
+            "numberOfAssaults": 0,
+            "notifySafetyCustodyLead": false,
+            "numberOfSeriousAssaults": 0,
+            "provisionalCategorisation": "C",
+            "numberOfNonSeriousAssaults": 0,
+            "veryHighRiskViolentOffender": false
+          },
+          "provisionalCategorisation": "C",
+          "transferToSecurity": false
+        },
+        "prisonId": "MDI",
+        "offender_no": "G9808UX",
+        "start_date": "2021-01-18T16:02:24.973725",
+        "security_reviewed_date": "2023-03-21 15:09:00.266 +0000",
+        "approval_date": "2023-03-21",
+        "assessment_date": "2023-03-20",
+        "due_by_date": "2017-03-31",
+        "cancelled_date": "2022-06-20T16:47:11.264110",
+        "typeOfCategorisationAssessment": "Recategorisation",
+        "reviewStatus": "Review cancelled",
+        "reviewReason": "Review due"
+      },
+      {
+        "form_response": {
+          "recat": {
+            "decision": {
+              "category": "C"
+            },
+            "securityInput": {
+              "securityInputNeeded": "No"
+            },
+            "nextReviewDate": {
+              "date": "29/09/2021"
+            },
+            "riskAssessment": {
+              "lowerCategory": "something.",
+              "otherRelevant": "No",
+              "higherCategory": "Remain Cat C - Evidenced Above.",
+              "otherRelevantText": ""
+            },
+            "prisonerBackground": {
+              "offenceDetails": "Class A."
+            }
+          },
+          "supervisor": {
+            "review": {
+              "proposedCategory": "C",
+              "otherInformationText": "Recalled.",
+              "supervisorCategoryAppropriate": "Yes"
+            }
+          },
+          "openConditionsRequested": "No"
+        },
+        "risk_profile": {
+          "catHistory": [
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2019-04-24",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 12,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2019-04-24",
+              "classification": "Cat C",
+              "nextReviewDate": "2019-10-21",
+              "assessmentStatus": "A",
+              "agencyDescription": "Liverpool (HMP)",
+              "assessmentAgencyId": "LPI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "24/04/2019",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2018-10-29",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 10,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2018-10-29",
+              "classification": "Cat C",
+              "nextReviewDate": "2019-04-27",
+              "assessmentStatus": "I",
+              "agencyDescription": "Liverpool (HMP)",
+              "assessmentAgencyId": "LPI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "29/10/2018",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2018-10-29",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 9,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2018-10-25",
+              "classification": "Cat C",
+              "nextReviewDate": "2019-04-23",
+              "assessmentStatus": "P",
+              "agencyDescription": "Liverpool (HMP)",
+              "assessmentComment": "outstanding court case for conspite to commit robbery",
+              "assessmentAgencyId": "LPI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "29/10/2018",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2018-05-01",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 6,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2018-05-01",
+              "classification": "Cat C",
+              "nextReviewDate": "2018-10-30",
+              "assessmentStatus": "I",
+              "agencyDescription": "Hindley (HMP & YOI)",
+              "assessmentAgencyId": "HII",
+              "classificationCode": "C",
+              "approvalDateDisplay": "01/05/2018",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2017-11-22",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 5,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2017-11-22",
+              "classification": "Cat C",
+              "nextReviewDate": "2018-05-21",
+              "assessmentStatus": "I",
+              "agencyDescription": "Hindley (HMP & YOI)",
+              "assessmentAgencyId": "HII",
+              "classificationCode": "C",
+              "approvalDateDisplay": "22/11/2017",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2017-06-26",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 4,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2017-06-23",
+              "classification": "Cat C",
+              "nextReviewDate": "2017-12-11",
+              "assessmentStatus": "I",
+              "agencyDescription": "Hindley (HMP & YOI)",
+              "assessmentComment": "Tfr into Hindley 16/06/2017",
+              "assessmentAgencyId": "HII",
+              "classificationCode": "C",
+              "approvalDateDisplay": "26/06/2017",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2017-06-14",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 3,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2017-06-14",
+              "classification": "Cat C",
+              "nextReviewDate": "2017-12-11",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "14/06/2017",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2017-05-03",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 2,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2017-05-02",
+              "classification": "Unsentenced",
+              "nextReviewDate": "2017-10-29",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "U",
+              "approvalDateDisplay": "03/05/2017",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2016-02-11",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 9,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2016-02-10",
+              "classification": "Cat C",
+              "nextReviewDate": "2016-06-19",
+              "assessmentStatus": "A",
+              "agencyDescription": "Hindley (HMP & YOI)",
+              "assessmentAgencyId": "HII",
+              "classificationCode": "C",
+              "approvalDateDisplay": "11/02/2016",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 398425,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2015-10-05",
+              "assessorUser": "SQA36S",
+              "assessmentSeq": 8,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2015-10-02",
+              "classification": "Cat C",
+              "nextReviewDate": "2016-03-30",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentComment": "Licence Recall.",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "05/10/2015",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2015-09-28",
+              "assessorUser": "FQK99P",
+              "assessmentSeq": 7,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2015-09-28",
+              "classification": "Cat C",
+              "nextReviewDate": "2016-03-26",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "28/09/2015",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2015-09-28",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 6,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2015-09-28",
+              "classification": "YOI Closed",
+              "nextReviewDate": "2016-03-26",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentComment": "Pending review board.",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "I",
+              "approvalDateDisplay": "28/09/2015",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2015-04-07",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 5,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2015-04-02",
+              "classification": "YOI Closed",
+              "nextReviewDate": "2015-09-29",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "I",
+              "approvalDateDisplay": "07/04/2015",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2015-01-07",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 3,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2015-01-06",
+              "classification": "YOI Closed",
+              "nextReviewDate": "2015-07-05",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "I",
+              "approvalDateDisplay": "07/01/2015",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2014-12-30",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 2,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2014-12-18",
+              "classification": "Cat C",
+              "nextReviewDate": "2015-06-16",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "30/12/2014",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2014-05-08",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 4,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2014-05-08",
+              "classification": "YOI Closed",
+              "nextReviewDate": "2014-11-04",
+              "assessmentStatus": "A",
+              "agencyDescription": "Brinsford (HMP)",
+              "assessmentAgencyId": "BSI",
+              "classificationCode": "I",
+              "approvalDateDisplay": "08/05/2014",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2013-07-05",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 3,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2013-07-05",
+              "classification": "YOI Closed",
+              "nextReviewDate": "2014-01-01",
+              "assessmentStatus": "I",
+              "agencyDescription": "Altcourse (HMP)",
+              "assessmentAgencyId": "ACI",
+              "classificationCode": "I",
+              "approvalDateDisplay": "05/07/2013",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 12345,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2013-05-10",
+              "assessorUser": "TNESS_GEN",
+              "assessmentSeq": 2,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2013-05-09",
+              "classification": "Unsentenced",
+              "nextReviewDate": "2013-11-05",
+              "assessmentStatus": "I",
+              "agencyDescription": "",
+              "classificationCode": "U",
+              "approvalDateDisplay": "10/05/2013",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            }
+          ],
+          "offences": [],
+          "escapeProfile": {
+            "nomsId": "G9808UX",
+            "provisionalCategorisation": "C"
+          },
+          "violenceProfile": {
+            "nomsId": "G9808UX",
+            "numberOfAssaults": 4,
+            "numberOfSeriousAssaults": 0,
+            "numberOfNonSeriousAssaults": 0,
+            "provisionalCategorisation": "C",
+            "shouldNotifySafetyCustodyLead": "No",
+            "isVeryHighRiskViolentOffender": "No"
+          },
+          "provisionalCategorisation": "C",
+          "transferToSecurity": false
+        },
+        "prisonId": "ACI",
+        "offender_no": "G9808UX",
+        "start_date": "2021-03-29T14:44:25.333114",
+        "approval_date": "2021-03-29",
+        "assessment_date": "2021-03-29",
+        "typeOfCategorisationAssessment": "Recategorisation",
+        "reviewStatus": "Review approved",
+        "reviewReason": "Review manually started"
+      },
+      {
+        "form_response": {
+          "ratings": {
+            "escapeRating": {
+              "escapeCatB": "No",
+              "escapeCatBText": "Text 112",
+              "escapeOtherEvidence": "No",
+              "escapeOtherEvidenceText": "Text 344"
+            },
+            "categoryDecisionBasedOnSecurityInformation": {
+              "categoryBIsWarranted": "No"
+            },
+            "furtherCharges": {
+              "furtherCharges": "Yes",
+              "furtherChargesCatB": "No",
+              "furtherChargesText": "some minor offences"
+            },
+            "nextReviewDate": {
+              "date": "19/06/2023",
+              "indeterminate": "false"
+            },
+            "violenceRating": {
+              "seriousThreat": "No",
+              "seriousThreatText": "threat text",
+              "highRiskOfViolence": "No",
+              "highRiskOfViolenceText": "violence text"
+            },
+            "extremismRating": {
+              "previousTerrorismOffences": "No",
+              "previousTerrorismOffencesText": "prev terr text"
+            },
+            "offendingHistory": {
+              "furtherCharges": "No",
+              "furtherChargesText": "charges test text",
+              "previousConvictions": "No",
+              "offendingHistoryCatB": "history text",
+              "previousConvictionsText": "prev convictions test"
+            },
+            "securityInput": {
+              "securityInputNeeded": "Yes",
+              "securityInputNeededText": "security info"
+            },
+            "securityBack": {
+              "catB": "No"
+            },
+            "decision": {
+              "category": "B"
+            }
+          },
+          "security": {
+            "review": {
+              "securityReview": "nothing further to add to this assessment."
+            }
+          },
+          "supervisor": {
+            "review": {
+              "proposedCategory": "C",
+              "supervisorCategoryAppropriate": "Yes"
+            }
+          },
+          "categoriser": {
+            "review": {},
+            "provisionalCategory": {
+              "suggestedCategory": "B",
+              "overriddenCategory": "D",
+              "categoryAppropriate": "No",
+              "otherInformationText": "other info",
+              "overriddenCategoryText": "some stuff"
+            }
+          }
+        },
+        "referred_date": "2022-01-07T09:00:21.302789",
+        "risk_profile": {
+          "history": {},
+          "offences": [
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2017-09-04",
+              "mostSerious": false,
+              "offenceCode": "CD71047",
+              "offenceDate": "2012-12-24",
+              "statuteCode": "CD71",
+              "primaryResultCode": "1106",
+              "offenceDescription": "Criminal damage to property valued under £5000 - offender under 16 - PILOT FORCES ONLY",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Fine or YOI",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 13,
+              "bookingId": 916546,
+              "courtDate": "2017-09-04",
+              "mostSerious": false,
+              "offenceCode": "BA76001",
+              "offenceDate": "2013-01-12",
+              "statuteCode": "BA76",
+              "primaryResultCode": "1106",
+              "offenceDescription": "Fail to surrender to police / court bail at the appointed time",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Fine or YOI",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2013-05-23",
+              "mostSerious": false,
+              "offenceCode": "OF61017A",
+              "offenceDate": "2013-05-07",
+              "statuteCode": "OF61",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Attempt to cause grievous bodily harm with intent to do grievous bodily harm",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2013-06-28",
+              "mostSerious": true,
+              "offenceCode": "OF61017",
+              "offenceDate": "2013-05-07",
+              "statuteCode": "OF61",
+              "primaryResultCode": "1024",
+              "offenceDescription": "Section 18 - grievous bodily harm with intent",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Young Offenders Institution",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2015-04-01",
+              "mostSerious": true,
+              "offenceCode": "OF61017",
+              "offenceDate": "2013-05-07",
+              "statuteCode": "OF61",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Section 18 - grievous bodily harm with intent",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2017-09-04",
+              "mostSerious": false,
+              "offenceCode": "OF61016",
+              "offenceDate": "2013-06-28",
+              "statuteCode": "OF61",
+              "primaryResultCode": "1106",
+              "offenceDescription": "Section 18 - wounding with intent",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Fine or YOI",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2014-12-18",
+              "mostSerious": false,
+              "offenceCode": "CD71038",
+              "offenceDate": "2014-12-16",
+              "statuteCode": "CD71",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Criminal damage to property - value over £5000",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2015-04-01",
+              "mostSerious": false,
+              "offenceCode": "GA05046",
+              "offenceDate": "2014-12-18",
+              "statuteCode": "GA05",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Breach of a personal licence condition",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-02-05",
+              "mostSerious": false,
+              "offenceCode": "PC53001",
+              "offenceDate": "2017-04-30",
+              "statuteCode": "PC53",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Possess an offensive weapon in a public place",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-02-05",
+              "mostSerious": false,
+              "offenceCode": "MD71230",
+              "offenceDate": "2017-04-30",
+              "statuteCode": "MD71",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Possess with intent to supply a controlled drug of Class A - Cocaine",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-02-05",
+              "mostSerious": false,
+              "offenceCode": "MD71231",
+              "offenceDate": "2017-04-30",
+              "statuteCode": "MD71",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Possess with intent to supply a controlled drug of Class A - Heroin",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "MD71130",
+              "offenceDate": "2020-07-21",
+              "statuteCode": "MD71",
+              "offenceRangeDate": "2020-12-02",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Supply a controlled drug of Class A - Cocaine",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": true,
+              "offenceCode": "MD71171",
+              "offenceDate": "2020-07-21",
+              "statuteCode": "MD71",
+              "offenceRangeDate": "2020-12-02",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Being concerned in supplying controlled drug - Class A - diamorphine (heroin)",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "MD71171",
+              "offenceDate": "2020-11-22",
+              "statuteCode": "MD71",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Being concerned in supplying controlled drug - Class A - diamorphine (heroin)",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "MD71134",
+              "offenceDate": "2020-11-22",
+              "statuteCode": "MD71",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Supply a controlled drug of Class A - Crack Cocaine",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "PU86004",
+              "offenceDate": "2020-11-25",
+              "statuteCode": "PU86",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Use threatening / abusive / insulting words / behaviour with intent to cause fear of / provoke unlawful violence",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "CJ88117",
+              "offenceDate": "2020-11-25",
+              "statuteCode": "CJ88",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Having article with blade or which was sharply pointed in public place",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "PU86003",
+              "offenceDate": "2020-11-25",
+              "statuteCode": "PU86",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Affray",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "MD71230",
+              "offenceDate": "2021-02-23",
+              "statuteCode": "MD71",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Possess with intent to supply a controlled drug of Class A - Cocaine",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-12-23",
+              "mostSerious": false,
+              "offenceCode": "MD71230",
+              "offenceDate": "2021-02-23",
+              "statuteCode": "MD71",
+              "primaryResultCode": "1002",
+              "offenceDescription": "Possess with intent to supply a controlled drug of Class A - Cocaine",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Imprisonment",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2015-04-01",
+              "mostSerious": false,
+              "offenceCode": "GA05046",
+              "statuteCode": "GA05",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Breach of a personal licence condition",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            },
+            {
+              "caseId": 12,
+              "bookingId": 916546,
+              "courtDate": "2021-02-05",
+              "mostSerious": false,
+              "offenceCode": "GA05046",
+              "statuteCode": "GA05",
+              "primaryResultCode": "1501",
+              "offenceDescription": "Breach of a personal licence condition",
+              "primaryResultConviction": true,
+              "primaryResultDescription": "Recall to Prison",
+              "secondaryResultConviction": false
+            }
+          ],
+          "escapeProfile": {
+            "nomsId": "G9808UX",
+            "provisionalCategorisation": "C"
+          },
+          "violenceProfile": {
+            "nomsId": "G9808UX",
+            "numberOfAssaults": 4,
+            "numberOfSeriousAssaults": 0,
+            "numberOfNonSeriousAssaults": 0,
+            "provisionalCategorisation": "C",
+            "shouldNotifySafetyCustodyLead": "No",
+            "isVeryHighRiskViolentOffender": "No"
+          },
+          "courtIssuedLifeSentence": {
+            "nomsId": "G9808UX",
+            "provisionalCategorisation": "C",
+            "servingACourtIssuedLifeSentence": false
+          },
+          "provisionalCategorisation": "C",
+          "transferToSecurity": true
+        },
+        "prisonId": "LPI",
+        "offender_no": "G9808UX",
+        "start_date": "2022-01-07T09:00:21.302789",
+        "security_reviewed_date": "2022-01-13T13:31:34.635356",
+        "approval_date": "2022-01-14",
+        "assessment_date": "2022-01-14",
+        "due_by_date": "2022-01-06",
+        "typeOfCategorisationAssessment": "Initial",
+        "reviewStatus": "Review approved",
+        "reviewReason": "Review manually started"
+      },
+      {
+        "form_response": {
+          "recat": {
+            "decision": {
+              "category": "C"
+            },
+            "securityInput": {
+              "securityInputNeeded": "No"
+            },
+            "nextReviewDate": {
+              "date": "13/07/2023"
+            },
+            "riskAssessment": {
+              "lowerCategory": "zxfxfvxdfv",
+              "otherRelevant": "No",
+              "higherCategory": "zfvxvxcvxc",
+              "otherRelevantText": ""
+            },
+            "prisonerBackground": {
+              "offenceDetails": "asdfgsdg"
+            }
+          },
+          "supervisor": {
+            "review": {
+              "proposedCategory": "C",
+              "supervisorCategoryAppropriate": "Yes"
+            }
+          },
+          "openConditionsRequested": "No"
+        },
+        "risk_profile": {
+          "catHistory": [
+            {
+              "bookingId": 916546,
+              "assessorId": 32620,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2016-10-03",
+              "assessorUser": "NQT67K",
+              "assessmentSeq": 9,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2016-09-29",
+              "classification": "Cat C",
+              "nextReviewDate": "2017-03-31",
+              "assessmentStatus": "A",
+              "agencyDescription": "Risley (HMP)",
+              "assessmentAgencyId": "RSI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "03/10/2016",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 32302,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2016-08-24",
+              "assessorUser": "JQP25M",
+              "assessmentSeq": 8,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2016-08-09",
+              "classification": "Cat C",
+              "nextReviewDate": "2016-10-31",
+              "assessmentStatus": "I",
+              "agencyDescription": "Risley (HMP)",
+              "assessmentAgencyId": "RSI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "24/08/2016",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 460380,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2016-04-01",
+              "assessorUser": "UQD86T",
+              "assessmentSeq": 7,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2016-04-01",
+              "classification": "Cat C",
+              "nextReviewDate": "2016-09-20",
+              "assessmentStatus": "I",
+              "agencyDescription": "Wymott (HMP)",
+              "assessmentComment": "YfbNMNgDixzcxjnylxfIlMtnEVoIwDdhDDYfbNMNgDixzcxjnylxfIlMtnEVoIwDdhDD",
+              "assessmentAgencyId": "WMI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "01/04/2016",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 34957,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2015-04-10",
+              "assessorUser": "JQP67A",
+              "assessmentSeq": 6,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2015-04-09",
+              "classification": "Cat C",
+              "nextReviewDate": "2016-04-30",
+              "assessmentStatus": "I",
+              "agencyDescription": "Wymott (HMP)",
+              "assessmentAgencyId": "WMI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "10/04/2015",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 434012,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2014-11-10",
+              "assessorUser": "OQR88M",
+              "assessmentSeq": 5,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2014-11-10",
+              "classification": "Cat C",
+              "nextReviewDate": "2015-05-09",
+              "assessmentStatus": "I",
+              "agencyDescription": "Liverpool (HMP)",
+              "assessmentAgencyId": "LPI",
+              "classificationCode": "C",
+              "approvalDateDisplay": "10/11/2014",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 405834,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2014-10-22",
+              "assessorUser": "HQC45Y",
+              "assessmentSeq": 3,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2014-10-22",
+              "classification": "Unsentenced",
+              "nextReviewDate": "2015-10-22",
+              "assessmentStatus": "I",
+              "agencyDescription": "Liverpool (HMP)",
+              "assessmentAgencyId": "LPI",
+              "classificationCode": "U",
+              "approvalDateDisplay": "22/10/2014",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            },
+            {
+              "bookingId": 916546,
+              "assessorId": 397174,
+              "offenderNo": "G9808UX",
+              "approvalDate": "2014-10-10",
+              "assessorUser": "CQX40D",
+              "assessmentSeq": 2,
+              "assessmentCode": "CATEGORY",
+              "assessmentDate": "2014-10-10",
+              "classification": "Unsentenced",
+              "nextReviewDate": "2015-04-08",
+              "assessmentStatus": "I",
+              "agencyDescription": "Doncaster (HMP)",
+              "assessmentAgencyId": "DNI",
+              "classificationCode": "U",
+              "approvalDateDisplay": "10/10/2014",
+              "cellSharingAlertFlag": false,
+              "assessmentDescription": "Categorisation"
+            }
+          ],
+          "offences": [],
+          "escapeProfile": {
+            "nomsId": "G9808UX",
+            "provisionalCategorisation": "C"
+          },
+          "violenceProfile": {
+            "nomsId": "G9808UX",
+            "numberOfAssaults": 0,
+            "numberOfSeriousAssaults": 0,
+            "numberOfNonSeriousAssaults": 0,
+            "provisionalCategorisation": "C",
+            "shouldNotifySafetyCustodyLead": "No",
+            "isVeryHighRiskViolentOffender": "No"
+          },
+          "provisionalCategorisation": "C",
+          "transferToSecurity": false
+        },
+        "prisonId": "MDI",
+        "offender_no": "G9808UX",
+        "start_date": "2022-06-24T15:34:11.775270",
+        "approval_date": "2022-07-13",
+        "assessment_date": "2022-07-13",
+        "due_by_date": "2017-03-31",
+        "typeOfCategorisationAssessment": "Recategorisation",
+        "reviewStatus": "Review approved",
+        "reviewReason": "Review due"
+      },
+      {
         "form_response": {
           "recat": {
             "decision": {
               "category": "C"
             },
             "oasysInput": {
-              "date": "10/10/2021",
-              "oasysRelevantInfo": "No"
+              "date": "08/02/2023",
+              "oasysRelevantInfo": "No",
+              "oasysInputText": "Details"
             },
-            "securityInput": {
-              "securityInputNeeded": "No"
+            "categoryDecisionBasedOnSecurityInformation": {
+              "categoryBIsWarranted": "No"
             },
             "nextReviewDate": {
-              "date": "12/10/2023",
+              "date": "18/07/2024",
               "indeterminate": "false"
             },
             "riskAssessment": {
-              "lowerCategory": "dffbxcvb",
+              "lowerCategory": "Not at this juncture.",
               "otherRelevant": "No",
-              "higherCategory": "xcbxcb",
-              "otherRelevantText": ""
+              "higherCategory": "Yes - closed estate.",
+              "otherRelevantText": "details"
             },
             "prisonerBackground": {
-              "offenceDetails": "zcvcxb"
+              "offenceDetails": "something."
+            },
+            "higherSecurityReview": {
+              "behaviour": "details",
+              "steps": "details",
+              "transfer": "Yes",
+              "transferText": "Details",
+              "conditions": "Details"
+            },
+            "miniHigherSecurityReview": {
+              "conditions": "details"
+            },
+            "securityInput": {
+              "securityNoteNeeded": "No",
+              "securityInputNeeded": "Yes",
+              "securityInputNeededText": "details"
+            },
+            "securityBack": {},
+            "review": {},
+            "riskProfileChangeDetail": {
+              "confirmation": "Yes"
+            },
+            "fasttrackEligibility": {
+              "earlyCatD": "Yes",
+              "increaseCategory": "Yes"
+            },
+            "fasttrackRemain": {
+              "remainCatC": "Yes"
+            },
+            "fasttrackProgress": {
+              "progressText": "details"
             }
           },
-          "openConditionsRequested": false
+          "security": {
+            "review": {
+              "securityReview": ""
+            }
+          },
+          "supervisor": {
+            "review": {
+              "proposedCategory": "C",
+              "otherInformationText": "",
+              "supervisorCategoryAppropriate": "Yes"
+            }
+          },
+          "openConditionsRequested": "No"
         },
-        "status": "STARTED",
+        "referred_date": "2023-12-20T09:41:12.316423",
         "risk_profile": {
+          "catHistory": [],
           "offences": [],
-          "socProfile": {},
           "escapeProfile": {
-            "nomsId": "G9979UV",
-            "riskType": "ESCAPE",
+            "nomsId": "G9808UX",
             "provisionalCategorisation": "C"
           },
           "violenceProfile": {
-            "nomsId": "G9979UV",
-            "riskType": "VIOLENCE",
-            "numberOfAssaults": 0,
-            "notifySafetyCustodyLead": false,
+            "nomsId": "G9808UX",
+            "numberOfAssaults": 8,
+            "numberOfSeriousAssaults": 0,
+            "numberOfNonSeriousAssaults": 2,
+            "provisionalCategorisation": "C",
+            "shouldNotifySafetyCustodyLead": "No",
+            "isVeryHighRiskViolentOffender": "No"
+          },
+          "provisionalCategorisation": "C",
+          "transferToSecurity": true
+        },
+        "prisonId": "LHI",
+        "offender_no": "G9808UX",
+        "start_date": "2023-12-20T09:41:12.316423",
+        "security_reviewed_date": "2024-01-16T13:16:55.806424",
+        "approval_date": "2024-02-09",
+        "assessment_date": "2024-02-06",
+        "due_by_date": "2024-01-19",
+        "typeOfCategorisationAssessment": "Recategorisation",
+        "reviewStatus": "Review approved",
+        "reviewReason": "Review due"
+      }
+    ],
+    "riskChange": [
+      {
+        "old_profile": {
+          "escape": {
+            "nomsId": "G9808UX",
+            "provisionalCategorisation": "C"
+          },
+          "violence": {
+            "nomsId": "G9808UX",
+            "numberOfAssaults": 4,
             "numberOfSeriousAssaults": 0,
             "numberOfNonSeriousAssaults": 0,
             "provisionalCategorisation": "C",
-            "veryHighRiskViolentOffender": false
+            "shouldNotifySafetyCustodyLead": "No",
+            "isVeryHighRiskViolentOffender": "No"
           },
-          "extremismProfile": {}
+          "provisionalCategorisation": "C",
+          "transferToSecurity": false
         },
-        "prison_id": "LEI",
-        "offender_no": "G9979UV",
-        "start_date": "2022-06-13 16:21:40.688179+01",
-        "cat_type": "RECAT",
-        "review_reason": "DUE",
-        "due_by_date": "2017-04-27"
+        "new_profile": {
+          "escape": {
+            "nomsId": "G9808UX",
+            "provisionalCategorisation": "C"
+          },
+          "violence": {
+            "nomsId": "G9808UX",
+            "numberOfAssaults": 4,
+            "numberOfSeriousAssaults": 0,
+            "numberOfNonSeriousAssaults": 0,
+            "provisionalCategorisation": "C",
+            "shouldNotifySafetyCustodyLead": "No",
+            "isVeryHighRiskViolentOffender": "No"
+          },
+          "provisionalCategorisation": "C",
+          "transferToSecurity": true
+        },
+        "offender_no": "G9808UX",
+        "prison_id": "LHI",
+        "raised_date": "2022-04-05T01:18:57.728977Z",
+        "riskChangeStatus": "Review not required"
+      }
+    ],
+    "security": [
+      {
+        "offender_no": "G9808UX",
+        "prisonId": "MDI",
+        "raised_date": "2025-02-04T14:00:05.990282Z",
+        "processed_date": "2025-02-04T14:00:48.552123Z",
+        "status": "Referred"
       },
-      "riskChange": [],
-      "security": [],
-      "nextReviewChangeHistory": []
-    },
+      {
+        "offender_no": "G9808UX",
+        "prisonId": "MDI",
+        "raised_date": "2025-02-13T14:00:05.990282Z",
+        "processed_date": "2025-02-14T14:00:48.552123Z",
+        "status": "Referred"
+      }
+    ],
+    "nextReviewChangeHistory": [
+      {
+        "offender_no": "G9808UX",
+        "next_review_date": "2024-11-29",
+        "reason": "Potential TPRS",
+        "change_date": "2024-11-15T08:47:15.141219Z"
+      },
+      {
+        "offender_no": "G9808UX",
+        "next_review_date": "2099-12-26",
+        "reason": "Currently on remand ",
+        "change_date": "2021-12-12T14:56:00.726172Z"
+      },
+      {
+        "offender_no": "G9808UX",
+        "next_review_date": "2024-11-30",
+        "reason": "steve test",
+        "change_date": "2023-12-07T11:20:58.699298Z"
+      }
+    ],
+    "liteCategory": [
+      {
+        "category": "U",
+        "supervisorCategory": "U",
+        "offender_no": "G9808UX",
+        "prison_id": "ACI",
+        "created_date": "2021-06-25T10:17:31.277379Z",
+        "approved_date": "2021-06-25T00:00Z",
+        "assessment_committee": "OCA",
+        "assessment_comment": "some test comment text here",
+        "next_review_date": "2021-12-25",
+        "placement_prison_id": "ACI",
+        "approved_committee": "OCA",
+        "approved_placement_prison_id": "ACI",
+        "approved_placement_comment": "approved placement comment testing here",
+        "approved_comment": "some approved comment for testing",
+        "sequence": "16"
+      },
+      {
+        "category": "U",
+        "supervisorCategory": "U",
+        "offender_no": "G9808UX",
+        "prison_id": "MDI",
+        "created_date": "2022-09-15T13:10:01.128618Z",
+        "approved_date": "2023-02-16T00:00Z",
+        "assessment_committee": "OCA",
+        "assessment_comment": "",
+        "next_review_date": "2023-03-15",
+        "placement_prison_id": "",
+        "approved_committee": "OCA",
+        "approved_placement_prison_id": "",
+        "approved_placement_comment": "",
+        "approved_comment": "",
+        "sequence": "11"
+      }
+    ],
     "riskProfiler": {
-      "offender_no": "G9979UV",
-      "escape": {},
-      "extremism": {},
-      "soc": {},
+      "offender_no": "G9808UX",
       "violence": {
-        "nomsId": "G9979UV",
-        "riskType": "VIOLENCE",
+        "nomsId": "G9808UX",
         "numberOfAssaults": 0,
-        "notifySafetyCustodyLead": false,
         "numberOfSeriousAssaults": 0,
         "numberOfNonSeriousAssaults": 0,
         "provisionalCategorisation": "C",
-        "veryHighRiskViolentOffender": false
+        "shouldNotifySafetyCustodyLead": "No",
+        "isVeryHighRiskViolentOffender": "No"
       },
-      "execute_date_time": "2021-07-27T02:17:50.908363Z"
+      "dateAndTimeRiskInformationLastUpdated": "2021-07-27T02:17:48.071852Z"
     }
   }
 }

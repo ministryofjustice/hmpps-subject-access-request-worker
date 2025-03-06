@@ -226,10 +226,10 @@ class TemplateRenderServiceTest {
     assertThat(renderedStyleTemplate).isNotNull()
     assertThat(renderedStyleTemplate).contains("<style>")
     assertThat(renderedStyleTemplate).contains("</style>")
-    assertThat(renderedStyleTemplate).contains("<h2>Categorisation</h2>")
+    assertThat(renderedStyleTemplate).contains("<h3>Categorisation form</h3>")
     assertThat(renderedStyleTemplate).contains("<tr><td>Text</td><td>previous terrorism offences text - talking about bombs</td></tr>")
-    assertThat(renderedStyleTemplate).contains("<h5>Security Input</h5>")
-    assertThat(renderedStyleTemplate).contains("<tr><td>Performed date and time</td><td>27 July 2021, 2:17:48 am</td></tr>")
+    assertThat(renderedStyleTemplate).contains("<h5>Ratings</h5>")
+    assertThat(renderedStyleTemplate).contains("<tr><td>Risk information last updated</td><td>27 July 2021, 2:17:48 am</td></tr>")
   }
 
   @Test
@@ -1488,8 +1488,8 @@ class TemplateRenderServiceTest {
     )
 
     private val testCategorisationServiceData: Map<Any, Any> = mapOf(
-      "categorisationTool" to mapOf(
-        "catForm" to mapOf(
+      "catForm" to arrayListOf(
+        mapOf(
           "form_response" to mapOf(
             "ratings" to mapOf(
               "escapeRating" to mapOf(
@@ -1570,26 +1570,26 @@ class TemplateRenderServiceTest {
           "due_by_date" to "2014-06-16",
           "cancelled_date" to "exampleDate",
         ),
-        "liteCategory" to mapOf(
-          "category" to "U",
-          "supervisorCategory" to "U",
-          // not included - duplicate ID:
-          "offender_no" to "G0552UV",
-          // not included - duplicate ID:
-          "prison_id" to "MDI",
-          "created_date" to "2021-05-04T06:58:12.399139Z",
-          "approved_date" to "2021-05-04T00:00Z",
-          "assessment_committee" to "OCA",
-          "assessment_comment" to "steve test 677",
-          "next_review_date" to "2021-06-04",
-          "placement_prison_id" to "",
-          "approved_committee" to "OCA",
-          "approved_placement_prison_id" to "",
-          "approved_placement_comment" to "",
-          "approved_comment" to "steve test 677",
-          // not included - system ID:
-          "sequence" to "15",
-        ),
+      ),
+      "liteCategory" to mapOf(
+        "category" to "U",
+        "supervisorCategory" to "U",
+        // not included - duplicate ID:
+        "offender_no" to "G0552UV",
+        // not included - duplicate ID:
+        "prison_id" to "MDI",
+        "created_date" to "2021-05-04T06:58:12.399139Z",
+        "approved_date" to "2021-05-04T00:00Z",
+        "assessment_committee" to "OCA",
+        "assessment_comment" to "steve test 677",
+        "next_review_date" to "2021-06-04",
+        "placement_prison_id" to "",
+        "approved_committee" to "OCA",
+        "approved_placement_prison_id" to "",
+        "approved_placement_comment" to "",
+        "approved_comment" to "steve test 677",
+        // not included - system ID:
+        "sequence" to "15",
       ),
       "riskProfiler" to mapOf(
         // not included - system ID:
@@ -1597,16 +1597,14 @@ class TemplateRenderServiceTest {
         "violence" to mapOf(
           // not included - duplicate ID:
           "nomsId" to "G2515UU",
-          "riskType" to "VIOLENCE",
-          "displayAssaults" to true,
           "numberOfAssaults" to 4,
-          "notifySafetyCustodyLead" to false,
           "numberOfSeriousAssaults" to 0,
           "numberOfNonSeriousAssaults" to 0,
           "provisionalCategorisation" to "C",
-          "veryHighRiskViolentOffender" to false,
+          "shouldNotifySafetyCustodyLead" to "No",
+          "isVeryHighRiskViolentOffender" to "No",
         ),
-        "execute_date_time" to "2021-07-27T02:17:48.130833Z",
+        "dateAndTimeRiskInformationLastUpdated" to "2021-07-27T02:17:48.130833Z",
       ),
     )
   }
