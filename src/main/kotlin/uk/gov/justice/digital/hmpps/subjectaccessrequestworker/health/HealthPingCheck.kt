@@ -16,3 +16,9 @@ class PrisonApiHealthPing(@Qualifier("prisonApiHealthWebClient") webClient: WebC
 
 @Component("probationApi")
 class ProbationApiHealthPing(@Qualifier("probationApiHealthWebClient") webClient: WebClient) : HealthPingCheck(webClient)
+
+@Component("locationsApi")
+class LocationsApiHealthPing(@Qualifier("locationsApiHealthWebClient") webClient: WebClient) : HealthPingCheck(webClient)
+
+@Component("nomisMappingsApi")
+class NomisMappingsApiHealthPing(@Qualifier("nomisMappingsApiHealthWebClient") webClient: WebClient) : HealthPingCheck(webClient)

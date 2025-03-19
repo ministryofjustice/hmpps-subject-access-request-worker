@@ -35,6 +35,10 @@ probation-api:
   url: "http://localhost:4002"
 document-storage:
   url: "http://localhost:8084"
+locations-api:
+  url: "http://localhost:8085"
+nomis-mappings-api:
+  url: "http://localhost:8086"
 sar-api:
   url: "http://localhost:8092"
 G1-api:

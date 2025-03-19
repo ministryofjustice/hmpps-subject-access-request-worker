@@ -235,7 +235,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   fun `store document retries on client request exception`() {
     val expectedFileContent = getFileBytes(FILE_CONTENT)
     val webClientWithIncorrectUrl = WebClient.builder()
-      .baseUrl("http://localhost:${documentApi.port() + 1}")
+      .baseUrl("http://localhost:${documentApi.port() + 10}")
       .build()
 
     documentStorageClient = DocumentStorageClient(webClientWithIncorrectUrl, webClientRetriesSpec, telemetryClient)

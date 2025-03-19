@@ -12,18 +12,30 @@ import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient.LocationDetailsResponse
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient.NomisLocationMapping
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.UserDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import java.util.stream.Stream
+
+private const val LOCATION_DPS_ID = "28953d06-d379-450c-9ec4-b5993ce5cd4f"
+private const val LOCATION_NOMIS_ID = 4324567
 
 class TemplateHelpersTest {
 
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
+  private val locationDetailsRepository: LocationDetailsRepository = mock()
+  private val locationsApiClient: LocationsApiClient = mock()
+  private val nomisMappingApiClient: NomisMappingApiClient = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository, locationDetailsRepository, locationsApiClient, nomisMappingApiClient)
 
   @Nested
   inner class GetElementNumberTest {
@@ -114,6 +126,101 @@ class TemplateHelpersTest {
     @ValueSource(strings = ["", " "])
     fun `getUserLastName returns No Data Held if null`(input: String?) {
       val response = templateHelpers.getUserLastName(input)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+  }
+
+  @Nested
+  inner class GetLocationNameByDpsIdTest {
+    @Test
+    fun `getLocationNameByDpsId returns location name from database`() {
+      whenever(locationDetailsRepository.findByDpsId(LOCATION_DPS_ID)).thenReturn(LocationDetail(LOCATION_DPS_ID, LOCATION_NOMIS_ID, "PROPERTY BOX 27"))
+      val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
+      assertThat(response).isEqualTo("PROPERTY BOX 27")
+    }
+
+    @Test
+    fun `getLocationNameByDpsId returns location name from api`() {
+      whenever(locationDetailsRepository.findByDpsId(LOCATION_DPS_ID)).thenReturn(null)
+      whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(LocationDetailsResponse(LOCATION_DPS_ID, "PROPERTY BOX 27", "PROP_BOXES-PB027"))
+      val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
+      assertThat(response).isEqualTo("PROPERTY BOX 27")
+    }
+
+    @Test
+    fun `getLocationNameByDpsId returns location name from api when no localname value`() {
+      whenever(locationDetailsRepository.findByDpsId(LOCATION_DPS_ID)).thenReturn(null)
+      whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(LocationDetailsResponse(LOCATION_DPS_ID, null, "PROP_BOXES-PB027"))
+      val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
+      assertThat(response).isEqualTo("PROP_BOXES-PB027")
+    }
+
+    @Test
+    fun `getLocationNameByDpsId returns No Data Held when not found from api`() {
+      whenever(locationDetailsRepository.findByDpsId(LOCATION_DPS_ID)).thenReturn(null)
+      whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(null)
+      val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = ["", " "])
+    fun `getUserLastNameByDpsId returns No Data Held if null`(input: String?) {
+      val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+  }
+
+  @Nested
+  inner class GetLocationNameByNomisIdTest {
+    @Test
+    fun `getLocationNameByNomisId returns location name from database`() {
+      whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(LocationDetail(LOCATION_DPS_ID, LOCATION_NOMIS_ID, "PROPERTY BOX 27"))
+      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
+      assertThat(response).isEqualTo("PROPERTY BOX 27")
+    }
+
+    @Test
+    fun `getLocationNameByNomisId returns location name from api`() {
+      whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(null)
+      whenever(nomisMappingApiClient.getNomisLocationMapping(LOCATION_NOMIS_ID)).thenReturn(NomisLocationMapping(LOCATION_DPS_ID, LOCATION_NOMIS_ID))
+      whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(LocationDetailsResponse(LOCATION_DPS_ID, "PROPERTY BOX 27", "PROP_BOXES-PB027"))
+      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
+      assertThat(response).isEqualTo("PROPERTY BOX 27")
+    }
+
+    @Test
+    fun `getLocationNameByNomisId returns location name from api when no localname value`() {
+      whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(null)
+      whenever(nomisMappingApiClient.getNomisLocationMapping(LOCATION_NOMIS_ID)).thenReturn(NomisLocationMapping(LOCATION_DPS_ID, LOCATION_NOMIS_ID))
+      whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(LocationDetailsResponse(LOCATION_DPS_ID, null, "PROP_BOXES-PB027"))
+      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
+      assertThat(response).isEqualTo("PROP_BOXES-PB027")
+    }
+
+    @Test
+    fun `getLocationNameByDpsId returns No Data Held when not found from locations api`() {
+      whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(null)
+      whenever(nomisMappingApiClient.getNomisLocationMapping(LOCATION_NOMIS_ID)).thenReturn(NomisLocationMapping(LOCATION_DPS_ID, LOCATION_NOMIS_ID))
+      whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(null)
+      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+
+    @Test
+    fun `getLocationNameByDpsId returns No Data Held when nomis mapping not found`() {
+      whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(null)
+      whenever(nomisMappingApiClient.getNomisLocationMapping(LOCATION_NOMIS_ID)).thenReturn(null)
+      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
+      assertThat(response).isEqualTo("No Data Held")
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = ["", " "])
+    fun `getLocationNameByNomisId returns No Data Held if null`(input: String?) {
+      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
       assertThat(response).isEqualTo("No Data Held")
     }
   }

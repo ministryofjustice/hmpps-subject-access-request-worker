@@ -15,6 +15,8 @@ class WebClientConfiguration(
   @Value("\${prison-api.url}") val prisonApiBaseUri: String,
   @Value("\${probation-api.url}") val probationApiBaseUri: String,
   @Value("\${hmpps-auth.url}") val hmppsAuthBaseUri: String,
+  @Value("\${locations-api.url}") val locationsApiBaseUri: String,
+  @Value("\${nomis-mappings-api.url}") val nomisMappingsApiBaseUri: String,
   @Value("\${api.health-timeout:2s}") val healthTimeout: Duration,
   @Value("\${api.timeout:20s}") val timeout: Duration,
   @Value("\${api.timeout:300s}") val documentStoreTimeout: Duration,
@@ -50,6 +52,18 @@ class WebClientConfiguration(
   @Bean
   fun dynamicWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.codecs { configurer -> configurer.defaultCodecs().maxInMemorySize(100 * 1024 * 1024) }
     .authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = "http", timeout = timeout)
+
+  @Bean
+  fun locationsApiHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(locationsApiBaseUri, healthTimeout)
+
+  @Bean
+  fun locationsApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = locationsApiBaseUri, timeout)
+
+  @Bean
+  fun nomisMappingsApiHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(nomisMappingsApiBaseUri, healthTimeout)
+
+  @Bean
+  fun nomisMappingsApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = nomisMappingsApiBaseUri, timeout)
 
   private var backOffDuration: Duration = Duration.parse(backOff)
 

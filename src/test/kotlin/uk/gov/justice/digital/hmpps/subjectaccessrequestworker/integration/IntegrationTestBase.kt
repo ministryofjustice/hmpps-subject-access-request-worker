@@ -12,6 +12,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.LocationsApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.LocationsApiExtension.Companion.locationsApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.NomisMappingsApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.NomisMappingsApiExtension.Companion.nomisMappingsApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension
@@ -20,7 +24,16 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Servi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 
-@ExtendWith(HmppsAuthApiExtension::class, DocumentApiExtension::class, PrisonApiExtension::class, ProbationApiExtension::class, ServiceOneApiExtension::class, ServiceTwoApiExtension::class)
+@ExtendWith(
+  HmppsAuthApiExtension::class,
+  DocumentApiExtension::class,
+  PrisonApiExtension::class,
+  ProbationApiExtension::class,
+  ServiceOneApiExtension::class,
+  ServiceTwoApiExtension::class,
+  LocationsApiExtension::class,
+  NomisMappingsApiExtension::class,
+)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 abstract class IntegrationTestBase {
@@ -45,5 +58,7 @@ abstract class IntegrationTestBase {
     prisonApi.stubHealthPing(status)
     probationApi.stubHealthPing(status)
     documentApi.stubHealthPing(status)
+    locationsApi.stubHealthPing(status)
+    nomisMappingsApi.stubHealthPing(status)
   }
 }

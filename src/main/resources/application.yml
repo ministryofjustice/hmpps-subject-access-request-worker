@@ -92,6 +92,10 @@ prison-api:
   url: http://localhost:8079
 probation-api:
   url: http://localhost:4002
+locations-api:
+  url: http://localhost:8085
+nomis-mappings-api:
+  url: http://localhost:8086
 G1-api:
   url: ${G1_API_URL)
 G2-api:

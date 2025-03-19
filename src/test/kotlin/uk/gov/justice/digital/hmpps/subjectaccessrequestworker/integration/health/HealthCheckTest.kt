@@ -32,6 +32,8 @@ class HealthCheckTest : IntegrationTestBase() {
       .jsonPath("components.documentApi.status").isEqualTo("DOWN")
       .jsonPath("components.prisonApi.status").isEqualTo("DOWN")
       .jsonPath("components.probationApi.status").isEqualTo("DOWN")
+      .jsonPath("components.locationsApi.status").isEqualTo("DOWN")
+      .jsonPath("components.nomisMappingsApi.status").isEqualTo("DOWN")
   }
 
   @Test
