@@ -5,7 +5,10 @@ import org.apache.commons.lang3.StringUtils.isNotBlank
 import org.apache.commons.lang3.StringUtils.leftPad
 import org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import java.lang.String.format
@@ -15,6 +18,9 @@ import java.time.LocalDateTime
 class TemplateHelpers(
   private val prisonDetailsRepository: PrisonDetailsRepository,
   private val userDetailsRepository: UserDetailsRepository,
+  private val locationDetailsRepository: LocationDetailsRepository,
+  private val locationsApiClient: LocationsApiClient,
+  private val nomisMappingApiClient: NomisMappingApiClient,
 ) {
   companion object {
     const val NO_DATA_HELD = "No Data Held"
@@ -87,6 +93,15 @@ class TemplateHelpers(
 
     return userDetails?.lastName ?: userId
   }
+
+  fun getLocationNameByDpsId(dpsId: String?): String = if (isBlank(dpsId)) {
+    NO_DATA_HELD
+  } else {
+    locationDetailsRepository.findByDpsId(dpsId!!)?.name ?: locationsApiClient.getLocationDetails(dpsId)
+      ?.let { it.localName ?: it.pathHierarchy } ?: NO_DATA_HELD
+  }
+
+  fun getLocationNameByNomisId(nomisId: Int?): String = nomisId?.let { locationDetailsRepository.findByNomisId(it)?.name } ?: getLocationNameByDpsId(nomisId?.let { nomisMappingApiClient.getNomisLocationMapping(it)?.dpsLocationId })
 
   fun convertBoolean(input: Any?): Any = when {
     input is Boolean && input -> "Yes"

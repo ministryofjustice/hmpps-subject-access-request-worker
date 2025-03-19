@@ -6,9 +6,12 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.microsoft.applicationinsights.TelemetryClient
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
@@ -54,7 +57,10 @@ class TemplateTestingUtil {
 
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val userDetailsRepository: UserDetailsRepository = mock()
-  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
+  private val locationDetailsRepository: LocationDetailsRepository = mock()
+  private val locationsApiClient: LocationsApiClient = mock()
+  private val nomisMappingApiClient: NomisMappingApiClient = mock()
+  private val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository, locationDetailsRepository, locationsApiClient, nomisMappingApiClient)
   private val templateResources = TemplateResources(
     templatesDirectory = "/templates",
     mandatoryServiceTemplates = listOf("G1", "G2", "G3"),

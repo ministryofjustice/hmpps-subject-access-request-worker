@@ -9,7 +9,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.io.CleanupMode
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.kotlin.mock
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateHelpers
@@ -20,7 +23,10 @@ import java.io.FileOutputStream
 abstract class BaseGeneratePdfTest {
   protected val prisonDetailsRepository: PrisonDetailsRepository = mock()
   protected val userDetailsRepository: UserDetailsRepository = mock()
-  protected val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository)
+  protected val locationDetailsRepository: LocationDetailsRepository = mock()
+  protected val locationsApiClient: LocationsApiClient = mock()
+  protected val nomisMappingApiClient: NomisMappingApiClient = mock()
+  protected val templateHelpers = TemplateHelpers(prisonDetailsRepository, userDetailsRepository, locationDetailsRepository, locationsApiClient, nomisMappingApiClient)
   protected val templateResources: TemplateResources = TemplateResources(
     templatesDirectory = "/templates",
     mandatoryServiceTemplates = listOf("G1", "G2", "G3"),
