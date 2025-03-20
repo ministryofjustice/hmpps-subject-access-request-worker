@@ -67,22 +67,6 @@
                     </tr>
                 {{/evidenceTagAndDescription}}
             </table>
-
-            <table class="data-table">
-                    <tr>
-                        <td>Body-worn camera numbers</td>
-                    </tr>
-                {{#bodyWornCameraNumbers}}
-                    <tr>
-                        <td>{{ optionalValue cameraNum }}</td>
-                    </tr>
-                {{/bodyWornCameraNumbers}}
-                {{^bodyWornCameraNumbers}}
-                    <tr>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/bodyWornCameraNumbers}}
-            </table>
         {{/evidence}}
         {{^evidence}}
             <p>No Data Held</p>
@@ -109,7 +93,7 @@
         <br>
            {{#incidentDetails}}
            <table class="summary-list">
-               <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+               <tr><td>Location</td><td>{{#incidentLocationId}}{{ getLocationNameByDpsId . }}{{/incidentLocationId}}{{^incidentLocationId}}{{ getLocationNameByNomisId locationId }}{{/incidentLocationId}}</td></tr>
                <tr><td>Planned use of force</td><td>{{ convertBoolean plannedUseOfForce }}</td></tr>
                <tr><td>Authorised by</td><td>{{ optionalValue authorisedBy }}</td></tr>
                <tr>
@@ -180,13 +164,11 @@
                  <tr>
                      <td class="data-column-25">Guiding hold</td>
                      <td class="data-column-25">Escorting hold</td>
-                     <td class="data-column-25">Restraint</td>
-                     <td class="data-column-25">Restraint positions</td>
+                     <td class="data-column-50">Restraint positions</td>
                  </tr>
                  <tr>
                      <td>{{ convertBoolean guidingHold }}</td>
                      <td>{{ convertBoolean escortingHold }}</td>
-                     <td>{{ convertBoolean restraint }}</td>
                      <td>{{#restraintPositions}}<li>{{ optionalValue . }}</li>{{/restraintPositions}}{{^restraintPositions}}No Data Held{{/restraintPositions}}</td>
                  </tr>
              </table>
@@ -200,8 +182,8 @@
         <br>
         {{#reasonsForUseOfForce}}
             <table class="summary-list">
-                    <tr><td>Primary Reason</td><td>{{ optionalValue primaryReason }}</td></tr>
-                    <tr><td>Reasons</td><td><ul>{{#reasons}}<li>{{ optionalValue . }}</li>{{/reasons}}</ul></td></tr>
+                <tr><td>Reasons</td><td><ul>{{#reasons}}<li>{{ optionalValue . }}</li>{{/reasons}}</ul></td></tr>
+                <tr><td>Primary Reason (if more than one)</td><td>{{ optionalValue primaryReason }}</td></tr>
             </table>
         {{/reasonsForUseOfForce}}
         {{^reasonsForUseOfForce}}
@@ -230,7 +212,7 @@
             <table class="data-table">
                 <tr>
                     <td class="data-column-25">Healthcare practioner name</td>
-                    <td class="data-column-25">Relocation compliancy</td>
+                    <td class="data-column-25">Was the prisoner compliant?</td>
                     <td class="data-column-25">Staff medical attention</td>
                     <td class="data-column-25">Prisoner hospitalisation</td>
                 </tr>
@@ -244,7 +226,7 @@
             <table class="data-table">
                 <tr>
                     <td class="data-column-50">Prisoner relocation</td>
-                    <td class="data-column-50">User specified relocation type</td>
+                    <td class="data-column-50">Other relocation type</td>
                 </tr>
                 <tr>
                     <td>{{ optionalValue prisonerRelocation }}</td>

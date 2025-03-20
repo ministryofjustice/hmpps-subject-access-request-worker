@@ -51,8 +51,10 @@ class GeneratePdfUseOfForceServiceTest : BaseGeneratePdfTest() {
       assertThat(pageTwoText).contains("Moorland (HMP & YOI)")
       assertThat(pageTwoText).contains("Altcourse (HMP & YOI)")
 
+      val pageThreeText = PdfTextExtractor.getTextFromPage(pdf.getPage(3))
+      assertThat(pageThreeText).contains("Jones")
+
       val pageFourText = PdfTextExtractor.getTextFromPage(pdf.getPage(4))
-      assertThat(pageFourText).contains("Jones")
       assertThat(pageFourText).contains("Walker")
 
       verify(userDetailsRepository, times(0)).findByUsername("USERAL_ADM")
