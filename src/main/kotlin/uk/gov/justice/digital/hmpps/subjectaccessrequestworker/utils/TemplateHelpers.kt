@@ -97,11 +97,18 @@ class TemplateHelpers(
   fun getLocationNameByDpsId(dpsId: String?): String = if (isBlank(dpsId)) {
     NO_DATA_HELD
   } else {
-    locationDetailsRepository.findByDpsId(dpsId!!)?.name ?: locationsApiClient.getLocationDetails(dpsId)
-      ?.let { it.localName ?: it.pathHierarchy } ?: NO_DATA_HELD
+    getLocationByDpsId(dpsId!!) ?: dpsId
   }
 
-  fun getLocationNameByNomisId(nomisId: Int?): String = nomisId?.let { locationDetailsRepository.findByNomisId(it)?.name } ?: getLocationNameByDpsId(nomisId?.let { nomisMappingApiClient.getNomisLocationMapping(it)?.dpsLocationId })
+  fun getLocationNameByNomisId(nomisId: Int?): String = if (nomisId == null) {
+    NO_DATA_HELD
+  } else {
+    locationDetailsRepository.findByNomisId(nomisId)?.name ?: nomisMappingApiClient.getNomisLocationMapping(nomisId)
+      ?.let { getLocationByDpsId(it.dpsLocationId) } ?: nomisId.toString()
+  }
+
+  private fun getLocationByDpsId(dpsId: String): String? = locationDetailsRepository.findByDpsId(dpsId)?.name ?: locationsApiClient.getLocationDetails(dpsId)
+    ?.let { it.localName ?: it.pathHierarchy }
 
   fun convertBoolean(input: Any?): Any = when {
     input is Boolean && input -> "Yes"

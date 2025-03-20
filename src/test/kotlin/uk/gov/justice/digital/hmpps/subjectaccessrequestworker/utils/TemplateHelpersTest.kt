@@ -156,18 +156,18 @@ class TemplateHelpersTest {
     }
 
     @Test
-    fun `getLocationNameByDpsId returns No Data Held when not found from api`() {
+    fun `getLocationNameByDpsId returns original id when not found from api`() {
       whenever(locationDetailsRepository.findByDpsId(LOCATION_DPS_ID)).thenReturn(null)
       whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(null)
       val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
-      assertThat(response).isEqualTo("No Data Held")
+      assertThat(response).isEqualTo(LOCATION_DPS_ID)
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = ["", " "])
     fun `getUserLastNameByDpsId returns No Data Held if null`(input: String?) {
-      val response = templateHelpers.getLocationNameByDpsId(LOCATION_DPS_ID)
+      val response = templateHelpers.getLocationNameByDpsId(input)
       assertThat(response).isEqualTo("No Data Held")
     }
   }
@@ -200,27 +200,26 @@ class TemplateHelpersTest {
     }
 
     @Test
-    fun `getLocationNameByDpsId returns No Data Held when not found from locations api`() {
+    fun `getLocationNameByNomisId returns original id when not found from locations api`() {
       whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(null)
       whenever(nomisMappingApiClient.getNomisLocationMapping(LOCATION_NOMIS_ID)).thenReturn(NomisLocationMapping(LOCATION_DPS_ID, LOCATION_NOMIS_ID))
       whenever(locationsApiClient.getLocationDetails(LOCATION_DPS_ID)).thenReturn(null)
       val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
-      assertThat(response).isEqualTo("No Data Held")
+      assertThat(response).isEqualTo(LOCATION_NOMIS_ID.toString())
     }
 
     @Test
-    fun `getLocationNameByDpsId returns No Data Held when nomis mapping not found`() {
+    fun `getLocationNameByNomisId returns original id when nomis mapping not found`() {
       whenever(locationDetailsRepository.findByNomisId(LOCATION_NOMIS_ID)).thenReturn(null)
       whenever(nomisMappingApiClient.getNomisLocationMapping(LOCATION_NOMIS_ID)).thenReturn(null)
       val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
-      assertThat(response).isEqualTo("No Data Held")
+      assertThat(response).isEqualTo(LOCATION_NOMIS_ID.toString())
     }
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = ["", " "])
-    fun `getLocationNameByNomisId returns No Data Held if null`(input: String?) {
-      val response = templateHelpers.getLocationNameByNomisId(LOCATION_NOMIS_ID)
+    fun `getLocationNameByNomisId returns No Data Held if null`(input: Int?) {
+      val response = templateHelpers.getLocationNameByNomisId(input)
       assertThat(response).isEqualTo("No Data Held")
     }
   }
