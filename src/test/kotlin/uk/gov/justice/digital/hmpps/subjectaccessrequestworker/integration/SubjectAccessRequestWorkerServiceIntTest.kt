@@ -33,8 +33,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestWorkerService
@@ -65,6 +67,9 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
   @Autowired
   private lateinit var prisonDetailsRepository: PrisonDetailsRepository
 
+  @Autowired
+  private lateinit var locationDetailsRepository: LocationDetailsRepository
+
   @MockitoBean
   private var dateService: DateService = mock()
 
@@ -75,6 +80,10 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
 
     prisonDetailsRepository.saveAndFlush(PrisonDetail("MDI", "MOORLAND (HMP & YOI)"))
     prisonDetailsRepository.saveAndFlush(PrisonDetail("LEI", "LEEDS (HMP)"))
+
+    locationDetailsRepository.saveAndFlush(LocationDetail("cac85758-380b-49fc-997f-94147e2553ac", 357591, "ASSO A WING"))
+    locationDetailsRepository.saveAndFlush(LocationDetail("d0763236-c073-4ef4-9592-419bf0cd72cb", 357592, "ASSO B WING"))
+    locationDetailsRepository.saveAndFlush(LocationDetail("8ac39ebb-499d-4862-ae45-0b091253e89d", 27187, "ADJ"))
 
     hmppsAuth.stubGrantToken()
 
