@@ -12,7 +12,7 @@
     <br>
     {{#incidentDetails}}
         <table class="summary-list">
-            <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+            <tr><td>Location</td><td>{{ getLocationNameByNomisId locationId }}</td></tr>
             <tr><td>Date and time of incident</td><td>{{ optionalValue (formatDate dateTimeOfIncident) }}</td></tr>
             <tr><td>Date and time of discovery</td><td>{{ optionalValue (formatDate dateTimeOfDiscovery) }}</td></tr>
             <tr><td>Handover deadline</td><td>{{ optionalValue (formatDate handoverDeadline) }}</td></tr>
@@ -158,7 +158,7 @@
         <h4>Hearing</h4>
         <table class="summary-list">
             <tr><td>Date and time of hearing</td><td>{{ optionalValue (formatDate dateTimeOfHearing) }}</td></tr>
-            <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+            <tr><td>Location</td><td>{{ getLocationNameByNomisId locationId }}</td></tr>
             <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
             <tr><td>Agency</td><td>{{ getPrisonName agencyId }}</td></tr>
         </table>
@@ -222,7 +222,7 @@
         {{#hearing}}
             <table class="summary-list">
                 <tr><td>Date and time of hearing</td><td>{{ optionalValue (formatDate dateTimeOfHearing) }}</td></tr>
-                <tr><td>Location ID</td><td>{{ optionalValue locationId }}</td></tr>
+                <tr><td>Location</td><td>{{ getLocationNameByNomisId locationId }}</td></tr>
                 <tr><td>OIC hearing type</td><td>{{ optionalValue oicHearingType }}</td></tr>
                 <tr><td>Agency</td><td>{{ getPrisonName agencyId }}</td></tr>
             </table>

@@ -9,6 +9,7 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
@@ -71,20 +72,29 @@ class TemplateTestingUtil {
   private val pdfService: GeneratePdfService = GeneratePdfService(templateRenderService, telemetryClient, dateService)
 
   init {
-    whenever(prisonDetailsRepository.findByPrisonId("MDI")).thenReturn(
-      PrisonDetail(
-        prisonId = "MDI",
-        prisonName = "MOORLAND (HMP & YOI)",
-      ),
-    )
-    whenever(prisonDetailsRepository.findByPrisonId("LEI")).thenReturn(
-      PrisonDetail(
-        prisonId = "LEI",
-        prisonName = "LEEDS (HMP)",
-      ),
-    )
+    addPrisonMapping("MDI", "MOORLAND (HMP & YOI)")
+    addPrisonMapping("LEI", "LEEDS (HMP)")
+
+    addLocationMapping("cac85758-380b-49fc-997f-94147e2553ac", 357591, "ASSO A WING")
+    addLocationMapping("d0763236-c073-4ef4-9592-419bf0cd72cb", 357592, "ASSO B WING")
+    addLocationMapping("8ac39ebb-499d-4862-ae45-0b091253e89d", 27187, "ADJ")
 
     whenever(dateService.now()).thenReturn(reportGenerationDate)
+  }
+
+  private fun addPrisonMapping(prisonId: String, prisonName: String) {
+    whenever(prisonDetailsRepository.findByPrisonId(prisonId)).thenReturn(
+      PrisonDetail(
+        prisonId = prisonId,
+        prisonName = prisonName,
+      ),
+    )
+  }
+
+  private fun addLocationMapping(locationId: String, nomisId: Int, locationName: String) {
+    val locationDetail = LocationDetail(dpsId = locationId, nomisId = nomisId, name = locationName)
+    whenever(locationDetailsRepository.findByDpsId(locationId)).thenReturn(locationDetail)
+    whenever(locationDetailsRepository.findByNomisId(nomisId)).thenReturn(locationDetail)
   }
 
   fun generatePdfStream(
