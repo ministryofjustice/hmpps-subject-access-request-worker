@@ -3,7 +3,6 @@
     <br>
     <h2>Induction</h2>
     <table class="summary-list">
-        <tr><td>Prison number</td><td>{{ optionalValue prisonNumber }}</td></tr>
         <tr><td>Hoping to Work</td><td>{{ optionalValue workOnRelease.hopingToWork }}</td></tr>
         <tr><td>Factors affecting ability to work</td><td>{{#workOnRelease.affectAbilityToWork}}{{ . }}{{#unless @last}}<br>{{/unless}}{{/workOnRelease.affectAbilityToWork}}</td></tr>
         <tr><td>Other Factors</td><td>{{ optionalValue workOnRelease.affectAbilityToWorkOther}}</td></tr>
@@ -17,15 +16,19 @@
     <h3>Previous qualifications</h3>
     <table class="data-table">
         <tr>
-            <td class="data-column-25">Subject</td>
-            <td class="data-column-25">Level</td>
-            <td class="data-column-50">Grade</td>
+            <td class="data-column-50">Subject</td>
+            <td class="data-column-50">Level</td>
         </tr>
         {{#previousQualifications.qualifications}}
             <tr>
                 <td>{{ optionalValue subject }}</td>
-                <td>{{ optionalValue level }}</td>
                 <td>{{ optionalValue grade }}</td>
+            </tr>
+        {{/previousQualifications.qualifications}}
+        {{^previousQualifications.qualifications}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
             </tr>
         {{/previousQualifications.qualifications}}
     </table>
@@ -44,6 +47,14 @@
                 <td>{{ optionalValue experienceTypeOther }}</td>
                 <td>{{ optionalValue role }}</td>
                 <td>{{ optionalValue details }}</td>
+            </tr>
+        {{/previousWorkExperiences.experiences}}
+        {{^previousWorkExperiences.experiences}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
             </tr>
         {{/previousWorkExperiences.experiences}}
     </table>
