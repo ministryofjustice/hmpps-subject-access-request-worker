@@ -103,6 +103,10 @@ class IntegrationTestFixture {
         serviceLabel = "Consider a Recall",
       ),
       TestCase(
+        serviceName = "hmpps-education-and-work-plan-api",
+        serviceLabel = "Personal Learning Plan",
+      ),
+      TestCase(
         serviceName = "G1",
         serviceLabel = "G1",
       ),
