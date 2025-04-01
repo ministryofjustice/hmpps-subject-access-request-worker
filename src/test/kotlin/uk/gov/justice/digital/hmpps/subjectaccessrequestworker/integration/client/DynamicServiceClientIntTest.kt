@@ -43,9 +43,6 @@ class DynamicServiceClientIntTest : BaseClientIntTest() {
   @Autowired
   private lateinit var dynamicServicesClient: DynamicServicesClient
 
-  @Autowired
-  private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
-
   private val subjectAccessRequestParams = GetSubjectAccessRequestParams(
     prn = PRN,
     crn = CRN,
@@ -56,7 +53,7 @@ class DynamicServiceClientIntTest : BaseClientIntTest() {
   @BeforeEach
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token
-    oAuth2AuthorizedClientService.removeAuthorizedClient("sar-client", "anonymousUser")
+    clearOauthClientCache("sar-client", "anonymousUser")
   }
 
   @Test

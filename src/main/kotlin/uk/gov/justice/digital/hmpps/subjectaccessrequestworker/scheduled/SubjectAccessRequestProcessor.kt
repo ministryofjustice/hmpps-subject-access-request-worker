@@ -30,7 +30,7 @@ class SubjectAccessRequestProcessor(
   @Scheduled(
     fixedDelayString = "\${scheduled.subject-access-request-processor.interval-seconds:30}",
     timeUnit = TimeUnit.SECONDS,
-    initialDelay = 30,
+    initialDelayString = "\${scheduled.subject-access-request-processor.initial-delay-seconds:30}",
   )
   fun execute() {
     log.info("checking for available subject access requests to process")

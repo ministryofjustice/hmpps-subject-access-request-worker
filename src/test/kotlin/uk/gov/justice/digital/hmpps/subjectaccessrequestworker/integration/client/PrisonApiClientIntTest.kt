@@ -28,9 +28,6 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
   @Autowired
   private lateinit var prisonApiClient: PrisonApiClient
 
-  @Autowired
-  private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
-
   private val subjectAccessRequest = SubjectAccessRequest(
     id = UUID.randomUUID(),
     sarCaseReferenceNumber = UUID.randomUUID().toString(),
@@ -59,7 +56,7 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
   @BeforeEach
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the Prison API.
-    oAuth2AuthorizedClientService.removeAuthorizedClient("sar-client", "anonymousUser")
+    clearOauthClientCache("sar-client", "anonymousUser")
   }
 
   @Test

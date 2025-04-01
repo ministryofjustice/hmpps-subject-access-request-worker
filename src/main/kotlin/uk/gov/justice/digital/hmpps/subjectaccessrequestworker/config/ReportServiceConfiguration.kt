@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config
 
 import com.microsoft.applicationinsights.TelemetryClient
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
@@ -15,12 +14,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceC
 
 @Configuration
 class ReportServiceConfiguration(
-  @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
-  @Autowired val documentStorageClient: DocumentStorageClient,
-  @Autowired val generatePdfService: GeneratePdfService,
-  @Autowired val prisonApiClient: PrisonApiClient,
-  @Autowired val probationApiClient: ProbationApiClient,
-  @Autowired val serviceConfigurationService: ServiceConfigurationService,
+  val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
+  val documentStorageClient: DocumentStorageClient,
+  val generatePdfService: GeneratePdfService,
+  val prisonApiClient: PrisonApiClient,
+  val probationApiClient: ProbationApiClient,
+  val serviceConfigurationService: ServiceConfigurationService,
   private val telemetryClient: TelemetryClient,
 ) {
 

@@ -1,8 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import org.assertj.core.api.Assertions.assertThat
@@ -12,12 +10,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.bean.override.mockito.MockitoBean
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
@@ -36,19 +31,14 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Servi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.time.LocalDate
 
-const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
-const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
-
+@Deprecated(
+  message = "test is being gradually migrated to " +
+    "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.SubjectAccessRequestProcessorIntTest",
+)
 @TestPropertySource(
   properties = [
     "G1-api.url=http://localhost:4100",
@@ -59,30 +49,30 @@ const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
 class ReportServiceIntTest : IntegrationTestBase() {
 
   @Autowired
-  private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
-
-  @Autowired
   private lateinit var subjectAccessRequestWorkerService: ReportService
-
-  @Autowired
-  private lateinit var prisonDetailsRepository: PrisonDetailsRepository
-
-  @Autowired
-  private lateinit var locationDetailsRepository: LocationDetailsRepository
-
-  @MockitoBean
-  private var dateService: DateService = mock()
 
   @BeforeEach
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the documentStore API.
-    oAuth2AuthorizedClientService.removeAuthorizedClient("sar-client", "anonymousUser")
+    clearOauthClientCache("sar-client", "anonymousUser")
 
     prisonDetailsRepository.saveAndFlush(PrisonDetail("MDI", "MOORLAND (HMP & YOI)"))
     prisonDetailsRepository.saveAndFlush(PrisonDetail("LEI", "LEEDS (HMP)"))
 
-    locationDetailsRepository.saveAndFlush(LocationDetail("cac85758-380b-49fc-997f-94147e2553ac", 357591, "ASSO A WING"))
-    locationDetailsRepository.saveAndFlush(LocationDetail("d0763236-c073-4ef4-9592-419bf0cd72cb", 357592, "ASSO B WING"))
+    locationDetailsRepository.saveAndFlush(
+      LocationDetail(
+        "cac85758-380b-49fc-997f-94147e2553ac",
+        357591,
+        "ASSO A WING",
+      ),
+    )
+    locationDetailsRepository.saveAndFlush(
+      LocationDetail(
+        "d0763236-c073-4ef4-9592-419bf0cd72cb",
+        357592,
+        "ASSO B WING",
+      ),
+    )
     locationDetailsRepository.saveAndFlush(LocationDetail("8ac39ebb-499d-4862-ae45-0b091253e89d", 27187, "ADJ"))
 
     hmppsAuth.stubGrantToken()
@@ -294,25 +284,6 @@ class ReportServiceIntTest : IntegrationTestBase() {
     serviceOneMockApi.verifyApiCalled(1)
     documentApi.verifyStoreDocumentIsCalled(1, testSubjectAccessRequestId.toString())
   }
-
-  private fun getPreGeneratedPdfDocument(expectedPdfFilename: String): PdfDocument {
-    val inputStream = this::class.java.getResourceAsStream("$REFERENCE_PDF_BASE_DIR/$expectedPdfFilename")
-
-    assertThat(inputStream).isNotNull
-
-    return pdfDocumentFromInputStream(inputStream!!)
-  }
-
-  private fun getUploadedPdfDocument(): PdfDocument = pdfDocumentFromInputStream(
-    ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
-  )
-
-  private fun pdfDocumentFromInputStream(inputStream: InputStream): PdfDocument = PdfDocument(PdfReader(inputStream))
-
-  private fun getSarResponseStub(filename: String): String = this::class.java
-    .getResourceAsStream("$SAR_STUB_RESPONSES_DIR/$filename").use { input ->
-      InputStreamReader(input).readText()
-    }
 
   private fun contentWhenNoDataHeld(serviceLabel: String, nomidId: String): String = StringBuilder("$serviceLabel ")
     .append("\n")

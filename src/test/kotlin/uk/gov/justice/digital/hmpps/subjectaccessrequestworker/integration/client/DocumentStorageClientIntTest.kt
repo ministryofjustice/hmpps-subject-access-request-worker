@@ -45,9 +45,6 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   @Autowired
   private lateinit var webClientRetriesSpec: WebClientRetriesSpec
 
-  @Autowired
-  private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
-
   private val subjectAccessRequestId = UUID.randomUUID()
   private val contextId = UUID.randomUUID()
   private val subjectAccessRequest = SubjectAccessRequest(id = subjectAccessRequestId, contextId = contextId)

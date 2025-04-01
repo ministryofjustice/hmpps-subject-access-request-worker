@@ -29,9 +29,6 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
   @Autowired
   private lateinit var locationsApiClient: LocationsApiClient
 
-  @Autowired
-  private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
-
   companion object {
     @JvmStatic
     fun responseStubs4xx(): List<StubErrorResponse> = listOf(
@@ -44,7 +41,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
   @BeforeEach
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the Prison API.
-    oAuth2AuthorizedClientService.removeAuthorizedClient("sar-client", "anonymousUser")
+    clearOauthClientCache("sar-client", "anonymousUser")
   }
 
   @Test

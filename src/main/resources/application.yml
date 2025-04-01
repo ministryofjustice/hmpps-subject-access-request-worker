@@ -44,6 +44,10 @@ spring:
             client-secret: ${system.client.secret}
             authorization-grant-type: client_credentials
             scope: read
+  task:
+    scheduling:
+      pool:
+        size: 1 # To manage memory we should only process 1 request at a time.
 
 server:
   port: 8081
@@ -109,6 +113,7 @@ template-resources:
 
 scheduled:
   subject-access-request-processor:
+    initial-delay-seconds: 30
     interval-seconds: 30
 
 sentry:

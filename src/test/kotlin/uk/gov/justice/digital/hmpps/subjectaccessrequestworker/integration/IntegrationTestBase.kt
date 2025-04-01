@@ -1,13 +1,18 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension
@@ -21,8 +26,20 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Priso
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.util.UUID
+
+const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
+const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
 
 @ExtendWith(
   HmppsAuthApiExtension::class,
@@ -39,13 +56,25 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 abstract class IntegrationTestBase {
 
   @Autowired
-  private lateinit var documentStorageClient: DocumentStorageClient
+  protected lateinit var subjectAccessRequestRepository: SubjectAccessRequestRepository
+
+  @Autowired
+  protected lateinit var prisonDetailsRepository: PrisonDetailsRepository
+
+  @Autowired
+  protected lateinit var locationDetailsRepository: LocationDetailsRepository
+
+  @Autowired
+  protected lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
 
   @Autowired
   protected lateinit var webTestClient: WebTestClient
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthorisationHelper
+
+  @MockitoBean
+  protected var dateService: DateService = mock()
 
   internal fun setAuthorisation(
     username: String? = "AUTH_ADM",
@@ -61,4 +90,28 @@ abstract class IntegrationTestBase {
     locationsApi.stubHealthPing(status)
     nomisMappingsApi.stubHealthPing(status)
   }
+
+  protected fun clearOauthClientCache(clientId: String, principalName: String) = oAuth2AuthorizedClientService
+    .removeAuthorizedClient(clientId, principalName)
+
+  protected fun getSarResponseStub(filename: String): String = this::class.java
+    .getResourceAsStream("$SAR_STUB_RESPONSES_DIR/$filename").use { input ->
+      InputStreamReader(input).readText()
+    }
+
+  protected fun getPreGeneratedPdfDocument(expectedPdfFilename: String): PdfDocument {
+    val inputStream = this::class.java.getResourceAsStream("$REFERENCE_PDF_BASE_DIR/$expectedPdfFilename")
+    assertThat(inputStream).isNotNull
+    return pdfDocumentFromInputStream(inputStream!!)
+  }
+
+  protected fun pdfDocumentFromInputStream(inputStream: InputStream): PdfDocument = PdfDocument(PdfReader(inputStream))
+
+  protected fun getUploadedPdfDocument(): PdfDocument = pdfDocumentFromInputStream(
+    ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
+  )
+
+  protected fun verifyHmppsAuthIsCalledOnce() = hmppsAuth.verifyCalledOnce()
+  protected fun verifyHmppsSarEndpointCalledOnce() = serviceOneMockApi.verifyApiCalled(1)
+  protected fun verifyDocumentStorageApiCalledOnce(id: UUID) = documentApi.verifyStoreDocumentIsCalled(1, id.toString())
 }

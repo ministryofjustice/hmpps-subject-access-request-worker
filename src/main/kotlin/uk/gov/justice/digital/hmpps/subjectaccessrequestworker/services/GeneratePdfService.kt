@@ -47,7 +47,7 @@ const val NO_DATA_HELD = "No Data Held"
 class GeneratePdfService(
   val templateRenderService: TemplateRenderService,
   val telemetryClient: TelemetryClient,
-  val dateService: DateService = DateService(),
+  val dateService: DateService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

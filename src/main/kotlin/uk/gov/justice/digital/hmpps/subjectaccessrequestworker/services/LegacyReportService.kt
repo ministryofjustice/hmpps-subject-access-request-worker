@@ -4,7 +4,6 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
@@ -17,12 +16,12 @@ import java.util.concurrent.TimeUnit
 const val POLL_DELAY: Long = 10000
 
 class LegacyReportService(
-  @Autowired val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
-  @Autowired val documentStorageClient: DocumentStorageClient,
-  @Autowired val generatePdfService: GeneratePdfService,
-  @Autowired val prisonApiClient: PrisonApiClient,
-  @Autowired val probationApiClient: ProbationApiClient,
-  @Autowired val serviceConfigurationService: ServiceConfigurationService,
+  private val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
+  private val documentStorageClient: DocumentStorageClient,
+  private val generatePdfService: GeneratePdfService,
+  private val prisonApiClient: PrisonApiClient,
+  private val probationApiClient: ProbationApiClient,
+  private val serviceConfigurationService: ServiceConfigurationService,
   private val telemetryClient: TelemetryClient,
 ) : ReportService {
 

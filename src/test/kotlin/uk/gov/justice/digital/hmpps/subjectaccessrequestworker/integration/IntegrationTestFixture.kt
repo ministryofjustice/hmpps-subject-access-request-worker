@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSubjectAccessRequestParams
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
 import java.util.UUID
 
@@ -18,6 +20,25 @@ class IntegrationTestFixture {
       crn = testNdeliusCaseReferenceNumber,
       dateFrom = testDateFrom,
       dateTo = testDateTo,
+    )
+
+    fun createSubjectAccessRequestForService(service: String, status: Status = Status.Pending) = SubjectAccessRequest(
+      id = testSubjectAccessRequestId,
+      dateFrom = testDateFrom,
+      dateTo = testDateTo,
+      sarCaseReferenceNumber = "666",
+      services = service,
+      nomisId = testNomisId,
+      ndeliusCaseReferenceId = testNdeliusCaseReferenceNumber,
+      requestedBy = "Me",
+      status = status,
+    )
+
+    fun SubjectAccessRequest.toGetParams() = GetSubjectAccessRequestParams(
+      prn = this.nomisId,
+      crn = this.ndeliusCaseReferenceId,
+      dateFrom = this.dateFrom,
+      dateTo = this.dateTo,
     )
 
     @JvmStatic
