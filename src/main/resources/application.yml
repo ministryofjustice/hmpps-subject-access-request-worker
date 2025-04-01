@@ -107,6 +107,10 @@ template-resources:
   directory: /templates
   mandatory: G1,G2,G3
 
+scheduled:
+  subject-access-request-processor:
+    interval-seconds: 30
+
 sentry:
   traces-sample-rate: "0.05"
 

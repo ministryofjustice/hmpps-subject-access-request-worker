@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -26,10 +25,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
+class LegacyReportServiceTest : IntegrationTestBase() {
+
   private val dateFromFormatted = LocalDate.parse("02/01/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy"))
   private val dateToFormatted = LocalDate.parse("02/01/2024", DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-  private val documentStorageClient: DocumentStorageClient = mock()
+
   private val sampleSAR = SubjectAccessRequest(
     id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
     status = Status.Pending,
@@ -61,6 +61,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       ),
     )
 
+  private val documentStorageClient: DocumentStorageClient = mock()
   private val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService = mock()
   private val prisonApiClient: PrisonApiClient = mock()
   private val probationApiClient: ProbationApiClient = mock()
@@ -69,94 +70,18 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
   private val telemetryClient: TelemetryClient = mock()
   private val serviceConfigurationService: ServiceConfigurationService = mock()
   private val pdfWriter: PdfWriter = mock()
-  private val subjectAccessRequestService: SubjectAccessRequestService = mock()
 
-  val subjectAccessRequestWorkerService = SubjectAccessRequestWorkerService(
+  val subjectAccessRequestWorkerService = LegacyReportService(
     getSubjectAccessRequestDataService,
     documentStorageClient,
     generatePdfService,
     prisonApiClient,
     probationApiClient,
     serviceConfigurationService,
-    subjectAccessRequestService,
     telemetryClient,
   )
 
   private val postDocumentResponse = DocumentStorageClient.PostDocumentResponse(documentUuid = sampleSAR.id.toString())
-
-  @Test
-  fun `pollForNewSubjectAccessRequests returns single SubjectAccessRequest`() = runTest {
-    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
-
-    val result = subjectAccessRequestWorkerService
-      .pollForNewSubjectAccessRequests()
-
-    val expected: SubjectAccessRequest = sampleSAR
-    assertThat(result).isEqualTo(expected)
-  }
-
-  @Test
-  fun `pollForRequests polls for unclaimed SAR`() = runTest {
-    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
-
-    subjectAccessRequestWorkerService.pollForRequests()
-
-    verify(subjectAccessRequestService, times(1)).findUnclaimed()
-  }
-
-  @Test
-  fun `startPolling calls claim and complete on happy path`() = runTest {
-    whenever(serviceConfigurationService.getSelectedServices(any())).thenReturn(selectedDpsServices)
-
-    whenever(
-      getSubjectAccessRequestDataService.requestDataFromServices(
-        selectedDpsServices,
-        null,
-        "1",
-        dateFromFormatted,
-        dateToFormatted,
-        sampleSAR,
-      ),
-    )
-      .thenReturn(dpsServicesList)
-    whenever(generatePdfService.getPdfWriter(byteArrayOutputStream))
-      .thenReturn(pdfWriter)
-    whenever(probationApiClient.getOffenderName(sampleSAR, "1"))
-      .thenReturn("TEST, Name")
-    whenever(
-      generatePdfService.execute(
-        services = dpsServicesList,
-        subjectName = "TEST, Name",
-        sar = sampleSAR,
-      ),
-    ).thenReturn(byteArrayOutputStream)
-
-    whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream))
-      .thenReturn(postDocumentResponse)
-
-    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
-
-    subjectAccessRequestWorkerService.pollForRequests()
-
-    verify(subjectAccessRequestService, times(1)).findUnclaimed()
-    verify(subjectAccessRequestService, times(1)).updateStatus(
-      UUID.fromString("11111111-1111-1111-1111-111111111111"),
-      Status.Completed,
-    )
-  }
-
-  @Test
-  fun `startPolling doesn't call complete if claim patch fails`() = runTest {
-    whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
-    whenever(subjectAccessRequestService.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(any())).thenThrow(
-      RuntimeException("Database error"),
-    )
-
-    subjectAccessRequestWorkerService.pollForRequests()
-
-    verify(subjectAccessRequestService, times(1)).findUnclaimed()
-    verify(subjectAccessRequestService, times(0)).updateStatus(any(), eq(Status.Completed))
-  }
 
   @Nested
   inner class CreateSubjectAccessRequestReport {
@@ -188,7 +113,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream))
         .thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
+      subjectAccessRequestWorkerService.generateReport(sampleSAR)
 
       verify(getSubjectAccessRequestDataService, times(1)).requestDataFromServices(
         any(),
@@ -231,7 +156,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
         ),
       ).thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
+      subjectAccessRequestWorkerService.generateReport(sampleSAR)
 
       verify(generatePdfService, times(1)).execute(
         anyOrNull(),
@@ -270,7 +195,7 @@ class SubjectAccessRequestWorkerServiceTest : IntegrationTestBase() {
       whenever(documentStorageClient.storeDocument(sampleSAR, byteArrayOutputStream))
         .thenReturn(postDocumentResponse)
 
-      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(sampleSAR)
+      subjectAccessRequestWorkerService.generateReport(sampleSAR)
 
       verify(documentStorageClient, times(1)).storeDocument(
         sampleSAR,

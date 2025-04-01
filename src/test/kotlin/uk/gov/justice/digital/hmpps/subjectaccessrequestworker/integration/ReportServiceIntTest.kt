@@ -39,7 +39,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestWorkerService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -56,13 +56,13 @@ const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
     "G3-api.url=http://localhost:4100",
   ],
 )
-class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
+class ReportServiceIntTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
 
   @Autowired
-  private lateinit var subjectAccessRequestWorkerService: SubjectAccessRequestWorkerService
+  private lateinit var subjectAccessRequestWorkerService: ReportService
 
   @Autowired
   private lateinit var prisonDetailsRepository: PrisonDetailsRepository
@@ -114,7 +114,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       `Document API upload request is successful for`(subjectAccessRequest.id.toString())
 
       // When
-      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+      subjectAccessRequestWorkerService.generateReport(subjectAccessRequest)
 
       // Then
       `the PDF uploaded to the Document store contains the expected content`(testCase)
@@ -132,7 +132,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       `Document API upload request is successful for`(subjectAccessRequest.id.toString())
 
       // When
-      subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+      subjectAccessRequestWorkerService.generateReport(subjectAccessRequest)
 
       // Then
       `expected service calls are made`()
@@ -149,7 +149,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       val subjectAccessRequest = newSubjectAccessRequestFor(service = serviceName)
 
       val actual = assertThrows<FatalSubjectAccessRequestException> {
-        subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+        subjectAccessRequestWorkerService.generateReport(subjectAccessRequest)
       }
 
       assertThat(actual.event).isEqualTo(ProcessingEvent.GET_SERVICE_CONFIGURATION)
@@ -177,7 +177,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       )
 
       val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-        subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+        subjectAccessRequestWorkerService.generateReport(subjectAccessRequest)
       }
 
       assertThat(actual.event).isEqualTo(ProcessingEvent.GET_SAR_DATA)
@@ -208,7 +208,7 @@ class SubjectAccessRequestWorkerServiceIntTest : IntegrationTestBase() {
       documentApi.stubUploadFileFailsWithStatus(subjectAccessRequest.id.toString(), 500)
 
       val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-        subjectAccessRequestWorkerService.createSubjectAccessRequestReport(subjectAccessRequest)
+        subjectAccessRequestWorkerService.generateReport(subjectAccessRequest)
       }
 
       assertThat(actual.event).isEqualTo(ProcessingEvent.STORE_DOCUMENT)

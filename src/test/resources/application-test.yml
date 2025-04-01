@@ -51,3 +51,7 @@ G3-api:
 template-resources:
   directory: /templates
   mandatory: G1,G2,G3
+
+scheduled:
+  subject-access-request-processor:
+    interval-seconds: 3

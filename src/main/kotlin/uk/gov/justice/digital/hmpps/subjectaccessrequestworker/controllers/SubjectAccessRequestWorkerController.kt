@@ -1,14 +1,13 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controllers
 
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestWorkerService
 
+@Deprecated("functionality replaced by uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor")
 @RestController
-class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestService: SubjectAccessRequestWorkerService) {
+class SubjectAccessRequestWorkerController() {
 
   private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -17,6 +16,6 @@ class SubjectAccessRequestWorkerController(@Autowired val subjectAccessRequestSe
   )
   suspend fun startPolling() {
     log.debug("Starting polling...")
-    subjectAccessRequestService.startPolling()
+    //pollingService.start()
   }
 }
