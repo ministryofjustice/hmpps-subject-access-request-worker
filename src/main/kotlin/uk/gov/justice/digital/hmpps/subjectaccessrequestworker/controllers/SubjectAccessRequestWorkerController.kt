@@ -15,7 +15,7 @@ class SubjectAccessRequestWorkerController {
     ApplicationReadyEvent::class,
   )
   suspend fun startPolling() {
-    log.debug("Starting polling...")
+    // log.debug("Starting polling...")
     // pollingService.start()
   }
 }
