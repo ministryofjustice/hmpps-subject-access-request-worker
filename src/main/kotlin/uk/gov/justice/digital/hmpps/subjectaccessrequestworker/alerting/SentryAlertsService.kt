@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
  * functionality it just makes it easier to mock the alerting functionality in tests.
  */
 @Service
-class SentryAlertsService: AlertsService {
+class SentryAlertsService : AlertsService {
 
   override fun raiseReportErrorAlert(ex: SubjectAccessRequestException) {
     Sentry.captureException(ex)

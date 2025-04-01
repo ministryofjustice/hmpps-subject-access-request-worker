@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Deprecated("functionality replaced by uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor")
 @RestController
-class SubjectAccessRequestWorkerController() {
+class SubjectAccessRequestWorkerController {
 
   private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -16,6 +16,6 @@ class SubjectAccessRequestWorkerController() {
   )
   suspend fun startPolling() {
     log.debug("Starting polling...")
-    //pollingService.start()
+    // pollingService.start()
   }
 }

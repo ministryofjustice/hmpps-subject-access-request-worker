@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
@@ -25,7 +24,7 @@ class LegacyReportService(
   @Autowired val probationApiClient: ProbationApiClient,
   @Autowired val serviceConfigurationService: ServiceConfigurationService,
   private val telemetryClient: TelemetryClient,
-): ReportService {
+) : ReportService {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

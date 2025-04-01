@@ -177,7 +177,6 @@ class SubjectAccessRequestProcessorTest {
         subjectAccessRequest = sampleSAR,
       )
     }
-
   }
 
   private fun verifyTelemetryEvents(subjectAccessRequest: SubjectAccessRequest?, vararg eventNames: String) {
@@ -216,6 +215,5 @@ class SubjectAccessRequestProcessorTest {
     assertThat(actual.event).isEqualTo(null)
     assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
     assertThat(actual.params).containsEntry("sarCaseReferenceNumber", subjectAccessRequest?.sarCaseReferenceNumber)
-
   }
 }
