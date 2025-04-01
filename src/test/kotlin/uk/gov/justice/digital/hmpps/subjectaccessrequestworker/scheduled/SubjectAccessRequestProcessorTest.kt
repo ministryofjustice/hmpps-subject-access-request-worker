@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.health.scheduled
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled
 
 import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
