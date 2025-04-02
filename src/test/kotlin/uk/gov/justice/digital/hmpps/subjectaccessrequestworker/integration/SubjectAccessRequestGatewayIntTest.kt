@@ -9,8 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException.InternalServerError
@@ -35,7 +35,7 @@ class SubjectAccessRequestGatewayIntTest : IntegrationTestBase() {
   @Autowired
   private lateinit var sarGateway: SubjectAccessRequestGateway
 
-  @MockBean
+  @MockitoBean
   private lateinit var hmppsAuthGateway: HmppsAuthGateway
 
   @Mock

@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
@@ -31,6 +32,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Servi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
 import java.time.LocalDate
@@ -50,6 +52,9 @@ class ReportServiceIntTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var subjectAccessRequestWorkerService: ReportService
+
+  @MockitoBean
+  protected lateinit var dateService: DateService
 
   @BeforeEach
   fun setup() {

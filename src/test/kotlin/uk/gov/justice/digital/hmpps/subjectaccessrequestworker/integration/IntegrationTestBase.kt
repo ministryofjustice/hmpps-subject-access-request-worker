@@ -4,14 +4,12 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.kotlin.mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
@@ -31,7 +29,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Servi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -72,9 +69,6 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthorisationHelper
-
-  @MockitoBean
-  protected var dateService: DateService = mock()
 
   internal fun setAuthorisation(
     username: String? = "AUTH_ADM",

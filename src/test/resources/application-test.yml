@@ -54,5 +54,5 @@ template-resources:
 
 scheduled:
   subject-access-request-processor:
-    initial-delay-seconds: 1
-    interval-seconds: 2
+    initial-delay-seconds: 0
+    interval-seconds: 1

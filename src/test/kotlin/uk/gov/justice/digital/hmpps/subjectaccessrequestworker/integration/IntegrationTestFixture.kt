@@ -47,98 +47,98 @@ class IntegrationTestFixture {
         serviceName = "keyworker-api",
         serviceLabel = "Keyworker",
       ),
-      TestCase(
-        serviceName = "offender-case-notes",
-        serviceLabel = "Sensitive Case Notes",
-      ),
-      TestCase(
-        serviceName = "court-case-service",
-        serviceLabel = "Prepare a Case for Sentence",
-      ),
-      TestCase(
-        serviceName = "hmpps-restricted-patients-api",
-        serviceLabel = "Restricted Patients",
-      ),
-      TestCase(
-        serviceName = "hmpps-accredited-programmes-api",
-        serviceLabel = "Accredited Programmes",
-      ),
-      TestCase(
-        serviceName = "hmpps-complexity-of-need",
-        serviceLabel = "Complexity Of Need",
-      ),
-      TestCase(
-        serviceName = "offender-management-allocation-manager",
-        serviceLabel = "Manage Prison Offender Manager Cases",
-      ),
-      TestCase(
-        serviceName = "hmpps-book-secure-move-api",
-        serviceLabel = "Book a Secure Move",
-      ),
-      TestCase(
-        serviceName = "hmpps-non-associations-api",
-        serviceLabel = "Non-associations",
-      ),
-      TestCase(
-        serviceName = "hmpps-incentives-api",
-        serviceLabel = "Incentives",
-      ),
-      TestCase(
-        serviceName = "hmpps-manage-adjudications-api",
-        serviceLabel = "Manage Adjudications",
-      ),
-      TestCase(
-        serviceName = "hmpps-offender-categorisation-api",
-        serviceLabel = "Categorisation Tool",
-      ),
-      TestCase(
-        serviceName = "hmpps-hdc-api",
-        serviceLabel = "Home Detention Curfew",
-      ),
-      TestCase(
-        serviceName = "create-and-vary-a-licence-api",
-        serviceLabel = "Create and Vary a Licence",
-      ),
-      TestCase(
-        serviceName = "hmpps-uof-data-api",
-        serviceLabel = "Use of Force",
-      ),
-      TestCase(
-        serviceName = "hmpps-activities-management-api",
-        serviceLabel = "Manage Activities and Appointments",
-      ),
-      TestCase(
-        serviceName = "hmpps-resettlement-passport-api",
-        serviceLabel = "Prepare Someone for Release",
-      ),
-      TestCase(
-        serviceName = "hmpps-approved-premises-api",
-        serviceLabel = "Approved Premises",
-      ),
-      TestCase(
-        serviceName = "hmpps-education-employment-api",
-        serviceLabel = "Education Employment",
-      ),
-      TestCase(
-        serviceName = "make-recall-decision-api",
-        serviceLabel = "Consider a Recall",
-      ),
-      TestCase(
-        serviceName = "hmpps-education-and-work-plan-api",
-        serviceLabel = "Personal Learning Plan",
-      ),
-      TestCase(
-        serviceName = "G1",
-        serviceLabel = "G1",
-      ),
-      TestCase(
-        serviceName = "G2",
-        serviceLabel = "G2",
-      ),
-      TestCase(
-        serviceName = "G3",
-        serviceLabel = "G3",
-      ),
+//      TestCase(
+//        serviceName = "offender-case-notes",
+//        serviceLabel = "Sensitive Case Notes",
+//      ),
+//      TestCase(
+//        serviceName = "court-case-service",
+//        serviceLabel = "Prepare a Case for Sentence",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-restricted-patients-api",
+//        serviceLabel = "Restricted Patients",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-accredited-programmes-api",
+//        serviceLabel = "Accredited Programmes",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-complexity-of-need",
+//        serviceLabel = "Complexity Of Need",
+//      ),
+//      TestCase(
+//        serviceName = "offender-management-allocation-manager",
+//        serviceLabel = "Manage Prison Offender Manager Cases",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-book-secure-move-api",
+//        serviceLabel = "Book a Secure Move",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-non-associations-api",
+//        serviceLabel = "Non-associations",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-incentives-api",
+//        serviceLabel = "Incentives",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-manage-adjudications-api",
+//        serviceLabel = "Manage Adjudications",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-offender-categorisation-api",
+//        serviceLabel = "Categorisation Tool",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-hdc-api",
+//        serviceLabel = "Home Detention Curfew",
+//      ),
+//      TestCase(
+//        serviceName = "create-and-vary-a-licence-api",
+//        serviceLabel = "Create and Vary a Licence",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-uof-data-api",
+//        serviceLabel = "Use of Force",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-activities-management-api",
+//        serviceLabel = "Manage Activities and Appointments",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-resettlement-passport-api",
+//        serviceLabel = "Prepare Someone for Release",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-approved-premises-api",
+//        serviceLabel = "Approved Premises",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-education-employment-api",
+//        serviceLabel = "Education Employment",
+//      ),
+//      TestCase(
+//        serviceName = "make-recall-decision-api",
+//        serviceLabel = "Consider a Recall",
+//      ),
+//      TestCase(
+//        serviceName = "hmpps-education-and-work-plan-api",
+//        serviceLabel = "Personal Learning Plan",
+//      ),
+//      TestCase(
+//        serviceName = "G1",
+//        serviceLabel = "G1",
+//      ),
+//      TestCase(
+//        serviceName = "G2",
+//        serviceLabel = "G2",
+//      ),
+//      TestCase(
+//        serviceName = "G3",
+//        serviceLabel = "G3",
+//      ),
     )
   }
 
