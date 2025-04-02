@@ -34,7 +34,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDeta
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
 import java.time.LocalDate
 
 @Deprecated(
@@ -85,7 +84,7 @@ class ReportServiceIntTest : IntegrationTestBase() {
     /**
      * Ensure test generated reports have the same 'report generation date' as pre-generated reference reports.
      */
-    whenever(dateService.now()).thenReturn(TemplateTestingUtil.reportGenerationDate)
+    whenever(dateService.reportGenerationDate()).thenReturn("1 January 2025")
   }
 
   @Nested

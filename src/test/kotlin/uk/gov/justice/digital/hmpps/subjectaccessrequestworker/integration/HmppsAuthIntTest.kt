@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
@@ -18,9 +19,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Hmpps
 @ExtendWith(HmppsAuthApiExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
+@DirtiesContext
 class HmppsAuthIntTest {
 
-  @Autowired
+  @Autowiredq
   private lateinit var hmppsAuthGateway: HmppsAuthGateway
 
   @Test
