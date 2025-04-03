@@ -8,13 +8,21 @@ import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.kotlin.capture
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.expectedSubjectAccessRequestParameters
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.toGetParams
@@ -25,6 +33,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Priso
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Pending
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -46,6 +55,9 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
 
   @MockitoBean
   protected lateinit var dateService: DateService
+
+  @Captor
+  protected lateinit var errorCaptor: ArgumentCaptor<SubjectAccessRequestException>
 
   @BeforeEach
   fun setup() {
@@ -82,7 +94,7 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
 
       await()
         .atMost(10, TimeUnit.SECONDS)
-        .until { requestHasStatusComplete(sar) }
+        .until { requestHasStatus(sar, Completed) }
 
       hmppsAuth.verifyCalledOnce()
       serviceOneMockApi.verifyApiCalled(1)
@@ -106,7 +118,7 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
 
       await()
         .atMost(10, TimeUnit.SECONDS)
-        .until { requestHasStatusComplete(sar) }
+        .until { requestHasStatus(sar, Completed) }
 
       hmppsAuth.verifyCalledOnce()
       serviceOneMockApi.verifyApiCalled(1)
@@ -115,6 +127,37 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
 
       assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase)
       assertSubjectAccessRequestHasStatus(sar, Completed)
+    }
+  }
+
+  @Nested
+  inner class ReportGenerationErrorScenarios {
+
+    @Test
+    fun `should fail to process request when service does not exist`() {
+      val serviceName = "this-service-does-not-exist"
+      val sar = createSubjectAccessRequestWithStatus(Pending, serviceName)
+      assertSubjectAccessRequestHasStatus(sar, Pending)
+
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .untilAsserted {
+          verify(alertsService, times(1)).raiseReportErrorAlert(capture(errorCaptor))
+        }
+
+      assertThat(errorCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
+
+      val actualException = errorCaptor.allValues[0]
+      assertThat(actualException.message).startsWith("subjectAccessRequest failed with non-retryable error: service with name '$serviceName' not found")
+      assertThat(actualException.subjectAccessRequest?.id).isEqualTo(sar.id)
+      assertThat(actualException.event).isEqualTo(ProcessingEvent.GET_SERVICE_CONFIGURATION)
+
+      assertRequestClaimedAtLeastOnce(sar)
+
+      hmppsAuth.verifyNeverCalled()
+      documentApi.verifyNeverCalled()
+      serviceOneMockApi.verifyNeverCalled()
+      prisonApi.verifyNeverCalled()
     }
   }
 
@@ -178,8 +221,16 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     .append("Official Sensitive")
     .toString()
 
-  private fun requestHasStatusComplete(subjectAccessRequest: SubjectAccessRequest) = Completed ==
-    subjectAccessRequestRepository.findById(subjectAccessRequest.id).get().status
+  private fun requestHasStatus(subjectAccessRequest: SubjectAccessRequest, expectedStatus: Status): Boolean {
+    val target = getSubjectAccessRequest(subjectAccessRequest.id)
+    return expectedStatus == target.status
+  }
+
+  private fun assertRequestClaimedAtLeastOnce(subjectAccessRequest: SubjectAccessRequest) {
+    val target = getSubjectAccessRequest(subjectAccessRequest.id)
+    assertThat(target.claimDateTime).isNotNull()
+    assertThat(target.claimAttempts).isGreaterThanOrEqualTo(1)
+  }
 
   private fun clearDatabaseData() {
     subjectAccessRequestRepository.deleteAll()

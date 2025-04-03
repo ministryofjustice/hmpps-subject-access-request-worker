@@ -36,7 +36,7 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
-import kotlin.jvm.optionals.getOrNull
+import java.util.UUID
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
 const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
@@ -115,8 +115,12 @@ abstract class IntegrationTestBase {
   }
 
   protected fun assertSubjectAccessRequestHasStatus(subjectAccessRequest: SubjectAccessRequest, status: Status) {
-    val pendingRequest = subjectAccessRequestRepository.findById(subjectAccessRequest.id)
-    assertThat(pendingRequest.getOrNull()).isNotNull
-    assertThat(pendingRequest.get().status).isEqualTo(status)
+    assertThat(getSubjectAccessRequest(subjectAccessRequest.id).status).isEqualTo(status)
+  }
+
+  protected fun getSubjectAccessRequest(id: UUID): SubjectAccessRequest {
+    val optional = subjectAccessRequestRepository.findById(id)
+    assertThat(optional.isPresent).isTrue()
+    return optional.get()
   }
 }
