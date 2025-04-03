@@ -305,10 +305,8 @@ class GeneratePdfService(
     document.add(Paragraph(getSubjectIdLine(nomisId, ndeliusCaseReferenceId)).setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
-    val reportGenerationDate = dateService.reportGenerationDate()
-    log.info("report generation date: $reportGenerationDate")
     document.add(
-      Paragraph("Report generation date: $reportGenerationDate").setTextAlignment(
+      Paragraph("Report generation date: ${dateService.reportGenerationDate()}").setTextAlignment(
         TextAlignment.CENTER,
       ),
     )
