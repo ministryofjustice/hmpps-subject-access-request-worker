@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.Integ
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.toGetParams
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.TestCase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSubjectAccessRequestParams
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
@@ -84,8 +85,7 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     @ParameterizedTest
     @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture#generateReportTestCases")
     fun `should process pending request successfully when data is held`(testCase: TestCase) {
-      val sar = createSubjectAccessRequestWithStatus(Pending, testCase.serviceName)
-      assertSubjectAccessRequestHasStatus(sar, Pending)
+      val sar = insertSubjectAccessRequest(testCase.serviceName, Pending)
 
       hmppsAuth.stubGrantToken()
       hmppsServiceReturnsSarData(testCase.serviceName, sar)
@@ -108,8 +108,7 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     @ParameterizedTest
     @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture#generateReportTestCases")
     fun `should process pending request successfully when no data is held`(testCase: TestCase) {
-      val sar = createSubjectAccessRequestWithStatus(Pending, testCase.serviceName)
-      assertSubjectAccessRequestHasStatus(sar, Pending)
+      val sar = insertSubjectAccessRequest(testCase.serviceName, Pending)
 
       hmppsAuth.stubGrantToken()
       hmppsServiceReturnsNoSarData()
@@ -136,8 +135,7 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     @Test
     fun `should fail to process request when service does not exist`() {
       val serviceName = "this-service-does-not-exist"
-      val sar = createSubjectAccessRequestWithStatus(Pending, serviceName)
-      assertSubjectAccessRequestHasStatus(sar, Pending)
+      val sar = insertSubjectAccessRequest(serviceName, Pending)
 
       await()
         .atMost(10, TimeUnit.SECONDS)
@@ -147,10 +145,11 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
 
       assertThat(errorCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
 
-      val actualException = errorCaptor.allValues[0]
-      assertThat(actualException.message).startsWith("subjectAccessRequest failed with non-retryable error: service with name '$serviceName' not found")
-      assertThat(actualException.subjectAccessRequest?.id).isEqualTo(sar.id)
-      assertThat(actualException.event).isEqualTo(ProcessingEvent.GET_SERVICE_CONFIGURATION)
+      val actual = errorCaptor.allValues[0]
+      assertThat(actual.message).startsWith("subjectAccessRequest failed with non-retryable error: service with name '$serviceName' not found")
+      assertThat(actual.subjectAccessRequest?.id).isEqualTo(sar.id)
+      assertThat(actual.event).isEqualTo(ProcessingEvent.GET_SERVICE_CONFIGURATION)
+      assertThat(actual.cause).isNull()
 
       assertRequestClaimedAtLeastOnce(sar)
 
@@ -159,6 +158,73 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
       serviceOneMockApi.verifyNeverCalled()
       prisonApi.verifyNeverCalled()
     }
+
+    @Test
+    fun `should throw exception if request to service API is unsuccessful`() {
+      val serviceName = "keyworker-api"
+      val sar = insertSubjectAccessRequest(serviceName, Pending)
+
+      hmppsAuth.stubGrantToken()
+      hmppsServiceReturnsStatus500(sar)
+
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .untilAsserted {
+          verify(alertsService, times(1)).raiseReportErrorAlert(capture(errorCaptor))
+        }
+
+      assertThat(errorCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
+      val actual = errorCaptor.allValues[0]
+
+      assertThat(actual.message).startsWith("subjectAccessRequest failed and max retry attempts (2) exhausted")
+      assertThat(actual.subjectAccessRequest?.id).isEqualTo(sar.id)
+      assertThat(actual.event).isEqualTo(ProcessingEvent.GET_SAR_DATA)
+      assertThat(actual.params).containsExactlyEntriesOf(mapOf("uri" to "http://localhost:4100"))
+
+      assertRequestClaimedAtLeastOnce(sar)
+
+      hmppsAuth.verifyCalledOnce()
+      serviceOneMockApi.verifyApiCalled(3)
+      documentApi.verifyNeverCalled()
+      prisonApi.verifyNeverCalled()
+    }
+
+    @Test
+    fun `should throw exception if document api request is unsuccessful`() {
+      val serviceName = "hmpps-book-secure-move-api"
+      val sar = insertSubjectAccessRequest(serviceName, Pending)
+
+      hmppsAuth.stubGrantToken()
+      hmppsServiceReturnsSarData(serviceName, sar)
+      documentApi.stubUploadFileFailsWithStatus(sar.id.toString(), 500)
+
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .untilAsserted {
+          verify(alertsService, times(1)).raiseReportErrorAlert(capture(errorCaptor))
+        }
+
+      assertThat(errorCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
+      val actual = errorCaptor.allValues[0]
+
+      assertThat(actual.message).startsWith("subjectAccessRequest failed and max retry attempts (2) exhausted")
+      assertThat(actual.subjectAccessRequest?.id).isEqualTo(sar.id)
+      assertThat(actual.event).isEqualTo(ProcessingEvent.STORE_DOCUMENT)
+      assertThat(actual.params).containsExactlyEntriesOf(mapOf("uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/${sar.id}"))
+      assertThat(actual.cause).isNotNull()
+      assertThat(actual.cause!!.message).contains("500 Internal Server Error from POST http://localhost:${documentApi.port()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/${sar.id}")
+
+      hmppsAuth.verifyCalledOnce()
+      serviceOneMockApi.verifyApiCalled(1)
+      prisonApi.verifyApiCalled(1, sar.nomisId!!)
+      documentApi.verifyStoreDocumentIsCalled(3, sar.id.toString())
+    }
+  }
+
+  private fun insertSubjectAccessRequest(serviceName: String, status: Status): SubjectAccessRequest {
+    val sar = createSubjectAccessRequestWithStatus(status, serviceName)
+    assertSubjectAccessRequestHasStatus(sar, status)
+    return sar
   }
 
   private fun hmppsServiceReturnsSarData(serviceName: String, subjectAccessRequest: SubjectAccessRequest) {
@@ -179,6 +245,18 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
         .withStatus(204)
         .withHeader("Content-Type", "application/json"),
       expectedSubjectAccessRequestParameters,
+    )
+  }
+
+  private fun hmppsServiceReturnsStatus500(subjectAccessRequest: SubjectAccessRequest) {
+    serviceOneMockApi.stubSubjectAccessRequestErrorResponse(
+      status = 500,
+      params = GetSubjectAccessRequestParams(
+        prn = subjectAccessRequest.nomisId,
+        crn = subjectAccessRequest.ndeliusCaseReferenceId,
+        dateFrom = subjectAccessRequest.dateFrom,
+        dateTo = subjectAccessRequest.dateTo,
+      ),
     )
   }
 
