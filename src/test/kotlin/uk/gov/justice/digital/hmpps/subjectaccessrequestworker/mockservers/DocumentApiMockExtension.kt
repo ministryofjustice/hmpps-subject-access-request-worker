@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.fileHash
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -68,6 +69,10 @@ class DocumentApiMockServer : WireMockServer(8084) {
         ),
     )
   }
+
+  fun stubUploadFileSuccess(subjectAccessRequest: SubjectAccessRequest) = stubUploadFileSuccess(
+    subjectAccessRequest.id.toString(),
+  )
 
   fun stubUploadFileSuccess(subjectAccessRequestId: String) {
     stubFor(

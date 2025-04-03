@@ -29,6 +29,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+const val REPORT_GENERATION_DATE = "1 January 2025"
+const val REPORT_GENERATION_DATE_FORMAT = "d MMMM yyyy"
+
 fun main(args: Array<String>) {
   TemplateTestingUtil().generatePdfFile()
 }
@@ -44,7 +47,16 @@ class TemplateTestingUtil {
      * Use a fixed date in all generated reports.
      */
     @JvmStatic
-    val reportGenerationDate: LocalDate = LocalDate.of(2025, 1, 1)
+    fun getReportGenerationDate(): LocalDate = LocalDate.parse(
+      REPORT_GENERATION_DATE,
+      DateTimeFormatter.ofPattern(REPORT_GENERATION_DATE_FORMAT),
+    )
+
+    /**
+     * Return the fixed date used in all generated reports in the format expected in the report
+     */
+    @JvmStatic
+    fun getFormattedReportGenerationDate(): String = REPORT_GENERATION_DATE
 
     val subjectAccessRequest = SubjectAccessRequest(
       id = UUID.fromString("83f1f9af-1036-4273-8252-633f6c7cc1d6"),
@@ -79,7 +91,7 @@ class TemplateTestingUtil {
     addLocationMapping("d0763236-c073-4ef4-9592-419bf0cd72cb", 357592, "ASSO B WING")
     addLocationMapping("8ac39ebb-499d-4862-ae45-0b091253e89d", 27187, "ADJ")
 
-    whenever(dateService.now()).thenReturn(reportGenerationDate)
+    whenever(dateService.now()).thenReturn(getReportGenerationDate())
   }
 
   private fun addPrisonMapping(prisonId: String, prisonName: String) {

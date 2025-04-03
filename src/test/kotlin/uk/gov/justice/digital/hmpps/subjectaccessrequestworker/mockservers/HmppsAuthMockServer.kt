@@ -45,6 +45,10 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 9090
   }
 
+  fun verifyNeverCalled() {
+    verify(0, anyRequestedFor(anyUrl()))
+  }
+
   fun verifyCalledOnce() {
     verify(1, anyRequestedFor(anyUrl()))
   }

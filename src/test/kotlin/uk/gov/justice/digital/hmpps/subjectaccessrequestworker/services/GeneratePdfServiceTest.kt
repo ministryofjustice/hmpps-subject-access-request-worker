@@ -11,7 +11,9 @@ import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.AreaBreakType
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import java.io.ByteArrayInputStream
@@ -20,6 +22,11 @@ import java.io.FileOutputStream
 import java.time.LocalDate
 
 class GeneratePdfServiceTest : BaseGeneratePdfTest() {
+
+  @BeforeEach
+  fun setup() {
+    whenever(dateService.now()).thenReturn(LocalDate.now())
+  }
 
   @Test
   fun `generatePdfService adds rear page with correct text`() {

@@ -47,7 +47,7 @@ const val NO_DATA_HELD = "No Data Held"
 class GeneratePdfService(
   val templateRenderService: TemplateRenderService,
   val telemetryClient: TelemetryClient,
-  val dateService: DateService = DateService(),
+  val dateService: DateService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -306,7 +306,7 @@ class GeneratePdfService(
     document.add(Paragraph("SAR Case Reference Number: $sarCaseReferenceNumber").setTextAlignment(TextAlignment.CENTER))
     document.add(Paragraph(getReportDateRangeLine(dateFrom, dateTo)).setTextAlignment(TextAlignment.CENTER))
     document.add(
-      Paragraph("Report generation date: ${dateService.now().format(reportDateFormat)}").setTextAlignment(
+      Paragraph("Report generation date: ${dateService.reportGenerationDate()}").setTextAlignment(
         TextAlignment.CENTER,
       ),
     )

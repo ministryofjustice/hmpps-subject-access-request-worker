@@ -33,7 +33,8 @@ abstract class BaseGeneratePdfTest {
   )
   protected val templateRenderService = TemplateRenderService(templateHelpers, templateResources)
   protected val telemetryClient: TelemetryClient = mock()
-  protected val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient)
+  protected val dateService: DateService = mock()
+  protected val generatePdfService = GeneratePdfService(templateRenderService, telemetryClient, dateService)
 
   /**
    * Change to ON_SUCCESS/NEVER if you need to retain the generated PDF files after the tests have run.

@@ -9,7 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
@@ -27,9 +26,6 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
 
   @Autowired
   private lateinit var prisonApiClient: PrisonApiClient
-
-  @Autowired
-  private lateinit var oAuth2AuthorizedClientService: OAuth2AuthorizedClientService
 
   private val subjectAccessRequest = SubjectAccessRequest(
     id = UUID.randomUUID(),
@@ -59,7 +55,7 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
   @BeforeEach
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the Prison API.
-    oAuth2AuthorizedClientService.removeAuthorizedClient("sar-client", "anonymousUser")
+    clearOauthClientCache("sar-client", "anonymousUser")
   }
 
   @Test
