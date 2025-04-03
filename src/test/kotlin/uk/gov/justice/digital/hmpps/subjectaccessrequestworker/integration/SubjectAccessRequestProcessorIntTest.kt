@@ -15,7 +15,6 @@ import org.mockito.kotlin.whenever
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.createSubjectAccessRequestForService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.expectedSubjectAccessRequestParameters
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.toGetParams
@@ -26,14 +25,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Priso
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Pending
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil.Companion.getFormattedReportGenerationDate
 import java.util.concurrent.TimeUnit
-import kotlin.jvm.optionals.getOrNull
 
 @TestPropertySource(
   properties = [
@@ -181,8 +178,8 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     .append("Official Sensitive")
     .toString()
 
-  private fun requestHasStatusComplete(subjectAccessRequest: SubjectAccessRequest) =
-    Completed == subjectAccessRequestRepository.findById(subjectAccessRequest.id).get().status
+  private fun requestHasStatusComplete(subjectAccessRequest: SubjectAccessRequest) = Completed ==
+    subjectAccessRequestRepository.findById(subjectAccessRequest.id).get().status
 
   private fun clearDatabaseData() {
     subjectAccessRequestRepository.deleteAll()
