@@ -12,5 +12,5 @@ class DateService {
   private val reportGenerationDateFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   fun now(): LocalDate = LocalDate.now()
-  fun reportGenerationDate(): String = LocalDate.now().format(reportGenerationDateFormat)
+  fun reportGenerationDate(): String = now().format(reportGenerationDateFormat)
 }

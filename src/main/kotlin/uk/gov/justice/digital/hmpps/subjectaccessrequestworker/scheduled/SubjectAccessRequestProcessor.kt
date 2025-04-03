@@ -54,7 +54,7 @@ class SubjectAccessRequestProcessor(
   private fun getNextRequestOrNull(): SubjectAccessRequest? = subjectAccessRequestService
     .findUnclaimed()
     .takeIf { it.isNotEmpty() }
-    ?.let { it[0] }
+    ?.firstOrNull()
 
   private fun processRequest(subjectAccessRequest: SubjectAccessRequest, stopWatch: StopWatch) {
     stopWatch.start()
@@ -77,7 +77,6 @@ class SubjectAccessRequestProcessor(
 
   private fun handleError(stopWatch: StopWatch, subjectAccessRequest: SubjectAccessRequest?, ex: Exception) {
     log.error(buildErrorMessage(subjectAccessRequest, ex), ex)
-    ex.printStackTrace()
 
     reportErrorEvent(subjectAccessRequest, ex, stopWatch)
 
@@ -94,7 +93,6 @@ class SubjectAccessRequestProcessor(
   ) = telemetryClient.trackSarEvent(
     name = "NewReportClaimStarted",
     subjectAccessRequest = subjectAccessRequest,
-    TIME_ELAPSED_KEY to "0",
   )
 
   private fun reportCompletedEvent(

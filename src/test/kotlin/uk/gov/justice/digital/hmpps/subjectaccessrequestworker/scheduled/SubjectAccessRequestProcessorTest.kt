@@ -200,7 +200,6 @@ class SubjectAccessRequestProcessorTest {
         "contextId",
         subjectAccessRequest?.contextId.toString(),
       )
-      assertThat(eventPropertiesCaptor.allValues[i]).containsKey("totalTimeElapsed")
     }
   }
 
