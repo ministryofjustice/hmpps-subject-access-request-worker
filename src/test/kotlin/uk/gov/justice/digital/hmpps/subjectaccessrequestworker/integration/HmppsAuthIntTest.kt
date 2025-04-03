@@ -22,7 +22,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Hmpps
 @DirtiesContext
 class HmppsAuthIntTest {
 
-  @Autowiredq
+  @Autowired
   private lateinit var hmppsAuthGateway: HmppsAuthGateway
 
   @Test

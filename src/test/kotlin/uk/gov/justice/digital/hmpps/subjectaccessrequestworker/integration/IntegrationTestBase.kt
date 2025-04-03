@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.createSubjectAccessRequestForService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension
@@ -25,8 +26,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Priso
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
@@ -34,7 +36,7 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
 const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
@@ -107,7 +109,14 @@ abstract class IntegrationTestBase {
     ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
   )
 
-  protected fun verifyHmppsAuthIsCalledOnce() = hmppsAuth.verifyCalledOnce()
-  protected fun verifyHmppsSarEndpointCalledOnce() = serviceOneMockApi.verifyApiCalled(1)
-  protected fun verifyDocumentStorageApiCalledOnce(id: UUID) = documentApi.verifyStoreDocumentIsCalled(1, id.toString())
+  protected fun createSubjectAccessRequestWithStatus(status: Status, serviceName: String): SubjectAccessRequest {
+    val sar = createSubjectAccessRequestForService(serviceName, status)
+    return subjectAccessRequestRepository.saveAndFlush(sar)
+  }
+
+  protected fun assertSubjectAccessRequestHasStatus(subjectAccessRequest: SubjectAccessRequest, status: Status) {
+    val pendingRequest = subjectAccessRequestRepository.findById(subjectAccessRequest.id)
+    assertThat(pendingRequest.getOrNull()).isNotNull
+    assertThat(pendingRequest.get().status).isEqualTo(status)
+  }
 }

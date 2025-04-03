@@ -7,14 +7,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.createSubjectAccessRequestForService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.expectedSubjectAccessRequestParameters
@@ -28,11 +27,11 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Servi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Pending
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
-import java.time.LocalDate
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil.Companion.getFormattedReportGenerationDate
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 
@@ -48,86 +47,79 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
   @MockitoBean
   private lateinit var alertsService: AlertsService
 
-  @MockitoSpyBean
+  @MockitoBean
   protected lateinit var dateService: DateService
 
   @BeforeEach
   fun setup() {
-    clearOAuthClientCache()
+    clearOauthClientCache("sar-client", "anonymousUser")
+    clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     clearDatabaseData()
     populatePrisonDetails()
     populateLocationDetails()
 
     /** Ensure the test generated reports have the same 'report generation date' as pre-generated reference reports */
-    whenever(dateService.reportGenerationDate()).thenReturn("1 January 2025")
+    whenever(dateService.reportGenerationDate()).thenReturn(getFormattedReportGenerationDate())
   }
 
   @AfterEach
   fun cleanup() {
     clearDatabaseData()
-    clearOAuthClientCache()
+    clearOauthClientCache("sar-client", "anonymousUser")
+    clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
   }
 
-  @ParameterizedTest
-  @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture#generateReportTestCases")
-  fun `should process pending request successfully when data is held`(testCase: TestCase) {
-    val sar = createSubjectAccessRequestWithStatus(Pending, testCase.serviceName)
-    assertSubjectAccessRequestHasStatus(sar, Pending)
+  @Nested
+  inner class ReportGenerationSuccessScenarios {
 
-    hmppsAuthGrantsToken()
-    hmppsServiceReturnsSarData(testCase.serviceName, sar)
-    prisonApiReturnsOffenderDetailsForNomisId(sar.nomisId!!)
-    documentUploadIsSuccessful(sar)
+    @ParameterizedTest
+    @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture#generateReportTestCases")
+    fun `should process pending request successfully when data is held`(testCase: TestCase) {
+      val sar = createSubjectAccessRequestWithStatus(Pending, testCase.serviceName)
+      assertSubjectAccessRequestHasStatus(sar, Pending)
 
-    await()
-      .atMost(10, TimeUnit.SECONDS)
-      .until { requestHasStatusComplete(sar) }
+      hmppsAuth.stubGrantToken()
+      hmppsServiceReturnsSarData(testCase.serviceName, sar)
+      prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+      documentApi.stubUploadFileSuccess(sar)
 
-    verifyHmppsAuthIsCalledOnce()
-    verifyHmppsSarEndpointCalledOnce()
-    verifyDocumentStorageApiCalledOnce(sar.id)
-    verifyNoInteractions(alertsService)
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .until { requestHasStatusComplete(sar) }
 
-    assertUploadedDocumentMatchesExpectedPdf(testCase.serviceName)
-    assertSubjectAccessRequestStatusIsComplete(sar)
+      hmppsAuth.verifyCalledOnce()
+      serviceOneMockApi.verifyApiCalled(1)
+      documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+      verifyNoInteractions(alertsService)
+
+      assertUploadedDocumentMatchesExpectedPdf(testCase.serviceName)
+      assertSubjectAccessRequestHasStatus(sar, Completed)
+    }
+
+    @ParameterizedTest
+    @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture#generateReportTestCases")
+    fun `should process pending request successfully when no data is held`(testCase: TestCase) {
+      val sar = createSubjectAccessRequestWithStatus(Pending, testCase.serviceName)
+      assertSubjectAccessRequestHasStatus(sar, Pending)
+
+      hmppsAuth.stubGrantToken()
+      hmppsServiceReturnsNoSarData()
+      prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+      documentApi.stubUploadFileSuccess(sar)
+
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .until { requestHasStatusComplete(sar) }
+
+      hmppsAuth.verifyCalledOnce()
+      serviceOneMockApi.verifyApiCalled(1)
+      documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+      verifyNoInteractions(alertsService)
+
+      assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase)
+      assertSubjectAccessRequestHasStatus(sar, Completed)
+    }
   }
-
-//  @Disabled
-//  @ParameterizedTest
-//  @MethodSource("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture#generateReportTestCases")
-//  fun `should process pending request successfully when no data is held`(testCase: TestCase) {
-//    val subjectAccessRequest = createSubjectAccessRequestWithStatus(Status.Pending, testCase.serviceName)
-//
-//    hmppsAuthGrantsToken()
-//    hmppsServiceReturnsNoSarData()
-//    prisonApiReturnsOffenderDetailsForNomisId(nomisId = subjectAccessRequest.nomisId!!)
-//    documentUploadIsSuccessful(subjectAccessRequest = subjectAccessRequest)
-//
-//    await()
-//      .atMost(20, TimeUnit.SECONDS)
-//      .untilAsserted {
-//        verify(subjectAccessRequestProcessor, atLeastOnce()).execute()
-//        verifyHmppsAuthIsCalledOnce()
-//        verifyHmppsSarEndpointCalledOnce()
-//        verifyDocumentStorageApiCalledOnce(id = subjectAccessRequest.id)
-//        assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase = testCase)
-//        assertSubjectAccessRequestStatusIsComplete(subjectAccessRequest = subjectAccessRequest)
-//        verifyNoInteractions(alertsService)
-//      }
-//  }
-
-  private fun createSubjectAccessRequestWithStatus(status: Status, serviceName: String): SubjectAccessRequest {
-    val sar = createSubjectAccessRequestForService(serviceName, status)
-    return subjectAccessRequestRepository.saveAndFlush(sar)
-  }
-
-  private fun assertSubjectAccessRequestHasStatus(subjectAccessRequest: SubjectAccessRequest, status: Status) {
-    val pendingRequest = subjectAccessRequestRepository.findById(subjectAccessRequest.id)
-    assertThat(pendingRequest.getOrNull()).isNotNull
-    assertThat(pendingRequest.get().status).isEqualTo(status)
-  }
-
-  private fun hmppsAuthGrantsToken() = hmppsAuth.stubGrantToken()
 
   private fun hmppsServiceReturnsSarData(serviceName: String, subjectAccessRequest: SubjectAccessRequest) {
     val responseBody = getSarResponseStub("$serviceName-stub.json")
@@ -150,11 +142,6 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     )
   }
 
-  private fun documentUploadIsSuccessful(subjectAccessRequest: SubjectAccessRequest) = documentApi
-    .stubUploadFileSuccess(subjectAccessRequest.id.toString())
-
-  fun prisonApiReturnsOffenderDetailsForNomisId(nomisId: String) = prisonApi.stubGetOffenderDetails(nomisId)
-
   fun assertUploadedDocumentMatchesExpectedPdf(serviceName: String) {
     val expected = getPreGeneratedPdfDocument("$serviceName-reference.pdf")
     val actual = getUploadedPdfDocument()
@@ -169,13 +156,6 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
         .isEqualTo(expectedPageN)
         .withFailMessage("actual page: $i did not match expected.")
     }
-  }
-
-  fun assertSubjectAccessRequestStatusIsComplete(subjectAccessRequest: SubjectAccessRequest) {
-    val target = subjectAccessRequestRepository.findById(subjectAccessRequest.id)
-    assertThat(target.getOrNull()).isNotNull
-    assertThat(target.get().status).isEqualTo(Status.Completed)
-    assertThat(target.get().claimAttempts).isGreaterThanOrEqualTo(1)
   }
 
   fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase: TestCase) {
@@ -202,13 +182,7 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     .toString()
 
   private fun requestHasStatusComplete(subjectAccessRequest: SubjectAccessRequest) =
-    Status.Completed == subjectAccessRequestRepository.findById(subjectAccessRequest.id).get().status
-
-  private fun clearOAuthClientCache() {
-    // Remove the cache client token to force each test to obtain an Auth token before calling the documentStore API.
-    clearOauthClientCache("sar-client", "anonymousUser")
-    clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
-  }
+    Completed == subjectAccessRequestRepository.findById(subjectAccessRequest.id).get().status
 
   private fun clearDatabaseData() {
     subjectAccessRequestRepository.deleteAll()
