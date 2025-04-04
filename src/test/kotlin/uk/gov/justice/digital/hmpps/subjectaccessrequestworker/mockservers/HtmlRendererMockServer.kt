@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
@@ -80,10 +82,11 @@ class HtmlRendererMockServer : WireMockServer(8087) {
     verify(
       times,
       postRequestedFor(urlPathEqualTo("/subject-access-request/render"))
-        .withRequestBody(equalToJson(objectMapper.writeValueAsString(expectedBody)))
+        .withRequestBody(equalToJson(objectMapper.writeValueAsString(expectedBody))),
     )
   }
 
+  fun verifyRenderNeverCalled() = verify(0, anyRequestedFor(anyUrl()))
 }
 
 class HtmlRendererApiExtension :

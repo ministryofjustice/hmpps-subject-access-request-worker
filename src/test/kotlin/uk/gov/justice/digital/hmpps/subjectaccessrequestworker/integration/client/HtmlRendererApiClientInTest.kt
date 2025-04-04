@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -8,9 +9,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.security.oauth2.client.ClientAuthorizationException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNdeliusCaseReferenceNumber
@@ -42,6 +45,33 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   fun setup() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the Prison API.
     clearOauthClientCache("sar-client", "anonymousUser")
+  }
+
+  @Test
+  fun `should throw expected exception when unable to obtain client auth token`() {
+    val subjectAccessRequest = subjectAccessRequest()
+    val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
+      subjectAccessRequest = subjectAccessRequest,
+      serviceName = serviceName,
+      serviceUrl = serviceUrl,
+    )
+
+    hmppsAuth.stubGrantTokenResponse(
+      responseDefinitionBuilder = ResponseDefinitionBuilder().withStatus(403),
+    )
+
+    val actual = assertThrows<FatalSubjectAccessRequestException> {
+      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceName, serviceUrl)
+    }
+
+    assertThat(actual.message)
+      .startsWith("subjectAccessRequest failed with non-retryable error: sarHtmlRendererApiClient error authorization exception")
+    assertThat(actual.cause).isNotNull()
+    assertThat(actual.cause).isInstanceOf(ClientAuthorizationException::class.java)
+    assertThat(actual.event).isEqualTo(ACQUIRE_AUTH_TOKEN)
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderNeverCalled()
   }
 
   @Test

@@ -46,7 +46,7 @@ class HtmlRendererApiClient(
           params = mapOf(
             "serviceName" to serviceName,
             "serviceUrl" to serviceUrl,
-          )
+          ),
         ),
       )
       .block()
