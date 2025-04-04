@@ -53,6 +53,13 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
     verify(1, anyRequestedFor(anyUrl()))
   }
 
+  fun stubGrantTokenResponse(responseDefinitionBuilder: ResponseDefinitionBuilder) {
+    stubFor(
+      post(urlEqualTo("/auth/oauth/token"))
+        .willReturn(responseDefinitionBuilder),
+    )
+  }
+
   fun stubGrantToken() {
     stubFor(
       post(urlEqualTo("/auth/oauth/token"))
