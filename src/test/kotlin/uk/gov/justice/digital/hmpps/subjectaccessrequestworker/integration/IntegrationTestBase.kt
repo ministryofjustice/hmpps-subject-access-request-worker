@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.LocationsApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.LocationsApiExtension.Companion.locationsApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.NomisMappingsApiExtension
@@ -50,6 +51,7 @@ const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
   ServiceTwoApiExtension::class,
   LocationsApiExtension::class,
   NomisMappingsApiExtension::class,
+  HtmlRendererApiExtension::class,
 )
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")

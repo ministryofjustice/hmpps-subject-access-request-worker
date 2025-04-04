@@ -100,6 +100,8 @@ locations-api:
   url: http://localhost:8085
 nomis-mappings-api:
   url: http://localhost:8086
+sar-html-renderer-api:
+  url: http://localhost:8087
 G1-api:
   url: ${G1_API_URL)
 G2-api:

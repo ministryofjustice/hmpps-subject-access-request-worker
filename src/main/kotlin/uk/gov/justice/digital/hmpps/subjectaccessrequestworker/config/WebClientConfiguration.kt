@@ -17,6 +17,7 @@ class WebClientConfiguration(
   @Value("\${hmpps-auth.url}") val hmppsAuthBaseUri: String,
   @Value("\${locations-api.url}") val locationsApiBaseUri: String,
   @Value("\${nomis-mappings-api.url}") val nomisMappingsApiBaseUri: String,
+  @Value("\${sar-html-renderer-api.url}") val sarHtmlRendererApiBaseUri: String,
   @Value("\${api.health-timeout:2s}") val healthTimeout: Duration,
   @Value("\${api.timeout:20s}") val timeout: Duration,
   @Value("\${api.timeout:300s}") val documentStoreTimeout: Duration,
@@ -64,6 +65,10 @@ class WebClientConfiguration(
 
   @Bean
   fun nomisMappingsApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = nomisMappingsApiBaseUri, timeout)
+
+  @Bean
+  fun sarHtmlRendererApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder
+    .authorisedWebClient(authorizedClientManager, registrationId = "sar-client", url = sarHtmlRendererApiBaseUri, timeout)
 
   private var backOffDuration: Duration = Duration.parse(backOff)
 
