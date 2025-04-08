@@ -43,6 +43,9 @@ const val DATA_FONT_SIZE = 12f
 const val DATA_LINE_SPACING = 16f
 const val NO_DATA_HELD = "No Data Held"
 
+/**
+ * This is the legacy implementation, see [PdfService] for new.
+ */
 @Service
 class GeneratePdfService(
   val templateRenderService: TemplateRenderService,

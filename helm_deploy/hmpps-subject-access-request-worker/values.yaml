@@ -51,6 +51,9 @@ generic-service:
       G2_API_URL: "G2_API_URL"
       G3_API_URL: "G3_API_URL"
 
+    hmpps-subject-access-request-s3:
+      HMPPS_S3_SUBJECT_ACCESS_REQUEST_BUCKET: "bucket_name"
+
   allowlist:
     groups:
       - internal

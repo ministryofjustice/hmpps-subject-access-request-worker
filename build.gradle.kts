@@ -28,6 +28,7 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.6.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.2")
   implementation("commons-io:commons-io:2.18.0")
+  implementation("aws.sdk.kotlin:s3:1.4.38")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")

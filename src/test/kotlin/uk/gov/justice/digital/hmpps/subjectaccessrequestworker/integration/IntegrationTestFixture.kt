@@ -14,6 +14,7 @@ class IntegrationTestFixture {
     val testNdeliusCaseReferenceNumber = "ndeliusCaseReferenceId-666"
     var testDateTo = LocalDate.of(2025, 1, 1)
     var testDateFrom = LocalDate.of(2024, 1, 1)
+    val subjectName = "REACHER, Joe"
 
     val expectedSubjectAccessRequestParameters = GetSubjectAccessRequestParams(
       prn = testNomisId,

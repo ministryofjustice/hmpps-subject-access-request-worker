@@ -13,4 +13,6 @@ class DateService {
 
   fun now(): LocalDate = LocalDate.now()
   fun reportGenerationDate(): String = now().format(reportGenerationDateFormat)
+  fun reportDateFormat(localDate: LocalDate): String = localDate.format(reportGenerationDateFormat)
+  fun reportDateFormat(localDate: LocalDate?, default: String): String = localDate?.format(reportGenerationDateFormat) ?: default
 }

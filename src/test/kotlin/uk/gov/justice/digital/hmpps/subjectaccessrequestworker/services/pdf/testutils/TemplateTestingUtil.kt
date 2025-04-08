@@ -42,6 +42,8 @@ class TemplateTestingUtil {
     const val CONFIG_PATH = "/integration-tests/template-testing-util/template-testing-config.yml"
     const val DATA_STUBS_PATH = "/integration-tests/api-response-stubs"
     const val SUBJECT_NAME = "REACHER, Joe"
+    val reportDateFrom = LocalDate.of(2024, 1, 1)
+    val reportDateTo = LocalDate.of(2025, 1, 1)
 
     /**
      * Use a fixed date in all generated reports.
@@ -58,13 +60,25 @@ class TemplateTestingUtil {
     @JvmStatic
     fun getFormattedReportGenerationDate(): String = REPORT_GENERATION_DATE
 
-    val subjectAccessRequest = SubjectAccessRequest(
+    @JvmStatic
+    fun getSubjectAccessRequest() = SubjectAccessRequest(
       id = UUID.fromString("83f1f9af-1036-4273-8252-633f6c7cc1d6"),
       nomisId = "nomis-666",
       ndeliusCaseReferenceId = "ndeliusCaseReferenceId-666",
       sarCaseReferenceNumber = "666",
-      dateFrom = LocalDate.of(2024, 1, 1),
-      dateTo = LocalDate.of(2025, 1, 1),
+      dateFrom = reportDateFrom,
+      dateTo = reportDateTo,
+    )
+
+    @JvmStatic
+    fun getSubjectAccessRequest(service: String) = SubjectAccessRequest(
+      id = UUID.fromString("83f1f9af-1036-4273-8252-633f6c7cc1d6"),
+      nomisId = "nomis-666",
+      ndeliusCaseReferenceId = "ndeliusCaseReferenceId-666",
+      sarCaseReferenceNumber = "666",
+      dateFrom = reportDateFrom,
+      dateTo = reportDateTo,
+      services = service,
     )
   }
 
@@ -135,7 +149,7 @@ class TemplateTestingUtil {
 
   fun generatePdfFile() {
     val config = readConfig()
-    writePdf(config, generatePdfStream(config, SUBJECT_NAME, subjectAccessRequest))
+    writePdf(config, generatePdfStream(config, SUBJECT_NAME, getSubjectAccessRequest()))
   }
 
   private fun writePdf(config: Config, baos: ByteArrayOutputStream) {
