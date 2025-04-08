@@ -25,7 +25,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Service
 class PdfService(
@@ -33,8 +32,6 @@ class PdfService(
   private val htmlDocumentStoreService: HtmlDocumentStoreService,
   private val dateService: DateService,
 ) {
-
-  private val reportDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   data class PdfRenderRequest(
     val subjectAccessRequest: SubjectAccessRequest,
@@ -258,14 +255,12 @@ class PdfService(
   }
 
   private fun getReportDateRangeLine(dateFrom: LocalDate?, dateTo: LocalDate?): String {
-    val formattedDateTo = dateTo!!.format(reportDateFormat)
-    val formattedDateFrom: String = dateFrom?.format(reportDateFormat) ?: "Start of record"
+    val formattedDateTo = dateService.reportDateFormat(dateTo!!)
+    val formattedDateFrom: String = dateService.reportDateFormat(dateFrom, "Start of record")
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
   private data class PdfOutputStreamWrapper(val outputStream: ByteArrayOutputStream, val numberOfPages: Int) {
-    fun toInputStream(): ByteArrayInputStream {
-      return ByteArrayInputStream(outputStream.toByteArray())
-    }
+    fun toInputStream(): ByteArrayInputStream = ByteArrayInputStream(outputStream.toByteArray())
   }
 }

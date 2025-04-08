@@ -17,17 +17,15 @@ class HtmlDocumentStoreService(
   private val s3: S3Client,
   private val s3Properties: S3Properties,
 ) {
-  suspend fun getDocument(subjectAccessRequest: SubjectAccessRequest, serviceName: String): InputStream? {
-    return try {
-      s3.getObject(
-        GetObjectRequest {
-          bucket = s3Properties.bucketName
-          key = "${subjectAccessRequest.id}/${serviceName}.html"
-        },
-      ) { getResponseAsInputStream(it) }
-    } catch (ex: Exception) {
-      throw getDocumentException(subjectAccessRequest, ex, serviceName)
-    }
+  suspend fun getDocument(subjectAccessRequest: SubjectAccessRequest, serviceName: String): InputStream? = try {
+    s3.getObject(
+      GetObjectRequest {
+        bucket = s3Properties.bucketName
+        key = "${subjectAccessRequest.id}/$serviceName.html"
+      },
+    ) { getResponseAsInputStream(it) }
+  } catch (ex: Exception) {
+    throw getDocumentException(subjectAccessRequest, ex, serviceName)
   }
 
   private fun getResponseAsInputStream(response: GetObjectResponse) = response.body
@@ -45,7 +43,7 @@ class HtmlDocumentStoreService(
     cause = cause,
     params = mapOf(
       "serviceName" to serviceName,
-      "documentKey" to "${subjectAccessRequest.id}/${serviceName}.html",
+      "documentKey" to "${subjectAccessRequest.id}/$serviceName.html",
     ),
   )
 }

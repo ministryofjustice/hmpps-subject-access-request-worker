@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
@@ -28,23 +30,37 @@ class PdfServiceTest {
     dateService,
   )
 
+  @BeforeEach
+  fun setup() {
+    /**
+     * Dates should match the corresponding date values in the reference PDF.
+     */
+    whenever(dateService.reportGenerationDate())
+      .thenReturn("1 January 2025")
+
+    whenever(dateService.reportDateFormat(any()))
+      .thenReturn("1 January 2025")
+
+    whenever(dateService.reportDateFormat(any(), eq("Start of record")))
+      .thenReturn("1 January 2024")
+  }
+
   @ParameterizedTest
   @MethodSource("generateReportTestCases")
   fun `should generate the expected PDF`(testCase: TestCase) = runTest {
+    val subjectAccessRequest = TemplateTestingUtil.getSubjectAccessRequest(testCase.serviceName)
+
     val pdfRenderRequest = PdfService.PdfRenderRequest(
-      subjectAccessRequest = IntegrationTestFixture.createSubjectAccessRequestForService(testCase.serviceName),
+      subjectAccessRequest = subjectAccessRequest,
       subjectName = IntegrationTestFixture.subjectName,
     )
 
-    whenever(htmlDocumentStoreService.getDocument(pdfRenderRequest.subjectAccessRequest, testCase.serviceName))
+    whenever(htmlDocumentStoreService.getDocument(subjectAccessRequest, testCase.serviceName))
       .thenReturn(getResource("/integration-tests/html-stubs/${testCase.serviceName}-expected.html"))
 
     whenever(serviceConfiguration.getSelectedServices(any())).thenReturn(
       listOf(dpsService(testCase.serviceName, testCase.serviceLabel)),
     )
-
-    whenever(dateService.reportGenerationDate())
-      .thenReturn(TemplateTestingUtil.getFormattedReportGenerationDate())
 
     val actual = pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
 
