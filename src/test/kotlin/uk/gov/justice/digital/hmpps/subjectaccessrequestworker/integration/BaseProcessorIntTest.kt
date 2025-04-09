@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import org.assertj.core.api.Assertions.assertThat
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
@@ -31,6 +32,28 @@ class BaseProcessorIntTest : IntegrationTestBase() {
         .withFailMessage("actual page: $i did not match expected.")
     }
   }
+
+  protected fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceName: String, serviceLabel: String) {
+    val actual = getUploadedPdfDocument()
+
+    assertThat(actual.numberOfPages).isEqualTo(5)
+    val actualPageContent = PdfTextExtractor.getTextFromPage(actual.getPage(4), SimpleTextExtractionStrategy())
+    val expectedPageContent = contentWhenNoDataHeld(serviceLabel, testNomisId)
+
+    assertThat(actualPageContent)
+      .isEqualTo(expectedPageContent)
+      .withFailMessage("$serviceName report did not match expected")
+  }
+
+  protected fun contentWhenNoDataHeld(serviceLabel: String, nomisId: String): String = StringBuilder("$serviceLabel\n")
+    .append("No Data Held")
+    .append("\n")
+    .append("Name: REACHER, Joe ")
+    .append("\n")
+    .append("NOMIS ID: $nomisId")
+    .append("\n")
+    .append("Official Sensitive")
+    .toString()
 
   protected fun insertSubjectAccessRequest(serviceName: String, status: Status): SubjectAccessRequest {
     val sar = createSubjectAccessRequestWithStatus(status, serviceName)

@@ -88,9 +88,52 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
+  @Test
+  fun `should process pending request successfully when no data is held and html-renderer is enabled`() {
+    val serviceName = "hmpps-book-secure-move-api"
+    val serviceLabel = "Book a secure move"
+    val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
+    val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
+      subjectAccessRequest = sar,
+      serviceName = serviceName,
+      serviceUrl = "http://localhost:4100",
+    )
+
+    hmppsAuth.stubGrantToken()
+    htmlRendererSuccessfullyRendersHtmlNoDataHeld(sar, htmlRenderRequest)
+    prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+    documentApi.stubUploadFileSuccess(sar)
+
+    await()
+      .atMost(10, TimeUnit.SECONDS)
+      .until { requestHasStatus(sar, Completed) }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
+    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+
+    assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceName, serviceLabel)
+    assertSubjectAccessRequestHasStatus(sar, Completed)
+  }
+
   private fun htmlRendererSuccessfullyRendersHtml(
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
+  ) = stubHtmlRendererSuccess(sar, htmlRenderRequest, htmlRenderRequest.serviceName)
+
+  private fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
+  ) = stubHtmlRendererSuccess(
+    sar = sar,
+    htmlRenderRequest = htmlRenderRequest,
+    fileToAddToBucket = "${htmlRenderRequest.serviceName}-no-data",
+  )
+
+  private fun stubHtmlRendererSuccess(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
+    fileToAddToBucket: String,
   ) = runBlocking {
     val documentKey = documentKey(sar, htmlRenderRequest.serviceName)
 
@@ -104,7 +147,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     s3TestUtil.putFile(
       S3TestUtils.S3File(
         documentKey,
-        getReportHtmlForService(htmlRenderRequest.serviceName),
+        getReportHtmlForService(fileToAddToBucket),
       ),
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()

@@ -16,8 +16,10 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
+import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -31,6 +33,7 @@ class PdfService(
   private val serviceConfigurationService: ServiceConfigurationService,
   private val htmlDocumentStoreService: HtmlDocumentStoreService,
   private val dateService: DateService,
+  private val telemetryClient: TelemetryClient,
 ) {
 
   data class PdfRenderRequest(
@@ -39,23 +42,33 @@ class PdfService(
   )
 
   suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): ByteArrayOutputStream {
+    telemetryClient.trackSarEvent("pdfGenerationStarted", pdfRenderRequest.subjectAccessRequest)
     val bodyOutputStream = ByteArrayOutputStream()
     val bodyWrapper = createPdfDocument(bodyOutputStream).use { pdfDocument ->
+      telemetryClient.trackSarEvent("pdfBodyGenerationStarted", pdfRenderRequest.subjectAccessRequest)
+
       createDocumentBodyPdf(pdfRenderRequest, pdfDocument)
-      PdfOutputStreamWrapper(bodyOutputStream, pdfDocument.numberOfPages)
+      PdfOutputStreamWrapper(bodyOutputStream, pdfDocument.numberOfPages).also {
+        telemetryClient.trackSarEvent("pdfBodyGenerationCompleted", pdfRenderRequest.subjectAccessRequest)
+      }
     }
 
     val coverOutputStream = ByteArrayOutputStream()
     val coverWrapper = createPdfDocument(coverOutputStream).use { pdfDocument ->
+      telemetryClient.trackSarEvent("pdfCoverGenerationStarted", pdfRenderRequest.subjectAccessRequest)
       createSubjectAccessRequestDocument(pdfDocument).addInternalCoverPage(
         pdfRenderRequest.subjectName,
         pdfRenderRequest.subjectAccessRequest,
         bodyWrapper.numberOfPages - 1,
       )
-      PdfOutputStreamWrapper(coverOutputStream, pdfDocument.numberOfPages)
+      PdfOutputStreamWrapper(coverOutputStream, pdfDocument.numberOfPages).also {
+        telemetryClient.trackSarEvent("pdfCoverGenerationCompleted", pdfRenderRequest.subjectAccessRequest)
+      }
     }
 
-    return mergeBodyAndCoverDocuments(bodyWrapper, coverWrapper)
+    return mergeBodyAndCoverDocuments(bodyWrapper, coverWrapper).also {
+      telemetryClient.trackSarEvent("pdfGenerationCompleted", pdfRenderRequest.subjectAccessRequest)
+    }
   }
 
   private fun createPdfDocument(outputStream: OutputStream): PdfDocument = PdfDocument(PdfWriter(outputStream))
@@ -151,19 +164,22 @@ class PdfService(
     )
   }
 
-  private suspend fun Document.addServiceData(subjectAccessRequest: SubjectAccessRequest, services: List<DpsService>) {
+  private suspend fun Document.addServiceData(
+    subjectAccessRequest: SubjectAccessRequest,
+    services: List<DpsService>,
+    ) {
+    telemetryClient.trackSarEvent("pdfAddServicesDataStarted", subjectAccessRequest, "services" to services.serviceNames())
     services.forEach { service ->
+      telemetryClient.trackSarEvent("pdfAddServiceDataStarted", subjectAccessRequest, "service" to service.name!!)
       this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
 
       val elements = htmlDocumentStoreService.getDocument(
         subjectAccessRequest = subjectAccessRequest,
-        serviceName = service.name ?: "",
-      ).use {
-        println(it?.available())
-        HtmlConverter.convertToElements(it)
-      }
+        serviceName = service.name,
+      ).use { HtmlConverter.convertToElements(it) }
 
       elements.forEach { this.add(it as IBlockElement) }
+      telemetryClient.trackSarEvent("pdfAddServiceDataCompleted", subjectAccessRequest, "service" to service.name)
     }
   }
 
@@ -263,4 +279,6 @@ class PdfService(
   private data class PdfOutputStreamWrapper(val outputStream: ByteArrayOutputStream, val numberOfPages: Int) {
     fun toInputStream(): ByteArrayInputStream = ByteArrayInputStream(outputStream.toByteArray())
   }
+
+  private fun List<DpsService>.serviceNames() = this.map { it.name?: "Unknown" }.joinToString(",")
 }

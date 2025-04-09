@@ -1,8 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
+ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
@@ -24,7 +22,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsSe
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.expectedSubjectAccessRequestParameters
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.toGetParams
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.TestCase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
@@ -121,7 +118,7 @@ class SubjectAccessRequestProcessorIntTest : BaseProcessorIntTest() {
       documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
       verifyNoInteractions(alertsService)
 
-      assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase)
+      assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase.serviceName, "${testCase.serviceLabel} ")
       assertSubjectAccessRequestHasStatus(sar, Completed)
     }
   }
@@ -250,27 +247,4 @@ class SubjectAccessRequestProcessorIntTest : BaseProcessorIntTest() {
       ),
     )
   }
-
-  fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase: TestCase) {
-    val actual = getUploadedPdfDocument()
-
-    assertThat(actual.numberOfPages).isEqualTo(5)
-    val actualPageContent = PdfTextExtractor.getTextFromPage(actual.getPage(4), SimpleTextExtractionStrategy())
-    val expectedPageContent = contentWhenNoDataHeld(testCase.serviceLabel, testNomisId)
-
-    assertThat(actualPageContent)
-      .isEqualTo(expectedPageContent)
-      .withFailMessage("${testCase.serviceName} report did not match expected")
-  }
-
-  private fun contentWhenNoDataHeld(serviceLabel: String, nomidId: String): String = StringBuilder("$serviceLabel ")
-    .append("\n")
-    .append("No Data Held")
-    .append("\n")
-    .append("Name: REACHER, Joe ")
-    .append("\n")
-    .append("NOMIS ID: $nomidId")
-    .append("\n")
-    .append("Official Sensitive")
-    .toString()
 }
