@@ -30,7 +30,7 @@ class LegacyReportService(
     const val TIME_ELAPSED_KEY = "totalTimeElapsed"
   }
 
-  override fun generateReport(subjectAccessRequest: SubjectAccessRequest) {
+  override suspend fun generateReport(subjectAccessRequest: SubjectAccessRequest) {
     val stopWatch = StopWatch.createStarted()
     telemetryClient.trackSarEvent("DoReportStarted", subjectAccessRequest, TIME_ELAPSED_KEY to "0")
 

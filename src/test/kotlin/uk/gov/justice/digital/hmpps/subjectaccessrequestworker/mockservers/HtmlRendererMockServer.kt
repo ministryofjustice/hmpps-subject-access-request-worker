@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 
 class HtmlRendererMockServer : WireMockServer(8087) {
@@ -34,16 +33,6 @@ class HtmlRendererMockServer : WireMockServer(8087) {
       ),
     )
   }
-
-  fun successResponse(documentKey: String): ResponseDefinitionBuilder = ResponseDefinitionBuilder.responseDefinition()
-    .withStatus(201)
-    .withHeader("Content-Type", "application/json")
-    .withBody("""{ "documentKey": "$documentKey" }""".trimIndent())
-
-  fun errorResponse(status: HttpStatus): ResponseDefinitionBuilder = ResponseDefinitionBuilder.responseDefinition()
-    .withStatus(status.value())
-    .withHeader("Content-Type", "application/json")
-    .withBody(status.reasonPhrase)
 
   fun stubRenderHtmlResponses(
     renderRequest: HtmlRendererApiClient.HtmlRenderRequest,

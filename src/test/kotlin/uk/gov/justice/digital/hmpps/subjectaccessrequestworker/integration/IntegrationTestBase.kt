@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import org.assertj.core.api.Assertions.assertThat
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
@@ -125,4 +127,18 @@ abstract class IntegrationTestBase {
     assertThat(optional.isPresent).isTrue()
     return optional.get()
   }
+
+  protected fun rendererSuccessResponse(
+    documentKey: String,
+  ): ResponseDefinitionBuilder = ResponseDefinitionBuilder.responseDefinition()
+    .withStatus(201)
+    .withHeader("Content-Type", "application/json")
+    .withBody("""{ "documentKey": "$documentKey" }""".trimIndent())
+
+  protected fun rendererErrorResponse(
+    status: HttpStatus,
+  ): ResponseDefinitionBuilder = ResponseDefinitionBuilder.responseDefinition()
+    .withStatus(status.value())
+    .withHeader("Content-Type", "application/json")
+    .withBody(status.reasonPhrase)
 }

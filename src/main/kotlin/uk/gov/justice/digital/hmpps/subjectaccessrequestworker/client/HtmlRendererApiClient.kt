@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.time.LocalDate
@@ -20,12 +21,11 @@ class HtmlRendererApiClient(
 
   fun submitRenderRequest(
     subjectAccessRequest: SubjectAccessRequest,
-    serviceName: String,
-    serviceUrl: String,
+    service: DpsService,
   ): HtmlRenderResponse? = try {
     sarHtmlRendererApiWebClient.post()
       .uri("/subject-access-request/render")
-      .bodyValue(HtmlRenderRequest(subjectAccessRequest, serviceName, serviceUrl))
+      .bodyValue(HtmlRenderRequest(subjectAccessRequest, service.name!!, service.url!!))
       .retrieve()
       .onStatus(
         webClientRetriesSpec.is4xxStatus(),
@@ -33,8 +33,8 @@ class HtmlRendererApiClient(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
           params = mapOf(
-            "serviceName" to serviceName,
-            "serviceUrl" to serviceUrl,
+            "serviceName" to service.name,
+            "serviceUrl" to service.url,
           ),
         ),
       )
@@ -44,8 +44,8 @@ class HtmlRendererApiClient(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
           params = mapOf(
-            "serviceName" to serviceName,
-            "serviceUrl" to serviceUrl,
+            "serviceName" to service.name,
+            "serviceUrl" to service.url,
           ),
         ),
       )

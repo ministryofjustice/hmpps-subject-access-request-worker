@@ -32,7 +32,7 @@ class SubjectAccessRequestProcessor(
     timeUnit = TimeUnit.SECONDS,
     initialDelayString = "\${scheduled.subject-access-request-processor.initial-delay-seconds:30}",
   )
-  fun execute() {
+  suspend fun execute() {
     log.info("checking for available subject access requests to process")
 
     var subjectAccessRequest: SubjectAccessRequest? = null
@@ -56,7 +56,7 @@ class SubjectAccessRequestProcessor(
     .takeIf { it.isNotEmpty() }
     ?.firstOrNull()
 
-  private fun processRequest(subjectAccessRequest: SubjectAccessRequest, stopWatch: StopWatch) {
+  private suspend fun processRequest(subjectAccessRequest: SubjectAccessRequest, stopWatch: StopWatch) {
     stopWatch.start()
 
     subjectAccessRequestService.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(subjectAccessRequest.id)

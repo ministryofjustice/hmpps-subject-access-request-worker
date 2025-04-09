@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.GetObjectResponse
-import aws.smithy.kotlin.runtime.content.toInputStream
+import aws.smithy.kotlin.runtime.content.toByteArray
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.S3Properties
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_RENDERED_HTML_DOCUMENT
@@ -23,14 +23,13 @@ class HtmlDocumentStoreService(
         bucket = s3Properties.bucketName
         key = "${subjectAccessRequest.id}/$serviceName.html"
       },
-    ) { getResponseAsInputStream(it) }
+    ) { ByteArrayInputStream(getResponseAsInputStream(it)) }
   } catch (ex: Exception) {
     throw getDocumentException(subjectAccessRequest, ex, serviceName)
   }
 
-  private fun getResponseAsInputStream(response: GetObjectResponse) = response.body
-    ?.toInputStream()
-    ?: ByteArrayInputStream(ByteArray(0))
+  private suspend fun getResponseAsInputStream(response: GetObjectResponse) = response.body
+    ?.toByteArray() ?: ByteArray(0)
 
   private fun getDocumentException(
     subjectAccessRequest: SubjectAccessRequest,

@@ -32,9 +32,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension.Companion.serviceOneMockApi
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Pending
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -49,7 +46,7 @@ import java.util.concurrent.TimeUnit
     "G3-api.url=http://localhost:4100",
   ],
 )
-class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
+class SubjectAccessRequestProcessorIntTest : BaseProcessorIntTest() {
 
   @MockitoBean
   private lateinit var alertsService: AlertsService
@@ -221,12 +218,6 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     }
   }
 
-  private fun insertSubjectAccessRequest(serviceName: String, status: Status): SubjectAccessRequest {
-    val sar = createSubjectAccessRequestWithStatus(status, serviceName)
-    assertSubjectAccessRequestHasStatus(sar, status)
-    return sar
-  }
-
   private fun hmppsServiceReturnsSarData(serviceName: String, subjectAccessRequest: SubjectAccessRequest) {
     val responseBody = getSarResponseStub("$serviceName-stub.json")
 
@@ -260,22 +251,6 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     )
   }
 
-  fun assertUploadedDocumentMatchesExpectedPdf(serviceName: String) {
-    val expected = getPreGeneratedPdfDocument("$serviceName-reference.pdf")
-    val actual = getUploadedPdfDocument()
-
-    assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
-
-    for (i in 1..actual.numberOfPages) {
-      val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
-      val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
-
-      assertThat(actualPageN)
-        .isEqualTo(expectedPageN)
-        .withFailMessage("actual page: $i did not match expected.")
-    }
-  }
-
   fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(testCase: TestCase) {
     val actual = getUploadedPdfDocument()
 
@@ -298,51 +273,4 @@ class SubjectAccessRequestProcessorIntTest : IntegrationTestBase() {
     .append("\n")
     .append("Official Sensitive")
     .toString()
-
-  private fun requestHasStatus(subjectAccessRequest: SubjectAccessRequest, expectedStatus: Status): Boolean {
-    val target = getSubjectAccessRequest(subjectAccessRequest.id)
-    return expectedStatus == target.status
-  }
-
-  private fun assertRequestClaimedAtLeastOnce(subjectAccessRequest: SubjectAccessRequest) {
-    val target = getSubjectAccessRequest(subjectAccessRequest.id)
-    assertThat(target.claimDateTime).isNotNull()
-    assertThat(target.claimAttempts).isGreaterThanOrEqualTo(1)
-  }
-
-  private fun clearDatabaseData() {
-    subjectAccessRequestRepository.deleteAll()
-    subjectAccessRequestRepository.deleteAll()
-    prisonDetailsRepository.deleteAll()
-    locationDetailsRepository.deleteAll()
-  }
-
-  private fun populatePrisonDetails() {
-    prisonDetailsRepository.saveAndFlush(PrisonDetail("MDI", "MOORLAND (HMP & YOI)"))
-    prisonDetailsRepository.saveAndFlush(PrisonDetail("LEI", "LEEDS (HMP)"))
-  }
-
-  private fun populateLocationDetails() {
-    locationDetailsRepository.saveAndFlush(
-      LocationDetail(
-        "cac85758-380b-49fc-997f-94147e2553ac",
-        357591,
-        "ASSO A WING",
-      ),
-    )
-    locationDetailsRepository.saveAndFlush(
-      LocationDetail(
-        "d0763236-c073-4ef4-9592-419bf0cd72cb",
-        357592,
-        "ASSO B WING",
-      ),
-    )
-    locationDetailsRepository.saveAndFlush(
-      LocationDetail(
-        "8ac39ebb-499d-4862-ae45-0b091253e89d",
-        27187,
-        "ADJ",
-      ),
-    )
-  }
 }

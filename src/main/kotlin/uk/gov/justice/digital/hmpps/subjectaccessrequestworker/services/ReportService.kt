@@ -4,5 +4,5 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 
 interface ReportService {
 
-  fun generateReport(subjectAccessRequest: SubjectAccessRequest)
+  suspend fun generateReport(subjectAccessRequest: SubjectAccessRequest)
 }

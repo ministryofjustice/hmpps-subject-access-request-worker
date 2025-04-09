@@ -38,7 +38,7 @@ class PdfService(
     val subjectName: String,
   )
 
-  suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): ByteArray {
+  suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): ByteArrayOutputStream {
     val bodyOutputStream = ByteArrayOutputStream()
     val bodyWrapper = createPdfDocument(bodyOutputStream).use { pdfDocument ->
       createDocumentBodyPdf(pdfRenderRequest, pdfDocument)
@@ -66,7 +66,7 @@ class PdfService(
   private fun mergeBodyAndCoverDocuments(
     body: PdfOutputStreamWrapper,
     cover: PdfOutputStreamWrapper,
-  ): ByteArray {
+  ): ByteArrayOutputStream {
     try {
       val fullDocumentOutputStream = ByteArrayOutputStream()
 
@@ -81,7 +81,7 @@ class PdfService(
           merger.merge(bodyDoc, 1, (bodyDoc.numberOfPages))
         }
       }
-      return fullDocumentOutputStream.toByteArray()
+      return fullDocumentOutputStream
     } finally {
       body.outputStream.close()
       cover.outputStream.close()
