@@ -30,7 +30,7 @@ class PdfServiceTest {
     serviceConfiguration,
     htmlDocumentStoreService,
     dateService,
-    telemetryClient
+    telemetryClient,
   )
 
   @BeforeEach

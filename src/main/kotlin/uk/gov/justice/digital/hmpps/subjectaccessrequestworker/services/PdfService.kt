@@ -167,8 +167,12 @@ class PdfService(
   private suspend fun Document.addServiceData(
     subjectAccessRequest: SubjectAccessRequest,
     services: List<DpsService>,
-    ) {
-    telemetryClient.trackSarEvent("pdfAddServicesDataStarted", subjectAccessRequest, "services" to services.serviceNames())
+  ) {
+    telemetryClient.trackSarEvent(
+      "pdfAddServicesDataStarted",
+      subjectAccessRequest,
+      "services" to services.serviceNames(),
+    )
     services.forEach { service ->
       telemetryClient.trackSarEvent("pdfAddServiceDataStarted", subjectAccessRequest, "service" to service.name!!)
       this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
@@ -280,5 +284,5 @@ class PdfService(
     fun toInputStream(): ByteArrayInputStream = ByteArrayInputStream(outputStream.toByteArray())
   }
 
-  private fun List<DpsService>.serviceNames() = this.map { it.name?: "Unknown" }.joinToString(",")
+  private fun List<DpsService>.serviceNames() = this.map { it.name ?: "Unknown" }.joinToString(",")
 }

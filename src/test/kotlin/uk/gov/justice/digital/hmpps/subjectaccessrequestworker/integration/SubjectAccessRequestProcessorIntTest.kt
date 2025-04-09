@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
- import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
