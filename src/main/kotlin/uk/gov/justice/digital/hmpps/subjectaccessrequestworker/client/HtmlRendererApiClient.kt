@@ -65,9 +65,9 @@ class HtmlRendererApiClient(
     val id: UUID,
     val nomisId: String?,
     val ndeliusId: String?,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateFrom: LocalDate?,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateTo: LocalDate?,
     val sarCaseReferenceNumber: String?,
     val serviceName: String,
