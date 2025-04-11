@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -14,6 +15,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Service
+@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class HtmlRendererApiClient(
   private val sarHtmlRendererApiWebClient: WebClient,
   private val webClientRetriesSpec: WebClientRetriesSpec,

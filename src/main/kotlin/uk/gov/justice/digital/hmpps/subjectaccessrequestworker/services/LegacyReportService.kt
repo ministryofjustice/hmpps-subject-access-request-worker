@@ -4,6 +4,8 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
@@ -15,6 +17,8 @@ import java.util.concurrent.TimeUnit
 
 const val POLL_DELAY: Long = 10000
 
+@Service
+@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "false")
 class LegacyReportService(
   private val getSubjectAccessRequestDataService: GetSubjectAccessRequestDataService,
   private val documentStorageClient: DocumentStorageClient,
@@ -28,6 +32,10 @@ class LegacyReportService(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     const val TIME_ELAPSED_KEY = "totalTimeElapsed"
+  }
+
+  init {
+    log.info("htmlRenderEnabled=false configuring worker with legacy reportService")
   }
 
   override suspend fun generateReport(subjectAccessRequest: SubjectAccessRequest) {

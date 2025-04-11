@@ -18,6 +18,7 @@ import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
@@ -29,6 +30,7 @@ import java.io.OutputStream
 import java.time.LocalDate
 
 @Service
+@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class PdfService(
   private val serviceConfigurationService: ServiceConfigurationService,
   private val htmlDocumentStoreService: HtmlDocumentStoreService,

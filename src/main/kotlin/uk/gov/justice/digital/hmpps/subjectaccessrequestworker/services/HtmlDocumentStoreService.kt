@@ -4,6 +4,7 @@ import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.GetObjectResponse
 import aws.smithy.kotlin.runtime.content.toByteArray
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.S3Properties
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_RENDERED_HTML_DOCUMENT
@@ -13,6 +14,7 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 
 @Service
+@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class HtmlDocumentStoreService(
   private val s3: S3Client,
   private val s3Properties: S3Properties,
