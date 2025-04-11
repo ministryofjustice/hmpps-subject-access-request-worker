@@ -42,6 +42,8 @@ class S3ClientConfig(
   @Bean
   @ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
   fun s3(): S3Client {
+    log.info("s3.provider={}", s3Properties.provider)
+
     if (htmlRenderEnabled && PROVIDER_S3 == s3Properties.provider) {
       return s3Client()
     }
