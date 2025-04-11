@@ -106,6 +106,7 @@ class TemplateTestingUtil {
     addLocationMapping("8ac39ebb-499d-4862-ae45-0b091253e89d", 27187, "ADJ")
 
     whenever(dateService.now()).thenReturn(getReportGenerationDate())
+    whenever(dateService.reportGenerationDate()).thenReturn(REPORT_GENERATION_DATE)
   }
 
   private fun addPrisonMapping(prisonId: String, prisonName: String) {

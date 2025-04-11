@@ -4294,6 +4294,1192 @@
       }
     },
     {
+      "BailAccommodation": {
+        "StatusUpdateDetails": [
+          {
+            "noms_number": "A8767EA",
+            "status_label": "More information requested",
+            "created_at": "2025-03-13 14:33:17",
+            "assessment_id": "955a932a-ea65-4bb7-8eed-091b809598ae",
+            "detail_label": "Health needs",
+            "application_id": "98c5011d-816e-4c48-9b6c-9be49f8b1210",
+            "crn": "X823998",
+            "status_update_id": "ade9257b-77c8-40a2-94f0-307de6807b5e"
+          },
+          {
+            "noms_number": "A8767EA",
+            "status_label": "More information requested",
+            "created_at": "2025-04-09 10:04:39",
+            "assessment_id": "55ce1b74-371f-44d6-9284-38b2329067d4",
+            "detail_label": "Applicant details",
+            "application_id": "e8f27ada-09ce-4c88-83fd-a6e5bcad7107",
+            "crn": "X823998",
+            "status_update_id": "09e820b3-1066-4652-9d88-6bc64611828c"
+          },
+          {
+            "noms_number": "A8767EA",
+            "status_label": "More information requested",
+            "created_at": "2025-04-09 10:04:39",
+            "assessment_id": "55ce1b74-371f-44d6-9284-38b2329067d4",
+            "detail_label": "Concerns to others",
+            "application_id": "e8f27ada-09ce-4c88-83fd-a6e5bcad7107",
+            "crn": "X823998",
+            "status_update_id": "09e820b3-1066-4652-9d88-6bc64611828c"
+          },
+          {
+            "noms_number": "A8767EA",
+            "status_label": "Referral withdrawn",
+            "created_at": "2025-04-09 12:57:07",
+            "assessment_id": "52de9ea4-b8c5-41d6-96d0-3ea94dd483ca",
+            "detail_label": "Withdrew or declined offer",
+            "application_id": "84c05723-8e03-4511-acbe-7fd17a463647",
+            "crn": "X823998",
+            "status_update_id": "e0448ab7-3544-4929-91ea-01cdbea24d5c"
+          }
+        ],
+        "Applications": [
+          {
+            "data": null,
+            "submitted_at": null,
+            "document": null,
+            "conditional_release_date": null,
+            "telephone_number": null,
+            "created_at": "2025-03-20T13:04:38.702706+00:00",
+            "abandoned_at": null,
+            "referring_prison_code": null,
+            "created_by_user": "Kath Cooper",
+            "noms_number": "A8767EA",
+            "bail_hearing_date": null,
+            "application_origin": "courtBail",
+            "preferred_areas": null,
+            "id": "f8ea03de-b4ef-419a-b60b-1e7399d7306b",
+            "crn": "X823998",
+            "hdc_eligibility_date": null
+          },
+          {
+            "data": {
+              "confirm-consent": {
+                "confirm-consent": {
+                  "hasGivenConsent": "yes",
+                  "consentRefusalDetail": "",
+                  "consentDate-year": "2025",
+                  "consentDate-month": "03",
+                  "consentDate-day": "01",
+                  "consentDate": "2025-03-01"
+                }
+              },
+              "risk-information": {
+                "safety-of-staff": {
+                  "pastRiskToStaffDetail": "Text here",
+                  "pastRiskToStaff": "yes",
+                  "currentConcerns": "yes",
+                  "currentConcernsDetail": "Text here"
+                },
+                "violence-and-arson": {
+                  "pastConvictionsDetail": "Text here",
+                  "pastConvictions": "yes",
+                  "currentConcerns": "yes",
+                  "currentConcernsDetail": "Text here"
+                }
+              },
+              "confirm-eligibility": {
+                "confirm-eligibility": {
+                  "isEligible": "yes"
+                }
+              }
+            },
+            "submitted_at": null,
+            "document": null,
+            "conditional_release_date": null,
+            "telephone_number": null,
+            "created_at": "2025-03-17T16:58:01.150889+00:00",
+            "abandoned_at": null,
+            "referring_prison_code": null,
+            "created_by_user": "Nomis Prison-bail",
+            "noms_number": "A8767EA",
+            "bail_hearing_date": null,
+            "application_origin": "prisonBail",
+            "preferred_areas": null,
+            "id": "2e143111-ec5d-4461-a4ee-fce370656b31",
+            "crn": "X823998",
+            "hdc_eligibility_date": null
+          },
+          {
+            "data": {
+              "address-history": {
+                "previous-address": {
+                  "hasPreviousAddress": "yes",
+                  "previousAddressLine2": "prev line 2",
+                  "previousAddressLine1": "prev line 1",
+                  "previousPostcode": "B5",
+                  "previousTownOrCity": "Birmingham",
+                  "previousCounty": "WM"
+                }
+              },
+              "offending-history": {
+                "any-previous-convictions": {
+                  "hasAnyPreviousConvictions": "yesRelevantRisk"
+                },
+                "offence-history": {},
+                "offence-history-data": [
+                  {
+                    "summary": "test",
+                    "offenceGroupName": "test",
+                    "numberOfOffences": "1",
+                    "offenceCategory": "stalkingOrHarassment",
+                    "sentenceTypes": "test"
+                  },
+                  {
+                    "summary": "test 2",
+                    "offenceGroupName": "test 2",
+                    "numberOfOffences": "1",
+                    "offenceCategory": "stalkingOrHarassment",
+                    "sentenceTypes": "test 2"
+                  }
+                ]
+              },
+              "confirm-consent": {
+                "confirm-consent": {
+                  "hasGivenConsent": "yes",
+                  "consentRefusalDetail": "some detail",
+                  "consentDate-year": "2025",
+                  "consentDate-month": "1",
+                  "consentDate-day": "1",
+                  "consentDate": "2025-01-01"
+                }
+              },
+              "funding-information": {
+                "alternative-applicant-id": {
+                  "alternativeIDDocuments": "none"
+                },
+                "funding-cas2-accommodation": {
+                  "fundingSourceDetail": "employment2",
+                  "nationalInsuranceNumber": "SF123456XL",
+                  "hasNationalInsuranceNumber": "yes",
+                  "receivingBenefits": "no",
+                  "fundingSource": "personalSavings"
+                },
+                "applicant-id": {
+                  "idDocuments": "none"
+                }
+              },
+              "risk-information": {
+                "safety-of-staff": {
+                  "pastRiskToStaff": "yes",
+                  "pastRiskToStaffDetail": "Alleged violence toward police when arrested: lunged at the police and allegedly pulled their hair. Was under the influence of benzos at the time ",
+                  "currentConcerns": "yes",
+                  "currentConcernsDetail": "Alleged violence toward police when arrested: lunged at the police and allegedly pulled their hair. Was under the influence of benzos at the time \r\n\r\nJane has not exhibited any violent or threatening behaviour in custody "
+                },
+                "additional-concerns": {
+                  "additionalConcernsDetail": "text",
+                  "additionalConcerns": "yes"
+                },
+                "risk-management-arrangements": {
+                  "arrangements": "no",
+                  "mappaDetails": "mappa",
+                  "maracDetails": "marac",
+                  "iomDetails": "iom"
+                },
+                "violence-and-arson": {
+                  "pastConvictionsDetail": "Concerns relate to her previous ABH conviction and her alleged offence behaviour. Details were that she was acting threatening to Ms Test Jones who was an ex partner.  \r\n\r\nAlleged violence toward police when arrested: lunged at the police and allegedly pulled their hair. Was under the influence of benzos at the time ",
+                  "pastConvictions": "yes",
+                  "currentConcerns": "yes",
+                  "currentConcernsDetail": "test concerns"
+                },
+                "self-harm": {
+                  "currentlyPresenting": "seems okay",
+                  "pastHarm": "no",
+                  "pastHarmDetail": "past harm details",
+                  "specificTriggersDetail": "specific trigger details",
+                  "specificTriggersNotKnownDetail": "test text",
+                  "specificTriggers": "dontKnow",
+                  "currentConcerns": "no",
+                  "currentConcernsDetail": "concerns details"
+                },
+                "concerns": {},
+                "living-in-the-community": {
+                  "otherConcernsDetail": "sample text two",
+                  "otherConcerns": "yes",
+                  "convictionsRelatedToHateOrAggression": "yes",
+                  "cellSharingRiskAssessment": "no",
+                  "cellSharingRiskAssessmentDetail": "cell detail",
+                  "victimOfOthers": "no",
+                  "victimOfOthersDetail": "victim details",
+                  "convictionsDetail": "sample text"
+                },
+                "acct-data": [
+                  {
+                    "acctDetails": "document opened as a result of low mood, applicant was not expected to be remanded so presented as tearful – monitoring due to light concern",
+                    "closedDate-year": "2025",
+                    "referringInstitution": "HMP Styal",
+                    "closedDate-month": "03",
+                    "createdDate-year": "2025",
+                    "isOngoing": "no",
+                    "createdDate-day": "16",
+                    "createdDate-month": "03",
+                    "closedDate-day": "29"
+                  }
+                ]
+              },
+              "bail-hearing-information": {
+                "bail-hearing-medium": {
+                  "bailHearingMedium": "judgeInChambers"
+                },
+                "bail-hearing-date": {
+                  "bailHearingDate-year": "31",
+                  "bailHearingDate-month": "2",
+                  "bailHearingDate-day": "10"
+                },
+                "bail-hearing-arranger": {
+                  "bailHearingArranger": "solicitor"
+                },
+                "court-name": {
+                  "courtName": "chipwood2"
+                }
+              },
+              "confirm-eligibility": {
+                "confirm-eligibility": {
+                  "isEligible": "yes"
+                }
+              },
+              "personal-information": {
+                "gender": {
+                  "genderIdentity": "gender identity",
+                  "gender": "yes"
+                },
+                "working-mobile-phone": {
+                  "hasWorkingMobilePhone": "yes",
+                  "mobilePhoneNumber": "",
+                  "isSmartPhone": "no"
+                },
+                "immigration-status": {
+                  "immigrationStatus": "ukCitizen"
+                },
+                "pregnancy-information": {
+                  "isPregnant": "yes",
+                  "dueDate-month": "01",
+                  "dueDate": "2022-01-01",
+                  "dueDate-year": "2022",
+                  "dueDate-day": "01"
+                },
+                "support-worker-preference": {
+                  "supportWorkerPreference": "male",
+                  "hasSupportWorkerPreference": "yes"
+                },
+                "custody-location": {
+                  "custodyLocation": "Sefton Magistrates' Court"
+                }
+              },
+              "check-your-answers": {
+                "check-your-answers": {
+                  "checkYourAnswers": "confirmed"
+                }
+              },
+              "equality-and-diversity-monitoring": {
+                "care-leaver": {
+                  "isCareLeaver": "dontKnow"
+                },
+                "military-veteran": {
+                  "isVeteran": "dontKnow"
+                },
+                "sex-and-gender": {
+                  "gender": "no",
+                  "sex": "female",
+                  "optionalGenderIdentity": "nonbinary2"
+                },
+                "ethnic-group": {
+                  "ethnicGroup": "white"
+                },
+                "parental-carer-responsibilities": {
+                  "hasParentalOrCarerResponsibilities": "dontKnow"
+                },
+                "disability": {
+                  "hasDisability": "yes",
+                  "typeOfDisability": "mentalHealth",
+                  "otherDisability": "ADHD"
+                },
+                "white-background": {
+                  "optionalWhiteBackground": "Polish2",
+                  "whiteBackground": "other"
+                },
+                "asian-background": {
+                  "optionalAsianBackground": "Indian other",
+                  "asianBackground": "other"
+                },
+                "black-background": {
+                  "optionalBlackBackground": "Black other",
+                  "blackBackground": "other"
+                },
+                "mixed-background": {
+                  "optionalMixedBackground": "Mixed other",
+                  "mixedBackground": "whiteAndBlackAfrican"
+                },
+                "other-background": {
+                  "optionalOtherBackground": "Other background",
+                  "otherBackground": "preferNotToSay"
+                },
+                "sexual-orientation": {
+                  "orientation": "other",
+                  "otherOrientation": "pansexual2"
+                },
+                "marital-status": {
+                  "maritalStatus": "preferNotToSay"
+                },
+                "will-answer-equality-questions": {
+                  "willAnswer": "yes"
+                },
+                "religion": {
+                  "religion": "other",
+                  "otherReligion": "my religion"
+                }
+              },
+              "bail-conditions-and-support-sessions": {
+                "non-standard-bail-conditions": {
+                  "nonStandardBailConditions": "yes",
+                  "nonStandardBailConditionsDetail": "things2"
+                },
+                "mandatory-support-sessions": {
+                  "mandatorySupportSessions": "yes",
+                  "mandatorySupportSessionsDetail": "support details"
+                }
+              },
+              "community-supervision-and-current-offences": {
+                "current-offence-data": [
+                  {
+                    "summary": "test",
+                    "offenceDate-month": "1",
+                    "titleAndNumber": "test",
+                    "outstandingCharges": "no",
+                    "offenceDate-year": "2025",
+                    "offenceCategory": "stalkingOrHarassment",
+                    "offenceDate-day": "1",
+                    "sentenceLength": "test",
+                    "outstandingChargesDetail": "some detail"
+                  },
+                  {
+                    "summary": "test 2",
+                    "offenceDate-month": "1",
+                    "titleAndNumber": "test",
+                    "outstandingCharges": "no",
+                    "offenceDate-year": "2025",
+                    "offenceCategory": "stalkingOrHarassment",
+                    "offenceDate-day": "1",
+                    "sentenceLength": "test 2",
+                    "outstandingChargesDetail": "some detail 2"
+                  }
+                ],
+                "cpp-details": {
+                  "probationRegion": "test",
+                  "name": "test",
+                  "telephone": "test",
+                  "email": "test@test.com"
+                },
+                "community-supervision": {
+                  "probationSupervision": "yes"
+                },
+                "current-offences": {}
+              },
+              "solicitor-details": {
+                "has-solicitor": {
+                  "hasSolicitor": "yes"
+                },
+                "contact-information": {
+                  "number": "012345 67890",
+                  "name": "Jack Frost",
+                  "legalFirmAndAddress": "Green Lane, Skelmersdale SK11 4YT",
+                  "email": "grnlaw@law.com"
+                }
+              },
+              "alleged-offences": {
+                "alleged-offences": {},
+                "alleged-offences-summary": {
+                  "summary": "test"
+                },
+                "alleged-offence-data": [
+                  {
+                    "offenceDate-month": "1",
+                    "offenceDate-year": "2025",
+                    "offenceDate-day": "1",
+                    "offenceName": "theft"
+                  },
+                  {
+                    "offenceDate-month": "1",
+                    "offenceDate-year": "2025",
+                    "offenceDate-day": "15",
+                    "offenceName": "theft 2"
+                  }
+                ]
+              },
+              "area-information": {
+                "family-accommodation": {
+                  "familyProperty": "no"
+                },
+                "second-preferred-area": {
+                  "preferenceReason": "test",
+                  "preferredArea": "test"
+                },
+                "exclusion-zones": {
+                  "hasExclusionZones": "no"
+                },
+                "first-preferred-area": {
+                  "preferenceReason": "test",
+                  "preferredArea": "test"
+                },
+                "gang-affiliations": {
+                  "gangOperationArea": "test",
+                  "gangName": "test",
+                  "rivalGangDetail": "North street betties2",
+                  "hasGangAffiliations": "yes"
+                }
+              },
+              "health-needs": {
+                "physical-health": {
+                  "requiresSupport": "no",
+                  "supportDetail": "test details",
+                  "canClimbStairs": "yes",
+                  "canLiveIndependently": "yes",
+                  "indyLivingDetail": "independent living detail",
+                  "hasPhyHealthNeeds": "no",
+                  "needsDetail": "physical needs"
+                },
+                "mental-health": {
+                  "hasSupportNeeds": "no",
+                  "supportNeedsDetail": "support details",
+                  "receivesTreatment": "no",
+                  "treatmentDetail": "their treatment",
+                  "isEngagedWithService": "awaitingAssessment",
+                  "serviceDetail": "mental health service",
+                  "needsPresentation": "seems well",
+                  "hasMentalHealthNeeds": "no",
+                  "needsDetail": "needs details",
+                  "willReferralBeMade": "yes"
+                },
+                "substance-misuse": {
+                  "releasedWithNaloxone": "notInPrisonCustody",
+                  "substituteMedicationDetail": "Test",
+                  "serviceDetails": "Test",
+                  "substanceAndAlcoholUse": "yes",
+                  "requiresSubstituteMedication": "no",
+                  "engagedWithDrugAndAlcoholService": "no",
+                  "substanceAndAlcoholUseDetail": "Test has disclosed a dependency on Benzo to help her calm and sleep. She takes double the suggested over-the-counter dose and takes them in the evening. She expresses she would find it useful to speak to professionals about her substance use.  ",
+                  "intentToReferToService": "notInPrisonCustody"
+                },
+                "learning-difficulties": {
+                  "learningNeedsDetail": "She has a formal diagnosis and takes stimulants to help her focus. Side effects include feeling aggressive, irritable, depressed, anxious or tense which could affect her interactions with others. She doesn’t need any support to manage her condition or her treatment. \r\n\r\nShe could be vulnerable if she has no access to her medication. ",
+                  "treatmentDetail": "Takes stimulants to help her focus and she can manage these appropriately",
+                  "needsSupport": "no",
+                  "supportDetail": "support details",
+                  "receivesTreatment": "yes",
+                  "isVulnerable": "no",
+                  "vulnerabilityDetail": "vulnerable details",
+                  "hasLearningNeeds": "yes"
+                },
+                "liaison-and-diversion": {
+                  "liaisonAndDiversionAssessment": "yes"
+                },
+                "health-needs-information": {},
+                "other-health": {
+                  "hasLongTermHealthCondition": "no",
+                  "healthConditionDetail": "condition details",
+                  "otherHealthNeeds": "no",
+                  "hasHadStroke": "yes",
+                  "hasSeizures": "no",
+                  "beingTreatedForCancer": "yes",
+                  "seizuresDetail": "seizures",
+                  "otherHealthNeedsDetail": "other health"
+                },
+                "brain-injury": {
+                  "receivingTreatment": "no",
+                  "isVulnerable": "no",
+                  "hasDifficultyInteracting": "no",
+                  "hasBrainInjury": "no",
+                  "supportNeeded": "no",
+                  "injuryDetail": "injuries",
+                  "supportDetail": "support details",
+                  "treatmentDetail": "some treatment",
+                  "vulnerabilityDetail": "vulnerable",
+                  "interactionDetail": "interactions"
+                },
+                "communication-and-language": {
+                  "requiresInterpreter": "no",
+                  "hasImpairments": "no",
+                  "impairmentsDetail": "impairments",
+                  "interpretationDetail": "interpret French"
+                }
+              },
+              "referrer-details": {
+                "job-title": {
+                  "jobTitle": "Bail Information Officer (BIO)"
+                },
+                "contact-number": {
+                  "telephone": "1343434q45"
+                },
+                "location": {
+                  "location": "Sefton Magistrates' Court"
+                },
+                "confirm-details": {
+                  "name": "Test name",
+                  "email": "mytest@email.com"
+                }
+              }
+            },
+            "submitted_at": "2025-04-04T14:36:34.758787+01:00",
+            "document": {
+              "sections": [
+                {
+                  "title": "Before you apply",
+                  "tasks": [
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Is the applicant eligible for this service?",
+                          "answer": "Yes, they are"
+                        }
+                      ],
+                      "title": "Confirm eligibility"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Has Test Offender given their verbal consent to apply for short-term accommodation (CAS2) for bail?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "When did they give consent?",
+                          "answer": "1 January 2025"
+                        }
+                      ],
+                      "title": "Confirm consent to share information"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "What is your job title?",
+                          "answer": "Bail Information Officer (BIO)"
+                        },
+                        {
+                          "question": "What is your contact telephone number?",
+                          "answer": "1343434q45"
+                        },
+                        {
+                          "question": "Where are you based?",
+                          "answer": "Sefton Magistrates' Court"
+                        }
+                      ],
+                      "title": "Add referrer details"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Does Test Offender have a solicitor?",
+                          "answer": "No"
+                        }
+                      ],
+                      "title": "Add solicitor details"
+                    }
+                  ]
+                },
+                {
+                  "title": "About the applicant",
+                  "tasks": [
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Where is Test Offender being held in custody?",
+                          "answer": "Sefton Magistrates' Court"
+                        },
+                        {
+                          "question": "Will Test Offender have a working mobile phone?",
+                          "answer": "no"
+                        },
+                        {
+                          "question": "What is Test Offender's immigration status?",
+                          "answer": "UK citizen"
+                        },
+                        {
+                          "question": "Is the gender Test Offender identifies with the same as the sex registered at birth?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Is Test Offender pregnant?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Does Test Offender have a gender preference for their support worker?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "What is their preference?",
+                          "answer": "Male"
+                        }
+                      ],
+                      "title": "Add personal information"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Did Test Offender have an address before entering custody?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "What was the address?",
+                          "answer": "1\r\n11\r\n3\r\n10\r\n5\r\n"
+                        }
+                      ],
+                      "title": "Add address history"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Equality questions for Test Offender",
+                          "answer": "Yes, answer the equality questions (takes 2 minutes)"
+                        },
+                        {
+                          "question": "Does Test Offender have a disability?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "What type of disability?",
+                          "answer": "Other"
+                        },
+                        {
+                          "question": "What is the disability?",
+                          "answer": "ADHD"
+                        },
+                        {
+                          "question": "What is Test Offender's sex?",
+                          "answer": "Female"
+                        },
+                        {
+                          "question": "Is the gender Test Offender identifies with the same as the sex registered at birth?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "What is their gender identity? (optional)",
+                          "answer": "nonbinary2"
+                        },
+                        {
+                          "question": "Which of the following best describes Test Offender's sexual orientation?",
+                          "answer": "Other"
+                        },
+                        {
+                          "question": "How would they describe their sexual orientation? (optional)",
+                          "answer": "pansexual2"
+                        },
+                        {
+                          "question": "What is Test Offender's ethnic group?",
+                          "answer": "White"
+                        },
+                        {
+                          "question": "Which of the following best describes Test Offender's White background?",
+                          "answer": "Any other White background"
+                        },
+                        {
+                          "question": "How would they describe their background? (optional)",
+                          "answer": "Polish2"
+                        },
+                        {
+                          "question": "What is Test Offender's religion?",
+                          "answer": "Any other religion"
+                        },
+                        {
+                          "question": "Is Test Offender a military veteran?",
+                          "answer": "I don't know"
+                        },
+                        {
+                          "question": "Is Test Offender a care leaver?",
+                          "answer": "I don't know"
+                        },
+                        {
+                          "question": "Does Test Offender have parental or carer responsibilities?",
+                          "answer": "I don't know"
+                        },
+                        {
+                          "question": "What is Test Offender's legal marital or registered civil partnership status?",
+                          "answer": "Prefer not to say"
+                        }
+                      ],
+                      "title": "Add equality and diversity monitoring information"
+                    }
+                  ]
+                },
+                {
+                  "title": "Area, funding and ID",
+                  "tasks": [
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "First preferred area",
+                          "answer": "test"
+                        },
+                        {
+                          "question": "Reason for first preference",
+                          "answer": "test"
+                        },
+                        {
+                          "question": "Second preferred area",
+                          "answer": "test"
+                        },
+                        {
+                          "question": "Reason for second preference",
+                          "answer": "test"
+                        },
+                        {
+                          "question": "Does Test Offender have any exclusion zones?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Does Test Offender have any gang affiliations?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "What is the name of the gang?",
+                          "answer": "test"
+                        },
+                        {
+                          "question": "Where do they operate?",
+                          "answer": "test"
+                        },
+                        {
+                          "question": "Name any known rival gangs and where they operate (optional)",
+                          "answer": "North street betties2"
+                        },
+                        {
+                          "question": "Do they want to apply to live with their children in a family property?",
+                          "answer": "No"
+                        }
+                      ],
+                      "title": "Add exclusion zones and preferred areas"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "How will the applicant pay for their accommodation and the service charge?",
+                          "answer": "Personal savings, salary or pension"
+                        },
+                        {
+                          "question": "Enter details (optional)",
+                          "answer": "employment2"
+                        },
+                        {
+                          "question": "Does the applicant have a National Insurance number?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Enter the number (optional)",
+                          "answer": "SF123456XL"
+                        },
+                        {
+                          "question": "Is the applicant currently receiving benefits?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "What identity document (ID) does the applicant have?",
+                          "answer": "None of these options"
+                        },
+                        {
+                          "question": "What other identification document (ID) does the applicant have?",
+                          "answer": "No ID available"
+                        }
+                      ],
+                      "title": "Confirm funding and ID"
+                    }
+                  ]
+                },
+                {
+                  "title": "Risks and needs",
+                  "tasks": [
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Has a Liaison and Diversion Assessment been carried out for Test Offender?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Do they have any issues related to substance and alcohol use?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they require any substitute medication for used substances?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are they engaged with a drug and alcohol service?",
+                          "answer": "They are awaiting assessment with a drug and alcohol service"
+                        },
+                        {
+                          "question": "Is there an intention to refer them to a drug and alcohol service?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Are they being released with naloxone?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Do they have any physical and mobility needs?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they need any support as a result of this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Can they climb stairs?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Can they live independently?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Do they have any mental health needs?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they need any support as a result of this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they receive any treatment for this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are they engaged with a mental health service?",
+                          "answer": "They are awaiting assessment with a mental health service"
+                        },
+                        {
+                          "question": "Will a referral be made for support in the community when they are released?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "How are they currently presenting? (optional)",
+                          "answer": "seems well"
+                        },
+                        {
+                          "question": "Do they have any literacy, visual or hearing impairments?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they need an interpreter?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they have any needs relating to learning difficulties or neurodiversity?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they need any support as a result of this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they receive any treatment for this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are they vulnerable as a result of this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they have a brain injury?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they need any support as a result of this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they receive any treatment for this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are they vulnerable as a result of this?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Do they have difficulties interacting with other people as a result of their injury?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are they managing any long term health conditions?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Have they experienced a stroke?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Do they experience seizures or epilepsy?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are they currently receiving regular treatment for cancer?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Do they have any other health needs?",
+                          "answer": "No"
+                        }
+                      ],
+                      "title": "Add health needs"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Has the applicant self-harmed or attempted suicide in the past?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Based on the information you have, are there any current concerns of self-harm or suicide?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Does the applicant have any specific triggers related to self-harm or suicide?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "How are they currently presenting? (optional)",
+                          "answer": "seems okay"
+                        },
+                        {
+                          "question": "Has the applicant had any convictions or behaviours noted related to violence or arson in the past?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Based on the information you have, are there any current concerns around violence or arson?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Has the applicant had any convictions or behaviours noted related to aggression or hate towards others in the past?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Based on the information you have, has the applicant ever been a victim of violence, bullying, or intimidation from others?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Based on the information you have, are there any other concerns with the applicant living in the community?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Has a Cell Sharing Risk Assessment (CSRA) been done?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Has Test Offender posed a risk to the safety of any staff in the past?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Based on the information you have, are there any current concerns over the safety of any staff?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are there any additional past or present concerns related to Test Offender?",
+                          "answer": "No"
+                        },
+                        {
+                          "question": "Are there any multi-agency risk management arrangements for Test Offender?",
+                          "answer": "No, they do not have risk management arrangements"
+                        }
+                      ],
+                      "title": "Add information about risks to the applicant and others"
+                    }
+                  ]
+                },
+                {
+                  "title": "Offence information",
+                  "tasks": [
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Alleged offence 1",
+                          "answer": "theft\r\n1 January 2025"
+                        },
+                        {
+                          "question": "Add a summary of Test Offender's current alleged offences",
+                          "answer": "test"
+                        }
+                      ],
+                      "title": "Add alleged offences"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Is Test Offender currently supervised by probation?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "Who is Test Offender's Community Probation Practitioner (CPP)?",
+                          "answer": "test\r\ntest\r\ntest@test.com\r\ntest"
+                        },
+                        {
+                          "question": "Current offence 1",
+                          "answer": "test\r\nStalking or Harassment\r\n1 January 2025\r\ntest\r\n\nSummary: test\r\nOutstanding charges: No"
+                        }
+                      ],
+                      "title": "Community supervision and current offences"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Does Test Offender have any previous unspent convictions?",
+                          "answer": "Yes, and there is relevant risk"
+                        },
+                        {
+                          "question": "<strong class=\"govuk-tag govuk-tag--blue\">Stalking or Harassment</strong>",
+                          "answer": "test\r\nNumber of offences: 1\r\nSentence types: test\r\n\nDetails: test"
+                        }
+                      ],
+                      "title": "Add offending history"
+                    }
+                  ]
+                },
+                {
+                  "title": "Bail information",
+                  "tasks": [
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "Are there any non-standard bail conditions being considered for Test Offender?",
+                          "answer": "Yes"
+                        },
+                        {
+                          "question": "What are they?",
+                          "answer": "things2"
+                        },
+                        {
+                          "question": "Does the court require more than one mandatory support session per week for Test Offender?",
+                          "answer": "Yes"
+                        }
+                      ],
+                      "title": "Add bail conditions and support sessions"
+                    },
+                    {
+                      "questionsAndAnswers": [
+                        {
+                          "question": "When is Test Offender's bail hearing?",
+                          "answer": ""
+                        },
+                        {
+                          "question": "What's the name of the court where Test Offender's bail hearing will take place?",
+                          "answer": "chipwood2"
+                        },
+                        {
+                          "question": "How will Test Offender's bail hearing be heard?",
+                          "answer": "Judge in Chambers"
+                        }
+                      ],
+                      "title": "Add bail hearing information"
+                    }
+                  ]
+                }
+              ]
+            },
+            "conditional_release_date": null,
+            "telephone_number": "1343434q45",
+            "created_at": "2025-04-04T10:35:48.567551+01:00",
+            "abandoned_at": null,
+            "referring_prison_code": "OUT",
+            "created_by_user": "Emma Hankins",
+            "noms_number": "A8767EA",
+            "bail_hearing_date": null,
+            "application_origin": "courtBail",
+            "preferred_areas": "test | test",
+            "id": "9a5794bb-6527-4169-9150-d8aa89f799a6",
+            "crn": "X823998",
+            "hdc_eligibility_date": null
+          }
+        ],
+        "DomainEventsMetadata": [],
+        "Assessments": [
+          {
+            "noms_number": "A8767EA",
+            "created_at": "2025-03-13T11:45:02.072817+00:00",
+            "id": "955a932a-ea65-4bb7-8eed-091b809598ae",
+            "assessor_name": "John Doe",
+            "nacro_referral_id": "123456",
+            "application_id": "98c5011d-816e-4c48-9b6c-9be49f8b1210",
+            "crn": "X823998"
+          },
+          {
+            "noms_number": "A8767EA",
+            "created_at": "2025-03-24T16:40:18.163383+00:00",
+            "id": "944041f7-a9ca-4d8b-bdf1-9dfe684c0a49",
+            "assessor_name": null,
+            "nacro_referral_id": null,
+            "application_id": "1a4aaca5-6156-4bab-91fd-b6ec948b2338",
+            "crn": "X823998"
+          },
+          {
+            "noms_number": "A8767EA",
+            "created_at": "2025-04-10T13:32:50.574197+01:00",
+            "id": "d9984b25-a458-42f9-9a25-8dd6437615ab",
+            "assessor_name": "Test assessor",
+            "nacro_referral_id": "11111",
+            "application_id": "3a6af7ef-b6ee-4ab6-8b16-93328af20193",
+            "crn": "X823998"
+          }
+        ],
+        "StatusUpdates": [
+          {
+            "noms_number": "A8767EA",
+            "created_at": "2025-03-13 14:33:17",
+            "description": "The prison offender manager (POM) must provide information requested for the application to progress.",
+            "assessment_id": "955a932a-ea65-4bb7-8eed-091b809598ae",
+            "id": "ade9257b-77c8-40a2-94f0-307de6807b5e",
+            "assessor_name": "Cas-two Test Admin",
+            "label": "More information requested",
+            "application_id": "98c5011d-816e-4c48-9b6c-9be49f8b1210",
+            "crn": "X823998"
+          },
+          {
+            "noms_number": "A8767EA",
+            "created_at": "2025-04-09 10:02:23",
+            "description": "The CAS-2 team has the information they need and will make a decision.",
+            "assessment_id": "55ce1b74-371f-44d6-9284-38b2329067d4",
+            "id": "812735ee-a3b1-4d51-a320-5df782415b11",
+            "assessor_name": "Cas-two Test Admin",
+            "label": "Awaiting decision",
+            "application_id": "e8f27ada-09ce-4c88-83fd-a6e5bcad7107",
+            "crn": "X823998"
+          },
+          {
+            "noms_number": "A8767EA",
+            "created_at": "2025-04-09 12:57:07",
+            "description": "The prison offender manager (POM) withdrew the application.",
+            "assessment_id": "52de9ea4-b8c5-41d6-96d0-3ea94dd483ca",
+            "id": "e0448ab7-3544-4929-91ea-01cdbea24d5c",
+            "assessor_name": "Cas-two Test Admin",
+            "label": "Referral withdrawn",
+            "application_id": "84c05723-8e03-4511-acbe-7fd17a463647",
+            "crn": "X823998"
+          }
+        ],
+        "ApplicationNotes": [
+          {
+            "noms_number": "A8767EA",
+            "created_by_user_type": "DELIUS",
+            "assessment_id": "955a932a-ea65-4bb7-8eed-091b809598ae",
+            "id": "39e66bcb-fe43-4ace-9db6-d1a9cdf78712",
+            "body": "Desidero statua tenax adulescens pectus conturbo cumque uredo creo urbanus. Depromo ara surculus cunabula decet sulum. Cunctatio voluptate sub summisse delego.",
+            "application_id": "98c5011d-816e-4c48-9b6c-9be49f8b1210",
+            "crn": "X823998",
+            "created_by_user": "Test User"
+          },
+          {
+            "noms_number": "A8767EA",
+            "created_by_user_type": "DELIUS",
+            "assessment_id": "955a932a-ea65-4bb7-8eed-091b809598ae",
+            "id": "90c2b618-4c6a-4c3f-8e21-96a55f5bac5b",
+            "body": "Vomito optio celebrer conatus votum textilis. Arcesso adaugeo tredecim succedo cunctatio. Civitas cumque alienus aegrotatio temperantia temperantia totidem.",
+            "application_id": "98c5011d-816e-4c48-9b6c-9be49f8b1210",
+            "crn": "X823998",
+            "created_by_user": "Test User"
+          }
+        ],
+        "DomainEvents": []
+      }
+    },
+    {
       "TemporaryAccommodation": {
         "BookingExtensions": [
           {
