@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-private const val PROVIDER_S3 = "s3"
+private const val PROVIDER_S3 = "aws"
 
 @ConfigurationProperties(prefix = "s3")
 @ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
@@ -39,11 +39,13 @@ class S3ClientConfig(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
+  init {
+      log.info("html-renderer.enabled={} s3.provider={}", htmlRenderEnabled, s3Properties.provider)
+  }
+
   @Bean
   @ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
   fun s3(): S3Client {
-    log.info("s3.provider={}", s3Properties.provider)
-
     if (htmlRenderEnabled && PROVIDER_S3 == s3Properties.provider) {
       return s3Client()
     }
@@ -51,14 +53,16 @@ class S3ClientConfig(
   }
 
   private fun s3Client(): S3Client = runBlocking {
+    log.info("configuring S3 client for provider: ${s3Properties.provider}, region: ${s3Properties.region}")
+
     S3Client.fromEnvironment {
       region = s3Properties.region
-    }.also {
-      log.info("configured S3 client for provider: ${s3Properties.provider}, region: ${s3Properties.region}")
     }
   }
 
   private fun s3ClientLocalstack(): S3Client = runBlocking {
+    log.info("configuring S3 client for provider: ${s3Properties.provider}, region: ${s3Properties.region}")
+
     S3Client.fromEnvironment {
       region = s3Properties.region
       endpointUrl = Url.parse(s3Properties.serviceEndpointOverride!!)
@@ -68,7 +72,6 @@ class S3ClientConfig(
         secretAccessKey = "test"
       }
     }.also {
-      log.info("configured S3 client for provider: ${s3Properties.provider}, region: ${s3Properties.region}")
       createBucketIfNotExists(it)
     }
   }
