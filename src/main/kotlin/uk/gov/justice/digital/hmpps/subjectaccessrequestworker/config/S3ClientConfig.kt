@@ -22,14 +22,14 @@ data class S3Properties(
   val region: String,
   val bucketName: String,
   val provider: String,
-  val serviceEndpointOverride: String?,
+  val serviceEndpointOverride: String? = "http://localhost:4566",
 )
 
 @Configuration
 @EnableConfigurationProperties(S3Properties::class)
 class S3ClientConfig(
   private val s3Properties: S3Properties,
-  @Value("\${html-renderer.enabled}") private val htmlRenderEnabled: Boolean,
+  @Value("\${html-renderer.enabled:false}") private val htmlRenderEnabled: Boolean,
 ) {
 
   private companion object {
