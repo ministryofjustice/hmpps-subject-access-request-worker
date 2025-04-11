@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled
 
 import com.microsoft.applicationinsights.TelemetryClient
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -20,7 +21,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsSe
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestService
 import java.time.LocalDate
@@ -81,7 +81,7 @@ class SubjectAccessRequestProcessorTest {
   inner class SuccessCases {
 
     @Test
-    fun `should generate report for available unclaimed request`() {
+    fun `should generate report for available unclaimed request`() = runTest {
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
 
       subjectAccessRequestProcessor.execute()
@@ -95,7 +95,7 @@ class SubjectAccessRequestProcessorTest {
     }
 
     @Test
-    fun `should do nothing when findUnclaimed returns empty list`() {
+    fun `should do nothing when findUnclaimed returns empty list`() = runTest {
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(emptyList())
 
       subjectAccessRequestProcessor.execute()
@@ -106,7 +106,7 @@ class SubjectAccessRequestProcessorTest {
     }
 
     @Test
-    fun `should do nothing when findUnclaimed returns list with null value at index 0`() {
+    fun `should do nothing when findUnclaimed returns list with null value at index 0`() = runTest {
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(null))
 
       subjectAccessRequestProcessor.execute()
@@ -121,7 +121,7 @@ class SubjectAccessRequestProcessorTest {
   inner class FailureCases {
 
     @Test
-    fun `should raise expected alert when findUnclaimed throws an exception`() {
+    fun `should raise expected alert when findUnclaimed throws an exception`() = runTest {
       val rootCause = RuntimeException("findUnclaimed error")
       whenever(subjectAccessRequestService.findUnclaimed()).thenThrow(rootCause)
 
@@ -138,7 +138,7 @@ class SubjectAccessRequestProcessorTest {
     }
 
     @Test
-    fun `should raise expected alert when reportService throws an exception`() {
+    fun `should raise expected alert when reportService throws an exception`() = runTest {
       val rootCause = RuntimeException("findUnclaimed error")
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
       whenever(reportService.generateReport(sampleSAR)).thenThrow(rootCause)
@@ -158,7 +158,7 @@ class SubjectAccessRequestProcessorTest {
     }
 
     @Test
-    fun `should raise expected alert when updateStatus throws an exception`() {
+    fun `should raise expected alert when updateStatus throws an exception`() = runTest {
       val rootCause = RuntimeException("findUnclaimed error")
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
       whenever(subjectAccessRequestService.updateStatus(sampleSAR.id, Status.Completed)).thenThrow(rootCause)

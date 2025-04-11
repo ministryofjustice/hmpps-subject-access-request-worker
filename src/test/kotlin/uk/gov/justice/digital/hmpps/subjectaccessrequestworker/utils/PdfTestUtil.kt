@@ -6,6 +6,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import org.assertj.core.api.Assertions.assertThat
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 class PdfTestUtil {
@@ -25,6 +26,13 @@ class PdfTestUtil {
      * Create a PdfDocument from the provided bytes.
      */
     fun createPdfDocumentFromBytes(bytes: ByteArray): PdfDocument = PdfDocument(PdfReader(ByteArrayInputStream(bytes)))
+
+    /**
+     * Create a PdfDocument from the provided bytes.
+     */
+    fun createPdfDocumentFromBytes(outputStream: ByteArrayOutputStream): PdfDocument = PdfDocument(
+      PdfReader(ByteArrayInputStream(outputStream.toByteArray())),
+    )
 
     /**
      * Get a class path resource.

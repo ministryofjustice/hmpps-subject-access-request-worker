@@ -87,7 +87,7 @@ class LegacyReportServiceTest : IntegrationTestBase() {
   inner class CreateSubjectAccessRequestReport {
 
     @Test
-    fun `doReport calls GetSubjectAccessRequestDataService execute`() {
+    fun `doReport calls GetSubjectAccessRequestDataService execute`() = runTest {
       whenever(serviceConfigurationService.getSelectedServices(any())).thenReturn(selectedDpsServices)
       whenever(
         getSubjectAccessRequestDataService.requestDataFromServices(
@@ -126,7 +126,7 @@ class LegacyReportServiceTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `doReport calls GeneratePdfService execute`() {
+    fun `doReport calls GeneratePdfService execute`() = runTest {
       whenever(serviceConfigurationService.getSelectedServices(any())).thenReturn(selectedDpsServices)
       whenever(
         getSubjectAccessRequestDataService.requestDataFromServices(

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
+import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,11 +24,13 @@ class PdfServiceTest {
   private val serviceConfiguration: ServiceConfigurationService = mock()
   private val htmlDocumentStoreService: HtmlDocumentStoreService = mock()
   private val dateService: DateService = mock()
+  private val telemetryClient: TelemetryClient = mock()
 
   private val pdfService = PdfService(
     serviceConfiguration,
     htmlDocumentStoreService,
     dateService,
+    telemetryClient,
   )
 
   @BeforeEach
