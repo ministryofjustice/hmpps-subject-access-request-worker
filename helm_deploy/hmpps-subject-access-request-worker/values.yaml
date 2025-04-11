@@ -1,5 +1,6 @@
 generic-service:
   nameOverride: hmpps-subject-access-request-worker
+  serviceAccountName: hmpps-subject-access-request
   productId: "DPS083"
 
   replicaCount: 4
