@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-private const val PROVIDER_S3 = "aws"
+private const val PROVIDER_AWS = "aws"
 
 @ConfigurationProperties(prefix = "s3")
 @ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
@@ -40,13 +40,13 @@ class S3ClientConfig(
   }
 
   init {
-      log.info("html-renderer.enabled={} s3.provider={}", htmlRenderEnabled, s3Properties.provider)
+    log.info("html-renderer.enabled={} s3.provider={}", htmlRenderEnabled, s3Properties.provider)
   }
 
   @Bean
   @ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
   fun s3(): S3Client {
-    if (htmlRenderEnabled && PROVIDER_S3 == s3Properties.provider) {
+    if (htmlRenderEnabled && PROVIDER_AWS == s3Properties.provider) {
       return s3Client()
     }
     return s3ClientLocalstack()
