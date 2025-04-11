@@ -34,6 +34,8 @@ hmpps-auth:
   client-id: "hmpps-subject-access-request"
   client-secret: "clientsecret"
 
+sar-html-renderer-api:
+  url: http://localhost:8087
 G1-api:
   url: http://localhost:9001
 G2-api:
