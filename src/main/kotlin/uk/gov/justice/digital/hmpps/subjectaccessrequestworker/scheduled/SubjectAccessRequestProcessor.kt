@@ -77,7 +77,6 @@ class SubjectAccessRequestProcessor(
 
   private fun handleError(stopWatch: StopWatch, subjectAccessRequest: SubjectAccessRequest?, ex: Exception) {
     log.error(buildErrorMessage(subjectAccessRequest, ex), ex)
-    ex.printStackTrace()
 
     reportErrorEvent(subjectAccessRequest, ex, stopWatch)
 
