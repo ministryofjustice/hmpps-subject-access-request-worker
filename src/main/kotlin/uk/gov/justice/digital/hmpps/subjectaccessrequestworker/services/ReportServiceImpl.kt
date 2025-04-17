@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils.isNotEmpty
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -8,6 +9,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentSt
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
 
@@ -23,6 +26,7 @@ class ReportServiceImpl(
   private val documentStorageClient: DocumentStorageClient,
   private val serviceConfigurationService: ServiceConfigurationService,
   private val pdfService: PdfService,
+  private val telemetryClient: TelemetryClient,
 ) : ReportService {
 
   private companion object {
@@ -47,11 +51,16 @@ class ReportServiceImpl(
   private fun generateReportHtmlForServices(subjectAccessRequest: SubjectAccessRequest) {
     val selectedServices = serviceConfigurationService.getSelectedServices(subjectAccessRequest)
 
+    trackSelectedService(selectedServices, subjectAccessRequest)
     log.info("processing subject access request ${subjectAccessRequest.id}")
+
     selectedServices.forEach { service ->
       log.info("submitted html render request for ${service.name!!}")
+      trackRenderServiceHtml(service, subjectAccessRequest)
+
       val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
       log.info("html render request ${response!!.documentKey} completed successfully")
+      trackRenderServiceHtmlComplete(service, subjectAccessRequest, response.documentKey)
     }
   }
 
@@ -73,5 +82,36 @@ class ReportServiceImpl(
       subjectAccessRequest,
       subjectName,
     ),
+  )
+
+  private fun trackSelectedService(
+    selectedServices: List<DpsService>,
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = telemetryClient.trackSarEvent(
+    "SelectedServices",
+    subjectAccessRequest,
+    "services" to selectedServices.map { it.name }.joinToString(","),
+  )
+
+  private fun trackRenderServiceHtml(
+    service: DpsService,
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = telemetryClient.trackSarEvent(
+    "RenderHtmlForService",
+    subjectAccessRequest,
+    "serviceName" to (service.name ?: "NA"),
+    "serviceUrl" to service.url.toString(),
+  )
+
+  private fun trackRenderServiceHtmlComplete(
+    service: DpsService,
+    subjectAccessRequest: SubjectAccessRequest,
+    documentKey: String,
+  ) = telemetryClient.trackSarEvent(
+    "RenderHtmlForService",
+    subjectAccessRequest,
+    "serviceName" to (service.name ?: "NA"),
+    "serviceUrl" to service.url.toString(),
+    "documentKey" to documentKey,
   )
 }

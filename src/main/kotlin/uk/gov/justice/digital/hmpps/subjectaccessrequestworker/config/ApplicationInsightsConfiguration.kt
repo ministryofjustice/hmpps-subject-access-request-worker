@@ -16,8 +16,6 @@ class ApplicationInsightsConfiguration {
 
 const val UNKNOWN_PLACEHOLDER = "unknown"
 
-fun TelemetryClient.trackEvent(name: String, properties: Map<String, String>) = this.trackEvent(name, properties, null)
-
 fun TelemetryClient.trackSarEvent(
   name: String,
   subjectAccessRequest: SubjectAccessRequest?,
@@ -33,6 +31,26 @@ fun TelemetryClient.trackSarEvent(
       "UUID" to subjectAccessRequest?.id.toString(),
       "contextId" to contextId,
       *kvpairs,
+    ),
+    null,
+  )
+}
+
+fun TelemetryClient.trackSarException(
+  ex: Exception,
+  subjectAccessRequest: SubjectAccessRequest?,
+  vararg params: Pair<String, String>,
+) {
+  val id = subjectAccessRequest?.sarCaseReferenceNumber ?: UNKNOWN_PLACEHOLDER
+  val contextId = subjectAccessRequest?.contextId.toString()
+
+  this.trackException(
+    ex,
+    mapOf(
+      "sarId" to id,
+      "UUID" to subjectAccessRequest?.id.toString(),
+      "contextId" to contextId,
+      *params,
     ),
     null,
   )
