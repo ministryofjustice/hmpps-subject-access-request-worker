@@ -35,6 +35,9 @@ class SubjectAccessRequestProcessorTest {
   private lateinit var eventNameCaptor: ArgumentCaptor<String>
 
   @Captor
+  private lateinit var exceptionCaptor: ArgumentCaptor<Exception>
+
+  @Captor
   private lateinit var eventPropertiesCaptor: ArgumentCaptor<Map<String, String>>
 
   @Captor
@@ -129,7 +132,7 @@ class SubjectAccessRequestProcessorTest {
 
       verify(subjectAccessRequestService, times(1)).findUnclaimed()
       verifyNoMoreInteractions(subjectAccessRequestService)
-      verifyTelemetryEvents(null, "ReportFailedWithError")
+      verifyTelemetryException(rootCause, null)
       verifyNoInteractions(reportService)
       verifySubjectAccessRequestAlert(
         expectedCause = rootCause,
@@ -149,7 +152,7 @@ class SubjectAccessRequestProcessorTest {
       verify(reportService, times(1)).generateReport(sampleSAR)
       verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
       verifyNoMoreInteractions(subjectAccessRequestService, reportService)
-      verifyTelemetryEvents(sampleSAR, "NewReportClaimStarted", "ReportFailedWithError")
+      verifyTelemetryException(rootCause, sampleSAR)
 
       verifySubjectAccessRequestAlert(
         expectedCause = rootCause,
@@ -170,7 +173,7 @@ class SubjectAccessRequestProcessorTest {
       verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
       verify(subjectAccessRequestService, times(1)).updateStatus(sampleSAR.id, Status.Completed)
       verifyNoMoreInteractions(subjectAccessRequestService, reportService)
-      verifyTelemetryEvents(sampleSAR, "NewReportClaimStarted", "ReportFailedWithError")
+      verifyTelemetryException(rootCause, sampleSAR)
 
       verifySubjectAccessRequestAlert(
         expectedCause = rootCause,
@@ -201,6 +204,31 @@ class SubjectAccessRequestProcessorTest {
         subjectAccessRequest?.contextId.toString(),
       )
     }
+  }
+
+  private fun verifyTelemetryException(expected: Exception, subjectAccessRequest: SubjectAccessRequest?) {
+    verify(telemetryClient, times(1)).trackException(
+      capture(exceptionCaptor),
+      capture(eventPropertiesCaptor),
+      eq(null),
+    )
+
+    assertThat(exceptionCaptor.allValues).hasSizeGreaterThanOrEqualTo(1)
+    assertThat(exceptionCaptor.allValues[0]).isNotNull()
+
+    val actual = exceptionCaptor.allValues[0]
+    assertThat(actual).isEqualTo(expected)
+
+    val actualProperties = eventPropertiesCaptor.allValues
+    assertThat(actualProperties).hasSizeGreaterThanOrEqualTo(1)
+    assertThat(actualProperties[0])
+      .containsEntry("sarId", subjectAccessRequest?.sarCaseReferenceNumber ?: "unknown")
+
+    assertThat(actualProperties[0])
+      .containsEntry("UUID", subjectAccessRequest?.id.toString())
+
+    assertThat(actualProperties[0])
+      .containsEntry("contextId", subjectAccessRequest?.contextId.toString())
   }
 
   private fun verifySubjectAccessRequestAlert(expectedCause: Exception?, subjectAccessRequest: SubjectAccessRequest?) {

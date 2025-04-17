@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -108,8 +109,8 @@ class SubjectAccessRequestProcessor(
     subjectAccessRequest: SubjectAccessRequest?,
     exception: Exception,
     stopWatch: StopWatch,
-  ) = telemetryClient.trackSarEvent(
-    name = "ReportFailedWithError",
+  ) = telemetryClient.trackSarException(
+    ex = exception,
     subjectAccessRequest = subjectAccessRequest,
     "error" to getErrorMessage(exception),
     TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
