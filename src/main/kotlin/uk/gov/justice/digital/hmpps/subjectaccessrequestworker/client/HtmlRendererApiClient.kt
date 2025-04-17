@@ -87,5 +87,5 @@ class HtmlRendererApiClient(
     )
   }
 
-  data class HtmlRenderResponse(val documentKey: String)
+  data class HtmlRenderResponse(val documentKey: String?)
 }

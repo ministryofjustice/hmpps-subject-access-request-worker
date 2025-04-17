@@ -58,9 +58,9 @@ class ReportServiceImpl(
       log.info("submitted html render request for ${service.name!!}")
       trackRenderServiceHtml(service, subjectAccessRequest)
 
-      val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
-      log.info("html render request ${response!!.documentKey} completed successfully")
-      trackRenderServiceHtmlComplete(service, subjectAccessRequest, response.documentKey)
+      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+      log.info("${subjectAccessRequest.id} html render request completed successfully")
+      trackRenderServiceHtmlComplete(service, subjectAccessRequest)
     }
   }
 
@@ -106,12 +106,10 @@ class ReportServiceImpl(
   private fun trackRenderServiceHtmlComplete(
     service: DpsService,
     subjectAccessRequest: SubjectAccessRequest,
-    documentKey: String,
   ) = telemetryClient.trackSarEvent(
     "RenderHtmlForService",
     subjectAccessRequest,
     "serviceName" to (service.name ?: "NA"),
     "serviceUrl" to service.url.toString(),
-    "documentKey" to documentKey,
   )
 }
