@@ -111,9 +111,19 @@ class SubjectAccessRequestProcessor(
   ) = telemetryClient.trackSarEvent(
     name = "ReportFailedWithError",
     subjectAccessRequest = subjectAccessRequest,
-    "error" to (exception.message ?: ""),
+    "error" to getErrorMessage(exception),
     TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
   )
+
+  private fun getErrorMessage(ex: Exception): String {
+    val exceptionName: String = ex.javaClass.simpleName
+
+    return ex.message?.takeIf {
+      it.isNotBlank()
+    } ?: ex.cause?.let {
+      "${exceptionName}_${it::class.java.simpleName}"
+    } ?: exceptionName
+  }
 
   private fun createSubjectAccessRequestExceptionFor(
     subjectAccessRequest: SubjectAccessRequest?,
