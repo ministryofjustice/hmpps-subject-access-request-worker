@@ -2,79 +2,32 @@
 {{#.}}
     <h2>Diet History</h2>
     <table class="summary-list">
-        <tr><td>Field History Id</td><td>{{ optionalValue fieldHistoryId }}</td></tr>
+        <!-- <tr><td>Field History Id</td><td>{{ optionalValue fieldHistoryId }}</td></tr> -->
         <tr><td>Created at</td><td>{{ optionalValue (formatDate createdAt) }}</td></tr>
         <tr><td>Created by</td><td>{{ getUserLastName createdBy }}</td></tr>
         <tr><td>Prisoner number</td><td>{{ optionalValue prisonerNumber }}</td></tr>
+        <tr><td>Prison</td><td>{{ getPrisonName prisonId }}</td></tr>
         <tr><td>Field History Type</td><td>{{ optionalValue fieldHistoryType }}</td></tr>
 
     </table>
 
-        <!-- <h3>Food Allergies</h3> -->
-
-        {{#fieldHistoryValue}}
-            <table class="summary-list">
-                <tr>
-                    <td class="data-column-30">Value</td>
-                    <td class="data-column-70">{{ optionalValue value }}</td>
-                </tr>
-                <tr>
-                    <td>Comment</td>
-                    <td>{{ optionalValue comment }}</td>
-                </tr>
-            </table>
-        {{/fieldHistoryValue}}
-        {{^fieldHistoryValue}}
-            <table class="summary-list">
-                <tr><td></td><td>No Data Held</td></tr>
-            </table>
-                <!--<p>No Data Held</p>-->
-        {{/fieldHistoryValue}}
-
-        <!--
-        {{#fieldHistoryValue.value.medicalDietaryRequirements}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-10"></td>
-                    <td class="data-column-30">Value</td>
-                    <td class="data-column-70">Comment</td>
-                </tr>
-                <tr>
-                    <td class="data-column-10"></td>
-                    <td>{{ optionalValue value }}</td>
-                    <td>{{ optionalValue comment }}</td>
-                </tr>
-            </table>
-        {{/fieldHistoryValue.value.medicalDietaryRequirements}}
-        -->
-
-        <!--
-        {{^fieldHistoryValue.value.medicalDietaryRequirements}}
-                <p>No Data Held for Medical Dietary Requirements</p>
-        {{/fieldHistoryValue.value.medicalDietaryRequirements}}
-        -->
-
-        <!--
-        {{#fieldHistoryValue.value.personalisedDietaryRequirements}}
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-10"></td>
-                    <td class="data-column-20">Value</td>
-                    <td class="data-column-70">Comment</td>
-                </tr>
-                <tr>
-                    <td class="data-column-10"></td>
-                    <td>{{ optionalValue value }}</td>
-                    <td>{{ optionalValue comment }}</td>
-                </tr>
-            </table>
-        {{/fieldHistoryValue.value.personalisedDietaryRequirements}}
-        -->
-
-        <!--
-        {{^fieldHistoryValue.value.personalisedDietaryRequirements}}
-                <p>No Data Held for Personalised Dietary Requirements</p>
-        {{/fieldHistoryValue.value.personalisedDietaryRequirements}}
-        -->
+    {{#fieldHistoryValue}}
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">{{ optionalValue value }}</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>{{ optionalValue comment }}</td>
+            </tr>
+        </table>
+    {{/fieldHistoryValue}}
+    {{^fieldHistoryValue}}
+        <table class="summary-list">
+            <tr><td></td><td>No Data Held</td></tr>
+        </table>
+            <!--<p>No Data Held</p>-->
+    {{/fieldHistoryValue}}
 
 {{/.}}

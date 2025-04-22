@@ -80,3 +80,6 @@ services:
   - name: G3
     businessName: G3
     order: 27
+  - name: hmpps-health-and-medication-api
+    businessName: Health and Medication
+    order: 28
