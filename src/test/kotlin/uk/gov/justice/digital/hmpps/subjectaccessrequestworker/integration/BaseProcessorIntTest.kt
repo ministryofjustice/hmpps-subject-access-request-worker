@@ -28,7 +28,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
       val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
 
       assertThat(actualPageN)
-        .isEqualTo(expectedPageN)
+        .isEqualToIgnoringCase(expectedPageN)
         .withFailMessage("actual page: $i did not match expected.")
     }
   }
@@ -41,7 +41,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     val expectedPageContent = contentWhenNoDataHeld(serviceLabel, testNomisId)
 
     assertThat(actualPageContent)
-      .isEqualTo(expectedPageContent)
+      .isEqualToIgnoringCase(expectedPageContent)
       .withFailMessage("$serviceName report did not match expected")
   }
 

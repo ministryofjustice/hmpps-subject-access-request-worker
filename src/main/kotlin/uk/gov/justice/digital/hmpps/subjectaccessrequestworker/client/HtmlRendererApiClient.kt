@@ -27,7 +27,7 @@ class HtmlRendererApiClient(
   ): HtmlRenderResponse? = try {
     sarHtmlRendererApiWebClient.post()
       .uri("/subject-access-request/render")
-      .bodyValue(HtmlRenderRequest(subjectAccessRequest, service.name!!, service.url!!))
+      .bodyValue(HtmlRenderRequest(subjectAccessRequest, service))
       .retrieve()
       .onStatus(
         webClientRetriesSpec.is4xxStatus(),
@@ -35,8 +35,8 @@ class HtmlRendererApiClient(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
           params = mapOf(
-            "serviceName" to service.name,
-            "serviceUrl" to service.url,
+            "serviceName" to service.name!!,
+            "serviceUrl" to service.url!!,
           ),
         ),
       )
@@ -73,17 +73,19 @@ class HtmlRendererApiClient(
     val dateTo: LocalDate?,
     val sarCaseReferenceNumber: String?,
     val serviceName: String,
+    val serviceLabel: String,
     val serviceUrl: String,
   ) {
-    constructor(subjectAccessRequest: SubjectAccessRequest, serviceName: String, serviceUrl: String) : this(
+    constructor(subjectAccessRequest: SubjectAccessRequest, service: DpsService) : this(
       id = subjectAccessRequest.id,
       nomisId = subjectAccessRequest.nomisId,
       ndeliusId = subjectAccessRequest.ndeliusCaseReferenceId,
       dateFrom = subjectAccessRequest.dateFrom,
       dateTo = subjectAccessRequest.dateTo,
       sarCaseReferenceNumber = subjectAccessRequest.sarCaseReferenceNumber,
-      serviceName = serviceName,
-      serviceUrl = serviceUrl,
+      serviceName = service.name!!,
+      serviceLabel = service.businessName!!,
+      serviceUrl = service.url!!,
     )
   }
 

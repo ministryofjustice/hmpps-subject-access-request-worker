@@ -47,7 +47,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   private val sarDateFrom = LocalDate.of(2024, 1, 1)
   private val serviceName = "keyworker-api"
   private val serviceUrl = "http://keyworker-api.com"
-  private val service = DpsService(name = serviceName, url = serviceUrl)
+  private val service = DpsService(name = serviceName, url = serviceUrl, businessName = serviceName)
 
   @BeforeEach
   fun setup() {
@@ -60,8 +60,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     val subjectAccessRequest = subjectAccessRequest()
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      serviceName = serviceName,
-      serviceUrl = serviceUrl,
+      service = service,
     )
 
     hmppsAuth.stubGrantTokenResponse(
@@ -87,8 +86,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     val subjectAccessRequest = subjectAccessRequest()
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      serviceName = serviceName,
-      serviceUrl = serviceUrl,
+      service = service,
     )
     val expectedDocumentKey = "12345-67890"
 
@@ -112,8 +110,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     val subjectAccessRequest = subjectAccessRequest()
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      serviceName = serviceName,
-      serviceUrl = serviceUrl,
+      service = service,
     )
     val expectedDocumentKey = "12345-67890"
 
@@ -140,8 +137,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      serviceName = serviceName,
-      serviceUrl = serviceUrl,
+      service = service,
     )
 
     hmppsAuth.stubGrantToken()
@@ -166,8 +162,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      serviceName = serviceName,
-      serviceUrl = serviceUrl,
+      service = service,
     )
 
     hmppsAuth.stubGrantToken()

@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -64,11 +65,12 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   @Test
   fun `should process pending request successfully when data is held and html-renderer is enabled`() {
     val serviceName = "hmpps-book-secure-move-api"
+    val serviceLabel = "Book a Secure Move"
     val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
+    val service = DpsService(url = "http://localhost:4100", name = serviceName, businessName = serviceLabel)
     val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = sar,
-      serviceName = serviceName,
-      serviceUrl = "http://localhost:4100",
+      service = service,
     )
 
     hmppsAuth.stubGrantToken()
@@ -91,12 +93,12 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   @Test
   fun `should process pending request successfully when no data is held and html-renderer is enabled`() {
     val serviceName = "hmpps-book-secure-move-api"
-    val serviceLabel = "Book a secure move"
+    val serviceLabel = "Book a Secure Move"
     val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
+    val service = DpsService(url = "http://localhost:4100", name = serviceName, businessName = serviceLabel)
     val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = sar,
-      serviceName = serviceName,
-      serviceUrl = "http://localhost:4100",
+      service = service,
     )
 
     hmppsAuth.stubGrantToken()
