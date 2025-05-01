@@ -3,6 +3,14 @@
     "catForm": [
       {
         "form_response": {
+          "ratings": {
+            "furtherCharges": {
+              "furtherCharges": "No"
+            },
+            "offendingHistory": {
+              "previousConvictions": "No"
+            }
+          },
           "recat": {
             "decision": {
               "category": "D"
