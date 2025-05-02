@@ -1,0 +1,1306 @@
+<style>
+    * {
+        font-family: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
+        font-size: 12pt;
+        color: #0b0c0c;
+    }
+    /* --- HEADINGS --- */
+
+    h1, h2, h3 {
+        color: #0b0c0c;
+        font-weight: 700;
+        display: block;
+        margin-top: 0;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+
+    h1 {
+        font-size: 18pt;
+        line-height: 1.09375;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        margin-block-start: 0.67em;
+        margin-block-end: 0.67em;
+    }
+
+    h2 {
+        font-size: 17pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    h3 {
+        font-size: 16pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    h4 {
+        font-size: 15pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    h5 {
+        font-size: 14pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    /* --- SUMMARY LIST --- */
+
+    table.summary-list {
+        display: table;
+        width: 700px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin: 0 0 5px;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+
+    table.summary-list tr {
+        display: table-row;
+        margin: 0 0 20px;
+    }
+
+    table.summary-list tr td {
+        border-bottom: 1px solid #b1b4b6;
+        /*margin-bottom: 5px;*/
+        overflow-wrap: break-word;
+        display: table-cell;
+        /*padding-top: 2px;*/
+        /*padding-bottom: 2px;*/
+        /*padding-right: 0;*/
+        margin-inline-start: 40px;
+        width: 70%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        line-height: 1.25;
+        font-weight: 400;
+        white-space: normal;
+        vertical-align: top;
+    }
+
+    table.summary-list tr td:first-child {
+        font-size: 12pt;
+        width: 30%;
+        font-weight: 700;
+        padding-right: 20px;
+        vertical-align: top;
+    }
+
+    /* --- DATA TABLE --- */
+
+    table.data-table {
+        display: table;
+        width: 700px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin: 0 0 5px;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+
+    table.data-table tr {
+        display: table-row;
+        margin: 0 0 20px;
+    }
+
+    table.data-table tr td {
+        border-bottom: 1px solid #b1b4b6;
+        margin-bottom: 5px;
+        overflow-wrap: break-word;
+        display: table-cell;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-right: 0;
+        margin-inline-start: 40px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        line-height: 1.25;
+        font-weight: 400;
+        white-space: pre-wrap;
+        vertical-align: top;
+    }
+
+    table.data-table tr:first-child td {
+        font-size: 12pt;
+        width: 30%;
+        font-weight: 700;
+        padding-right: 20px;
+        border-bottom: none;
+        vertical-align: top;
+    }
+
+    table.data-table tr td.data-column-5 { width: 5% }
+    table.data-table tr td.data-column-10 { width: 10% }
+    table.data-table tr td.data-column-15 { width: 15% }
+    table.data-table tr td.data-column-20 { width: 20% }
+    table.data-table tr td.data-column-25 { width: 25% }
+    table.data-table tr td.data-column-30 { width: 30% }
+    table.data-table tr td.data-column-35 { width: 35% }
+    table.data-table tr td.data-column-40 { width: 40% }
+    table.data-table tr td.data-column-45 { width: 45% }
+    table.data-table tr td.data-column-50 { width: 50% }
+    table.data-table tr td.data-column-55 { width: 55% }
+    table.data-table tr td.data-column-60 { width: 60% }
+    table.data-table tr td.data-column-65 { width: 65% }
+    table.data-table tr td.data-column-70 { width: 70% }
+    table.data-table tr td.data-column-75 { width: 75% }
+    table.data-table tr td.data-column-80 { width: 80% }
+    table.data-table tr td.data-column-85 { width: 85% }
+    table.data-table tr td.data-column-90 { width: 90% }
+    table.data-table tr td.data-column-95 { width: 95% }
+
+    table tr td.data-column-5 { width: 5% }
+    table tr td.data-column-10 { width: 10% }
+    table tr td.data-column-15 { width: 15% }
+    table tr td.data-column-20 { width: 20% }
+    table tr td.data-column-25 { width: 25% }
+    table tr td.data-column-30 { width: 30% }
+    table tr td.data-column-35 { width: 35% }
+    table tr td.data-column-40 { width: 40% }
+    table tr td.data-column-45 { width: 45% }
+    table tr td.data-column-50 { width: 50% }
+    table tr td.data-column-55 { width: 55% }
+    table tr td.data-column-60 { width: 60% }
+    table tr td.data-column-65 { width: 65% }
+    table tr td.data-column-70 { width: 70% }
+    table tr td.data-column-75 { width: 75% }
+    table tr td.data-column-80 { width: 80% }
+    table tr td.data-column-85 { width: 85% }
+    table tr td.data-column-90 { width: 90% }
+    table tr td.data-column-95 { width: 95% }
+
+    table.summary-list tr td.data-column-5 { width: 5% }
+    table.summary-list tr td.data-column-10 { width: 10% }
+    table.summary-list tr td.data-column-15 { width: 15% }
+    table.summary-list tr td.data-column-20 { width: 20% }
+    table.summary-list tr td.data-column-25 { width: 25% }
+    table.summary-list tr td.data-column-30 { width: 30% }
+    table.summary-list tr td.data-column-35 { width: 35% }
+    table.summary-list tr td.data-column-40 { width: 40% }
+    table.summary-list tr td.data-column-45 { width: 45% }
+    table.summary-list tr td.data-column-50 { width: 50% }
+    table.summary-list tr td.data-column-55 { width: 55% }
+    table.summary-list tr td.data-column-60 { width: 60% }
+    table.summary-list tr td.data-column-65 { width: 65% }
+    table.summary-list tr td.data-column-70 { width: 70% }
+    table.summary-list tr td.data-column-75 { width: 75% }
+    table.summary-list tr td.data-column-80 { width: 80% }
+    table.summary-list tr td.data-column-85 { width: 85% }
+    table.summary-list tr td.data-column-90 { width: 90% }
+    table.summary-list tr td.data-column-95 { width: 95% }
+
+    ul {
+        padding: 0 0 0 10px;
+    }
+
+</style>
+
+<h1>Prepare a Case for Sentence</h1>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>b4a23007-beb0-4c3f-893f-3a7c80c3521c</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>605e08b9-8544-417e-84fa-39ce337ab04e</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>This is a note</td></tr>
+                <tr><td>Author surname</td><td>TestAuthor</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>605e08b9-8544-417e-84fa-39ce337ab04e</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>This is a note</td></tr>
+                <tr><td>Author surname</td><td>TestAuthor</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+    
+        <p>No Data Held</p>
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>d7047d77-97e5-4599-af60-2c2f563c34c5</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>5ee27730-77f3-4cd8-8892-6cc144ca682d</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Hello note one</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Another note with some great 
+information about the case.</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>information about the case.
+</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>ac09f33f-7753-45c4-aa04-b2bfb989960b</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Note 2</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+information about the case.
+</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Multi line comment
+
+line two
+
+line three</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+    
+        <p>No Data Held</p>
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>eee8aff8-62e8-46d6-8a12-599f7c4282d1</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>019e0a65-3165-4718-9f33-d29fbfb5447b</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>asdfasdfd</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>asdf</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>12 October 2022, 10:09:07 am</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>12 October 2022, 10:09:07 am</td>
+                <td>Homer Simpson</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>372553b6-de73-4052-b6b9-be55b41dde4e</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+    
+        <p>No Data Held</p>
+    
+
+    <h3>Comments</h3>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>Wheeee!</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>08 September 2022, 5:31:50 pm</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>08 September 2022, 5:31:50 pm</td>
+                <td>Homer Simpson</td>
+                <td>2106223516243653999</td>
+            </tr>
+        </table>
+    
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>e31a09d3-6284-47b2-bfd7-7d38af17182c</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>e31a09d3-6284-47b2-bfd7-7d38af17182c</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Hello note two</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>note two</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>asdfasdfsadfsdfsadf asdf asdfasdfsd asdf asdf </td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>three</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Hello note one</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one Test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>10b6a7b5-8de0-43c9-a1c3-6f98aa0abca5</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>note two</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>note</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>local host note res update asdf asdfsdfds test one</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>ddddddddddddddddd asdfsdfd </td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>tesst asasdfsdf</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one Test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>two Test3</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>this is a test note </td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFour</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>Other</td>
+                    <td>22 June 2023, 2:12:31 pm</td>
+                    <td>12 September 2023, 3:30:13 pm</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>Resulted</td>
+                    <td>Homer Simpson</td>
+                    <td>22 June 2023, 2:12:31 pm</td>
+                </tr>
+            </table>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>No outcome</td>
+                    <td>31 January 2022, 12:30:07 pm</td>
+                    <td>No Data Held</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>New</td>
+                    <td>No Data Held</td>
+                    <td>31 January 2022, 12:30:07 pm</td>
+                </tr>
+            </table>
+        
+        
+
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>366dcee7-0bdc-42d4-80f2-bacd51523eb9</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one two asdfldkjfd. lsdfdf akjdsf laksdf dkf df asdf sdf asdf a sdf asdfasdfsdfd asdf sdf asdf asdf asdf sdf sdfasd asdf asd asdf dsxxxxx</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one two three asd asdf</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test test asf asdfsd test  test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>etsts</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Test3 draft</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Test: one two
+testing edit notes test asfasdf sadf asdf asdf asdfa sdfasd asdf saf asdf</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Test: note</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>testt asdf asdf  asdf  asd asdf dasf sdf asdf adfa sdfd asdfasdf 1</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>note</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>one Test3</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Note by Test</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>sdf</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorTwo</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test note 4</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFour</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>This a note from JAWS</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFour</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>test</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>21 June 2023, 12:11:21 pm</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>21 June 2023, 12:11:21 pm</td>
+                <td>Homer Simpson</td>
+                <td>2106223516243653402</td>
+            </tr>
+        </table>
+    
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>9186a13f-03eb-4b2a-ae04-d233d287cc13</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>5a85a119-ee2a-4261-968f-c86d8fcfbfc2</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>test outcome</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorFive</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>Adjourned</td>
+                    <td>20 September 2023, 9:48:47 am</td>
+                    <td>26 September 2023, 3:39:38 pm</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>Resulted</td>
+                    <td>Homer Simpson</td>
+                    <td>20 September 2023, 9:48:47 am</td>
+                </tr>
+            </table>
+        
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+    
+        <p>No Data Held</p>
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>356b5ca4-7b71-47e8-a6e1-17344e801ee5</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>bccc9cd7-994a-4b94-9b60-1e7bfc891609</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>Report requested (PSR). </td></tr>
+                <tr><td>Author surname</td><td>TestAuthorSix</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>Report requested</td>
+                    <td>18 December 2024, 4:04:17 pm</td>
+                    <td>18 December 2024, 4:08:39 pm</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>Resulted</td>
+                    <td>Homer Simpson</td>
+                    <td>18 December 2024, 12:30:07 pm</td>
+                </tr>
+            </table>
+        
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>Safeguarding and DV checks requested. </td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>18 December 2024, 3:55:26 pm</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>18 December 2024, 3:55:37 pm</td>
+                <td>Homer Simpson</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>Safeguarding and DV checks added to NDelius and PACFS. </td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>18 December 2024, 3:59:20 pm</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>18 December 2024, 3:59:22 pm</td>
+                <td>Homer Simpson</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+    <br/>
+
+
+    <h2>Case</h2>
+    <table class="summary-list">
+        <tr><td>Case ID</td><td>4016742e-0f22-42fc-b3fc-76a718119364</td></tr>
+    </table>
+
+    <h3>Hearings</h3>
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>8b673519-6d96-447d-b38c-853ad71f3e53</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+        
+            <p>No Data Held</p>
+        
+
+        <h5>Outcomes</h5>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>No outcome</td>
+                    <td>31 January 2025, 12:30:07 pm</td>
+                    <td>No Data Held</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>New</td>
+                    <td>No Data Held</td>
+                    <td>31 January 2025, 12:30:07 pm</td>
+                </tr>
+            </table>
+        
+        
+
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>f8a7fdb6-3a9e-4782-801d-0efbba26cf8a</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>asdfasdf</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorSeven</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>hearing note</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorSeven</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>Trial</td>
+                    <td>30 January 2025, 10:43:06 am</td>
+                    <td>30 January 2025, 10:46:09 am</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>Resulted</td>
+                    <td>Homer Simpson</td>
+                    <td>30 January 2025, 10:43:06 am</td>
+                </tr>
+            </table>
+        
+        
+
+    
+        <h4>Hearing</h4>
+        <table class="summary-list">
+            <tr><td>Hearing ID</td><td>cde9666b-809d-4db2-a42a-4a18b7fdcb06</td></tr>
+        </table>
+
+        <h5>Notes</h5>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>asdfg</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorSeven</td></tr>
+            </table>
+        
+            <br/>
+            <table class="summary-list">
+                <tr><td>Note</td><td>asdfasdf</td></tr>
+                <tr><td>Author surname</td><td>TestAuthorSeven</td></tr>
+            </table>
+        
+        
+
+        <h5>Outcomes</h5>
+        
+            <br/>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">Outcome type</td>
+                    <td class="data-column-30">Outcome date</td>
+                    <td class="data-column-30">Resulted date</td>
+                </tr>
+                <tr>
+                    <td>Trial</td>
+                    <td>29 January 2025, 2:56:52 pm</td>
+                    <td>29 January 2025, 2:57:36 pm</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-30">State</td>
+                    <td class="data-column-30">Assigned to</td>
+                    <td class="data-column-30">Created date</td>
+                </tr>
+                <tr>
+                    <td>Resulted</td>
+                    <td>Homer Simpson</td>
+                    <td>28 January 2025, 12:30:07 pm</td>
+                </tr>
+            </table>
+        
+        
+
+    
+    
+
+    <h3>Comments</h3>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>dsfbv</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>29 January 2025, 2:56:44 pm</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>29 January 2025, 2:56:44 pm</td>
+                <td>Homer Simpson</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>case comment</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>03 February 2025, 10:42:14 am</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>03 February 2025, 10:42:14 am</td>
+                <td>Homer Simpson</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <br/>
+        <table class="data-table">
+            <tr><td>Comment</td></tr>
+            <tr><td>sadfsadf</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Author surname</td>
+                <td class="data-column-30">Created</td>
+                <td class="data-column-30">Created by</td>
+            </tr>
+            <tr>
+                <td>Homer Simpson</td>
+                <td>30 January 2025, 10:42:54 am</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Last updated by</td>
+                <td class="data-column-30">Case number</td>
+            </tr>
+            <tr>
+                <td>30 January 2025, 10:42:54 am</td>
+                <td>Homer Simpson</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+    <br/>
+
+
+
+
+
