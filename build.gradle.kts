@@ -50,3 +50,32 @@ tasks {
     compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
   }
 }
+
+tasks.register<TemplateGenerator>("generateHtml") {
+  group = "templates"
+  description = "Generate subject access report HTML for the specified service name"
+  classpath = sourceSets["test"].runtimeClasspath
+  mainClass = "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateDevelopmentUtilKt"
+  environment = mapOf("TEST_RESOURCES_DIR" to project.rootDir.resolve("src/test/resources"))
+}
+
+abstract class TemplateGenerator : JavaExec() {
+  private lateinit var serviceName: String
+
+  @Option(
+    option = "service",
+    description = "The service name to generate report html for e.g 'hmpps-book-secure-move-api'",
+  )
+  fun setServiceName(serviceName: String) {
+    this.serviceName = serviceName
+  }
+
+  @Input
+  fun getServiceName(): String = serviceName
+
+  @TaskAction
+  fun generate() {
+    args(this.serviceName)
+    super.exec()
+  }
+}

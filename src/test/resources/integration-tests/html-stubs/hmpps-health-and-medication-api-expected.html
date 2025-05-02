@@ -1,0 +1,1745 @@
+<style>
+    * {
+        font-family: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
+        font-size: 12pt;
+        color: #0b0c0c;
+    }
+    /* --- HEADINGS --- */
+
+    h1, h2, h3 {
+        color: #0b0c0c;
+        font-weight: 700;
+        display: block;
+        margin-top: 0;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+
+    h1 {
+        font-size: 18pt;
+        line-height: 1.09375;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        margin-block-start: 0.67em;
+        margin-block-end: 0.67em;
+    }
+
+    h2 {
+        font-size: 17pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    h3 {
+        font-size: 16pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    h4 {
+        font-size: 15pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    h5 {
+        font-size: 14pt;
+        line-height: 1.0416666667;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    /* --- SUMMARY LIST --- */
+
+    table.summary-list {
+        display: table;
+        width: 700px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin: 0 0 5px;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+
+    table.summary-list tr {
+        display: table-row;
+        margin: 0 0 20px;
+    }
+
+    table.summary-list tr td {
+        border-bottom: 1px solid #b1b4b6;
+        /*margin-bottom: 5px;*/
+        overflow-wrap: break-word;
+        display: table-cell;
+        /*padding-top: 2px;*/
+        /*padding-bottom: 2px;*/
+        /*padding-right: 0;*/
+        margin-inline-start: 40px;
+        width: 70%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        line-height: 1.25;
+        font-weight: 400;
+        white-space: normal;
+        vertical-align: top;
+    }
+
+    table.summary-list tr td:first-child {
+        font-size: 12pt;
+        width: 30%;
+        font-weight: 700;
+        padding-right: 20px;
+        vertical-align: top;
+    }
+
+    /* --- DATA TABLE --- */
+
+    table.data-table {
+        display: table;
+        width: 700px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin: 0 0 5px;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+
+    table.data-table tr {
+        display: table-row;
+        margin: 0 0 20px;
+    }
+
+    table.data-table tr td {
+        border-bottom: 1px solid #b1b4b6;
+        margin-bottom: 5px;
+        overflow-wrap: break-word;
+        display: table-cell;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-right: 0;
+        margin-inline-start: 40px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        line-height: 1.25;
+        font-weight: 400;
+        white-space: pre-wrap;
+        vertical-align: top;
+    }
+
+    table.data-table tr:first-child td {
+        font-size: 12pt;
+        width: 30%;
+        font-weight: 700;
+        padding-right: 20px;
+        border-bottom: none;
+        vertical-align: top;
+    }
+
+    table.data-table tr td.data-column-5 { width: 5% }
+    table.data-table tr td.data-column-10 { width: 10% }
+    table.data-table tr td.data-column-15 { width: 15% }
+    table.data-table tr td.data-column-20 { width: 20% }
+    table.data-table tr td.data-column-25 { width: 25% }
+    table.data-table tr td.data-column-30 { width: 30% }
+    table.data-table tr td.data-column-35 { width: 35% }
+    table.data-table tr td.data-column-40 { width: 40% }
+    table.data-table tr td.data-column-45 { width: 45% }
+    table.data-table tr td.data-column-50 { width: 50% }
+    table.data-table tr td.data-column-55 { width: 55% }
+    table.data-table tr td.data-column-60 { width: 60% }
+    table.data-table tr td.data-column-65 { width: 65% }
+    table.data-table tr td.data-column-70 { width: 70% }
+    table.data-table tr td.data-column-75 { width: 75% }
+    table.data-table tr td.data-column-80 { width: 80% }
+    table.data-table tr td.data-column-85 { width: 85% }
+    table.data-table tr td.data-column-90 { width: 90% }
+    table.data-table tr td.data-column-95 { width: 95% }
+
+    table tr td.data-column-5 { width: 5% }
+    table tr td.data-column-10 { width: 10% }
+    table tr td.data-column-15 { width: 15% }
+    table tr td.data-column-20 { width: 20% }
+    table tr td.data-column-25 { width: 25% }
+    table tr td.data-column-30 { width: 30% }
+    table tr td.data-column-35 { width: 35% }
+    table tr td.data-column-40 { width: 40% }
+    table tr td.data-column-45 { width: 45% }
+    table tr td.data-column-50 { width: 50% }
+    table tr td.data-column-55 { width: 55% }
+    table tr td.data-column-60 { width: 60% }
+    table tr td.data-column-65 { width: 65% }
+    table tr td.data-column-70 { width: 70% }
+    table tr td.data-column-75 { width: 75% }
+    table tr td.data-column-80 { width: 80% }
+    table tr td.data-column-85 { width: 85% }
+    table tr td.data-column-90 { width: 90% }
+    table tr td.data-column-95 { width: 95% }
+
+    table.summary-list tr td.data-column-5 { width: 5% }
+    table.summary-list tr td.data-column-10 { width: 10% }
+    table.summary-list tr td.data-column-15 { width: 15% }
+    table.summary-list tr td.data-column-20 { width: 20% }
+    table.summary-list tr td.data-column-25 { width: 25% }
+    table.summary-list tr td.data-column-30 { width: 30% }
+    table.summary-list tr td.data-column-35 { width: 35% }
+    table.summary-list tr td.data-column-40 { width: 40% }
+    table.summary-list tr td.data-column-45 { width: 45% }
+    table.summary-list tr td.data-column-50 { width: 50% }
+    table.summary-list tr td.data-column-55 { width: 55% }
+    table.summary-list tr td.data-column-60 { width: 60% }
+    table.summary-list tr td.data-column-65 { width: 65% }
+    table.summary-list tr td.data-column-70 { width: 70% }
+    table.summary-list tr td.data-column-75 { width: 75% }
+    table.summary-list tr td.data-column-80 { width: 80% }
+    table.summary-list tr td.data-column-85 { width: 85% }
+    table.summary-list tr td.data-column-90 { width: 90% }
+    table.summary-list tr td.data-column-95 { width: 95% }
+
+    ul {
+        padding: 0 0 0 10px;
+    }
+
+</style>
+
+<h1>Health and Medication</h1>
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>383</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-16T18:35:55+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Coeliac (cannot eat gluten)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 2</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Dysphagia (has problems swallowing food)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some eating disorder - no more info</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Lactose intolerant</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Low cholesterol</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Low phosphorous diet</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Nutrient deficiency</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some nutrient deficiency - no more info</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information - no more info</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>382</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-16T18:35:55+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Personalised Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Halal</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Kosher</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>some other req</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Vegan</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>381</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-16T18:35:55+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>380</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-16T18:35:55+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Food Allergies</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Celery</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Crustaceans</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Egg</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Fish</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Cereals containing gluten</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Lupin</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Milk</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Molluscs</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Mustard</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Details</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Peanuts</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Sesame</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Soya</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Sulphur dioxide</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Tree nuts</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>361</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-09T11:03:55+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>360</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-03T14:34:41+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>359</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-03T14:34:41+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Coeliac (cannot eat gluten)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 2</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some eating disorder</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Nutrient deficiency</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some nutrient deficiency</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>357</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-01T14:35:00+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>356</td></tr> -->
+        <tr><td>Created at</td><td>2025-04-01T14:35:00+0100</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Coeliac (cannot eat gluten)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some eating disorder</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Nutrient deficiency</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some nutrient deficiency</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>345</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-27T11:52:18+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>340</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-20T18:00:09+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some eating disorder</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Nutrient deficiency</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some nutrient deficiency</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>339</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-20T18:00:09+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>338</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-20T17:59:27+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>337</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-19T09:42:54+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>336</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-18T11:10:15+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Catering Instructions</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">No Data Held</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>335</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-18T11:10:15+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Personalised Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Halal</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>some other req</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Vegan</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>334</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-14T13:03:14+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some eating disorder</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Nutrient deficiency</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>333</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-14T12:46:41+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Some eating disorder</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Nutrient deficiency</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Deficiency of some sort</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>329</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-12T14:11:18+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Test information</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>328</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-12T14:11:18+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Food Allergies</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Egg</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>Details</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Tree nuts</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>327</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-12T12:58:48+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 2</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Dysphagia (has problems swallowing food)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Eating disorder</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>326</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-10T14:46:14+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 2</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Dysphagia (has problems swallowing food)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>325</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-10T14:39:41+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 2</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Dysphagia (has problems swallowing food)</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>323</td></tr> -->
+        <tr><td>Created at</td><td>2025-03-06T11:20:26+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 2</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>319</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-21T15:20:59+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Personalised Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Kosher</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>some other req</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Vegan</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>318</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-21T15:20:46+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Food Allergies</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Egg</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Tree nuts</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>317</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-21T15:20:46+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Personalised Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Kosher</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Vegan</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>316</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-17T16:49:08+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Diabetic type 1</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>315</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-17T16:49:08+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Food Allergies</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Egg</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>314</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-06T14:51:44+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Personalised Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Kosher</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>No Data Held</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>313</td></tr> -->
+        <tr><td>Created at</td><td>2025-02-06T14:51:44+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+    
+        <table class="summary-list">
+            <tr><td></td><td>No Data Held</td></tr>
+        </table>
+            <!--<p>No Data Held</p>-->
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>6</td></tr> -->
+        <tr><td>Created at</td><td>2025-01-31T14:57:27+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Medical Dietary Requirements</td></tr>
+
+    </table>
+
+    
+        <table class="summary-list">
+            <tr>
+                <td class="data-column-30">Value</td>
+                <td class="data-column-70">Other</td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>aaaaaaaaaaaaaaaaaaaadfadsga;&#x27;glkadgjawfadf&#x27;ka;&#x27;lgkmaerw&#x27;lgmwego&#x27;jae;&#x27;fkaew;&#x27;fkawe&#x27;flkawea</td>
+            </tr>
+        </table>
+    
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>5</td></tr> -->
+        <tr><td>Created at</td><td>2025-01-31T14:57:27+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Food Allergies</td></tr>
+
+    </table>
+
+    
+    
+        <table class="summary-list">
+            <tr><td></td><td>No Data Held</td></tr>
+        </table>
+            <!--<p>No Data Held</p>-->
+    
+
+
+    <h2>Diet History</h2>
+    <table class="summary-list">
+        <!-- <tr><td>Field History Id</td><td>4</td></tr> -->
+        <tr><td>Created at</td><td>2025-01-31T14:57:27+0000</td></tr>
+        <tr><td>Created by</td><td>Homer Simpson</td></tr>
+        <tr><td>Prisoner number</td><td>G5475UO</td></tr>
+        <tr><td>Prison</td><td>HMPPS Mordor</td></tr>
+        <tr><td>Field History Type</td><td>Personalised Dietary Requirements</td></tr>
+
+    </table>
+
+    
+    
+        <table class="summary-list">
+            <tr><td></td><td>No Data Held</td></tr>
+        </table>
+            <!--<p>No Data Held</p>-->
+    
+
