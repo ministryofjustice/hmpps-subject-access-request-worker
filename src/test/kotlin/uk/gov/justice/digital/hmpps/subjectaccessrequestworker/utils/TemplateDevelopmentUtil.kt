@@ -153,8 +153,7 @@ class TemplateGeneratorUtil {
 
   private fun getTestResourcesDir() = System.getenv("TEST_RESOURCES_DIR")
 
-  private fun responseStubJsonNotFoundException(target: Path) =
-    RuntimeException("expected service response stub json [$target] but not found")
+  private fun responseStubJsonNotFoundException(target: Path) = RuntimeException("expected service response stub json [$target] but not found")
 
   private fun log(message: String) {
     println("[generateHtml] $message")
