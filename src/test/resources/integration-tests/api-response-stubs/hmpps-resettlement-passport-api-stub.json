@@ -4,35 +4,1121 @@
       "id": 3,
       "nomsId": "A8731DY",
       "creationDate": "2023-11-17T14:49:58.308566",
-      "crn": "U328968",
-      "prisonId": "MDI"
+      "prisonId": "CFI",
+      "supportNeedsLegacyProfile": false
     },
-    "assessment": {
-      "id": 518,
-      "prisonerId": 3,
-      "creationDate": "2024-03-19T15:32:57.283459",
-      "assessmentDate": "2023-01-08T00:00:00",
-      "isBankAccountRequired": false,
-      "isIdRequired": true,
-      "idDocuments": [
-        {
-          "id": 8,
-          "name": "Deed poll certificate"
+    "assessments": [
+      {
+        "id": 466,
+        "prisonerId": 3,
+        "creationDate": "2023-12-07T12:03:54.882331",
+        "assessmentDate": "2023-12-12T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [
+          {
+            "id": 3,
+            "name": "Civil partnership certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-03-19T15:32:37.760045"
+      },
+      {
+        "id": 467,
+        "prisonerId": 3,
+        "creationDate": "2023-12-08T12:22:44.974547",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:22:45.965791"
+      },
+      {
+        "id": 468,
+        "prisonerId": 3,
+        "creationDate": "2023-12-08T12:22:51.998753",
+        "assessmentDate": "2023-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [
+          {
+            "id": 3,
+            "name": "Civil partnership certificate"
+          },
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          },
+          {
+            "id": 6,
+            "name": "Driving licence"
+          },
+          {
+            "id": 8,
+            "name": "Deed poll certificate"
+          },
+          {
+            "id": 1,
+            "name": "Birth certificate"
+          },
+          {
+            "id": 5,
+            "name": "Divorce decree absolute certificate"
+          },
+          {
+            "id": 2,
+            "name": "Marriage certificate"
+          },
+          {
+            "id": 7,
+            "name": "Biometric residence permit"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:22:52.831898"
+      },
+      {
+        "id": 471,
+        "prisonerId": 3,
+        "creationDate": "2023-12-13T09:58:11.030241",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T09:58:12.006963"
+      },
+      {
+        "id": 472,
+        "prisonerId": 3,
+        "creationDate": "2023-12-13T09:58:51.974941",
+        "assessmentDate": "2029-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [],
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T09:58:52.589807"
+      },
+      {
+        "id": 473,
+        "prisonerId": 3,
+        "creationDate": "2023-12-14T09:46:32.807141",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2023-12-14T09:46:34.044021"
+      },
+      {
+        "id": 474,
+        "prisonerId": 3,
+        "creationDate": "2023-12-14T09:47:18.171245",
+        "assessmentDate": "2029-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [],
+        "isDeleted": true,
+        "deletionDate": "2023-12-14T09:47:18.725003"
+      },
+      {
+        "id": 475,
+        "prisonerId": 3,
+        "creationDate": "2023-12-15T09:59:02.212583",
+        "assessmentDate": "2029-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [],
+        "isDeleted": true,
+        "deletionDate": "2023-12-15T09:59:09.615725"
+      },
+      {
+        "id": 476,
+        "prisonerId": 3,
+        "creationDate": "2023-12-19T16:20:39.322509",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2023-12-19T16:20:40.013448"
+      },
+      {
+        "id": 477,
+        "prisonerId": 3,
+        "creationDate": "2023-12-19T16:20:44.514686",
+        "assessmentDate": "2023-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [
+          {
+            "id": 3,
+            "name": "Civil partnership certificate"
+          },
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          },
+          {
+            "id": 6,
+            "name": "Driving licence"
+          },
+          {
+            "id": 8,
+            "name": "Deed poll certificate"
+          },
+          {
+            "id": 1,
+            "name": "Birth certificate"
+          },
+          {
+            "id": 5,
+            "name": "Divorce decree absolute certificate"
+          },
+          {
+            "id": 2,
+            "name": "Marriage certificate"
+          },
+          {
+            "id": 7,
+            "name": "Biometric residence permit"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2023-12-19T16:20:45.082013"
+      },
+      {
+        "id": 478,
+        "prisonerId": 3,
+        "creationDate": "2023-12-19T16:20:49.51905",
+        "assessmentDate": "2029-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [],
+        "isDeleted": true,
+        "deletionDate": "2023-12-19T16:20:50.110067"
+      },
+      {
+        "id": 479,
+        "prisonerId": 3,
+        "creationDate": "2024-01-02T15:14:06.488103",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-02T15:14:07.533454"
+      },
+      {
+        "id": 484,
+        "prisonerId": 3,
+        "creationDate": "2024-01-03T13:40:37.700973",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-03T13:40:38.392826"
+      },
+      {
+        "id": 485,
+        "prisonerId": 3,
+        "creationDate": "2024-01-03T13:40:43.323558",
+        "assessmentDate": "2023-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [
+          {
+            "id": 3,
+            "name": "Civil partnership certificate"
+          },
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          },
+          {
+            "id": 6,
+            "name": "Driving licence"
+          },
+          {
+            "id": 8,
+            "name": "Deed poll certificate"
+          },
+          {
+            "id": 1,
+            "name": "Birth certificate"
+          },
+          {
+            "id": 5,
+            "name": "Divorce decree absolute certificate"
+          },
+          {
+            "id": 2,
+            "name": "Marriage certificate"
+          },
+          {
+            "id": 7,
+            "name": "Biometric residence permit"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-03T13:40:43.878414"
+      },
+      {
+        "id": 486,
+        "prisonerId": 3,
+        "creationDate": "2024-01-03T13:40:48.450048",
+        "assessmentDate": "2029-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [],
+        "isDeleted": true,
+        "deletionDate": "2024-01-03T13:40:49.003974"
+      },
+      {
+        "id": 493,
+        "prisonerId": 3,
+        "creationDate": "2024-01-04T10:11:22.885324",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-04T10:11:23.776884"
+      },
+      {
+        "id": 494,
+        "prisonerId": 3,
+        "creationDate": "2024-01-04T10:11:29.416848",
+        "assessmentDate": "2023-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [
+          {
+            "id": 3,
+            "name": "Civil partnership certificate"
+          },
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          },
+          {
+            "id": 6,
+            "name": "Driving licence"
+          },
+          {
+            "id": 8,
+            "name": "Deed poll certificate"
+          },
+          {
+            "id": 1,
+            "name": "Birth certificate"
+          },
+          {
+            "id": 5,
+            "name": "Divorce decree absolute certificate"
+          },
+          {
+            "id": 2,
+            "name": "Marriage certificate"
+          },
+          {
+            "id": 7,
+            "name": "Biometric residence permit"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-04T10:11:30.006935"
+      },
+      {
+        "id": 495,
+        "prisonerId": 3,
+        "creationDate": "2024-01-04T10:11:36.191399",
+        "assessmentDate": "2029-07-20T00:00:00",
+        "isBankAccountRequired": false,
+        "isIdRequired": false,
+        "idDocuments": [],
+        "isDeleted": true,
+        "deletionDate": "2024-01-04T10:11:36.709929"
+      },
+      {
+        "id": 496,
+        "prisonerId": 3,
+        "creationDate": "2024-01-08T09:38:22.204551",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-08T09:38:23.052624"
+      },
+      {
+        "id": 501,
+        "prisonerId": 3,
+        "creationDate": "2024-01-10T14:47:04.935028",
+        "assessmentDate": "2023-05-21T00:00:00",
+        "isBankAccountRequired": true,
+        "isIdRequired": true,
+        "idDocuments": [
+          {
+            "id": 4,
+            "name": "Adoption certificate"
+          }
+        ],
+        "isDeleted": true,
+        "deletionDate": "2024-01-10T14:47:06.081415"
+      }
+    ],
+    "skippedAssessments": [
+      {
+        "id": 4,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "TRANSFER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER",
+        "creationDate": "2024-05-29T12:58:44.774607"
+      },
+      {
+        "id": 5,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "COMPLETED_IN_OASYS",
+        "moreInfo": "Yeah Yeah Yeah",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-07-01T14:48:06.19158"
+      },
+      {
+        "id": 6,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "COMPLETED_IN_OASYS",
+        "moreInfo": "Yeah Yeah Yeah",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-07-01T14:48:20.66948"
+      },
+      {
+        "id": 7,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "COMPLETED_IN_OASYS",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-07-01T16:32:06.991964"
+      },
+      {
+        "id": 8,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "COMPLETED_IN_OASYS",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_3",
+        "creationDate": "2024-07-01T16:33:34.78719"
+      },
+      {
+        "id": 9,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "EARLY_RELEASE",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-07-02T13:48:40.876175"
+      },
+      {
+        "id": 10,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "EARLY_RELEASE",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-07-29T14:25:15.835359"
+      },
+      {
+        "id": 11,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "s",
+        "createdBy": "TEST_USER_4",
+        "creationDate": "2024-08-05T12:41:19.959675"
+      },
+      {
+        "id": 12,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "thigs",
+        "createdBy": "TEST_USER_3",
+        "creationDate": "2024-08-05T16:01:43.003126"
+      },
+      {
+        "id": 13,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "EARLY_RELEASE",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_3",
+        "creationDate": "2024-08-05T16:02:11.497909"
+      },
+      {
+        "id": 14,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-06T14:13:54.780444"
+      },
+      {
+        "id": 15,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-06T14:43:35.865145"
+      },
+      {
+        "id": 16,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-06T14:45:13.467512"
+      },
+      {
+        "id": 17,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-06T15:35:58.337578"
+      },
+      {
+        "id": 18,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-06T15:44:37.504813"
+      },
+      {
+        "id": 19,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-07T10:58:16.995148"
+      },
+      {
+        "id": 20,
+        "assessmentType": "BCST2",
+        "prisonerId": 3,
+        "reason": "OTHER",
+        "moreInfo": "",
+        "createdBy": "TEST_USER_2",
+        "creationDate": "2024-08-07T11:00:04.397598"
+      }
+    ],
+    "bankApplications": [
+      {
+        "id": 1406,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
         },
-        {
-          "id": 2,
-          "name": "Marriage certificate"
+        "logs": [
+          {
+            "id": 3022,
+            "status": "Pending",
+            "changeDate": "2022-12-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-12-14T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1411,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
         },
-        {
-          "id": 7,
-          "name": "Biometric residence permit"
-        }
-      ],
-      "isDeleted": false,
-      "deletionDate": null
-    },
-    "bankApplication": null,
-    "deliusContact": [
+        "logs": [
+          {
+            "id": 3031,
+            "status": "Pending",
+            "changeDate": "2021-04-12T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-04-12T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1412,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3032,
+            "status": "Pending",
+            "changeDate": "2000-04-12T00:00:00"
+          },
+          {
+            "id": 3033,
+            "status": "Returned incomplete",
+            "changeDate": "2001-04-12T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2000-04-12T00:00:00",
+        "currentStatus": "Returned incomplete",
+        "bankName": "HSBC",
+        "bankResponseDate": "2001-04-12T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1414,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3037,
+            "status": "Pending",
+            "changeDate": "2022-12-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-12-14T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1416,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3040,
+            "status": "Pending",
+            "changeDate": "2021-10-12T00:00:00"
+          },
+          {
+            "id": 3041,
+            "status": "Returned ineligible",
+            "changeDate": "2022-11-18T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-10-12T00:00:00",
+        "currentStatus": "Returned ineligible",
+        "bankName": "Barclays",
+        "bankResponseDate": "2022-11-18T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1418,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3044,
+            "status": "Pending",
+            "changeDate": "2022-09-30T00:00:00"
+          },
+          {
+            "id": 3045,
+            "status": "Account opened",
+            "changeDate": "2022-10-06T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-09-30T00:00:00",
+        "currentStatus": "Account opened",
+        "bankName": "Nationwide",
+        "bankResponseDate": "2022-10-06T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1417,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3042,
+            "status": "Pending",
+            "changeDate": "2021-04-12T00:00:00"
+          },
+          {
+            "id": 3043,
+            "status": "Returned incomplete",
+            "changeDate": "2023-06-08T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-04-12T00:00:00",
+        "currentStatus": "Returned incomplete",
+        "bankName": "Co-op",
+        "bankResponseDate": "2023-06-08T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1420,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3047,
+            "status": "Pending",
+            "changeDate": "2022-12-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-12-14T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1421,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3048,
+            "status": "Pending",
+            "changeDate": "2021-04-12T00:00:00"
+          },
+          {
+            "id": 3049,
+            "status": "Account opened",
+            "changeDate": "2023-06-08T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-04-12T00:00:00",
+        "currentStatus": "Account opened",
+        "bankName": "Santander",
+        "bankResponseDate": "2023-06-08T00:00:00",
+        "isAddedToPersonalItems": true,
+        "addedToPersonalItemsDate": "2022-11-08T00:00:00"
+      },
+      {
+        "id": 1422,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3050,
+            "status": "Pending",
+            "changeDate": "2021-10-12T00:00:00"
+          },
+          {
+            "id": 3051,
+            "status": "Returned ineligible",
+            "changeDate": "2022-11-18T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-10-12T00:00:00",
+        "currentStatus": "Returned ineligible",
+        "bankName": "Barclays",
+        "bankResponseDate": "2022-11-18T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1424,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3054,
+            "status": "Pending",
+            "changeDate": "2000-04-12T00:00:00"
+          },
+          {
+            "id": 3055,
+            "status": "Returned incomplete",
+            "changeDate": "2001-04-12T00:00:00"
+          },
+          {
+            "id": 3056,
+            "status": "Account resubmitted",
+            "changeDate": "2002-04-12T00:00:00"
+          },
+          {
+            "id": 3057,
+            "status": "Account opened",
+            "changeDate": "2002-04-28T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2000-04-12T00:00:00",
+        "currentStatus": "Account opened",
+        "bankName": "HSBC",
+        "bankResponseDate": "2002-04-28T00:00:00",
+        "isAddedToPersonalItems": true,
+        "addedToPersonalItemsDate": "2002-04-29T00:00:00"
+      },
+      {
+        "id": 1426,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3062,
+            "status": "Pending",
+            "changeDate": "2000-04-12T00:00:00"
+          },
+          {
+            "id": 3063,
+            "status": "Returned incomplete",
+            "changeDate": "2001-04-12T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2000-04-12T00:00:00",
+        "currentStatus": "Returned incomplete",
+        "bankName": "HSBC",
+        "bankResponseDate": "2001-04-12T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1428,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3066,
+            "status": "Pending",
+            "changeDate": "2022-12-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-12-14T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1431,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3070,
+            "status": "Pending",
+            "changeDate": "2005-04-12T00:00:00"
+          },
+          {
+            "id": 3071,
+            "status": "Returned incomplete",
+            "changeDate": "2005-05-12T00:00:00"
+          },
+          {
+            "id": 3072,
+            "status": "Account resubmitted",
+            "changeDate": "2005-06-12T00:00:00"
+          },
+          {
+            "id": 3073,
+            "status": "Account declined",
+            "changeDate": "2005-07-12T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2005-04-12T00:00:00",
+        "currentStatus": "Account declined",
+        "bankName": "NatWest",
+        "bankResponseDate": "2005-07-12T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1432,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3074,
+            "status": "Pending",
+            "changeDate": "2022-12-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-12-14T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1433,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3075,
+            "status": "Pending",
+            "changeDate": "2021-04-12T00:00:00"
+          },
+          {
+            "id": 3076,
+            "status": "Account opened",
+            "changeDate": "2023-06-08T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-04-12T00:00:00",
+        "currentStatus": "Account opened",
+        "bankName": "Santander",
+        "bankResponseDate": "2023-06-08T00:00:00",
+        "isAddedToPersonalItems": true,
+        "addedToPersonalItemsDate": "2022-11-08T00:00:00"
+      },
+      {
+        "id": 1436,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3081,
+            "status": "Pending",
+            "changeDate": "2022-09-30T00:00:00"
+          },
+          {
+            "id": 3082,
+            "status": "Account opened",
+            "changeDate": "2022-10-06T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-09-30T00:00:00",
+        "currentStatus": "Account opened",
+        "bankName": "Nationwide",
+        "bankResponseDate": "2022-10-06T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1437,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3083,
+            "status": "Pending",
+            "changeDate": "2021-04-12T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2021-04-12T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1439,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3088,
+            "status": "Pending",
+            "changeDate": "2005-04-12T00:00:00"
+          },
+          {
+            "id": 3089,
+            "status": "Returned incomplete",
+            "changeDate": "2005-05-12T00:00:00"
+          },
+          {
+            "id": 3090,
+            "status": "Account resubmitted",
+            "changeDate": "2005-06-13T00:00:00"
+          },
+          {
+            "id": 3091,
+            "status": "Account declined",
+            "changeDate": "2005-07-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2005-04-12T00:00:00",
+        "currentStatus": "Account declined",
+        "bankName": "NatWest",
+        "bankResponseDate": "2005-07-14T00:00:00",
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null
+      },
+      {
+        "id": 1468,
+        "prisoner": {
+          "id": 3,
+          "nomsId": "A8731DY",
+          "creationDate": "2023-11-17T14:49:58.308566",
+          "prisonId": "CFI",
+          "supportNeedsLegacyProfile": false
+        },
+        "logs": [
+          {
+            "id": 3155,
+            "status": "Pending",
+            "changeDate": "2022-12-14T00:00:00"
+          }
+        ],
+        "applicationSubmittedDate": "2022-12-14T00:00:00",
+        "currentStatus": "Pending",
+        "bankName": "HSBC",
+        "bankResponseDate": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null
+      }
+    ],
+    "deliusContacts": [
       {
         "caseNoteId": "db-2",
         "pathway": "FINANCE_AND_ID",
@@ -192,531 +1278,601 @@
         "occurenceDateTime": "2024-02-14T14:10:55.377441",
         "createdBy": "Test User",
         "text": "This is my case note for Accommodation."
-      },
-      {
-        "caseNoteId": "db-68",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-02-14T14:10:55.913664",
-        "occurenceDateTime": "2024-02-14T14:10:55.913664",
-        "createdBy": "Test User",
-        "text": "Show and tell - Test case note for ATB assessment."
-      },
-      {
-        "caseNoteId": "db-69",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-02-14T14:10:56.246139",
-        "occurenceDateTime": "2024-02-14T14:10:56.246139",
-        "createdBy": "Test User",
-        "text": "Show and tell - Test case note for CFC assessment."
-      },
-      {
-        "caseNoteId": "db-70",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-02-14T14:10:56.452904",
-        "occurenceDateTime": "2024-02-14T14:10:56.452904",
-        "createdBy": "Test User",
-        "text": "Show and tell - Test case note for Drugs and alcohol assessment."
-      },
-      {
-        "caseNoteId": "db-71",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-02-14T14:10:56.67009",
-        "occurenceDateTime": "2024-02-14T14:10:56.67009",
-        "createdBy": "Test User",
-        "text": "Show and tell - Test case note for ESW assessment."
-      },
-      {
-        "caseNoteId": "db-185",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-15T17:04:18.011997",
-        "occurenceDateTime": "2024-03-15T17:04:18.011997",
-        "createdBy": "Test User",
-        "text": "oy8"
-      },
-      {
-        "caseNoteId": "db-186",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-15T17:04:18.182299",
-        "occurenceDateTime": "2024-03-15T17:04:18.182299",
-        "createdBy": "Test User",
-        "text": "upo;j"
-      },
-      {
-        "caseNoteId": "db-187",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-15T17:04:18.343083",
-        "occurenceDateTime": "2024-03-15T17:04:18.343083",
-        "createdBy": "Test User",
-        "text": "ugik"
-      },
-      {
-        "caseNoteId": "db-188",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-15T17:04:18.542375",
-        "occurenceDateTime": "2024-03-15T17:04:18.542375",
-        "createdBy": "Test User",
-        "text": "guyj"
-      },
-      {
-        "caseNoteId": "db-189",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-15T17:04:18.691228",
-        "occurenceDateTime": "2024-03-15T17:04:18.691228",
-        "createdBy": "Test User",
-        "text": "ry"
-      },
-      {
-        "caseNoteId": "db-72",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-02-14T14:10:56.846985",
-        "occurenceDateTime": "2024-02-14T14:10:56.846985",
-        "createdBy": "Test User",
-        "text": "Show and tell - Test case note for Finance and ID assessment."
-      },
-      {
-        "caseNoteId": "db-73",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-02-14T14:10:57.010553",
-        "occurenceDateTime": "2024-02-14T14:10:57.010553",
-        "createdBy": "Test User",
-        "text": "Show and tell - Test case note for Health assessment."
-      },
-      {
-        "caseNoteId": "db-91",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-02-22T11:44:17.039212",
-        "occurenceDateTime": "2024-02-22T11:44:17.039212",
-        "createdBy": "Test User",
-        "text": "will try again"
-      },
-      {
-        "caseNoteId": "db-92",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-02-22T11:44:17.238213",
-        "occurenceDateTime": "2024-02-22T11:44:17.238213",
-        "createdBy": "Test User",
-        "text": "Testing"
-      },
-      {
-        "caseNoteId": "db-93",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-02-22T11:44:17.433536",
-        "occurenceDateTime": "2024-02-22T11:44:17.433536",
-        "createdBy": "Test User",
-        "text": "Testing"
-      },
-      {
-        "caseNoteId": "db-94",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-02-22T11:44:17.60211",
-        "occurenceDateTime": "2024-02-22T11:44:17.60211",
-        "createdBy": "Test User",
-        "text": "Testing"
-      },
-      {
-        "caseNoteId": "db-95",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-02-22T11:44:17.777306",
-        "occurenceDateTime": "2024-02-22T11:44:17.777306",
-        "createdBy": "Test User",
-        "text": "Testing"
-      },
-      {
-        "caseNoteId": "db-96",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-02-22T11:44:17.964861",
-        "occurenceDateTime": "2024-02-22T11:44:17.964861",
-        "createdBy": "Test User",
-        "text": "Testing"
-      },
-      {
-        "caseNoteId": "db-97",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-02-22T11:44:18.15237",
-        "occurenceDateTime": "2024-02-22T11:44:18.15237",
-        "createdBy": "Test User",
-        "text": "Testing"
-      },
-      {
-        "caseNoteId": "db-124",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-01T17:17:54.859729",
-        "occurenceDateTime": "2024-03-01T17:17:54.859729",
-        "createdBy": "Test User",
-        "text": "test1"
-      },
-      {
-        "caseNoteId": "db-125",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-01T17:17:55.170259",
-        "occurenceDateTime": "2024-03-01T17:17:55.170259",
-        "createdBy": "Test User",
-        "text": "test2"
-      },
-      {
-        "caseNoteId": "db-126",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-01T17:17:55.410639",
-        "occurenceDateTime": "2024-03-01T17:17:55.410639",
-        "createdBy": "Test User",
-        "text": "test3"
-      },
-      {
-        "caseNoteId": "db-127",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-01T17:17:55.602014",
-        "occurenceDateTime": "2024-03-01T17:17:55.602014",
-        "createdBy": "Test User",
-        "text": "test4"
-      },
-      {
-        "caseNoteId": "db-128",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-01T17:17:55.789266",
-        "occurenceDateTime": "2024-03-01T17:17:55.789266",
-        "createdBy": "Test User",
-        "text": "test5"
-      },
-      {
-        "caseNoteId": "db-129",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-01T17:17:55.955733",
-        "occurenceDateTime": "2024-03-01T17:17:55.955733",
-        "createdBy": "Test User",
-        "text": "test6"
-      },
-      {
-        "caseNoteId": "db-130",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-01T17:17:56.104653",
-        "occurenceDateTime": "2024-03-01T17:17:56.104653",
-        "createdBy": "Test User",
-        "text": "test7"
-      },
-      {
-        "caseNoteId": "db-162",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-12T11:31:06.915366",
-        "occurenceDateTime": "2024-03-12T11:31:06.915366",
-        "createdBy": "Test User",
-        "text": "N/A"
-      },
-      {
-        "caseNoteId": "db-163",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-12T11:31:07.197449",
-        "occurenceDateTime": "2024-03-12T11:31:07.197449",
-        "createdBy": "Test User",
-        "text": "testing notes"
-      },
-      {
-        "caseNoteId": "db-164",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-12T11:31:07.421199",
-        "occurenceDateTime": "2024-03-12T11:31:07.421199",
-        "createdBy": "Test User",
-        "text": "testing notes"
-      },
-      {
-        "caseNoteId": "db-165",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-12T11:31:07.603067",
-        "occurenceDateTime": "2024-03-12T11:31:07.603067",
-        "createdBy": "Test User",
-        "text": "testing notes"
-      },
-      {
-        "caseNoteId": "db-166",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-12T11:31:07.756943",
-        "occurenceDateTime": "2024-03-12T11:31:07.756943",
-        "createdBy": "Test User",
-        "text": "N/A"
-      },
-      {
-        "caseNoteId": "db-167",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-12T11:31:07.957313",
-        "occurenceDateTime": "2024-03-12T11:31:07.957313",
-        "createdBy": "Test User",
-        "text": "testing"
-      },
-      {
-        "caseNoteId": "db-168",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-12T11:31:08.117843",
-        "occurenceDateTime": "2024-03-12T11:31:08.117843",
-        "createdBy": "Test User",
-        "text": "N/A"
-      },
-      {
-        "caseNoteId": "db-176",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-13T16:04:03.537441",
-        "occurenceDateTime": "2024-03-13T16:04:03.537441",
-        "createdBy": "Test User",
-        "text": "iyh"
-      },
-      {
-        "caseNoteId": "db-177",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-13T16:04:03.825963",
-        "occurenceDateTime": "2024-03-13T16:04:03.825963",
-        "createdBy": "Test User",
-        "text": "hj"
-      },
-      {
-        "caseNoteId": "db-178",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-13T16:04:04.020823",
-        "occurenceDateTime": "2024-03-13T16:04:04.020823",
-        "createdBy": "Test User",
-        "text": "gjb"
-      },
-      {
-        "caseNoteId": "db-179",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-13T16:04:04.210283",
-        "occurenceDateTime": "2024-03-13T16:04:04.210283",
-        "createdBy": "Test User",
-        "text": "req"
-      },
-      {
-        "caseNoteId": "db-180",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-13T16:04:04.378537",
-        "occurenceDateTime": "2024-03-13T16:04:04.378537",
-        "createdBy": "Test User",
-        "text": "h"
-      },
-      {
-        "caseNoteId": "db-181",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-13T16:04:04.549518",
-        "occurenceDateTime": "2024-03-13T16:04:04.549518",
-        "createdBy": "Test User",
-        "text": "hkn"
-      },
-      {
-        "caseNoteId": "db-182",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-13T16:04:04.720618",
-        "occurenceDateTime": "2024-03-13T16:04:04.720618",
-        "createdBy": "Test User",
-        "text": "jbm"
-      },
-      {
-        "caseNoteId": "db-183",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-15T17:04:16.464017",
-        "occurenceDateTime": "2024-03-15T17:04:16.464017",
-        "createdBy": "Test User",
-        "text": "t\r\ne\r\nssss\r\nt"
-      },
-      {
-        "caseNoteId": "db-184",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-15T17:04:17.403392",
-        "occurenceDateTime": "2024-03-15T17:04:17.403392",
-        "createdBy": "Test User",
-        "text": "ou"
-      },
-      {
-        "caseNoteId": "db-204",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-18T13:37:53.377806",
-        "occurenceDateTime": "2024-03-18T13:37:53.377806",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-205",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-18T13:37:53.635811",
-        "occurenceDateTime": "2024-03-18T13:37:53.635811",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-206",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-18T13:37:53.918781",
-        "occurenceDateTime": "2024-03-18T13:37:53.918781",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-207",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-18T13:37:54.100563",
-        "occurenceDateTime": "2024-03-18T13:37:54.100563",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-208",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-18T13:37:54.276376",
-        "occurenceDateTime": "2024-03-18T13:37:54.276376",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-209",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-18T13:37:54.452967",
-        "occurenceDateTime": "2024-03-18T13:37:54.452967",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-210",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-18T13:37:54.620649",
-        "occurenceDateTime": "2024-03-18T13:37:54.620649",
-        "createdBy": "Test User",
-        "text": "a note"
-      },
-      {
-        "caseNoteId": "db-211",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-19T15:06:07.729945",
-        "occurenceDateTime": "2024-03-19T15:06:07.729945",
-        "createdBy": "Test User",
-        "text": "y"
-      },
-      {
-        "caseNoteId": "db-212",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-19T15:06:07.97572",
-        "occurenceDateTime": "2024-03-19T15:06:07.97572",
-        "createdBy": "Test User",
-        "text": "ui"
-      },
-      {
-        "caseNoteId": "db-213",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-19T15:06:08.212556",
-        "occurenceDateTime": "2024-03-19T15:06:08.212556",
-        "createdBy": "Test User",
-        "text": "k"
-      },
-      {
-        "caseNoteId": "db-214",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-19T15:06:08.413357",
-        "occurenceDateTime": "2024-03-19T15:06:08.413357",
-        "createdBy": "Test User",
-        "text": "y"
-      },
-      {
-        "caseNoteId": "db-215",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-19T15:06:08.575172",
-        "occurenceDateTime": "2024-03-19T15:06:08.575172",
-        "createdBy": "Test User",
-        "text": "jol\r\nte\r\nst\r\nft"
-      },
-      {
-        "caseNoteId": "db-216",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-19T15:06:08.74087",
-        "occurenceDateTime": "2024-03-19T15:06:08.74087",
-        "createdBy": "Test User",
-        "text": "iu"
-      },
-      {
-        "caseNoteId": "db-217",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-19T15:06:08.907361",
-        "occurenceDateTime": "2024-03-19T15:06:08.907361",
-        "createdBy": "Test User",
-        "text": "j"
-      },
-      {
-        "caseNoteId": "db-225",
-        "pathway": "ACCOMMODATION",
-        "creationDateTime": "2024-03-21T10:44:52.414203",
-        "occurenceDateTime": "2024-03-21T10:44:52.414203",
-        "createdBy": "Test User",
-        "text": "ui"
-      },
-      {
-        "caseNoteId": "db-226",
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "creationDateTime": "2024-03-21T10:44:52.79264",
-        "occurenceDateTime": "2024-03-21T10:44:52.79264",
-        "createdBy": "Test User",
-        "text": "l"
-      },
-      {
-        "caseNoteId": "db-227",
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "creationDateTime": "2024-03-21T10:44:53.032651",
-        "occurenceDateTime": "2024-03-21T10:44:53.032651",
-        "createdBy": "Test User",
-        "text": "o"
-      },
-      {
-        "caseNoteId": "db-228",
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "creationDateTime": "2024-03-21T10:44:53.21548",
-        "occurenceDateTime": "2024-03-21T10:44:53.21548",
-        "createdBy": "Test User",
-        "text": "u8"
-      },
-      {
-        "caseNoteId": "db-229",
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "creationDateTime": "2024-03-21T10:44:53.384284",
-        "occurenceDateTime": "2024-03-21T10:44:53.384284",
-        "createdBy": "Test User",
-        "text": "nk"
-      },
-      {
-        "caseNoteId": "db-230",
-        "pathway": "FINANCE_AND_ID",
-        "creationDateTime": "2024-03-21T10:44:53.539268",
-        "occurenceDateTime": "2024-03-21T10:44:53.539268",
-        "createdBy": "Test User",
-        "text": "hik"
-      },
-      {
-        "caseNoteId": "db-231",
-        "pathway": "HEALTH",
-        "creationDateTime": "2024-03-21T10:44:53.702249",
-        "occurenceDateTime": "2024-03-21T10:44:53.702249",
-        "createdBy": "Test User",
-        "text": "yu"
       }
     ],
-    "idApplication": {
-      "id": 2159,
-      "prisonerId": 3,
-      "idType": {
-        "id": 7,
-        "name": "Biometric residence permit"
+    "idApplications": [
+      {
+        "id": 1919,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-08T12:28:51.154894",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": true,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": true,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Peru",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:28:51.90739",
+        "dateIdReceived": null
       },
-      "creationDate": "2024-07-23T11:49:07.136436",
-      "applicationSubmittedDate": "2023-12-01T00:00:00",
-      "isPriorityApplication": false,
-      "costOfApplication": 1,
-      "refundAmount": 4564564,
-      "haveGro": null,
-      "isUkNationalBornOverseas": null,
-      "countryBornIn": null,
-      "caseNumber": null,
-      "courtDetails": null,
-      "driversLicenceType": null,
-      "driversLicenceApplicationMadeAt": null,
-      "isAddedToPersonalItems": null,
-      "addedToPersonalItemsDate": null,
-      "status": "Rejected",
-      "statusUpdateDate": "2024-10-30T10:34:44.493661",
-      "isDeleted": false,
-      "deletionDate": null,
-      "dateIdReceived": null
-    },
+      {
+        "id": 1922,
+        "prisonerId": 3,
+        "idType": {
+          "id": 6,
+          "name": "Driving licence"
+        },
+        "creationDate": "2023-12-08T12:29:17.534835",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": "Provisional",
+        "driversLicenceApplicationMadeAt": "Online",
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:29:18.083032",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1923,
+        "prisonerId": 3,
+        "idType": {
+          "id": 7,
+          "name": "Biometric residence permit"
+        },
+        "creationDate": "2023-12-08T12:29:24.022222",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:29:24.601468",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1924,
+        "prisonerId": 3,
+        "idType": {
+          "id": 9,
+          "name": "National Insurance Number letter"
+        },
+        "creationDate": "2023-12-08T12:29:33.020021",
+        "applicationSubmittedDate": "2023-05-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 0,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:29:33.800923",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1925,
+        "prisonerId": 3,
+        "idType": {
+          "id": 2,
+          "name": "Marriage certificate"
+        },
+        "creationDate": "2023-12-08T12:30:48.10173",
+        "applicationSubmittedDate": "2001-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": null,
+        "haveGro": true,
+        "isUkNationalBornOverseas": false,
+        "countryBornIn": "",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:12.74947",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1926,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-08T12:30:49.702901",
+        "applicationSubmittedDate": "2001-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": null,
+        "haveGro": false,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Nigeria",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:13.19598",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1928,
+        "prisonerId": 3,
+        "idType": {
+          "id": 4,
+          "name": "Adoption certificate"
+        },
+        "creationDate": "2023-12-08T12:30:53.462089",
+        "applicationSubmittedDate": "2001-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": null,
+        "haveGro": true,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:13.578219",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1930,
+        "prisonerId": 3,
+        "idType": {
+          "id": 7,
+          "name": "Biometric residence permit"
+        },
+        "creationDate": "2023-12-08T12:30:59.262506",
+        "applicationSubmittedDate": "2020-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:13.997582",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1933,
+        "prisonerId": 3,
+        "idType": {
+          "id": 6,
+          "name": "Driving licence"
+        },
+        "creationDate": "2023-12-08T12:31:05.302474",
+        "applicationSubmittedDate": "2001-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": "Provisional",
+        "driversLicenceApplicationMadeAt": "Online",
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:14.360025",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1934,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-08T12:31:17.148733",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": null,
+        "haveGro": false,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Nigeria",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": false,
+        "addedToPersonalItemsDate": null,
+        "status": "Accepted",
+        "statusUpdateDate": "2023-12-08T12:31:23.214027",
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:23.878014",
+        "dateIdReceived": "1987-04-12T00:00:00"
+      },
+      {
+        "id": 1952,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-13T10:08:25.225799",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": null,
+        "haveGro": false,
+        "isUkNationalBornOverseas": false,
+        "countryBornIn": "",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-14T09:47:48.66745",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1936,
+        "prisonerId": 3,
+        "idType": {
+          "id": 9,
+          "name": "National Insurance Number letter"
+        },
+        "creationDate": "2023-12-08T12:31:40.483135",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 0,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": true,
+        "addedToPersonalItemsDate": "1990-04-12T00:00:00",
+        "status": "Accepted",
+        "statusUpdateDate": "2023-12-08T12:31:44.904215",
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:31:45.514308",
+        "dateIdReceived": "1988-04-12T00:00:00"
+      },
+      {
+        "id": 1939,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-08T12:32:09.854952",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": 500,
+        "haveGro": false,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Peru",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "Rejected",
+        "statusUpdateDate": "2023-12-08T12:32:13.759919",
+        "isDeleted": true,
+        "deletionDate": "2023-12-08T12:32:14.346528",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1940,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-13T10:05:10.093973",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": true,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": true,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Peru",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T10:05:10.833253",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1945,
+        "prisonerId": 3,
+        "idType": {
+          "id": 9,
+          "name": "National Insurance Number letter"
+        },
+        "creationDate": "2023-12-13T10:05:44.400091",
+        "applicationSubmittedDate": "2023-05-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 0,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T10:05:45.102553",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1953,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-14T09:54:13.953981",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": true,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": true,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Peru",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-14T09:54:14.55512",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1947,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-13T10:07:32.028832",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100.99,
+        "refundAmount": null,
+        "haveGro": false,
+        "isUkNationalBornOverseas": false,
+        "countryBornIn": "",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": true,
+        "addedToPersonalItemsDate": "1990-04-12T00:00:00",
+        "status": "Accepted",
+        "statusUpdateDate": "2023-12-13T10:07:36.313087",
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T10:07:36.998186",
+        "dateIdReceived": "1988-04-12T00:00:00"
+      },
+      {
+        "id": 1948,
+        "prisonerId": 3,
+        "idType": {
+          "id": 9,
+          "name": "National Insurance Number letter"
+        },
+        "creationDate": "2023-12-13T10:07:45.314734",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 0,
+        "refundAmount": null,
+        "haveGro": null,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": true,
+        "addedToPersonalItemsDate": "1990-04-12T00:00:00",
+        "status": "Accepted",
+        "statusUpdateDate": "2023-12-13T10:07:49.564026",
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T10:07:50.195322",
+        "dateIdReceived": "1988-04-12T00:00:00"
+      },
+      {
+        "id": 1954,
+        "prisonerId": 3,
+        "idType": {
+          "id": 4,
+          "name": "Adoption certificate"
+        },
+        "creationDate": "2023-12-14T09:54:21.036153",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": true,
+        "costOfApplication": 50,
+        "refundAmount": null,
+        "haveGro": true,
+        "isUkNationalBornOverseas": null,
+        "countryBornIn": null,
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "pending",
+        "statusUpdateDate": null,
+        "isDeleted": true,
+        "deletionDate": "2023-12-14T09:54:21.753997",
+        "dateIdReceived": null
+      },
+      {
+        "id": 1949,
+        "prisonerId": 3,
+        "idType": {
+          "id": 1,
+          "name": "Birth certificate"
+        },
+        "creationDate": "2023-12-13T10:07:56.107629",
+        "applicationSubmittedDate": "1987-04-12T00:00:00",
+        "isPriorityApplication": false,
+        "costOfApplication": 100,
+        "refundAmount": 500,
+        "haveGro": false,
+        "isUkNationalBornOverseas": true,
+        "countryBornIn": "Peru",
+        "caseNumber": null,
+        "courtDetails": null,
+        "driversLicenceType": null,
+        "driversLicenceApplicationMadeAt": null,
+        "isAddedToPersonalItems": null,
+        "addedToPersonalItemsDate": null,
+        "status": "Rejected",
+        "statusUpdateDate": "2023-12-13T10:07:59.338716",
+        "isDeleted": true,
+        "deletionDate": "2023-12-13T10:07:59.949815",
+        "dateIdReceived": null
+      }
+    ],
+    "pathwayStatus": [
+      {
+        "id": 57,
+        "prisonerId": 3,
+        "pathway": "ACCOMMODATION",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.637857"
+      },
+      {
+        "id": 58,
+        "prisonerId": 3,
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.648554"
+      },
+      {
+        "id": 59,
+        "prisonerId": 3,
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.682501"
+      },
+      {
+        "id": 60,
+        "prisonerId": 3,
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.687074"
+      },
+      {
+        "id": 61,
+        "prisonerId": 3,
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.691797"
+      },
+      {
+        "id": 62,
+        "prisonerId": 3,
+        "pathway": "FINANCE_AND_ID",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.697225"
+      },
+      {
+        "id": 63,
+        "prisonerId": 3,
+        "pathway": "HEALTH",
+        "status": "NOT_STARTED",
+        "updatedDate": "2025-05-02T11:59:52.701435"
+      }
+    ],
     "statusSummary": [
       {
         "type": "BCST2",
@@ -785,6 +1941,1753 @@
         ]
       }
     ],
-    "resettlementAssessment": []
+    "resettlementAssessments": [
+      {
+        "assessmentType": "RESETTLEMENT_PLAN",
+        "lastUpdated": "2024-10-17T15:23:48.573839",
+        "updatedBy": "Test User 5",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have a bank account?",
+            "answer": "No answer provided",
+            "originalPageId": "FINANCE_AND_ID_REPORT"
+          },
+          {
+            "questionTitle": "What ID documents does the person in prison have?",
+            "answer": "No answer provided",
+            "originalPageId": "FINANCE_AND_ID_REPORT"
+          },
+          {
+            "questionTitle": "What benefits was the person in prison receiving before custody?",
+            "answer": "No answer provided",
+            "originalPageId": "FINANCE_AND_ID_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any debts or arrears?",
+            "answer": "No answer provided",
+            "originalPageId": "FINANCE_AND_ID_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-03-26T10:27:25.362736",
+        "updatedBy": "Test User 3",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "No permanent or fixed address",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "Does not have anywhere to live",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-03-26T10:27:32.029722",
+        "updatedBy": "Test User 3",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have any issues managing their emotions?",
+            "answer": "No answer provided",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any issues with gambling?",
+            "answer": "No answer provided",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "RESETTLEMENT_PLAN",
+        "lastUpdated": "2024-10-17T11:59:07.814011",
+        "updatedBy": "Test User 5",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "Hostel",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Enter the address",
+            "answer": "test1\nlondon\ntest",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "Does not have anywhere to live",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "Cancel a tenancy\nSet up payment for rent arrears\nAnother support need",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-03-26T10:27:57.296694",
+        "updatedBy": "Test User 3",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
+            "answer": "No answer provided",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?",
+            "answer": "No answer provided",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-04-10T12:49:46.0186",
+        "updatedBy": "Test User 3",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "No answer provided",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "No answer provided",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-14T16:07:59.741463",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "No answer provided",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "No answer provided",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-02-14T11:25:06.381601",
+        "updatedBy": "Test User 3",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
+            "answer": "No",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?",
+            "answer": "No",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "Something",
+            "originalPageId": "HEALTH_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-16T13:22:27.489137",
+        "updatedBy": "Test User 6",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "Private housing rented by them",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Enter the address",
+            "answer": "Address line 1\nTown or city\nPostcode",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "No answer provided",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-14T16:08:12.33665",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have any issues managing their emotions?",
+            "answer": "No answer provided",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any issues with gambling?",
+            "answer": "No answer provided",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-14T16:08:43.268705",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have a partner or spouse?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have parental responsibility for any children under 16?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Is the person in prison the primary carer for any children under 16?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Are children's services involved with the person in prison and the children they look after?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have caring responsibilities for any adults?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Are social services involved with the person in prison and any adults they provide care for?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever received support from social services or been in care?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have support from family, friends or their community outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison had any involvement in gang activity?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Is the person in prison under threat outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the victim of domestic abuse?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the perpetrator of domestic abuse?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the victim of sexual abuse?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the perpetrator of sexual abuse?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever worked in the sex industry?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-03-26T10:28:23.3446",
+        "updatedBy": "Test User 3",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?",
+            "answer": "No answer provided",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "HEALTH_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2025-04-10T14:36:05.659854",
+        "updatedBy": "Test User 7",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "No permanent or fixed address",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "No answer provided",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Additional details",
+            "answer": "",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-18T12:02:12.640915",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have a partner or spouse?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have parental responsibility for any children under 16?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Is the person in prison the primary carer for any children under 16?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Are children's services involved with the person in prison and the children they look after?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have caring responsibilities for any adults?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Are social services involved with the person in prison and any adults they provide care for?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever received support from social services or been in care?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have support from family, friends or their community outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison had any involvement in gang activity?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Is the person in prison under threat outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the victim of domestic abuse?",
+            "answer": "No",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the perpetrator of domestic abuse?",
+            "answer": "No",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the victim of sexual abuse?",
+            "answer": "No",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever been the perpetrator of sexual abuse?",
+            "answer": "No",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Has the person in prison ever worked in the sex industry?",
+            "answer": "No",
+            "originalPageId": "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-18T12:02:24.204718",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
+            "answer": "No",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?",
+            "answer": "No",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-18T11:51:08.574637",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?",
+            "answer": "No answer provided",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "RESETTLEMENT_PLAN",
+        "lastUpdated": "2024-10-11T10:33:18.759195",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Where did the person in prison live before custody?",
+            "answer": "Private housing rented by them",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Enter the address",
+            "answer": "1\n1\n1\n1\n1",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Where will the person in prison live when they are released?",
+            "answer": "Return to their previous address",
+            "originalPageId": "ACCOMMODATION_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "RESETTLEMENT_PLAN",
+        "lastUpdated": "2024-10-11T10:37:09.533058",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have any issues managing their emotions?",
+            "answer": "No answer provided",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any issues with gambling?",
+            "answer": "No answer provided",
+            "originalPageId": "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "RESETTLEMENT_PLAN",
+        "lastUpdated": "2024-10-11T10:38:49.014097",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
+            "answer": "No answer provided",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?",
+            "answer": "No answer provided",
+            "originalPageId": "HEALTH_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      },
+      {
+        "assessmentType": "BCST2",
+        "lastUpdated": "2024-10-14T16:08:58.649761",
+        "updatedBy": "Test  User 4",
+        "questionsAndAnswers": [
+          {
+            "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
+            "answer": "No answer provided",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?",
+            "answer": "No answer provided",
+            "originalPageId": "DRUGS_AND_ALCOHOL_REPORT"
+          },
+          {
+            "questionTitle": "Support needs",
+            "answer": "No support needs identified",
+            "originalPageId": "SUPPORT_REQUIREMENTS"
+          }
+        ]
+      }
+    ],
+    "supportNeeds": [
+      {
+        "id": 15,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 48,
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "section": "Specialist support",
+          "title": "Support for care leavers",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:25:55.225693",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.289883",
+        "latestUpdateId": 20
+      },
+      {
+        "id": 16,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 56,
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "section": "Support in prison",
+          "title": "No prison drugs and alcohol support needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:26:17.731525",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.289942",
+        "latestUpdateId": null
+      },
+      {
+        "id": 17,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 62,
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "section": "Support in the community",
+          "title": "No community drug and alcohol support needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:26:17.738277",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.289996",
+        "latestUpdateId": null
+      },
+      {
+        "id": 203,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 11,
+          "pathway": "ACCOMMODATION",
+          "section": "Moving to new accommodation",
+          "title": "No new accommodation support needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User 2",
+        "createdDate": "2025-03-27T09:39:51.774528",
+        "deleted": true,
+        "deletedDate": "2025-03-27T10:03:42.748022",
+        "latestUpdateId": null
+      },
+      {
+        "id": 18,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 53,
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "section": "Support in prison",
+          "title": "Support for drug issues in prison",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:26:43.654701",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.290054",
+        "latestUpdateId": 21
+      },
+      {
+        "id": 19,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 63,
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "section": "Advice",
+          "title": "Advice about employment, education and training options",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.601625",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.290105",
+        "latestUpdateId": 22
+      },
+      {
+        "id": 20,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 68,
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "section": "Employment",
+          "title": "Help to find a job for release",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.620634",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.290167",
+        "latestUpdateId": 23
+      },
+      {
+        "id": 21,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 69,
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "section": "Employment",
+          "title": "Support to create or update a CV",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.632235",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.290263",
+        "latestUpdateId": 24
+      },
+      {
+        "id": 22,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 75,
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "section": "Education and training",
+          "title": "Help to find education or training for release",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.643326",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.330421",
+        "latestUpdateId": 25
+      },
+      {
+        "id": 23,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 82,
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "section": "Learning support",
+          "title": "No learning support needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.654295",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.330732",
+        "latestUpdateId": null
+      },
+      {
+        "id": 24,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 85,
+          "pathway": "FINANCE_AND_ID",
+          "section": "Finance",
+          "title": "Support to identify all financial obligations",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:28:33.377579",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.33083",
+        "latestUpdateId": 26
+      },
+      {
+        "id": 25,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 90,
+          "pathway": "FINANCE_AND_ID",
+          "section": "ID",
+          "title": "Apply for ID documents",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:28:33.387955",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.330894",
+        "latestUpdateId": 27
+      },
+      {
+        "id": 26,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 99,
+          "pathway": "FINANCE_AND_ID",
+          "section": "Benefits",
+          "title": "No benefits support needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:28:33.396811",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.330946",
+        "latestUpdateId": null
+      },
+      {
+        "id": 204,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 15,
+          "pathway": "ACCOMMODATION",
+          "section": "Accommodation related debt and arrears",
+          "title": "No accommodation related debt and arrears support needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User 2",
+        "createdDate": "2025-03-27T09:39:51.777972",
+        "deleted": true,
+        "deletedDate": "2025-03-27T10:03:42.748169",
+        "latestUpdateId": null
+      },
+      {
+        "id": 27,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 95,
+          "pathway": "FINANCE_AND_ID",
+          "section": "Debt support and advice",
+          "title": "No debt support and advice needs identified",
+          "hidden": false,
+          "excludeFromCount": true,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:28:33.402077",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.330997",
+        "latestUpdateId": null
+      },
+      {
+        "id": 202,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 1,
+          "pathway": "ACCOMMODATION",
+          "section": "Accommodation before custody",
+          "title": "End a tenancy",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User 2",
+        "createdDate": "2025-03-27T09:39:51.762384",
+        "deleted": true,
+        "deletedDate": "2025-03-27T10:03:42.748216",
+        "latestUpdateId": 448
+      },
+      {
+        "id": 28,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 101,
+          "pathway": "HEALTH",
+          "section": "Support in prison",
+          "title": "Support with a mental health need in prison",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:30:16.632489",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.331045",
+        "latestUpdateId": 28
+      },
+      {
+        "id": 29,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 105,
+          "pathway": "HEALTH",
+          "section": "Support in the community",
+          "title": "Support with a mental health need in the community",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:30:16.645216",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.331093",
+        "latestUpdateId": 29
+      },
+      {
+        "id": 30,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 109,
+          "pathway": "HEALTH",
+          "section": "Health admin",
+          "title": "Help to register with a GP surgery",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:30:16.655708",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.331142",
+        "latestUpdateId": 30
+      },
+      {
+        "id": 7,
+        "prisonerId": 3,
+        "supportNeed": {
+          "id": 1,
+          "pathway": "ACCOMMODATION",
+          "section": "Accommodation before custody",
+          "title": "End a tenancy",
+          "hidden": false,
+          "excludeFromCount": false,
+          "allowOtherDetail": false,
+          "createdDate": "2025-01-17T11:55:43.995545",
+          "deleted": false,
+          "deletedDate": null
+        },
+        "otherDetail": null,
+        "createdBy": "Test User 3",
+        "createdDate": "2025-02-24T12:36:51.433347",
+        "deleted": true,
+        "deletedDate": "2025-03-03T12:10:57.331193",
+        "latestUpdateId": 35
+      }
+    ],
+    "supportNeedUpdates": [
+      {
+        "id": 57,
+        "prisonerSupportNeedId": 35,
+        "createdBy": "Test User 4",
+        "createdDate": "2025-03-03T12:31:20.210495",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 58,
+        "prisonerSupportNeedId": 36,
+        "createdBy": "Test User 4",
+        "createdDate": "2025-03-03T12:31:20.216476",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": false,
+        "isProbation": true,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 59,
+        "prisonerSupportNeedId": 37,
+        "createdBy": "Test User 4",
+        "createdDate": "2025-03-03T12:31:20.223054",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 60,
+        "prisonerSupportNeedId": 35,
+        "createdBy": "Test User 4",
+        "createdDate": "2025-03-03T12:32:23.414394",
+        "updateText": "New driving licence arrived and ready for John on release.",
+        "status": "MET",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 61,
+        "prisonerSupportNeedId": 33,
+        "createdBy": "Test User 2",
+        "createdDate": "2025-03-04T09:25:08.044641",
+        "updateText": "Support need removed because of profile reset\n\nReason for reset: /",
+        "status": null,
+        "isPrison": false,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 62,
+        "prisonerSupportNeedId": 34,
+        "createdBy": "Test User 2",
+        "createdDate": "2025-03-04T09:25:08.044648",
+        "updateText": "Support need removed because of profile reset\n\nReason for reset: /",
+        "status": null,
+        "isPrison": false,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 63,
+        "prisonerSupportNeedId": 36,
+        "createdBy": "Test User 2",
+        "createdDate": "2025-03-04T09:25:08.04465",
+        "updateText": "Support need removed because of profile reset\n\nReason for reset: /",
+        "status": null,
+        "isPrison": false,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 13,
+        "prisonerSupportNeedId": 7,
+        "createdBy": "Test User 3",
+        "createdDate": "2025-02-24T12:36:51.448002",
+        "updateText": "This is the first update.",
+        "status": "NOT_STARTED",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 14,
+        "prisonerSupportNeedId": 8,
+        "createdBy": "Test User 3",
+        "createdDate": "2025-02-24T12:36:51.461941",
+        "updateText": "This has already been met.",
+        "status": "MET",
+        "isPrison": true,
+        "isProbation": true,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 15,
+        "prisonerSupportNeedId": 10,
+        "createdBy": "Test User 3",
+        "createdDate": "2025-02-24T12:36:51.480667",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": false,
+        "isProbation": true,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 16,
+        "prisonerSupportNeedId": 7,
+        "createdBy": "Test User 3",
+        "createdDate": "2025-02-24T12:38:06.435035",
+        "updateText": "This is now in progress. Raised request with local council.",
+        "status": "IN_PROGRESS",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 18,
+        "prisonerSupportNeedId": 12,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:25:55.196403",
+        "updateText": "",
+        "status": "NOT_STARTED",
+        "isPrison": false,
+        "isProbation": true,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 19,
+        "prisonerSupportNeedId": 13,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:25:55.212876",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 20,
+        "prisonerSupportNeedId": 15,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:25:55.227384",
+        "updateText": "",
+        "status": "DECLINED",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 21,
+        "prisonerSupportNeedId": 18,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:26:43.657657",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 22,
+        "prisonerSupportNeedId": 19,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.608312",
+        "updateText": "",
+        "status": "NOT_STARTED",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 23,
+        "prisonerSupportNeedId": 20,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.622777",
+        "updateText": "",
+        "status": "IN_PROGRESS",
+        "isPrison": true,
+        "isProbation": true,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 24,
+        "prisonerSupportNeedId": 21,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.634262",
+        "updateText": "",
+        "status": "NOT_STARTED",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 25,
+        "prisonerSupportNeedId": 22,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:27:48.645241",
+        "updateText": "",
+        "status": "NOT_STARTED",
+        "isPrison": false,
+        "isProbation": true,
+        "deleted": false,
+        "deletedDate": null
+      },
+      {
+        "id": 26,
+        "prisonerSupportNeedId": 24,
+        "createdBy": "Test User",
+        "createdDate": "2025-02-26T14:28:33.380177",
+        "updateText": "",
+        "status": "NOT_STARTED",
+        "isPrison": true,
+        "isProbation": false,
+        "deleted": false,
+        "deletedDate": null
+      }
+    ],
+    "caseAllocations": [
+      {
+        "id": 1,
+        "prisonerId": 3,
+        "staffId": 487640,
+        "staffFirstname": "Matthew",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-02T10:28:06.39195",
+        "deletionDate": "2024-12-02T10:29:13.317549"
+      },
+      {
+        "id": 4,
+        "prisonerId": 3,
+        "staffId": 487430,
+        "staffFirstname": "Tom",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-02T11:43:35.416189",
+        "deletionDate": "2024-12-03T10:39:52.670164"
+      },
+      {
+        "id": 14,
+        "prisonerId": 3,
+        "staffId": 487430,
+        "staffFirstname": "Tom",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-03T10:41:05.498937",
+        "deletionDate": "2024-12-03T15:32:05.764957"
+      },
+      {
+        "id": 57,
+        "prisonerId": 3,
+        "staffId": 487640,
+        "staffFirstname": "Matthew",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-03T15:32:05.765087",
+        "deletionDate": "2024-12-03T15:43:48.953564"
+      },
+      {
+        "id": 58,
+        "prisonerId": 3,
+        "staffId": 487640,
+        "staffFirstname": "Matthew",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-03T16:29:15.127722",
+        "deletionDate": "2024-12-03T16:29:26.487564"
+      },
+      {
+        "id": 59,
+        "prisonerId": 3,
+        "staffId": 487735,
+        "staffFirstname": "Lucie",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-03T16:29:26.497828",
+        "deletionDate": "2024-12-09T11:07:54.894265"
+      },
+      {
+        "id": 68,
+        "prisonerId": 3,
+        "staffId": 487735,
+        "staffFirstname": "Lucie",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-09T11:08:10.571795",
+        "deletionDate": "2024-12-11T14:58:21.51875"
+      },
+      {
+        "id": 72,
+        "prisonerId": 3,
+        "staffId": 487735,
+        "staffFirstname": "Lucie",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-11T14:58:53.799009",
+        "deletionDate": "2024-12-12T15:06:52.380045"
+      },
+      {
+        "id": 74,
+        "prisonerId": 3,
+        "staffId": 487735,
+        "staffFirstname": "Lucie",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-12T15:07:01.124749",
+        "deletionDate": "2024-12-16T16:37:44.947298"
+      },
+      {
+        "id": 78,
+        "prisonerId": 3,
+        "staffId": 487430,
+        "staffFirstname": "Tom",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-16T17:10:49.697264",
+        "deletionDate": "2024-12-19T15:03:06.790378"
+      },
+      {
+        "id": 79,
+        "prisonerId": 3,
+        "staffId": 487354,
+        "staffFirstname": "Abdul",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-19T15:03:26.858993",
+        "deletionDate": "2024-12-19T15:03:42.462837"
+      },
+      {
+        "id": 83,
+        "prisonerId": 3,
+        "staffId": 486654,
+        "staffFirstname": "Deborah",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-19T15:03:42.463126",
+        "deletionDate": "2024-12-19T15:03:52.323453"
+      },
+      {
+        "id": 86,
+        "prisonerId": 3,
+        "staffId": 486654,
+        "staffFirstname": "Deborah",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-19T15:55:51.077534",
+        "deletionDate": "2024-12-19T15:55:59.829444"
+      },
+      {
+        "id": 89,
+        "prisonerId": 3,
+        "staffId": 487354,
+        "staffFirstname": "Abdul",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2024-12-20T10:46:04.083082",
+        "deletionDate": "2024-12-20T10:46:41.530228"
+      },
+      {
+        "id": 93,
+        "prisonerId": 3,
+        "staffId": 487430,
+        "staffFirstname": "Tom",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-01-06T15:36:42.55872",
+        "deletionDate": "2025-02-03T11:41:19.869944"
+      },
+      {
+        "id": 100,
+        "prisonerId": 3,
+        "staffId": 487430,
+        "staffFirstname": "Tom",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-02-03T11:41:19.878122",
+        "deletionDate": "2025-02-11T09:57:10.530251"
+      },
+      {
+        "id": 103,
+        "prisonerId": 3,
+        "staffId": 487411,
+        "staffFirstname": "James",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-02-11T09:57:10.53119",
+        "deletionDate": "2025-02-11T10:00:24.223956"
+      },
+      {
+        "id": 104,
+        "prisonerId": 3,
+        "staffId": 487430,
+        "staffFirstname": "Tom",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-02-11T10:00:24.225826",
+        "deletionDate": "2025-03-12T11:54:57.225085"
+      },
+      {
+        "id": 129,
+        "prisonerId": 3,
+        "staffId": 487411,
+        "staffFirstname": "James",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-03-12T11:54:57.22684",
+        "deletionDate": "2025-03-13T10:57:28.974338"
+      },
+      {
+        "id": 133,
+        "prisonerId": 3,
+        "staffId": 487735,
+        "staffFirstname": "Lucie",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-03-26T20:24:17.996296",
+        "deletionDate": "2025-03-26T20:30:04.432017"
+      },
+      {
+        "id": 143,
+        "prisonerId": 3,
+        "staffId": 488087,
+        "staffFirstname": "Anne",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-05-01T15:32:59.725985",
+        "deletionDate": "2025-05-01T15:33:06.334948"
+      },
+      {
+        "id": 163,
+        "prisonerId": 3,
+        "staffId": 488087,
+        "staffFirstname": "Anne",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-05-01T15:33:06.335493",
+        "deletionDate": "2025-05-01T15:41:16.3904"
+      },
+      {
+        "id": 181,
+        "prisonerId": 3,
+        "staffId": 488087,
+        "staffFirstname": "Anne",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-05-01T15:41:16.390755",
+        "deletionDate": "2025-05-02T12:17:40.502457"
+      },
+      {
+        "id": 185,
+        "prisonerId": 3,
+        "staffId": 488087,
+        "staffFirstname": "Anne",
+        "staffLastname": "User",
+        "isDeleted": false,
+        "creationDate": "2025-05-02T12:17:58.132213",
+        "deletionDate": null
+      },
+      {
+        "id": 183,
+        "prisonerId": 3,
+        "staffId": 488087,
+        "staffFirstname": "Anne",
+        "staffLastname": "User",
+        "isDeleted": true,
+        "creationDate": "2025-05-02T12:17:40.506156",
+        "deletionDate": "2025-05-02T12:17:58.131987"
+      }
+    ],
+    "profileTags": [
+      {
+        "id": 1,
+        "prisonerId": 3,
+        "profileTags": {
+          "tags": [
+            "NO_FIXED_ABODE"
+          ]
+        },
+        "updatedDate": "2020-01-01T00:00:00",
+        "tags": {
+          "tags": [
+            "NO_FIXED_ABODE"
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "prisonerId": 3,
+        "profileTags": {
+          "tags": [
+            "HELP_TO_CONTACT_BANK"
+          ]
+        },
+        "updatedDate": "2020-01-01T00:00:00",
+        "tags": {
+          "tags": [
+            "HELP_TO_CONTACT_BANK"
+          ]
+        }
+      }
+    ],
+    "todoItems": [
+      {
+        "id": "f2b40916-7399-4491-bf96-03b15d114a4d",
+        "prisonerId": 3,
+        "title": "Title",
+        "notes": "This is a to do item",
+        "dueDate": "2030-01-01",
+        "completed": false,
+        "createdByUrn": "999999",
+        "updatedByUrn": "999999",
+        "creationDate": "2020-09-01T12:00:00",
+        "updatedAt": "2020-09-01T12:00:00"
+      }
+    ],
+    "documents": [
+      {
+        "id": 19,
+        "prisonerId": 3,
+        "originalDocumentKey": "5b8a0f73-37c3-450b-8ec6-45c46c758037",
+        "pdfDocumentKey": "5b8a0f73-37c3-450b-8ec6-45c46c758037",
+        "creationDate": "2024-07-29T11:06:47.772572",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Certificate.pdf",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 20,
+        "prisonerId": 3,
+        "originalDocumentKey": "9bcc8d4f-29c0-4532-b15d-7c5ea971c1f8",
+        "pdfDocumentKey": "9bcc8d4f-29c0-4532-b15d-7c5ea971c1f8",
+        "creationDate": "2024-07-29T11:07:40.661239",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Certificate2.pdf",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 21,
+        "prisonerId": 3,
+        "originalDocumentKey": "81b1eaa6-3393-42d6-a61b-d261c57284da",
+        "pdfDocumentKey": "81b1eaa6-3393-42d6-a61b-d261c57284da",
+        "creationDate": "2024-07-29T11:08:06.348404",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Certificate2.pdf",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 46,
+        "prisonerId": 3,
+        "originalDocumentKey": "8a0c97b5-23bd-4c6b-bce0-f26dbd2715ea",
+        "pdfDocumentKey": "137c08be-f84c-445b-8fc6-124fb2f943be",
+        "creationDate": "2024-08-19T13:25:39.410593",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 47,
+        "prisonerId": 3,
+        "originalDocumentKey": "9cba26df-272d-47b4-98f7-b58c69f0c8c6",
+        "pdfDocumentKey": "5645293a-e989-418d-9aa4-a59e0ec8794b",
+        "creationDate": "2024-08-19T13:26:14.929955",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 48,
+        "prisonerId": 3,
+        "originalDocumentKey": "7eb35321-633b-4e25-b013-b2c50b04463f",
+        "pdfDocumentKey": "8bd6359b-950f-4dca-88fd-755fe62a8326",
+        "creationDate": "2024-08-19T13:27:07.987863",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 49,
+        "prisonerId": 3,
+        "originalDocumentKey": "39d0ca2a-fde4-4430-972d-63da3a1e7d28",
+        "pdfDocumentKey": "79106d15-03e2-41c8-bd30-7d0988652288",
+        "creationDate": "2024-08-19T13:27:49.331453",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 50,
+        "prisonerId": 3,
+        "originalDocumentKey": "61ec58ad-b314-459a-81e7-070d4c18bb2f",
+        "pdfDocumentKey": "f27e934e-f438-4a37-bd6e-f24235cde9d1",
+        "creationDate": "2024-08-19T13:28:19.494518",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 51,
+        "prisonerId": 3,
+        "originalDocumentKey": "fb1b2cf9-6388-4ee1-b72a-c8035af5e006",
+        "pdfDocumentKey": "4f59e065-5bd7-4a00-b1d7-a70aa3f4eb28",
+        "creationDate": "2024-08-19T13:29:20.833399",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 52,
+        "prisonerId": 3,
+        "originalDocumentKey": "4e162cc6-3b5b-47bc-a977-91b57d56291d",
+        "pdfDocumentKey": "1fe513cc-bf12-4e05-9114-dcc9420e31b6",
+        "creationDate": "2024-08-19T13:30:09.788677",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "Doc1.docx",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 69,
+        "prisonerId": 3,
+        "originalDocumentKey": "8d790afe-24f6-4711-b7d7-b90c401edc48",
+        "pdfDocumentKey": "8d790afe-24f6-4711-b7d7-b90c401edc48",
+        "creationDate": "2024-09-17T13:16:15.40849",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "LicenceConditionsExample.pdf",
+        "isDeleted": false,
+        "deletionDate": null
+      },
+      {
+        "id": 144,
+        "prisonerId": 3,
+        "originalDocumentKey": "66c13943-3f41-46e1-81d6-39c369d77282",
+        "pdfDocumentKey": "66c13943-3f41-46e1-81d6-39c369d77282",
+        "creationDate": "2024-12-03T11:29:00.517754",
+        "category": "LICENCE_CONDITIONS",
+        "originalDocumentFileName": "2023 GCHQ Christmas Challenge.pdf",
+        "isDeleted": false,
+        "deletionDate": null
+      }
+    ]
   }
 }

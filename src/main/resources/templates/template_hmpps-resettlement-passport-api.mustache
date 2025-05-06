@@ -2,7 +2,7 @@
 {{#.}}
     {{#prisoner}}
         <h2>Prisoner</h2>
-        <br>
+        <br/>
         <table class="data-table">
             <tr>
                 <td class="data-column-35">Case Reference Number</td>
@@ -29,10 +29,10 @@
         </table>
     {{/prisoner}}
 
-    {{#assessment}}
-        <br>
-        <h2>Assessment Information</h2>
-        <br>
+    <br/>
+    <h2>Assessment Information</h2>
+    {{#assessments}}
+        <h3>Assessment</h3>
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Prisoner ID</td>
@@ -61,9 +61,9 @@
                 <td></td>
             </tr>
         </table>
-        <br>
+        <br/>
         <h4>ID Documents</h4>
-        <br>
+        <br/>
         <table class="data-table">
             <tr>
                 <td class="data-column-50">Document name</td>
@@ -79,12 +79,50 @@
             </tr>
         {{/idDocuments}}
         </table>
-    {{/assessment}}
+    {{/assessments}}
+    {{^assessments}}
+        <p>No Data Held</p>
+    {{/assessments}}
 
-    <br>
-    {{#bankApplication}}
-        <h2>Bank Application</h2>
-        <br>
+    <br/>
+    <h2>Skipped Assessments</h2>
+    {{#skippedAssessments}}
+        <h3>Skipped Assessment</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Prisoner ID</td>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-25">Created by</td>
+                <td class="data-column-25">Creation date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ getUserLastName createdBy }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Assessment type</td>
+                <td class="data-column-25">Reason</td>
+                <td class="data-column-50">More Info</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue assessmentType }}</td>
+                <td>{{ optionalValue reason }}</td>
+                <td>{{ optionalValue moreInfo }}</td>
+            </tr>
+        </table>
+    {{/skippedAssessments}}
+    {{^skippedAssessments}}
+        <p>No Data Held</p>
+    {{/skippedAssessments}}
+
+    <br/>
+    <h2>Bank Applications</h2>
+    {{#bankApplications}}
+        <h3>Bank Application</h3>
         <table class="data-table">
             <tr>
                 <td class="data-column-20">ID</td>
@@ -112,9 +150,9 @@
                 <td>{{ optionalValue (formatDate addedToPersonalItemsDate) }}</td>
             </tr>
         </table>
-        <br>
+        <br/>
         <h4>Logs</h4>
-        <br>
+        <br/>
         <table class="data-table">
             <tr>
                 <td class="data-column-25">ID</td>
@@ -136,13 +174,17 @@
             </tr>
         {{/logs}}
         </table>
-    {{/bankApplication}}
-    <br>
-    <h2>Probation contact</h2>
-    {{#deliusContact}}
-        <br>
+    {{/bankApplications}}
+    {{^bankApplications}}
+        <p>No Data Held</p>
+    {{/bankApplications}}
+
+    <br/>
+    <h2>Probation contacts</h2>
+    {{#deliusContacts}}
+        <br/>
         <h4>Case note ID {{ optionalValue caseNoteId }}</h4>
-        <br>
+        <br/>
         <table class="data-table">
             <tr>
                 <td class="data-column-25">Pathway</td>
@@ -165,11 +207,15 @@
                 <td>{{ optionalValue text }}</td>
             </tr>
         </table>
-    {{/deliusContact}}
+    {{/deliusContacts}}
+    {{^deliusContacts}}
+        <p>No Data Held</p>
+    {{/deliusContacts}}
 
-    {{#idApplication}}
-        <br>
-        <h2>ID Application</h2>
+    <br/>
+    <h2>ID Applications</h2>
+    {{#idApplications}}
+        <h3>ID Application</h3>
         {{#idType}}
             <h4>ID Type</h4>
             <table class="data-table">
@@ -181,7 +227,7 @@
                 </tr>
             </table>
         {{/idType}}
-        <br>
+        <br/>
         <table class="data-table">
             <tr>
                 <td class="data-column-30">Creation date</td>
@@ -254,15 +300,19 @@
                 <td></td>
             </tr>
         </table>
-    {{/idApplication}}
-    <br>
+    {{/idApplications}}
+    {{^idApplications}}
+        <p>No Data Held</p>
+    {{/idApplications}}
+
+    <br/>
     <h2>Status summary</h2>
     {{#statusSummary}}
-        <br>
+        <br/>
         <table class="summary-list">
             <tr><td>Type</td><td>{{ optionalValue ttype }}</td></tr>
         </table>
-        <br>
+        <br/>
         <table class="data-table">
             <tr>
                 <td class="data-column-50">Pathway</td>
@@ -285,87 +335,271 @@
     {{^statusSummary}}
         <p>No Data Held</p>
     {{/statusSummary}}
-    <br>
-    <h2>Resettlement Assessment</h2>
-    {{#resettlementAssessment}}
-        {{#originalAssessment}}
-            <br>
-            <h3>Original Assessment</h3>
-            <br>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-30">Assessment type</td>
-                    <td class="data-column-30">Last updated</td>
-                    <td class="data-column-30">Updated by</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue assessmentType }}</td>
-                    <td>{{ optionalValue (formatDate lastUpdated) }}</td>
-                    <td>{{ getUserLastName updatedBy }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-30">Question title</td>
-                    <td class="data-column-30">Answer</td>
-                </tr>
-                {{#questionsAndAnswers}}
-                <tr>
-                    <td>{{ optionalValue questionTitle }}</td>
-                    <td>{{ optionalValue answer }}</td>
-                </tr>
-                {{/questionsAndAnswers}}
-                {{^questionsAndAnswers}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/questionsAndAnswers}}
-            </table>
-        {{/originalAssessment}}
-        <br>
-        <h3>Latest Assessment</h3>
-        {{#latestAssessment}}
-            <br>
-            <table class="data-table">
-                <tr>
-                    <td class="data-column-30">Assessment type</td>
-                    <td class="data-column-30">Last updated</td>
-                    <td class="data-column-30">Updated by</td>
-                </tr>
-                <tr>
-                    <td>{{ optionalValue assessmentType }}</td>
-                    <td>{{ optionalValue (formatDate lastUpdated) }}</td>
-                    <td>{{ getUserLastName updatedBy }}</td>
-                </tr>
-            </table>
-            <table class="data-table">
 
-                <tr>
-                    <td class="data-column-30">Question title</td>
-                    <td class="data-column-30">Answer</td>
-                </tr>
-                {{#questionsAndAnswers}}
+    <br/>
+    <h2>Resettlement Assessments</h2>
+    {{#resettlementAssessments}}
+        <h3>Assessment</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Assessment type</td>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Updated by</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue assessmentType }}</td>
+                <td>{{ optionalValue (formatDate lastUpdated) }}</td>
+                <td>{{ getUserLastName updatedBy }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-50">Question title</td>
+                <td class="data-column-50">Answer</td>
+            </tr>
+            {{#questionsAndAnswers}}
                 <tr>
                     <td>{{ optionalValue questionTitle }}</td>
                     <td>{{ optionalValue answer }}</td>
                 </tr>
-                {{/questionsAndAnswers}}
-                {{^questionsAndAnswers}}
-                    <tr>
-                        <td>No Data Held</td>
-                        <td>No Data Held</td>
-                    </tr>
-                {{/questionsAndAnswers}}
-            </table>
-        {{/latestAssessment}}
-        {{^latestAssessment}}
-            <p>No Data Held</p>
-        {{/latestAssessment}}
-    {{/resettlementAssessment}}
-    {{^resettlementAssessment}}
+            {{/questionsAndAnswers}}
+            {{^questionsAndAnswers}}
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
+            {{/questionsAndAnswers}}
+        </table>
+    {{/resettlementAssessments}}
+    {{^resettlementAssessments}}
         <p>No Data Held</p>
-    {{/resettlementAssessment}}
+    {{/resettlementAssessments}}
+
+    <br/>
+    <h2>Support Needs</h2>
+    {{#supportNeeds}}
+        <h3>Support Need</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Prisoner ID</td>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-25">Pathway</td>
+                <td class="data-column-25">Section</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue supportNeed.pathway }}</td>
+                <td>{{ optionalValue supportNeed.section }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Title</td>
+                <td class="data-column-25">Is hidden</td>
+                <td class="data-column-25">Exclude from count</td>
+                <td class="data-column-25">Allow other detail</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue supportNeed.title }}</td>
+                <td>{{ convertBoolean supportNeed.hidden }}</td>
+                <td>{{ convertBoolean supportNeed.excludeFromCount }}</td>
+                <td>{{ convertBoolean supportNeed.allowOtherDetail }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Other detail</td><td>{{ optionalValue otherDetail }}</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Created by</td>
+                <td class="data-column-25">Created date</td>
+                <td class="data-column-25">Is deleted</td>
+                <td class="data-column-25">Deletion date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+                <td>{{ convertBoolean deleted }}</td>
+                <td>{{ optionalValue (formatDate deletedDate) }}</td>
+            </tr>
+        </table>
+    {{/supportNeeds}}
+    {{^supportNeeds}}
+        <p>No Data Held</p>
+    {{/supportNeeds}}
+
+    <br/>
+    <h2>Support Need Updates</h2>
+    {{#supportNeedUpdates}}
+        <h3>Support Need Update</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Support Need ID</td>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-25">Created by</td>
+                <td class="data-column-25">Created date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerSupportNeedId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Is Prison</td>
+                <td class="data-column-25">Is Probation</td>
+                <td class="data-column-25">Is Deleted</td>
+                <td class="data-column-25">Deleted date</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean isPrison }}</td>
+                <td>{{ convertBoolean isProbation }}</td>
+                <td>{{ convertBoolean deleted }}</td>
+                <td>{{ optionalValue (formatDate deletedDate) }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Status</td><td>{{ optionalValue status }}</td></tr>
+            <tr><td>Update text</td><td>{{ optionalValue updateText }}</td></tr>
+        </table>
+    {{/supportNeedUpdates}}
+    {{^supportNeedUpdates}}
+        <p>No Data Held</p>
+    {{/supportNeedUpdates}}
+
+    <br/>
+    <h2>Case Allocations</h2>
+    {{#caseAllocations}}
+        <h3>Case Allocation</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Prisoner ID</td>
+                <td class="data-column-30">ID</td>
+                <td class="data-column-30">Staff lastname</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue staffLastname }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Creation date</td>
+                <td class="data-column-30">Is deleted</td>
+                <td class="data-column-30">Deletion date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ convertBoolean isDeleted }}</td>
+                <td>{{ optionalValue (formatDate deletionDate) }}</td>
+            </tr>
+        </table>
+    {{/caseAllocations}}
+    {{^caseAllocations}}
+        <p>No Data Held</p>
+    {{/caseAllocations}}
+
+    <br/>
+    <h2>Profile Tags</h2>
+    {{#profileTags}}
+        <h3>Profile Tag</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Prisoner ID</td>
+                <td class="data-column-30">ID</td>
+                <td class="data-column-30">Updated date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue (formatDate updatedDate) }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Profile tags</td><td>{{#profileTags.tags}}{{.}}{{#unless @last}}, {{/unless}}{{/profileTags.tags}}{{^profileTags.tags}}No Data Held{{/profileTags.tags}}</td></tr>
+            <tr><td>Tags</td><td>{{#tags.tags}}{{.}}{{#unless @last}}, {{/unless}}{{/tags.tags}}{{^tags.tags}}No Data Held{{/tags.tags}}</td></tr>
+        </table>
+    {{/profileTags}}
+    {{^profileTags}}
+        <p>No Data Held</p>
+    {{/profileTags}}
+
+    <br/>
+    <h2>Todo Items</h2>
+    {{#todoItems}}
+        <h3>Todo Item</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Prisoner ID</td>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-50">Title</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue title }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Due date</td>
+                <td class="data-column-25">Is completed</td>
+                <td class="data-column-25">Creation date</td>
+                <td class="data-column-25">Updated at</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate dueDate) }}</td>
+                <td>{{ convertBoolean completed }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ optionalValue (formatDate updatedAt) }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
+        </table>
+    {{/todoItems}}
+    {{^todoItems}}
+        <p>No Data Held</p>
+    {{/todoItems}}
+
+    <br/>
+    <h2>Documents</h2>
+    {{#documents}}
+        <h3>Document</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Prisoner ID</td>
+                <td class="data-column-25">ID</td>
+                <td class="data-column-50">Original document filename</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerId }}</td>
+                <td>{{ optionalValue id }}</td>
+                <td>{{ optionalValue originalDocumentFileName }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Category</td>
+                <td class="data-column-25">Creation date</td>
+                <td class="data-column-25">Is deleted</td>
+                <td class="data-column-25">Deletion date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue category }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ convertBoolean isDeleted }}</td>
+                <td>{{ optionalValue (formatDate deletionDate) }}</td>
+            </tr>
+        </table>
+    {{/documents}}
+    {{^documents}}
+        <p>No Data Held</p>
+    {{/documents}}
 {{/.}}
 {{^.}}
     <p>No data held</p>
