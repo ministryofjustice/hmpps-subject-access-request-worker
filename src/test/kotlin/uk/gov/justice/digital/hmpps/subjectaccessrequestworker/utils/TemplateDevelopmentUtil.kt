@@ -74,6 +74,11 @@ class TemplateGeneratorUtil {
       val dpsId = it.arguments[0] as String
       LocationDetail(dpsId, 666, "Hogwarts")
     }
+
+    whenever(locationDetailsRepository.findByNomisId(any())).doAnswer {
+      val nomisId = it.arguments[0] as Int
+      LocationDetail("666", nomisId, "Hogwarts")
+    }
   }
 
   fun generateServiceHtml(serviceName: String) {
