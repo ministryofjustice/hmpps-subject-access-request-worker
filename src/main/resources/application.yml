@@ -109,6 +109,9 @@ G2-api:
 G3-api:
   url: ${G3_API_URL}
 
+api:
+  timeout: 60s
+
 template-resources:
   directory: /templates
   mandatory: G1,G2,G3
