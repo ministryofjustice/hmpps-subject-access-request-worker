@@ -20,7 +20,7 @@ class WebClientConfiguration(
   @Value("\${sar-html-renderer-api.url}") val sarHtmlRendererApiBaseUri: String,
   @Value("\${api.health-timeout:2s}") val healthTimeout: Duration,
   @Value("\${api.timeout:20s}") val timeout: Duration,
-  @Value("\${api.timeout:300s}") val documentStoreTimeout: Duration,
+  @Value("\${document-store.timeout:300s}") val documentStoreTimeout: Duration,
   @Value("\${web-client.configuration.max-retries:0}") val maxRetries: Long,
   @Value("\${web-client.configuration.back-off:PT10S}") val backOff: String,
 ) {
