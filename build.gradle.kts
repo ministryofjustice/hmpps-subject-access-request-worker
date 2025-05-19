@@ -1,6 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.1.0"
-  kotlin("plugin.spring") version "2.1.20"
+  kotlin("plugin.spring") version "2.1.21"
 }
 
 configurations {
@@ -14,21 +14,21 @@ dependencyCheck {
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.json:json:20250107")
+  implementation("org.json:json:20250517")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
-  implementation("com.itextpdf:itext7-core:9.1.0")
-  implementation("com.itextpdf:html2pdf:6.1.0")
+  implementation("com.itextpdf:itext7-core:9.2.0")
+  implementation("com.itextpdf:html2pdf:6.2.0")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
   implementation("com.github.jknack:handlebars:4.4.0")
   implementation("org.apache.commons:commons-lang3:3.17.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.0")
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.10.0")
-  implementation("io.sentry:sentry-logback:8.10.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.12.0")
+  implementation("io.sentry:sentry-logback:8.12.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.3")
   implementation("commons-io:commons-io:2.19.0")
-  implementation("aws.sdk.kotlin:s3:1.4.72")
+  implementation("aws.sdk.kotlin:s3:1.4.86")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")
