@@ -1,18 +1,18 @@
 CREATE TABLE IF NOT EXISTS backlog_request (
    id UUID PRIMARY KEY,
+   sar_case_reference_number TEXT NOT NULL,
+   nomis_id TEXT,
+   ndelius_case_reference_id TEXT,
    status TEXT NOT NULL DEFAULT 'PENDING',
    data_held boolean DEFAULT NULL,
    date_from DATE,
    date_to DATE NOT NULL DEFAULT CURRENT_DATE,
-   sar_case_reference_number TEXT NOT NULL,
-   nomis_id TEXT,
-   ndelius_case_reference_id TEXT,
    created_at TIMESTAMP NOT NULL
 );
 
 CREATE INDEX backlog_request_status_index ON backlog_request (status);
 
-CREATE TABLE IF NOT EXISTS backlog_request_service_summary (
+CREATE TABLE IF NOT EXISTS service_summary (
     id UUID PRIMARY KEY,
     backlog_request_id UUID NOT NULL,
     service_name TEXT NOT NULL,

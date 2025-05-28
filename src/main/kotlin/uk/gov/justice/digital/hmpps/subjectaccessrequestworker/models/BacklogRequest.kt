@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.BacklogRequestController
 import java.time.LocalDate
 import java.util.UUID
 
@@ -19,46 +20,65 @@ enum class BacklogRequestStatus {
 }
 
 @Entity
-@Table(name = "sar_backlog_request")
+@Table(name = "backlog_request")
 data class BacklogRequest(
   @Id
   val id: UUID = UUID.randomUUID(),
 
-  val dateFrom: LocalDate? = null,
+  var sarCaseReferenceNumber: String = "",
+
+  var nomisId: String? = null,
+
+  var ndeliusCaseReferenceId: String? = null,
+
+  @Enumerated(EnumType.STRING)
+  var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
+
+  var dateFrom: LocalDate? = null,
 
   var dateTo: LocalDate? = null,
 
-  val sarCaseReferenceNumber: String = "",
+  @OneToMany( mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+  var serviceSummary: List<ServiceSummary> = mutableListOf(),
 
-  val nomisId: String? = null,
-
-  val ndeliusCaseReferenceId: String? = null,
-
-  @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-  @JoinColumn(name = "backlog_request_id", referencedColumnName = "id")
-  val serviceSummary: List<BacklogRequestServiceSummary>? = null,
-) {
+  ) {
   constructor() : this(
     dateTo = null,
     dateFrom = null,
     nomisId = null,
     ndeliusCaseReferenceId = null,
   )
+
+  constructor(request: BacklogRequestController.CreateBacklogRequest) : this(
+    sarCaseReferenceNumber = request.sarCaseReferenceId,
+    nomisId = request.nomisId,
+    ndeliusCaseReferenceId = request.nomisId,
+    dateTo = request.dateFrom,
+    dateFrom = request.dateTo,
+  )
 }
 
-
 @Entity
-@Table(name = "backlog_request_service_summary")
-data class BacklogRequestServiceSummary(
+@Table(name = "service_summary")
+data class ServiceSummary(
   @Id
   val id: UUID = UUID.randomUUID(),
 
-  val serviceName: String? = null,
+  @ManyToOne
+  @JoinColumn(name = "backlog_request_id", referencedColumnName = "id")
+  var backlogRequest: BacklogRequest? = null,
 
-  val dataHeld: Boolean = false,
+  var serviceName: String,
+
+  var dataHeld: Boolean = false,
 
   @Enumerated(EnumType.STRING)
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
 ) {
-  constructor() : this(serviceName = null, dataHeld = false, status = BacklogRequestStatus.PENDING)
+  constructor() : this(serviceName = "", dataHeld = false, status = BacklogRequestStatus.PENDING)
+
+  /** Required to stop stackoverflow due to cyclic dependency caused by reference to parent backlogRequest object. */
+  override fun toString(): String {
+    return "ServiceSummary(id=$id, backlogRequest=${backlogRequest?.id}, serviceName='$serviceName', dataHeld=$dataHeld, status=$status)"
+  }
 }

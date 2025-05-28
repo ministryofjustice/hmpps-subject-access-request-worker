@@ -7,15 +7,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 
 @DataJpaTest
 class BacklogRequestRepositoryTest @Autowired constructor(
   val backlogRequestRepository: BacklogRequestRepository,
   val serviceConfigurationRepository: ServiceConfigurationRepository,
-  val serviceSummaryRepository: BacklogServiceSummaryRepository,
 ) {
 
   private val serviceConfigurations = listOf(
@@ -64,37 +63,80 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     fun `should return all service names for backlogRequest with no service summary entries`() {
       val backlogRequest = backlogRequestRepository.save(BacklogRequest())
 
-      val actual = backlogRequestRepository.getPendingServiceSummaries(backlogRequest.id)
+      val actual = backlogRequestRepository.getOutstandingServiceSummaries(backlogRequest.id)
 
       assertThat(actual.size).isEqualTo(3)
       assertThat(actual).containsExactly("keyworker-api", "offender-case-notes", "court-case-service")
     }
 
     @Test
-    fun `should return service names for backlog request that do not have a service summary entry`() {
-      val backlogRequest = BacklogRequest(
-        serviceSummary = listOf(
-          BacklogRequestServiceSummary(
-            serviceName = "keyworker-api",
-            status = BacklogRequestStatus.COMPLETE,
-          ),
-          BacklogRequestServiceSummary(
-            serviceName = "offender-case-notes",
-            status = BacklogRequestStatus.COMPLETE,
-          ),
-          BacklogRequestServiceSummary(
-            serviceName = "court-case-service",
-            status = BacklogRequestStatus.COMPLETE,
-          ),
+    fun `should return service names for backlog request that do not have a COMPLETE service summary entry`() {
+      val backlogRequest = BacklogRequest()
+      backlogRequest.serviceSummary = listOf(
+        ServiceSummary(
+          serviceName = "keyworker-api",
+          backlogRequest = backlogRequest,
+          status = BacklogRequestStatus.COMPLETE,
         ),
       )
 
-      backlogRequestRepository.saveAndFlush(backlogRequest)
-      val actual = backlogRequestRepository.getPendingServiceSummaries(backlogRequest.id)
-      val actual2 = serviceSummaryRepository.getPendingServiceSummaries(backlogRequest.id)
-
+      backlogRequestRepository.save(backlogRequest)
+      val actual = backlogRequestRepository.getOutstandingServiceSummaries(backlogRequest.id)
       assertThat(actual.size).isEqualTo(2)
       assertThat(actual).containsExactly("offender-case-notes", "court-case-service")
     }
+  }
+
+  @Test
+  fun `should return all service names for backlog request when entries has status PENDING`() {
+    val backlogRequest = BacklogRequest()
+    backlogRequest.serviceSummary = listOf(
+      ServiceSummary(
+        serviceName = "keyworker-api",
+        backlogRequest = backlogRequest,
+        status = BacklogRequestStatus.PENDING,
+      ),
+      ServiceSummary(
+        serviceName = "offender-case-notes",
+        backlogRequest = backlogRequest,
+        status = BacklogRequestStatus.PENDING,
+      ),
+      ServiceSummary(
+        serviceName = "court-case-service",
+        backlogRequest = backlogRequest,
+        status = BacklogRequestStatus.PENDING,
+      ),
+    )
+
+    backlogRequestRepository.save(backlogRequest)
+    val actual = backlogRequestRepository.getOutstandingServiceSummaries(backlogRequest.id)
+    assertThat(actual.size).isEqualTo(3)
+    assertThat(actual).containsExactly("keyworker-api", "offender-case-notes", "court-case-service")
+  }
+
+  @Test
+  fun `should return empty when backlog request has COMPLETE service summary entry for each service`() {
+    val backlogRequest = BacklogRequest()
+    backlogRequest.serviceSummary = listOf(
+      ServiceSummary(
+        serviceName = "keyworker-api",
+        backlogRequest = backlogRequest,
+        status = BacklogRequestStatus.COMPLETE,
+      ),
+      ServiceSummary(
+        serviceName = "offender-case-notes",
+        backlogRequest = backlogRequest,
+        status = BacklogRequestStatus.COMPLETE,
+      ),
+      ServiceSummary(
+        serviceName = "court-case-service",
+        backlogRequest = backlogRequest,
+        status = BacklogRequestStatus.COMPLETE,
+      ),
+    )
+
+    backlogRequestRepository.save(backlogRequest)
+    val actual = backlogRequestRepository.getOutstandingServiceSummaries(backlogRequest.id)
+    assertThat(actual).isEmpty()
   }
 }

@@ -13,12 +13,13 @@ interface BacklogRequestRepository: JpaRepository<BacklogRequest, UUID> {
   @Query(
     "SELECT cfg.serviceName FROM ServiceConfiguration cfg " +
       "WHERE NOT EXISTS (" +
-      "SELECT cfg.serviceName FROM BacklogRequest b " +
-      "INNER JOIN BacklogRequestServiceSummary s ON s.backlog_request_id = b.id " +
-      "WHERE b.id = :backlogRequestId " +
-      "AND s.serviceName = cfg.serviceName " +
+      "SELECT summary.serviceName FROM BacklogRequest request " +
+      "INNER JOIN ServiceSummary summary ON summary.backlogRequest.id = request.id " +
+      "WHERE request.id = :backlogRequestId " +
+      "AND summary.serviceName = cfg.serviceName " +
+      "AND summary.status = 'COMPLETE'" +
       ") " +
       "ORDER BY cfg.order"
   )
-  fun getPendingServiceSummaries(@Param("backlogRequestId") id: UUID): List<String>
+  fun getOutstandingServiceSummaries(@Param("backlogRequestId") id: UUID): List<String>
 }
