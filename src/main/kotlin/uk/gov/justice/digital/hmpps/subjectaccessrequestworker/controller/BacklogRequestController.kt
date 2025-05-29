@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller
 
+import jakarta.validation.ValidationException
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -8,10 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogResponseEntity
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import java.net.URI
-import java.time.LocalDate
 import java.util.UUID
 
 @RestController
@@ -34,37 +36,22 @@ class BacklogRequestController(
 
   @PostMapping
   fun createBacklogRequest(@RequestBody createBacklogRequest: CreateBacklogRequest): ResponseEntity<BacklogResponseEntity> {
+    validateRequest(createBacklogRequest)
+
     val backlogRequest = BacklogRequest(createBacklogRequest)
     return backlogRequestService.newBacklogRequest(backlogRequest).let {
       ResponseEntity
-        .created(URI("/subject-access-request-worker/backlog-request/${it.id}"))
+        .created(URI("/subject-access-request/backlog/${it.id}"))
         .body(BacklogResponseEntity(it))
     }
   }
 
-  data class CreateBacklogRequest(
-    val sarCaseReferenceId: String,
-    val nomisId: String,
-    val ndeliusCaseReferenceId: String,
-    val dateFrom: LocalDate,
-    val dateTo: LocalDate,
-  )
-
-  data class ServiceSummary(val serviceName: String, val status: String, val dataHeld: Boolean)
-
-  data class BacklogResponseEntity(
-    val sarCaseReferenceId: String,
-    val id: UUID,
-    val status: String,
-    val serviceSummary: List<ServiceSummary>,
-  ) {
-    constructor(backlogRequest: BacklogRequest) : this(
-      sarCaseReferenceId = backlogRequest.sarCaseReferenceNumber,
-      id = backlogRequest.id,
-      status = backlogRequest.status.name,
-      serviceSummary = backlogRequest.serviceSummary.map {
-        ServiceSummary(it.serviceName, it.status.name, it.dataHeld)
-      },
-    )
+  private fun validateRequest(createBacklogRequest: CreateBacklogRequest) {
+    if (createBacklogRequest.sarCaseReferenceId.isNullOrBlank()) {
+      throw ValidationException("non null/empty value is required for sarCaseReferenceId")
+    }
+    if (createBacklogRequest.nomisId.isNullOrEmpty() && createBacklogRequest.ndeliusCaseReferenceId.isNullOrEmpty()) {
+      throw ValidationException("a non null/empty value is required for nomisId or ndeliusCaseReferenceId")
+    }
   }
 }

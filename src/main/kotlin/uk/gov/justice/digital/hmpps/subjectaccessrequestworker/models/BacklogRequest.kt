@@ -10,8 +10,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.BacklogRequestController
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 enum class BacklogRequestStatus {
@@ -24,23 +25,17 @@ enum class BacklogRequestStatus {
 data class BacklogRequest(
   @Id
   val id: UUID = UUID.randomUUID(),
-
   var sarCaseReferenceNumber: String = "",
-
   var nomisId: String? = null,
-
   var ndeliusCaseReferenceId: String? = null,
-
   @Enumerated(EnumType.STRING)
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
-
   var dateFrom: LocalDate? = null,
-
   var dateTo: LocalDate? = null,
-
   @OneToMany( mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
   var serviceSummary: List<ServiceSummary> = mutableListOf(),
-
+  val claimDateTime: LocalDateTime? = null,
+  val createdAt: LocalDateTime? = LocalDateTime.now(),
   ) {
   constructor() : this(
     dateTo = null,
@@ -49,8 +44,8 @@ data class BacklogRequest(
     ndeliusCaseReferenceId = null,
   )
 
-  constructor(request: BacklogRequestController.CreateBacklogRequest) : this(
-    sarCaseReferenceNumber = request.sarCaseReferenceId,
+  constructor(request: CreateBacklogRequest) : this(
+    sarCaseReferenceNumber = request.sarCaseReferenceId?: "",
     nomisId = request.nomisId,
     ndeliusCaseReferenceId = request.nomisId,
     dateTo = request.dateFrom,
