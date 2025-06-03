@@ -17,7 +17,7 @@ generic-service:
     LOCATIONS_API_URL: "https://locations-inside-prison-api-preprod.hmpps.service.justice.gov.uk"
     NOMIS_MAPPINGS_API_URL: "https://nomis-sync-prisoner-mapping-preprod.hmpps.service.justice.gov.uk"
     SAR_HTML_RENDERER_API_URL: "https://subject-access-request-html-renderer-preprod.hmpps.service.justice.gov.uk"
-    HTML_RENDERER_ENABLED: false
+    HTML_RENDERER_ENABLED: true
     S3_PROVIDER: "aws"
     SENTRY_ENV: preprod
 
