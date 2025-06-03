@@ -51,3 +51,7 @@ s3:
   region: eu-west-2
   serviceEndpointOverride: http://localhost:4566
   bucket-name: subject-access-request-html
+
+backlog-request:
+  api:
+    enabled: false
