@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 
 class HtmlRendererMockServer : WireMockServer(8087) {
@@ -63,6 +64,17 @@ class HtmlRendererMockServer : WireMockServer(8087) {
     stubFor(
       post("/subject-access-request/render")
         .withRequestBody(equalToJson(objectMapper.writeValueAsString(renderRequest)))
+        .willReturn(responseDefinition),
+    )
+  }
+
+  fun stubSubjectDataHeldResponse(
+    subjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
+    responseDefinition: ResponseDefinitionBuilder,
+  ) {
+    stubFor(
+      post("/subject-access-request/render")
+        .withRequestBody(equalToJson(objectMapper.writeValueAsString(subjectDataHeldRequest)))
         .willReturn(responseDefinition),
     )
   }

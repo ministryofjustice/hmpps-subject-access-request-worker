@@ -44,4 +44,4 @@ data class ServiceSummary(
   val dataHeld: Boolean,
 )
 
-class BacklogRequestException(msg: String, cause: Throwable) : RuntimeException(msg, cause)
+class BacklogRequestException(msg: String, cause: Throwable?) : RuntimeException(msg, cause)

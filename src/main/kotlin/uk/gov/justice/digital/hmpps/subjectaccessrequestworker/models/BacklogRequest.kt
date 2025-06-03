@@ -33,7 +33,7 @@ data class BacklogRequest(
   var dateFrom: LocalDate? = null,
   var dateTo: LocalDate? = null,
   @OneToMany( mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
-  var serviceSummary: List<ServiceSummary> = mutableListOf(),
+  var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
   val createdAt: LocalDateTime? = LocalDateTime.now(),
   ) {
