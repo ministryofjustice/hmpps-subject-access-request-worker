@@ -51,6 +51,16 @@ data class BacklogRequest(
     dateTo = request.dateFrom,
     dateFrom = request.dateTo,
   )
+
+  fun addServiceSummary(serviceSummary: ServiceSummary): BacklogRequest {
+    this.serviceSummary.add(serviceSummary)
+    return this
+  }
+
+  fun addServiceSummaries(vararg serviceSummaries: ServiceSummary): BacklogRequest {
+    this.serviceSummary.addAll(serviceSummaries)
+    return this
+  }
 }
 
 @Entity
