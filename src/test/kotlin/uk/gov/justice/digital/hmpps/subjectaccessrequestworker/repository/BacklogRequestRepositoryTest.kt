@@ -72,97 +72,44 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       assertThat(actual).hasSize(1)
       assertThat(actual.first()).isEqualTo(backlogRequest)
     }
-  }
-
-  @Nested
-  inner class PendingServiceSummary {
 
     @Test
-    fun `should return all service names for backlogRequest with no service summary entries`() {
-      val backlogRequest = backlogRequestRepository.save(BacklogRequest())
-
-      val actual = backlogRequestRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
-
-      assertThat(actual.size).isEqualTo(serviceConfigurations.size)
-      assertThat(actual).containsExactly(
-        keyworkerApiServiceConfig,
-        offenderCaseNotesServiceConfig,
-        courtCaseServiceServiceConfig,
-      )
-    }
-
-    @Test
-    fun `should return service names for backlog request that do not have a COMPLETE service summary entry`() {
-      val backlogRequest = BacklogRequest()
-      val services = mutableListOf(
-        ServiceSummary(
-          serviceName = "keyworker-api",
-          backlogRequest = backlogRequest,
-          status = COMPLETE,
-        ),
-      )
-      backlogRequest.serviceSummary = services
-
-      backlogRequestRepository.save(backlogRequest)
-      val actual = backlogRequestRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
-      assertThat(actual.size).isEqualTo(2)
-      assertThat(actual).containsExactly(
-        offenderCaseNotesServiceConfig,
-        courtCaseServiceServiceConfig,
-      )
-    }
-
-    @Test
-    fun `should return all service names for backlog request when entries has status PENDING`() {
-      val backlogRequest = BacklogRequest()
-      backlogRequest.serviceSummary = mutableListOf(
-        ServiceSummary(
-          serviceName = "keyworker-api",
-          backlogRequest = backlogRequest,
-          status = PENDING,
-        ),
-        ServiceSummary(
-          serviceName = "offender-case-notes",
-          backlogRequest = backlogRequest,
-          status = PENDING,
-        ),
-        ServiceSummary(
-          serviceName = "court-case-service",
-          backlogRequest = backlogRequest,
-          status = PENDING,
-        ),
+    fun `should persist child service summaries`() {
+      val request = BacklogRequest()
+      val serviceSummary1 = ServiceSummary(
+        id = UUID.randomUUID(),
+        backlogRequest = request,
+        serviceName = "service1",
+        serviceOrder = 1,
+        dataHeld = true,
+        status = COMPLETE,
       )
 
-      backlogRequestRepository.save(backlogRequest)
-      val actual = backlogRequestRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
-      assertThat(actual.size).isEqualTo(serviceConfigurations.size)
-      assertThat(actual).containsExactlyElementsOf(serviceConfigurations)
-    }
-
-    @Test
-    fun `should return empty when backlog request has COMPLETE service summary entry for each service`() {
-      val backlogRequest = BacklogRequest()
-      backlogRequest.serviceSummary = mutableListOf(
-        ServiceSummary(
-          serviceName = "keyworker-api",
-          backlogRequest = backlogRequest,
-          status = COMPLETE,
-        ),
-        ServiceSummary(
-          serviceName = "offender-case-notes",
-          backlogRequest = backlogRequest,
-          status = COMPLETE,
-        ),
-        ServiceSummary(
-          serviceName = "court-case-service",
-          backlogRequest = backlogRequest,
-          status = COMPLETE,
-        ),
+      val serviceSummary2 = ServiceSummary(
+        id = UUID.randomUUID(),
+        backlogRequest = request,
+        serviceName = "service2",
+        serviceOrder = 2,
+        dataHeld = true,
+        status = COMPLETE,
       )
+      request.addServiceSummaries(serviceSummary1, serviceSummary2)
 
-      backlogRequestRepository.save(backlogRequest)
-      val actual = backlogRequestRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
-      assertThat(actual).isEmpty()
+      backlogRequestRepository.saveAndFlush(request)
+      val actual = backlogRequestRepository.findByIdOrNull(request.id)
+      assertThat(actual).isNotNull
+
+      assertThat(actual!!.id).isEqualTo(request.id)
+      assertThat(actual.sarCaseReferenceNumber).isEqualTo(request.sarCaseReferenceNumber)
+      assertThat(actual.nomisId).isEqualTo(request.nomisId)
+      assertThat(actual.ndeliusCaseReferenceId).isEqualTo(request.ndeliusCaseReferenceId)
+      assertThat(actual.status).isEqualTo(request.status)
+      assertThat(actual.dateFrom).isEqualTo(request.dateFrom)
+      assertThat(actual.dateTo).isEqualTo(request.dateTo)
+      assertThat(actual.claimDateTime).isEqualTo(request.claimDateTime)
+      assertThat(actual.createdAt).isEqualTo(request.createdAt)
+      assertThat(actual.completedAt).isEqualTo(request.completedAt)
+      assertThat(actual.serviceSummary).containsExactlyElementsOf(listOf(serviceSummary1, serviceSummary2))
     }
   }
 
@@ -271,7 +218,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val expected = backlogRequestRepository.save(BacklogRequest(status = PENDING, claimDateTime = null))
 
       val beforeSave = now()
-      val result = backlogRequestRepository.claimRequest(expected.id)
+      val result = backlogRequestRepository.updateClaimDateTime(expected.id)
       assertThat(result).isEqualTo(1)
 
       assertClaimSuccessful(expected.id, beforeSave)
@@ -287,7 +234,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       )
 
       val beforeSave = now()
-      val result = backlogRequestRepository.claimRequest(expected.id, backOffThreshold)
+      val result = backlogRequestRepository.updateClaimDateTime(expected.id, backOffThreshold)
       assertThat(result).isEqualTo(1)
       assertClaimSuccessful(expected.id, beforeSave)
     }
@@ -301,7 +248,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ),
       )
 
-      val result = backlogRequestRepository.claimRequest(expected.id, backOffThreshold)
+      val result = backlogRequestRepository.updateClaimDateTime(expected.id, backOffThreshold)
       assertThat(result).isEqualTo(0)
       assertClaimUnsuccessful(expected.id, PENDING)
     }
@@ -315,7 +262,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ),
       )
 
-      val result = backlogRequestRepository.claimRequest(expected.id, backOffThreshold)
+      val result = backlogRequestRepository.updateClaimDateTime(expected.id, backOffThreshold)
       assertThat(result).isEqualTo(0)
       assertClaimUnsuccessful(expected.id, COMPLETE)
     }
@@ -329,7 +276,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ),
       )
 
-      val result = backlogRequestRepository.claimRequest(expected.id, backOffThreshold)
+      val result = backlogRequestRepository.updateClaimDateTime(expected.id, backOffThreshold)
       assertThat(result).isEqualTo(0)
       val actual = backlogRequestRepository.findByIdOrNull(expected.id)
       assertThat(actual).isNotNull
@@ -365,7 +312,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ),
       )
 
-      assertThat(backlogRequestRepository.completeRequest(request.id)).isEqualTo(0)
+      assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(0)
 
       val actual = backlogRequestRepository.findByIdOrNull(request.id)
       assertThat(actual).isNotNull
@@ -395,7 +342,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       )
       backlogRequestRepository.save(request)
 
-      assertThat(backlogRequestRepository.completeRequest(request.id)).isEqualTo(0)
+      assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(0)
 
       val actual = backlogRequestRepository.findByIdOrNull(request.id)
       assertThat(actual).isNotNull
@@ -433,7 +380,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     )
     backlogRequestRepository.save(request)
 
-    assertThat(backlogRequestRepository.completeRequest(request.id)).isEqualTo(0)
+    assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(0)
 
     val actual = backlogRequestRepository.findByIdOrNull(request.id)
     assertThat(actual).isNotNull
@@ -469,7 +416,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     )
     backlogRequestRepository.save(request)
 
-    assertThat(backlogRequestRepository.completeRequest(request.id)).isEqualTo(1)
+    assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(1)
 
     val actual = backlogRequestRepository.findByIdOrNull(request.id)
     assertThat(actual).isNotNull

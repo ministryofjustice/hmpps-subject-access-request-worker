@@ -133,5 +133,8 @@ s3:
   bucket-name: ${HMPPS_S3_SUBJECT_ACCESS_REQUEST_BUCKET}
 
 backlog-request:
+  processor:
+    interval: 30
+    initial-delay: 30
   api:
     enabled: false

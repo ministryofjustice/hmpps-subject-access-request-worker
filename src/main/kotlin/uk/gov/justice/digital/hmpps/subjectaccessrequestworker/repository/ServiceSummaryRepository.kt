@@ -1,0 +1,43 @@
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository
+
+import jakarta.persistence.LockModeType
+import jakarta.persistence.QueryHint
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Lock
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.jpa.repository.QueryHints
+import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
+import java.util.UUID
+
+@Repository
+interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
+
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
+  @Query(
+    "SELECT cfg FROM ServiceConfiguration cfg " +
+      "WHERE NOT EXISTS (" +
+      "SELECT summary.serviceName FROM BacklogRequest request " +
+      "INNER JOIN ServiceSummary summary ON summary.backlogRequest.id = request.id " +
+      "WHERE request.id = :backlogRequestId " +
+      "AND summary.serviceName = cfg.serviceName " +
+      "AND summary.status = 'COMPLETE'" +
+      ") " +
+      "ORDER BY cfg.order",
+  )
+  fun getPendingServiceSummariesForRequestId(@Param("backlogRequestId") id: UUID): List<ServiceConfiguration>
+
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
+  fun existsByBacklogRequestIdAndServiceName(
+    @Param("backlogRequestId") id: UUID,
+    @Param("serviceName") serviceName: String,
+  ): Boolean
+
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
+  fun findOneByBacklogRequestIdAndServiceName(backlogRequestId: UUID, serviceName: String): ServiceSummary?
+}

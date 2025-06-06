@@ -93,7 +93,7 @@ class BacklogRequestController(
   )
   @GetMapping(value = ["/{id}"])
   fun getRequestById(@PathVariable("id") id: UUID): ResponseEntity<BacklogResponseEntity> = backlogRequestService
-    .getById(id)
+    .getByIdOrNull(id)
     ?.let { ResponseEntity.ok(BacklogResponseEntity(it)) }
     ?: ResponseEntity.notFound().build()
 

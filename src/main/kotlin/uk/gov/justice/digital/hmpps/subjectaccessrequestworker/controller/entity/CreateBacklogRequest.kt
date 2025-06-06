@@ -24,6 +24,10 @@ data class BacklogResponseEntity(
   val status: String,
   val serviceSummary: List<ServiceSummary>,
   val createdDate: LocalDateTime?,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  val dateFrom: LocalDate?,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  val dateTo: LocalDate?,
 ) {
   constructor(backlogRequest: BacklogRequest) : this(
     id = backlogRequest.id,
@@ -35,6 +39,8 @@ data class BacklogResponseEntity(
     serviceSummary = backlogRequest.serviceSummary.map {
       ServiceSummary(it.serviceName, it.status.name, it.dataHeld)
     },
+    dateFrom = backlogRequest.dateFrom,
+    dateTo = backlogRequest.dateTo,
   )
 }
 
@@ -44,4 +50,11 @@ data class ServiceSummary(
   val dataHeld: Boolean,
 )
 
-class BacklogRequestException(msg: String, cause: Throwable) : RuntimeException(msg, cause)
+class BacklogRequestException(
+  val backlogRequestId: UUID,
+  msg: String,
+  cause: Throwable?,
+) : RuntimeException(msg, cause) {
+
+  constructor(backlogRequestId: UUID, msg: String) : this(backlogRequestId, msg, null)
+}

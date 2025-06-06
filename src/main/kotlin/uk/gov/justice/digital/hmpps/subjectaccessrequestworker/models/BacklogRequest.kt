@@ -32,10 +32,11 @@ data class BacklogRequest(
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
   var dateFrom: LocalDate? = null,
   var dateTo: LocalDate? = null,
-  @OneToMany(mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+  @OneToMany(mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
   var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
   val createdAt: LocalDateTime? = LocalDateTime.now(),
+  val completedAt: LocalDateTime? = null,
 ) {
   constructor() : this(
     dateTo = null,
@@ -58,6 +59,7 @@ data class BacklogRequest(
   }
 
   fun addServiceSummaries(vararg serviceSummaries: ServiceSummary): BacklogRequest {
+    serviceSummaries.forEach { it.backlogRequest = this }
     this.serviceSummary.addAll(serviceSummaries)
     return this
   }
@@ -75,14 +77,42 @@ data class ServiceSummary(
 
   var serviceName: String,
 
+  var serviceOrder: Int = 0,
+
   var dataHeld: Boolean = false,
 
   @Enumerated(EnumType.STRING)
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
 ) {
-  constructor() : this(serviceName = "", dataHeld = false, status = BacklogRequestStatus.PENDING)
+  constructor() : this(serviceName = "", serviceOrder = 0, dataHeld = false, status = BacklogRequestStatus.PENDING)
 
   /** Required to stop stackoverflow due to cyclic dependency caused by reference to parent backlogRequest object. */
   override fun toString(): String = "ServiceSummary(id=$id, backlogRequest=${backlogRequest?.id}, " +
-    "serviceName='$serviceName', dataHeld=$dataHeld, status=$status)"
+    "serviceName='$serviceName', serviceOrder=$serviceOrder, dataHeld=$dataHeld, status=$status)"
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as ServiceSummary
+
+    if (serviceOrder != other.serviceOrder) return false
+    if (dataHeld != other.dataHeld) return false
+    if (id != other.id) return false
+    if (backlogRequest?.id != other.backlogRequest?.id) return false
+    if (serviceName != other.serviceName) return false
+    if (status != other.status) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = serviceOrder
+    result = 31 * result + dataHeld.hashCode()
+    result = 31 * result + id.hashCode()
+    result = 31 * result + (backlogRequest?.id.hashCode() ?: 0)
+    result = 31 * result + serviceName.hashCode()
+    result = 31 * result + status.hashCode()
+    return result
+  }
 }
