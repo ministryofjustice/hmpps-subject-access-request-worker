@@ -72,7 +72,6 @@ class HtmlRendererMockServer : WireMockServer(8087) {
     subjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
     responseDefinition: ResponseDefinitionBuilder,
   ) {
-    println(objectMapper.writeValueAsString(subjectDataHeldRequest))
     stubFor(
       post("/subject-access-request/subject-data-held-summary")
         .withRequestBody(equalToJson(objectMapper.writeValueAsString(subjectDataHeldRequest)))

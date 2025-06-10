@@ -35,7 +35,7 @@ hmpps-auth:
   client-secret: "clientsecret"
 
 sar-html-renderer-api:
-  url: http://localhost:8087
+  url: http://localhost:8090
 G1-api:
   url: http://localhost:9001
 G2-api:
