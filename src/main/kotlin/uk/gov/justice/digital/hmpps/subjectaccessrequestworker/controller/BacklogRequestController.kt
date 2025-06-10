@@ -48,12 +48,15 @@ class BacklogRequestController(
     }
   }
 
-  private fun validateRequest(createBacklogRequest: CreateBacklogRequest) {
-    if (createBacklogRequest.sarCaseReferenceId.isNullOrBlank()) {
+  private fun validateRequest(request: CreateBacklogRequest) {
+    if (request.sarCaseReferenceId.isNullOrBlank()) {
       throw ValidationException("non null/empty value is required for sarCaseReferenceId")
     }
-    if (createBacklogRequest.nomisId.isNullOrEmpty() && createBacklogRequest.ndeliusCaseReferenceId.isNullOrEmpty()) {
+    if (request.nomisId.isNullOrEmpty() && request.ndeliusCaseReferenceId.isNullOrEmpty()) {
       throw ValidationException("a non null/empty value is required for nomisId or ndeliusCaseReferenceId")
+    }
+    if (!request.nomisId.isNullOrEmpty() && !request.ndeliusCaseReferenceId.isNullOrEmpty()) {
+      throw ValidationException("multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId")
     }
   }
 }

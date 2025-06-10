@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class BacklogRequestControllerIntTest : IntegrationTestBase() {
@@ -61,10 +62,11 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         "sarTestCase01 | '' | | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId is empty ndeliusCaseReferenceId is null",
         "sarTestCase01 | '' | '' | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId and ndeliusCaseReferenceId are empty",
         "sarTestCase01 | | '' | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId is null ndeliusCaseReferenceId is empty",
+        "sarTestCase01 | nomis_001 | ndelius_001 | multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId | Test case: both nomis and ndelius IDs provided",
       ],
       delimiterString = "|",
     )
-    fun `should return status 400 if nomisId and ndeliusCaseReferenceId is null`(
+    fun `should return status 400 if nomisId and ndeliusCaseReferenceId are not valid`(
       sarCaseReferenceId: String?,
       nomisId: String?,
       ndeliusCaseReferenceId: String?,
@@ -153,6 +155,53 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .jsonPath("$.serviceSummary").isArray
         .jsonPath("$.serviceSummary.length()").isEqualTo(0)
         .jsonPath("$.createdDate").isNotEmpty
+    }
+  }
+
+  @Nested
+  inner class CreateBacklogRequestTestCases {
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "nomis-001 |             | nomisID provide ndeliusId is null",
+        "          | ndelius-001 | nomisID provide ndeliusId is null",
+      ],
+      delimiterString = "|",
+    )
+    fun `should return status 200 when valid request with NOMIS ID is provided`(
+      nomisId: String?,
+      ndeliusId: String?,
+      description: String,
+    ) {
+      val startOfTest = LocalDateTime.now()
+      val request = CreateBacklogRequest(
+        sarCaseReferenceId = "sar-${UUID.randomUUID()}",
+        nomisId = nomisId,
+        ndeliusCaseReferenceId = ndeliusId,
+        dateFrom = LocalDate.now().minusYears(1),
+        dateTo = LocalDate.now(),
+      )
+
+      webTestClient
+        .post()
+        .uri("/subject-access-request/backlog")
+        .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+        .bodyValue(request)
+        .exchange()
+        .expectStatus().isCreated
+        .expectBody()
+        .jsonPath("$.id").isNotEmpty
+        .jsonPath("$.sarCaseReferenceId").isEqualTo(request.sarCaseReferenceId!!)
+        .jsonPath("$.nomisId").isEqualTo(nomisId)
+        .jsonPath("$.ndeliusCaseReferenceId").isEqualTo(ndeliusId)
+        .jsonPath("$.status").isEqualTo("PENDING")
+        .jsonPath("$.createdDate").value<String> {
+          LocalDateTime.parse(it).isAfter(startOfTest)
+          LocalDateTime.parse(it).isBefore(LocalDateTime.now())
+        }
+        .jsonPath("$.serviceSummary").isArray
+        .jsonPath("$.serviceSummary.length()").isEqualTo(0)
     }
   }
 

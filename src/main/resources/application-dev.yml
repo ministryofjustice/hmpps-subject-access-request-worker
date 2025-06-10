@@ -54,4 +54,4 @@ s3:
 
 backlog-request:
   api:
-    enabled: false
+    enabled: true
