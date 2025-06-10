@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogReq
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
 import java.util.UUID
 
@@ -21,7 +20,7 @@ import java.util.UUID
 class BacklogRequestService(
   private val backlogRequestRepository: BacklogRequestRepository,
   private val serviceSummaryRepository: ServiceSummaryRepository,
-  private val serviceConfigurationRepository: ServiceConfigurationRepository,
+  private val serviceConfigurationService: ServiceConfigurationService,
   private val dynamicServicesClient: DynamicServicesClient,
 ) {
 
@@ -48,14 +47,17 @@ class BacklogRequestService(
   fun claimRequest(id: UUID): Boolean = (1 == backlogRequestRepository.updateClaimDateTime(id))
 
   @Transactional
-  fun completeRequest(id: UUID): Boolean = 1 == backlogRequestRepository.updateStatusToComplete(id)
+  fun completeRequest(id: UUID, dataHeld: Boolean): Boolean = 1 == backlogRequestRepository.updateStatusAndDataHeld(
+    id = id,
+    dataHeld = dataHeld,
+  )
 
   @Transactional
   fun getPendingServiceSummariesForId(
     id: UUID,
   ): List<ServiceConfiguration> = serviceSummaryRepository.getPendingServiceSummariesForRequestId(id)
 
-  fun getServiceSummary(
+  fun getSubjectDataHeldSummary(
     backlogRequest: BacklogRequest,
     serviceConfig: ServiceConfiguration,
   ): ServiceSummary = dynamicServicesClient.getServiceSummary(
@@ -65,7 +67,7 @@ class BacklogRequestService(
       dateFrom = backlogRequest.dateFrom,
       dateTo = backlogRequest.dateTo,
       serviceName = serviceConfig.serviceName,
-      serviceUrl = serviceConfig.url,
+      serviceUrl = serviceConfigurationService.resolveUrlPlaceHolder(serviceConfig),
     ),
   )?.let { response ->
     response.body?.let {
@@ -91,7 +93,7 @@ class BacklogRequestService(
       throw BacklogRequestException(request.id, "Service name cannot be empty")
     }
 
-    if (serviceConfigurationRepository.findByServiceName(summary.serviceName) == null) {
+    if (serviceConfigurationService.findByServiceName(summary.serviceName) == null) {
       throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
     }
 
@@ -100,7 +102,7 @@ class BacklogRequestService(
       it.serviceOrder = summary.serviceOrder
       it.status = summary.status
       it.dataHeld = summary.dataHeld
-      serviceSummaryRepository.save(summary)
+      serviceSummaryRepository.saveAndFlush(it)
     } ?: run {
       LOG.info("adding service summary to backlogRequestId=${request.id}, serviceName=${summary.serviceName}")
       backlogRequestRepository.findByIdOrNull(request.id)?.let {
@@ -109,4 +111,7 @@ class BacklogRequestService(
       }
     }
   }
+
+  @Transactional
+  fun isDataHeldOnSubject(id: UUID): Boolean = serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(id) > 0
 }

@@ -53,12 +53,16 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
   @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Query(
     "UPDATE BacklogRequest " +
-      "SET status = 'COMPLETE', completedAt = :completedAt " +
+      "SET status = 'COMPLETE', completedAt = :completedAt, dataHeld = :dataHeld " +
       "WHERE id = :id " +
       "AND " +
       "(SELECT COUNT(DISTINCT cfg.serviceName) FROM ServiceConfiguration cfg) = " +
       "(SELECT COUNT(DISTINCT summary.serviceName) FROM ServiceSummary summary " +
       "WHERE summary.backlogRequest.id = :id AND summary.status = 'COMPLETE')",
   )
-  fun updateStatusToComplete(@Param("id") id: UUID, @Param("completedAt") completedAt: LocalDateTime = now()): Int
+  fun updateStatusAndDataHeld(
+    @Param("id") id: UUID,
+    @Param("dataHeld") dataHeld: Boolean,
+    @Param("completedAt") completedAt: LocalDateTime = now(),
+  ): Int
 }

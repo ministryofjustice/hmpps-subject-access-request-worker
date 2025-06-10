@@ -18,6 +18,22 @@ class ServiceConfigurationService(
   @Value("\${G3-api.url}") private val g3ApiUrl: String,
 ) {
 
+  fun deleteAll() = serviceConfigurationRepository.deleteAll()
+
+  fun save(
+    serviceConfiguration: ServiceConfiguration,
+  ) = serviceConfigurationRepository.saveAndFlush(serviceConfiguration)
+
+  fun saveAll(
+    serviceConfigurations: List<ServiceConfiguration>,
+  ) = serviceConfigurationRepository.saveAllAndFlush(serviceConfigurations)
+
+  fun getAllServiceConfigurations(): List<ServiceConfiguration> = serviceConfigurationRepository.findAll()
+
+  fun findByServiceName(
+    serviceName: String,
+  ): ServiceConfiguration? = serviceConfigurationRepository.findByServiceName(serviceName)
+
   fun getSelectedServices(subjectAccessRequest: SubjectAccessRequest): List<DpsService> = subjectAccessRequest.services
     .split(",")
     .filter { it.isNotBlank() }
@@ -36,7 +52,7 @@ class ServiceConfigurationService(
       )
     }.sortedBy { it.orderPosition }
 
-  private fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration): String {
+  fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration): String {
     val apiUrl = when (serviceConfiguration.serviceName) {
       "G1" -> g1ApiUrl
       "G2" -> g2ApiUrl

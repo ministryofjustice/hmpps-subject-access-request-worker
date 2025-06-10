@@ -30,19 +30,23 @@ class BacklogRequestProcessor(
       }
       log.info("claim request successful ${backlogRequest.id}")
 
-      val pendingSummaries = backlogRequestService.getPendingServiceSummariesForId(backlogRequest.id)
+      val pendingServices = backlogRequestService.getPendingServiceSummariesForId(backlogRequest.id)
 
-      pendingSummaries.forEach { service ->
+      pendingServices.forEach { service ->
         log.info("requesting data held summary for ${service.serviceName}")
-        val summary = backlogRequestService.getServiceSummary(backlogRequest, service)
+
+        val summary = backlogRequestService.getSubjectDataHeldSummary(backlogRequest, service)
 
         log.info("saving data held summary for ${service.serviceName}")
         backlogRequestService.addServiceSummary(backlogRequest, summary)
       }
 
-      log.info("completing backlog request ${backlogRequest.id}")
-      val result = backlogRequestService.completeRequest(backlogRequest.id)
-      log.info("completed backlog request ${backlogRequest.id}: result=$result")
+      val isDataHeld = backlogRequestService.isDataHeldOnSubject(backlogRequest.id)
+
+      log.info("completing backlog request ${backlogRequest.id}, dataHeld: $isDataHeld")
+      backlogRequestService.completeRequest(backlogRequest.id, isDataHeld).also {
+        log.info("completed backlog request ${backlogRequest.id}: result=$it")
+      }
     }
   }
 }

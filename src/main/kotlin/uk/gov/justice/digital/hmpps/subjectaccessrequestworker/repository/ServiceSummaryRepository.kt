@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.jpa.repository.QueryHints
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import java.util.UUID
@@ -40,4 +41,17 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
   @Lock(LockModeType.PESSIMISTIC_READ)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   fun findOneByBacklogRequestIdAndServiceName(backlogRequestId: UUID, serviceName: String): ServiceSummary?
+
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
+  fun countByBacklogRequestIdAndDataHeld(backlogRequestId: UUID, dataHeld: Boolean = true): Long
+
+  /**
+   * Only used in Integration tests.
+   */
+  fun findOneByBacklogRequestIdAndServiceNameAndStatus(
+    backlogRequestId: UUID,
+    serviceName: String,
+    status: BacklogRequestStatus,
+  ): ServiceSummary?
 }

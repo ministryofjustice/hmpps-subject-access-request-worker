@@ -4,6 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
@@ -11,6 +13,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogReq
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.PENDING
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
+import java.util.UUID
 
 @DataJpaTest
 class ServiceSummaryRepositoryTest @Autowired constructor(
@@ -219,6 +222,52 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       assertThat(actual!!.serviceName).isEqualTo("serviceAbc")
       assertThat(actual.backlogRequest).isNotNull
       assertThat(actual.backlogRequest!!.id).isEqualTo(backlogRequest.id)
+    }
+  }
+
+  @Nested
+  inner class CountByBacklogRequestIdAndDataHeldTestCases {
+
+    @Test
+    fun `should return 0 when no backlogRequest found`() {
+      assertThat(serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(UUID.randomUUID())).isEqualTo(0)
+    }
+
+    @Test
+    fun `should return 0 when no backlogRequest has no service summaries`() {
+      val backlogRequest = backlogRequestRepository.saveAndFlush(BacklogRequest())
+      assertThat(serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(backlogRequest.id)).isEqualTo(0)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "data held is false for all service summaries | false | false | false | 0",
+        "data held is true for one service summary | false | true | false | 1",
+        "data held is true for two service summaries | true | true | false | 2",
+        "data held is true for three service summaries | true | true | true | 3",
+      ],
+      delimiterString = "|",
+    )
+    fun `should return expected count when service summaries exist for backlog request`(
+      description: String,
+      service1DataHeld: Boolean,
+      service2DataHeld: Boolean,
+      service3DataHeld: Boolean,
+      expectedResult: Long,
+    ) {
+      val backlogRequest = backlogRequestRepository.saveAndFlush(
+        BacklogRequest()
+          .addServiceSummaries(
+            ServiceSummary(serviceName = "service1", dataHeld = service1DataHeld),
+            ServiceSummary(serviceName = "service2", dataHeld = service2DataHeld),
+            ServiceSummary(serviceName = "service2", dataHeld = service3DataHeld),
+          ),
+      )
+      assertThat(backlogRequest.serviceSummary).hasSize(3)
+
+      val actual = serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(backlogRequest.id)
+      assertThat(actual).isEqualTo(expectedResult)
     }
   }
 }

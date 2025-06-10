@@ -53,5 +53,8 @@ s3:
   bucket-name: subject-access-request-html
 
 backlog-request:
+  processor:
+    interval: 10
+    initial-delay: 5
   api:
     enabled: true

@@ -312,7 +312,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ),
       )
 
-      assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(0)
+      assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(0) // TODO
 
       val actual = backlogRequestRepository.findByIdOrNull(request.id)
       assertThat(actual).isNotNull
@@ -342,7 +342,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       )
       backlogRequestRepository.save(request)
 
-      assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(0)
+      assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(0)
 
       val actual = backlogRequestRepository.findByIdOrNull(request.id)
       assertThat(actual).isNotNull
@@ -380,7 +380,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     )
     backlogRequestRepository.save(request)
 
-    assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(0)
+    assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(0)
 
     val actual = backlogRequestRepository.findByIdOrNull(request.id)
     assertThat(actual).isNotNull
@@ -416,7 +416,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     )
     backlogRequestRepository.save(request)
 
-    assertThat(backlogRequestRepository.updateStatusToComplete(request.id)).isEqualTo(1)
+    assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(1)
 
     val actual = backlogRequestRepository.findByIdOrNull(request.id)
     assertThat(actual).isNotNull

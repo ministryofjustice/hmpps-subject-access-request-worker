@@ -32,6 +32,7 @@ data class BacklogRequest(
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
   var dateFrom: LocalDate? = null,
   var dateTo: LocalDate? = null,
+  var dataHeld: Boolean? = null,
   @OneToMany(mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
   var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
@@ -43,6 +44,7 @@ data class BacklogRequest(
     dateFrom = null,
     nomisId = null,
     ndeliusCaseReferenceId = null,
+    dataHeld = null,
   )
 
   constructor(request: CreateBacklogRequest) : this(
