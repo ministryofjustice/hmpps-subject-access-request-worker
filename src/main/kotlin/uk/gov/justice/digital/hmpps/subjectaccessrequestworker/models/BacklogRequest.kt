@@ -46,8 +46,8 @@ data class BacklogRequest(
 
   constructor(request: CreateBacklogRequest) : this(
     sarCaseReferenceNumber = request.sarCaseReferenceId ?: "",
-    nomisId = request.nomisId,
-    ndeliusCaseReferenceId = request.nomisId,
+    nomisId = if (request.nomisId.isNullOrEmpty()) null else request.nomisId,
+    ndeliusCaseReferenceId = if (request.ndeliusCaseReferenceId.isNullOrEmpty()) null else request.ndeliusCaseReferenceId,
     dateTo = request.dateFrom,
     dateFrom = request.dateTo,
   )
