@@ -79,10 +79,40 @@ class HtmlRendererMockServer : WireMockServer(8087) {
     )
   }
 
+  fun stubSubjectDataHeldResponseRetryAfterFailure(
+    subjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
+    responseOne: ResponseDefinitionBuilder,
+    responseTwo: ResponseDefinitionBuilder,
+  ) {
+    stubFor(
+      post("/subject-access-request/subject-data-held-summary")
+        .withRequestBody(equalToJson(objectMapper.writeValueAsString(subjectDataHeldRequest)))
+        .inScenario("request-1-then-2")
+        .willReturn(responseOne)
+        .willSetStateTo("response-1-done")
+    )
+
+    stubFor(
+      post("/subject-access-request/subject-data-held-summary")
+        .inScenario("request-1-then-2")
+        .withRequestBody(equalToJson(objectMapper.writeValueAsString(subjectDataHeldRequest)))
+        .whenScenarioStateIs("response-1-done")
+        .willReturn(responseTwo),
+    )
+  }
+
   fun verifyRenderCalled(times: Int, expectedBody: HtmlRendererApiClient.HtmlRenderRequest) {
     verify(
       times,
       postRequestedFor(urlPathEqualTo("/subject-access-request/render"))
+        .withRequestBody(equalToJson(objectMapper.writeValueAsString(expectedBody))),
+    )
+  }
+
+  fun verifySubjectDataHeldSummaryCalled(times: Int, expectedBody: DynamicServicesClient.SubjectDataHeldRequest) {
+    verify(
+      times,
+      postRequestedFor(urlPathEqualTo("/subject-access-request/subject-data-held-summary"))
         .withRequestBody(equalToJson(objectMapper.writeValueAsString(expectedBody))),
     )
   }
