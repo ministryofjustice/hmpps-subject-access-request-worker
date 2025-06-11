@@ -72,5 +72,6 @@ backlog-request:
   processor:
     interval: 1
     initial-delay: 1
+    enabled: true
   api:
     enabled: true

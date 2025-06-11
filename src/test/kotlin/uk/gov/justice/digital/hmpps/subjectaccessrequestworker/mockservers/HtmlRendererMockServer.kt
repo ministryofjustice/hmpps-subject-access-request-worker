@@ -89,7 +89,7 @@ class HtmlRendererMockServer : WireMockServer(8087) {
         .withRequestBody(equalToJson(objectMapper.writeValueAsString(subjectDataHeldRequest)))
         .inScenario("request-1-then-2")
         .willReturn(responseOne)
-        .willSetStateTo("response-1-done")
+        .willSetStateTo("response-1-done"),
     )
 
     stubFor(
