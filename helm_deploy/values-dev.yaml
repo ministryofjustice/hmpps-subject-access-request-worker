@@ -20,7 +20,7 @@ generic-service:
     HTML_RENDERER_ENABLED: true
     S3_PROVIDER: "aws"
     SENTRY_ENV: dev
-    BACKLOG_REQUEST_API_ENABLED: false
+    BACKLOG_REQUEST_API_ENABLED: true
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
