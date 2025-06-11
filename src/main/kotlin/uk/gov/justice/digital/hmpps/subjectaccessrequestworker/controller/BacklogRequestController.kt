@@ -1,5 +1,11 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.ValidationException
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.http.ResponseEntity
@@ -14,6 +20,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
 import java.util.UUID
 
@@ -25,17 +32,98 @@ class BacklogRequestController(
   val backlogRequestService: BacklogRequestService,
 ) {
 
+  @Operation(
+    summary = "Get the list of backlog requests",
+    description = "Get the list of backlog requests",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "The list of backlog requests currently stored",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = BacklogResponseEntity::class)),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
   @GetMapping
   fun getAllRequests(): List<BacklogResponseEntity> = backlogRequestService
     .getAllBacklogRequests()
     .map { BacklogResponseEntity(it) }
 
+  @Operation(
+    summary = "Get backlog request by ID",
+    description = "Get backlog request by ID",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Get backlog request by ID",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BacklogResponseEntity::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
   @GetMapping(value = ["/{id}"])
   fun getRequestById(@PathVariable("id") id: UUID): ResponseEntity<BacklogResponseEntity> = backlogRequestService
     .getById(id)
     ?.let { ResponseEntity.ok(BacklogResponseEntity(it)) }
     ?: ResponseEntity.notFound().build()
 
+  @Operation(
+    summary = "Create a new backlog request",
+    description = "Create a new backlog request",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Backlog request created successfully",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BacklogResponseEntity::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
   @PostMapping
   fun createBacklogRequest(@RequestBody createBacklogRequest: CreateBacklogRequest): ResponseEntity<BacklogResponseEntity> {
     validateRequest(createBacklogRequest)

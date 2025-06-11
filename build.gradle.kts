@@ -29,7 +29,7 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.4")
   implementation("commons-io:commons-io:2.19.0")
   implementation("aws.sdk.kotlin:s3:1.4.90")
-
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")
   runtimeOnly("org.postgresql:postgresql:42.7.5")
