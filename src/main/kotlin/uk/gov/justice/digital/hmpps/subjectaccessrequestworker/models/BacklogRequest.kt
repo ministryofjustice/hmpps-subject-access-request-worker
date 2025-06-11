@@ -51,8 +51,8 @@ data class BacklogRequest(
     sarCaseReferenceNumber = request.sarCaseReferenceId ?: "",
     nomisId = if (request.nomisId.isNullOrEmpty()) null else request.nomisId,
     ndeliusCaseReferenceId = if (request.ndeliusCaseReferenceId.isNullOrEmpty()) null else request.ndeliusCaseReferenceId,
-    dateTo = request.dateFrom,
-    dateFrom = request.dateTo,
+    dateTo = request.dateTo,
+    dateFrom = request.dateFrom,
   )
 
   fun addServiceSummary(serviceSummary: ServiceSummary): BacklogRequest {
