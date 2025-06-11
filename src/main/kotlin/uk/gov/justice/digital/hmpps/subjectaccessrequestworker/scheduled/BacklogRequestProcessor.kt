@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled
 
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import java.util.concurrent.TimeUnit
 
 @Component
+@ConditionalOnExpression("\${backlog-request.processor.enabled:false}")
 class BacklogRequestProcessor(
   val backlogRequestService: BacklogRequestService,
 ) {
@@ -17,8 +19,8 @@ class BacklogRequestProcessor(
 
   @Scheduled(
     fixedDelayString = "\${backlog-request.processor.interval:30}",
-    timeUnit = TimeUnit.SECONDS,
     initialDelayString = "\${backlog-request.processor.initial-delay:30}",
+    timeUnit = TimeUnit.SECONDS,
   )
   fun processBacklogRequests() {
     backlogRequestService.getNextToProcess()?.let { backlogRequest ->
