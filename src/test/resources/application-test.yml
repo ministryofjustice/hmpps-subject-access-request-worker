@@ -47,6 +47,8 @@ G2-api:
   url: "http://localhost:9002"
 G3-api:
   url: "http://localhost:9003"
+sar-html-renderer-api:
+  url: "http://localhost:8087"
 
 template-resources:
   directory: /templates
@@ -67,5 +69,9 @@ s3:
   bucket-name: subject-access-request-html
 
 backlog-request:
+  processor:
+    interval: 1
+    initial-delay: 1
+    enabled: true
   api:
     enabled: true

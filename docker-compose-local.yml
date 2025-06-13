@@ -1,7 +1,7 @@
 version: '3.1'
 services:
 
-  sar-db:
+  sar-worker-db:
     image: postgres:17
     networks:
       - hmpps
@@ -13,6 +13,19 @@ services:
       - POSTGRES_PASSWORD=admin_password
       - POSTGRES_USER=admin
       - POSTGRES_DB=sar-db
+
+  sar-renderer-db:
+    image: postgres:17
+    networks:
+      - hmpps
+    container_name: sar-db-renderer
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=admin_password
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=sar-db-renderer
 
   localstack:
     image: localstack/localstack:3

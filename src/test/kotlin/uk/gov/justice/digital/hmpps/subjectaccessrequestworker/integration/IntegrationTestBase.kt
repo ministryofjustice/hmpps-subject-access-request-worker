@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
@@ -39,6 +41,7 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
 import java.util.UUID
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
@@ -77,6 +80,10 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthorisationHelper
+
+  protected var objectMapper: ObjectMapper = ObjectMapper()
+    .registerModule(JavaTimeModule())
+    .setDateFormat(SimpleDateFormat("yyyy-MM-dd"))
 
   internal fun setAuthorisation(
     username: String? = "AUTH_ADM",
