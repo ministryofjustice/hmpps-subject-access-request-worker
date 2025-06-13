@@ -97,7 +97,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-3"), dataIsHeld)
 
     await()
-      .atMost(5, TimeUnit.SECONDS)
+      .atMost(10, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -282,7 +282,8 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
             dataHeld = dataHeld,
             serviceName = expectedSubjectDataHeldRequest.serviceName,
           ).toJson(),
-        ).withStatus(200),
+        ).withStatus(200)
+        .withUniformRandomDelay(500, 3000)
     )
   }
 
