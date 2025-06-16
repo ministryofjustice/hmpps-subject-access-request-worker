@@ -1,8 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -45,23 +44,13 @@ class BacklogRequestProcessor(
 
         runBlocking {
           val channel = Channel<ServiceSummary>(capacity = pendingServices.size)
-
-          launch(Dispatchers.Default) {
-            pendingServices.forEachIndexed { index, service ->
-              log.info("launching backlog request coroutine index: $index, ${backlogRequest.id} to service ${service.label}")
-              val summary = executeServiceSummaryRequest(backlogRequest, service)
-              channel.send(summary)
-            }
-            log.info("closing channel")
+          launch {
+            fanOutServiceSummaryRequest(pendingServices, backlogRequest, channel)
             channel.close()
           }
 
-          repeat(3) {
-            launch(Dispatchers.Default) {
-              channel.consumeEach { summary ->
-                processSummaryResponse(backlogRequest, summary)
-              }
-            }
+          for (serviceSummary in channel) {
+            processSummaryResponse(backlogRequest, serviceSummary)
           }
         }
       } else {
@@ -75,14 +64,22 @@ class BacklogRequestProcessor(
     }
   }
 
-  suspend fun executeServiceSummaryRequest(
+  suspend fun fanOutServiceSummaryRequest(
+    pendingService: List<ServiceConfiguration>,
     backlogRequest: BacklogRequest,
-    service: ServiceConfiguration,
-  ): ServiceSummary {
-    log.info("sending service summary request ${backlogRequest.id}, service ${service.label}")
-    return backlogRequestService.getSubjectDataHeldSummary(backlogRequest, service).also {
-      log.info("service summary response obtained ${backlogRequest.id}: $it")
+    channel: Channel<ServiceSummary>
+  ) {
+    coroutineScope {
+      pendingService.forEach { service ->
+        launch {
+          log.info("sending service summary request: backlogRequestId: {}, service: {}", backlogRequest.id, service.label)
+          val summary = backlogRequestService.getSubjectDataHeldSummary(backlogRequest, service)
+          log.info("service summary request complete: backlogRequestId: {}, service: {}", backlogRequest.id, service.label)
+          channel.send(summary)
+        }
+      }
     }
+
   }
 
   fun processSummaryResponse(backlogRequest: BacklogRequest, summary: ServiceSummary) {
