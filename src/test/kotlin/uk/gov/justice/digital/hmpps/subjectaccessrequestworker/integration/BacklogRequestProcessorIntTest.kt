@@ -283,7 +283,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
             serviceName = expectedSubjectDataHeldRequest.serviceName,
           ).toJson(),
         ).withStatus(200)
-        .withUniformRandomDelay(10, 2000)
+        .withUniformRandomDelay(10, 2000),
     )
   }
 

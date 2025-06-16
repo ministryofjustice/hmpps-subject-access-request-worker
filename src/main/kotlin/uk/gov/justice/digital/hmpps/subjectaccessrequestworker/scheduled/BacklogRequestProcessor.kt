@@ -41,7 +41,6 @@ class BacklogRequestProcessor(
 
       val pendingServices = backlogRequestService.getPendingServiceSummariesForId(backlogRequest.id)
       if (pendingServices.isNotEmpty()) {
-
         runBlocking {
           val channel = Channel<ServiceSummary>(capacity = pendingServices.size)
           launch {
@@ -67,7 +66,7 @@ class BacklogRequestProcessor(
   suspend fun fanOutServiceSummaryRequest(
     pendingService: List<ServiceConfiguration>,
     backlogRequest: BacklogRequest,
-    channel: Channel<ServiceSummary>
+    channel: Channel<ServiceSummary>,
   ) {
     coroutineScope {
       pendingService.forEach { service ->
@@ -79,7 +78,6 @@ class BacklogRequestProcessor(
         }
       }
     }
-
   }
 
   fun processSummaryResponse(backlogRequest: BacklogRequest, summary: ServiceSummary) {
