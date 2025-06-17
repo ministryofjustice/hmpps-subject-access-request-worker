@@ -4,13 +4,19 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
 class BacklogRequestControllerIntTest : IntegrationTestBase() {
+
+  @Autowired
+  lateinit var backlogRequestService: BacklogRequestService
 
   @Nested
   inner class AuthenticationTestCases {
@@ -202,6 +208,66 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         }
         .jsonPath("$.serviceSummary").isArray
         .jsonPath("$.serviceSummary.length()").isEqualTo(0)
+    }
+  }
+
+  @Nested
+  inner class BacklogStatusEntityTestCases {
+
+    @Test
+    fun `should return status 401 for backlog requests status when no auth header provided`() {
+      webTestClient.get()
+        .uri("/subject-access-request/backlog/status")
+        .exchange()
+        .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `should return backlog requests status success`() {
+      backlogRequestService.save(
+        BacklogRequest(
+          sarCaseReferenceNumber = "1",
+          nomisId = "1",
+          ndeliusCaseReferenceId = null,
+          dateFrom = LocalDate.now().minusYears(1),
+          dateTo = LocalDate.now(),
+          dataHeld = true,
+          status = BacklogRequestStatus.COMPLETE,
+        ),
+      )
+
+      backlogRequestService.save(
+        BacklogRequest(
+          sarCaseReferenceNumber = "2",
+          nomisId = "2",
+          ndeliusCaseReferenceId = null,
+          dateFrom = LocalDate.now().minusYears(1),
+          dateTo = LocalDate.now(),
+          dataHeld = false,
+        ),
+      )
+
+      backlogRequestService.save(
+        BacklogRequest(
+          sarCaseReferenceNumber = "3",
+          nomisId = null,
+          ndeliusCaseReferenceId = "3",
+          dateFrom = LocalDate.now().minusYears(1),
+          dateTo = LocalDate.now(),
+          dataHeld = false,
+        ),
+      )
+
+      webTestClient.get()
+        .uri("/subject-access-request/backlog/status")
+        .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+        .exchange()
+        .expectStatus().isOk
+        .expectBody()
+        .jsonPath("$.totalRequests").isEqualTo(3)
+        .jsonPath("$.pendingRequests").isEqualTo(2)
+        .jsonPath("$.completedRequests").isEqualTo(1)
+        .jsonPath("$.completeRequestsWithDataHeld").isEqualTo(1)
     }
   }
 

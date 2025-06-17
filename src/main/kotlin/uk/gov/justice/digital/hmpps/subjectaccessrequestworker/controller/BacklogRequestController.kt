@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogResponseEntity
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogStatusEntity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
@@ -135,6 +137,45 @@ class BacklogRequestController(
         .body(BacklogResponseEntity(it))
     }
   }
+
+  @Operation(
+    summary = "Get status snapshot of backlog requests",
+    description = "Get status snapshot of backlog requests",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Get status snapshot of backlog requests",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BacklogRequestStatus::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  @GetMapping(value = ["/status"])
+  fun getBacklogStatus(): ResponseEntity<BacklogStatusEntity> = ResponseEntity.ok(
+    backlogRequestService.getStatus().toBacklogStatusEntity(),
+  )
+
+  fun BacklogRequestService.BacklogStatus.toBacklogStatusEntity(): BacklogStatusEntity = BacklogStatusEntity(
+    totalRequests = this.totalRequests,
+    pendingRequests = this.pendingRequests,
+    completedRequests = this.completedRequests,
+    completeRequestsWithDataHeld = this.completeRequestsWithDataHeld,
+  )
 
   private fun validateRequest(request: CreateBacklogRequest) {
     if (request.sarCaseReferenceId.isNullOrBlank()) {

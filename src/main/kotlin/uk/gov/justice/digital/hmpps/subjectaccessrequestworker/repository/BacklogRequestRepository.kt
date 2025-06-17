@@ -65,4 +65,8 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
     @Param("dataHeld") dataHeld: Boolean,
     @Param("completedAt") completedAt: LocalDateTime = now(),
   ): Int
+
+  fun countByStatus(status: BacklogRequestStatus): Long
+
+  fun countByStatusAndDataHeld(status: BacklogRequestStatus, dataHeld: Boolean): Long
 }

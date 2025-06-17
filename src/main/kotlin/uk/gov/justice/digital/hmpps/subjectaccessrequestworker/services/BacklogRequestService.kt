@@ -114,4 +114,21 @@ class BacklogRequestService(
 
   @Transactional
   fun isDataHeldOnSubject(id: UUID): Boolean = serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(id) > 0
+
+  fun getStatus(): BacklogStatus = BacklogStatus(
+    totalRequests = backlogRequestRepository.count(),
+    pendingRequests = backlogRequestRepository.countByStatus(BacklogRequestStatus.PENDING),
+    completedRequests = backlogRequestRepository.countByStatus(BacklogRequestStatus.COMPLETE),
+    completeRequestsWithDataHeld = backlogRequestRepository.countByStatusAndDataHeld(
+      BacklogRequestStatus.COMPLETE,
+      true,
+    ),
+  )
+
+  data class BacklogStatus(
+    val totalRequests: Long,
+    val pendingRequests: Long,
+    val completedRequests: Long,
+    val completeRequestsWithDataHeld: Long,
+  )
 }
