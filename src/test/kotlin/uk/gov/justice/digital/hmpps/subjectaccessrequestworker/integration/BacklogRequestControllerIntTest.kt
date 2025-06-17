@@ -15,8 +15,26 @@ import java.util.UUID
 
 class BacklogRequestControllerIntTest : IntegrationTestBase() {
 
+  private companion object {
+    const val SAR_CASE_REF_INVALID_MSG = "non null/empty value is required for sarCaseReferenceId"
+    const val NOMIS_NDELIUS_ID_INVALID_MSG = "a non null/empty value is required for nomisId or ndeliusCaseReferenceId"
+    const val MULTIPLE_SUBJECT_IDS_PROVIDED_MSG = "multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId"
+    const val SUBJECT_NAME_NULL_OR_EMPTY_MSG = "a non null/empty value is required for subject name"
+    const val VERSION_NULL_OR_EMPTY_MSG = "a non null/empty value is required for version"
+  }
+
   @Autowired
   lateinit var backlogRequestService: BacklogRequestService
+
+  private val createBacklogRequest = CreateBacklogRequest(
+    subjectName = "Jailbird, Snake",
+    version = "1",
+    sarCaseReferenceId = "test-001",
+    ndeliusCaseReferenceId = null,
+    nomisId = null,
+    dateFrom = LocalDate.now().minusYears(1),
+    dateTo = LocalDate.now(),
+  )
 
   @Nested
   inner class AuthenticationTestCases {
@@ -25,15 +43,8 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       webTestClient
         .post()
         .uri("/subject-access-request/backlog")
-        .bodyValue(
-          CreateBacklogRequest(
-            sarCaseReferenceId = "test-001",
-            ndeliusCaseReferenceId = null,
-            nomisId = null,
-            dateFrom = LocalDate.now().minusYears(1),
-            dateTo = LocalDate.now(),
-          ),
-        ).exchange()
+        .bodyValue(createBacklogRequest)
+        .exchange()
         .expectStatus().isUnauthorized
     }
 
@@ -43,15 +54,8 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .post()
         .uri("/subject-access-request/backlog")
         .headers(setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS")))
-        .bodyValue(
-          CreateBacklogRequest(
-            sarCaseReferenceId = "test-001",
-            ndeliusCaseReferenceId = null,
-            nomisId = null,
-            dateFrom = LocalDate.now().minusYears(1),
-            dateTo = LocalDate.now(),
-          ),
-        ).exchange()
+        .bodyValue(createBacklogRequest)
+        .exchange()
         .expectStatus()
     }
   }
@@ -62,20 +66,26 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     @ParameterizedTest
     @CsvSource(
       value = [
-        " | | | non null/empty value is required for sarCaseReferenceId | Test case: sarCaseReferenceId is null",
-        " '' | | | non null/empty value is required for sarCaseReferenceId | Test case: sarCaseReferenceId is empty",
-        "sarTestCase01 | | | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId and ndeliusCaseReferenceId are null",
-        "sarTestCase01 | '' | | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId is empty ndeliusCaseReferenceId is null",
-        "sarTestCase01 | '' | '' | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId and ndeliusCaseReferenceId are empty",
-        "sarTestCase01 | | '' | a non null/empty value is required for nomisId or ndeliusCaseReferenceId | Test case: nomisId is null ndeliusCaseReferenceId is empty",
-        "sarTestCase01 | nomis_001 | ndelius_001 | multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId | Test case: both nomis and ndelius IDs provided",
+        "    |    |    |      |    | $SAR_CASE_REF_INVALID_MSG          | sarCaseReferenceId is null",
+        " '' |    |    |      |    | $SAR_CASE_REF_INVALID_MSG          | sarCaseReferenceId is empty",
+        "A1  |    |    |      |    | $NOMIS_NDELIUS_ID_INVALID_MSG      | nomisId and ndeliusCaseReferenceId are null",
+        "A1  | '' |    |      |    | $NOMIS_NDELIUS_ID_INVALID_MSG      | nomisId is empty ndeliusCaseReferenceId is null",
+        "A1  | '' | '' |      |    | $NOMIS_NDELIUS_ID_INVALID_MSG      | nomisId and ndeliusCaseReferenceId are empty",
+        "A1  |    | '' |      |    | $NOMIS_NDELIUS_ID_INVALID_MSG      | nomisId is null ndeliusCaseReferenceId is empty",
+        "A1  | B2 | C2 |      |    | $MULTIPLE_SUBJECT_IDS_PROVIDED_MSG | both nomis and ndelius IDs provided",
+        "A1  | B2 |    |      |    | $SUBJECT_NAME_NULL_OR_EMPTY_MSG    | subject name is null",
+        "A1  |    | C2 | ''   |    | $SUBJECT_NAME_NULL_OR_EMPTY_MSG    | subject name is empty",
+        "A1  |    | C2 | 'D2' |    | $VERSION_NULL_OR_EMPTY_MSG         | version is null",
+        "A1  |    | C2 | 'D2' | '' | $VERSION_NULL_OR_EMPTY_MSG         | version is empty",
       ],
       delimiterString = "|",
     )
-    fun `should return status 400 if nomisId and ndeliusCaseReferenceId are not valid`(
+    fun `should return status 400 if mandatory fields are null or empty`(
       sarCaseReferenceId: String?,
       nomisId: String?,
       ndeliusCaseReferenceId: String?,
+      subjectName: String?,
+      version: String?,
       expectedMessage: String,
       description: String,
     ) {
@@ -85,13 +95,16 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
         .bodyValue(
           CreateBacklogRequest(
+            subjectName = subjectName,
+            version = version,
             sarCaseReferenceId = sarCaseReferenceId,
-            ndeliusCaseReferenceId = nomisId,
-            nomisId = ndeliusCaseReferenceId,
+            ndeliusCaseReferenceId = ndeliusCaseReferenceId,
+            nomisId = nomisId,
             dateFrom = LocalDate.now().minusYears(1),
             dateTo = LocalDate.now(),
           ),
-        ).exchange()
+        )
+        .exchange()
         .expectStatus().isBadRequest
         .expectBody()
         .jsonPath("$.developerMessage")
@@ -161,6 +174,8 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .jsonPath("$.serviceSummary").isArray
         .jsonPath("$.serviceSummary.length()").isEqualTo(0)
         .jsonPath("$.createdDate").isNotEmpty
+        .jsonPath("$.subjectName").isEqualTo("Jailbird, Snake")
+        .jsonPath("$.version").isEqualTo("1")
     }
   }
 
@@ -182,9 +197,11 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     ) {
       val startOfTest = LocalDateTime.now()
       val request = CreateBacklogRequest(
-        sarCaseReferenceId = "sar-${UUID.randomUUID()}",
-        nomisId = nomisId,
+        subjectName = "Jailbird, Snake",
+        version = "1",
+        sarCaseReferenceId = "test-001",
         ndeliusCaseReferenceId = ndeliusId,
+        nomisId = nomisId,
         dateFrom = LocalDate.now().minusYears(1),
         dateTo = LocalDate.now(),
       )
@@ -278,6 +295,8 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
       .bodyValue(
         CreateBacklogRequest(
+          subjectName = "Jailbird, Snake",
+          version = "1",
           sarCaseReferenceId = caseReference,
           nomisId = caseReference,
           ndeliusCaseReferenceId = "",

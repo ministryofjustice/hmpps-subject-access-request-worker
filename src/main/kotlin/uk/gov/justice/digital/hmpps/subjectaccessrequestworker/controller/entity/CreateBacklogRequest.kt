@@ -7,7 +7,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class CreateBacklogRequest(
-  val sarCaseReferenceId: String?,
+  val subjectName: String? = null,
+  val version: String? = null,
+  val sarCaseReferenceId: String? = null,
   val nomisId: String? = null,
   val ndeliusCaseReferenceId: String? = null,
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -18,6 +20,8 @@ data class CreateBacklogRequest(
 
 data class BacklogResponseEntity(
   val id: UUID,
+  val subjectName: String,
+  val version: String,
   val sarCaseReferenceId: String,
   val nomisId: String?,
   val ndeliusCaseReferenceId: String?,
@@ -31,6 +35,8 @@ data class BacklogResponseEntity(
 ) {
   constructor(backlogRequest: BacklogRequest) : this(
     id = backlogRequest.id,
+    subjectName = backlogRequest.subjectName,
+    version = backlogRequest.version,
     sarCaseReferenceId = backlogRequest.sarCaseReferenceNumber,
     nomisId = backlogRequest.nomisId,
     ndeliusCaseReferenceId = backlogRequest.ndeliusCaseReferenceId,

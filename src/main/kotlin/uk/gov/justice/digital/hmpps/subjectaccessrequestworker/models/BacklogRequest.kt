@@ -26,6 +26,8 @@ data class BacklogRequest(
   @Id
   val id: UUID = UUID.randomUUID(),
   var sarCaseReferenceNumber: String = "",
+  var subjectName: String = "",
+  var version: String = "",
   var nomisId: String? = null,
   var ndeliusCaseReferenceId: String? = null,
   @Enumerated(EnumType.STRING)
@@ -48,6 +50,8 @@ data class BacklogRequest(
   )
 
   constructor(request: CreateBacklogRequest) : this(
+    subjectName = request.subjectName?: "",
+    version = request.version?: "",
     sarCaseReferenceNumber = request.sarCaseReferenceId ?: "",
     nomisId = if (request.nomisId.isNullOrEmpty()) null else request.nomisId,
     ndeliusCaseReferenceId = if (request.ndeliusCaseReferenceId.isNullOrEmpty()) null else request.ndeliusCaseReferenceId,

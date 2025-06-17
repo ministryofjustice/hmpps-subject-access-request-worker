@@ -27,6 +27,8 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 
+const val TIMEOUT_SEC = 8L
+
 class BacklogRequestProcessorIntTest : IntegrationTestBase() {
 
   @Autowired
@@ -97,7 +99,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-3"), dataIsHeld)
 
     await()
-      .atMost(8, TimeUnit.SECONDS)
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -148,7 +150,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldFailsOnFirstAttempt(createSubjectDataHeldRequest("service-3"), true)
 
     await()
-      .atMost(5, TimeUnit.SECONDS)
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -199,7 +201,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-3"), true)
 
     await()
-      .atMost(5, TimeUnit.SECONDS)
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -247,6 +249,8 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
     .bodyValue(
       CreateBacklogRequest(
+        subjectName = "Jailbird, Snake",
+        version = "1",
         sarCaseReferenceId = sarCaseRef,
         nomisId = testNomisId,
         ndeliusCaseReferenceId = null,

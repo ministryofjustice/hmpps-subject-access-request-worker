@@ -187,5 +187,11 @@ class BacklogRequestController(
     if (!request.nomisId.isNullOrEmpty() && !request.ndeliusCaseReferenceId.isNullOrEmpty()) {
       throw ValidationException("multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId")
     }
+    if (request.subjectName.isNullOrEmpty()) {
+      throw ValidationException("a non null/empty value is required for subject name")
+    }
+    if (request.version.isNullOrEmpty()) {
+      throw ValidationException("a non null/empty value is required for version")
+    }
   }
 }
