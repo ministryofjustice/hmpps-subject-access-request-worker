@@ -36,6 +36,33 @@ class BacklogRequestController(
   val backlogRequestService: BacklogRequestService,
 ) {
 
+  @Operation(
+    summary = "Get a list of available backlog request versions",
+    description = "Get a list of available backlog request versions",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Get a list of available backlog request versions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = String::class)),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
   @GetMapping("/versions")
   fun getBacklogVersions(): ResponseEntity<BacklogRequestVersions> = ResponseEntity.ok(
     BacklogRequestVersions(
