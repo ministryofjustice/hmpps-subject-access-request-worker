@@ -50,8 +50,8 @@ data class BacklogRequest(
   )
 
   constructor(request: CreateBacklogRequest) : this(
-    subjectName = request.subjectName?: "",
-    version = request.version?: "",
+    subjectName = request.subjectName ?: "",
+    version = request.version ?: "",
     sarCaseReferenceNumber = request.sarCaseReferenceNumber ?: "",
     nomisId = if (request.nomisId.isNullOrEmpty()) null else request.nomisId,
     ndeliusCaseReferenceId = if (request.ndeliusCaseReferenceId.isNullOrEmpty()) null else request.ndeliusCaseReferenceId,

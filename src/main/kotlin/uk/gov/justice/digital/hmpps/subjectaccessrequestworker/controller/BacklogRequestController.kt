@@ -183,7 +183,7 @@ class BacklogRequestController(
   @PostMapping
   fun createBacklogRequest(
     @RequestBody createBacklogRequest: CreateBacklogRequest,
-    ): ResponseEntity<BacklogRequestOverview> {
+  ): ResponseEntity<BacklogRequestOverview> {
     validateRequest(createBacklogRequest)
 
     val backlogRequest = BacklogRequest(createBacklogRequest)

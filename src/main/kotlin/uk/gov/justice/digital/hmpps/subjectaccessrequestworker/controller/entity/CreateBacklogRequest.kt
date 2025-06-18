@@ -70,7 +70,7 @@ data class BacklogRequestDetailsEntity(
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateTo: LocalDate?,
   val dataHeld: Boolean? = null,
-  val serviceSummary: List<ServiceSummary>
+  val serviceSummary: List<ServiceSummary>,
 ) {
   constructor(backlogRequest: BacklogRequest) : this(
     id = backlogRequest.id,

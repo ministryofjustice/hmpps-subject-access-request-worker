@@ -119,21 +119,21 @@ class BacklogRequestService(
   @Transactional
   fun isDataHeldOnSubject(id: UUID): Boolean = serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(id) > 0
 
-  fun getStatusByVersion(version: String): BacklogStatus? =
-    backlogRequestRepository.countByVersion(version)
-      .takeIf { it > 0 }
-      ?.let { total ->
-        BacklogStatus(
-          totalRequests = total,
-          pendingRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.PENDING),
-          completedRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.COMPLETE),
-          completeRequestsWithDataHeld = backlogRequestRepository.countByVersionAndStatusAndDataHeld(
-            version,
-            BacklogRequestStatus.COMPLETE,
-            true,
-          ),
-        )
-      }
+  fun getStatusByVersion(version: String): BacklogStatus? = backlogRequestRepository
+    .countByVersion(version)
+    .takeIf { it > 0 }
+    ?.let { total ->
+      BacklogStatus(
+        totalRequests = total,
+        pendingRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.PENDING),
+        completedRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.COMPLETE),
+        completeRequestsWithDataHeld = backlogRequestRepository.countByVersionAndStatusAndDataHeld(
+          version,
+          BacklogRequestStatus.COMPLETE,
+          true,
+        ),
+      )
+    }
 
   data class BacklogStatus(
     val totalRequests: Long,

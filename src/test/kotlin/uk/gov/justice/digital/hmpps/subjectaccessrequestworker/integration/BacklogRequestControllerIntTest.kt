@@ -266,7 +266,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     fun `should return status 401 if no auth header is present`() {
       webTestClient
         .get()
-        .uri("/subject-access-request/backlog/${backlogReqOneId}")
+        .uri("/subject-access-request/backlog/$backlogReqOneId")
         .exchange()
         .expectStatus().isUnauthorized
     }
@@ -275,7 +275,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     fun `should return status 403 if auth header does not contain the required role`() {
       webTestClient
         .get()
-        .uri("/subject-access-request/backlog/${backlogReqOneId}")
+        .uri("/subject-access-request/backlog/$backlogReqOneId")
         .headers(setAuthorisation(roles = listOf("ROLE_BOB")))
         .exchange()
         .expectStatus()
