@@ -30,9 +30,13 @@ class BacklogRequestService(
 
   fun save(backlogRequest: BacklogRequest): BacklogRequest = backlogRequestRepository.saveAndFlush(backlogRequest)
 
-  fun getAllBacklogRequests(): List<BacklogRequest> = backlogRequestRepository.findAll()
+  fun getRequestsForVersion(version: String): List<BacklogRequest> = backlogRequestRepository.findByVersionOrderByCreatedAt(version)
 
   fun getByIdOrNull(id: UUID): BacklogRequest? = backlogRequestRepository.findByIdOrNull(id)
+
+  fun getVersions(): Set<String> = backlogRequestRepository.findDistinctVersions()
+
+  fun deleteAll(): Unit = backlogRequestRepository.deleteAll()
 
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
     backlogRequestRepository.save(request)
@@ -115,15 +119,21 @@ class BacklogRequestService(
   @Transactional
   fun isDataHeldOnSubject(id: UUID): Boolean = serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(id) > 0
 
-  fun getStatus(): BacklogStatus = BacklogStatus(
-    totalRequests = backlogRequestRepository.count(),
-    pendingRequests = backlogRequestRepository.countByStatus(BacklogRequestStatus.PENDING),
-    completedRequests = backlogRequestRepository.countByStatus(BacklogRequestStatus.COMPLETE),
-    completeRequestsWithDataHeld = backlogRequestRepository.countByStatusAndDataHeld(
-      BacklogRequestStatus.COMPLETE,
-      true,
-    ),
-  )
+  fun getStatusByVersion(version: String): BacklogStatus? =
+    backlogRequestRepository.countByVersion(version)
+      .takeIf { it > 0 }
+      ?.let { total ->
+        BacklogStatus(
+          totalRequests = total,
+          pendingRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.PENDING),
+          completedRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.COMPLETE),
+          completeRequestsWithDataHeld = backlogRequestRepository.countByVersionAndStatusAndDataHeld(
+            version,
+            BacklogRequestStatus.COMPLETE,
+            true,
+          ),
+        )
+      }
 
   data class BacklogStatus(
     val totalRequests: Long,

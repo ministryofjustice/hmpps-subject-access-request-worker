@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogResponseEntity
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
@@ -243,7 +243,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-3"))
   }
 
-  private fun createBacklogRequest(): BacklogResponseEntity? = webTestClient
+  private fun createBacklogRequest(): BacklogRequestOverview? = webTestClient
     .post()
     .uri("/subject-access-request/backlog")
     .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
@@ -251,7 +251,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
       CreateBacklogRequest(
         subjectName = "Jailbird, Snake",
         version = "1",
-        sarCaseReferenceId = sarCaseRef,
+        sarCaseReferenceNumber = sarCaseRef,
         nomisId = testNomisId,
         ndeliusCaseReferenceId = null,
         dateFrom = dateFrom,
@@ -260,7 +260,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     ).exchange()
     .expectStatus()
     .isCreated
-    .returnResult(BacklogResponseEntity::class.java)
+    .returnResult(BacklogRequestOverview::class.java)
     .responseBody
     .blockFirst()
 

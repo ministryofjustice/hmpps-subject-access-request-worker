@@ -9,7 +9,7 @@ import java.util.UUID
 data class CreateBacklogRequest(
   val subjectName: String? = null,
   val version: String? = null,
-  val sarCaseReferenceId: String? = null,
+  val sarCaseReferenceNumber: String? = null,
   val nomisId: String? = null,
   val ndeliusCaseReferenceId: String? = null,
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -18,35 +18,79 @@ data class CreateBacklogRequest(
   val dateTo: LocalDate,
 )
 
-data class BacklogResponseEntity(
+data class BacklogRequestVersions(val versions: Set<String>)
+
+/**
+ * Top level overview of backlog request (omits service summary values).
+ */
+data class BacklogRequestOverview(
   val id: UUID,
   val subjectName: String,
   val version: String,
-  val sarCaseReferenceId: String,
+  val sarCaseReferenceNumber: String?,
   val nomisId: String?,
-  val ndeliusCaseReferenceId: String?,
+  val ndeliusCaseReferenceId: String? = null,
   val status: String,
-  val serviceSummary: List<ServiceSummary>,
   val createdDate: LocalDateTime?,
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateFrom: LocalDate?,
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateTo: LocalDate?,
+  val serviceQueried: Int = 0,
 ) {
   constructor(backlogRequest: BacklogRequest) : this(
     id = backlogRequest.id,
     subjectName = backlogRequest.subjectName,
     version = backlogRequest.version,
-    sarCaseReferenceId = backlogRequest.sarCaseReferenceNumber,
+    sarCaseReferenceNumber = backlogRequest.sarCaseReferenceNumber,
     nomisId = backlogRequest.nomisId,
     ndeliusCaseReferenceId = backlogRequest.ndeliusCaseReferenceId,
     status = backlogRequest.status.name,
     createdDate = backlogRequest.createdAt,
-    serviceSummary = backlogRequest.serviceSummary.map {
-      ServiceSummary(it.serviceName, it.status.name, it.dataHeld)
-    },
     dateFrom = backlogRequest.dateFrom,
     dateTo = backlogRequest.dateTo,
+    serviceQueried = backlogRequest.serviceSummary.size,
+  )
+}
+
+/**
+ * Detailed overview of backlog request that includes service summaries.
+ */
+data class BacklogRequestDetailsEntity(
+  val id: UUID,
+  val subjectName: String,
+  val version: String,
+  val sarCaseReferenceNumber: String?,
+  val nomisId: String?,
+  val ndeliusCaseReferenceId: String? = null,
+  val status: String,
+  val createdDate: LocalDateTime?,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  val dateFrom: LocalDate?,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  val dateTo: LocalDate?,
+  val dataHeld: Boolean? = null,
+  val serviceSummary: List<ServiceSummary>
+) {
+  constructor(backlogRequest: BacklogRequest) : this(
+    id = backlogRequest.id,
+    subjectName = backlogRequest.subjectName,
+    version = backlogRequest.version,
+    sarCaseReferenceNumber = backlogRequest.sarCaseReferenceNumber,
+    nomisId = backlogRequest.nomisId,
+    ndeliusCaseReferenceId = backlogRequest.ndeliusCaseReferenceId,
+    status = backlogRequest.status.name,
+    createdDate = backlogRequest.createdAt,
+    dateFrom = backlogRequest.dateFrom,
+    dateTo = backlogRequest.dateTo,
+    serviceSummary = backlogRequest.serviceSummary.map {
+      ServiceSummary(
+        serviceName = it.serviceName,
+        processingStatus = it.status.name,
+        dataHeld = it.dataHeld,
+      )
+    },
+    dataHeld = backlogRequest.serviceSummary.firstOrNull { it.dataHeld }?.dataHeld ?: false,
   )
 }
 
