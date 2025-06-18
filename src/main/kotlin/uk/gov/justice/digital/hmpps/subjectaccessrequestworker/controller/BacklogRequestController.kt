@@ -47,7 +47,7 @@ class BacklogRequestController(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = String::class)),
+            schema = Schema(implementation = BacklogRequestVersions::class),
           ),
         ],
       ),
