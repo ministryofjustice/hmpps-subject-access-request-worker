@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogResponseEntity
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
@@ -26,6 +26,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
+
+const val TIMEOUT_SEC = 8L
 
 class BacklogRequestProcessorIntTest : IntegrationTestBase() {
 
@@ -97,7 +99,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-3"), dataIsHeld)
 
     await()
-      .atMost(8, TimeUnit.SECONDS)
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -148,7 +150,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldFailsOnFirstAttempt(createSubjectDataHeldRequest("service-3"), true)
 
     await()
-      .atMost(5, TimeUnit.SECONDS)
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -199,7 +201,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-3"), true)
 
     await()
-      .atMost(5, TimeUnit.SECONDS)
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
       .until { requestIsComplete(backlogRequest!!.id) }
 
     val result = assertBacklogRequestEqualsExpected(
@@ -241,13 +243,15 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-3"))
   }
 
-  private fun createBacklogRequest(): BacklogResponseEntity? = webTestClient
+  private fun createBacklogRequest(): BacklogRequestOverview? = webTestClient
     .post()
     .uri("/subject-access-request/backlog")
     .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
     .bodyValue(
       CreateBacklogRequest(
-        sarCaseReferenceId = sarCaseRef,
+        subjectName = "Jailbird, Snake",
+        version = "1",
+        sarCaseReferenceNumber = sarCaseRef,
         nomisId = testNomisId,
         ndeliusCaseReferenceId = null,
         dateFrom = dateFrom,
@@ -256,7 +260,7 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
     ).exchange()
     .expectStatus()
     .isCreated
-    .returnResult(BacklogResponseEntity::class.java)
+    .returnResult(BacklogRequestOverview::class.java)
     .responseBody
     .blockFirst()
 

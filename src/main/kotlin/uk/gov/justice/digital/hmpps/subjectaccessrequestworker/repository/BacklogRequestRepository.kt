@@ -20,6 +20,17 @@ const val BACKLOG_REQUEST_LOCK_TIMEOUT = "3000"
 @Repository
 interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
 
+  fun countByVersion(version: String): Long
+
+  fun countByVersionAndStatus(version: String, status: BacklogRequestStatus): Long
+
+  fun countByVersionAndStatusAndDataHeld(version: String, status: BacklogRequestStatus, dataHeld: Boolean): Long
+
+  fun findByVersionOrderByCreatedAt(version: String): MutableList<BacklogRequest>
+
+  @Query("SELECT DISTINCT (b.version) FROM BacklogRequest b ORDER BY b.version")
+  fun findDistinctVersions(): Set<String>
+
   @Lock(LockModeType.PESSIMISTIC_READ)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   fun findByIdAndStatus(@Param("id") id: UUID, status: BacklogRequestStatus): BacklogRequest?
@@ -65,8 +76,4 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
     @Param("dataHeld") dataHeld: Boolean,
     @Param("completedAt") completedAt: LocalDateTime = now(),
   ): Int
-
-  fun countByStatus(status: BacklogRequestStatus): Long
-
-  fun countByStatusAndDataHeld(status: BacklogRequestStatus, dataHeld: Boolean): Long
 }

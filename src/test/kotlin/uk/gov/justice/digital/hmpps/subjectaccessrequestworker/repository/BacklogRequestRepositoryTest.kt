@@ -114,6 +114,34 @@ class BacklogRequestRepositoryTest @Autowired constructor(
   }
 
   @Nested
+  inner class GetVersionsTestCases {
+
+    @Test
+    fun `should return empty list when no versions exist`() {
+      assertThat(backlogRequestRepository.findDistinctVersions()).isEmpty()
+    }
+
+    @Test
+    fun `should return expected versions`() {
+      backlogRequestRepository.save(
+        BacklogRequest(
+          version = "1.0",
+          createdAt = now().minusDays(1),
+          status = PENDING,
+        ),
+      )
+      backlogRequestRepository.save(
+        BacklogRequest(
+          version = "2.0",
+          createdAt = now().minusHours(1),
+          status = PENDING,
+        ),
+      )
+      assertThat(backlogRequestRepository.findDistinctVersions()).isEqualTo(setOf("1.0", "2.0"))
+    }
+  }
+
+  @Nested
   inner class GetNextToProcessTestCases {
 
     private val backOffThreshold = now().minusMinutes(30)
@@ -349,78 +377,78 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       assertThat(actual!!.status).isEqualTo(PENDING)
       assertThat(actual.serviceSummary).hasSize(2)
     }
-  }
 
-  @Test
-  fun `should not complete backlog request unless all service summaries exist and have status COMPLETE`() {
-    // Create a backlog request with 3 out of 3 service summary entries but 1 service summary does not have status COMPLETE.
-    val request = BacklogRequest(
-      status = PENDING,
-      claimDateTime = null,
-    )
-    request.addServiceSummaries(
-      ServiceSummary(
-        serviceName = serviceConfigurations[0].serviceName,
-        dataHeld = false,
-        status = COMPLETE,
-        backlogRequest = request,
-      ),
-      ServiceSummary(
-        serviceName = serviceConfigurations[1].serviceName,
-        dataHeld = false,
-        status = COMPLETE,
-        backlogRequest = request,
-      ),
-      ServiceSummary(
-        serviceName = serviceConfigurations[2].serviceName,
-        dataHeld = false,
+    @Test
+    fun `should not complete backlog request unless all service summaries exist and have status COMPLETE`() {
+      // Create a backlog request with 3 out of 3 service summary entries but 1 service summary does not have status COMPLETE.
+      val request = BacklogRequest(
         status = PENDING,
-        backlogRequest = request,
-      ),
-    )
-    backlogRequestRepository.save(request)
+        claimDateTime = null,
+      )
+      request.addServiceSummaries(
+        ServiceSummary(
+          serviceName = serviceConfigurations[0].serviceName,
+          dataHeld = false,
+          status = COMPLETE,
+          backlogRequest = request,
+        ),
+        ServiceSummary(
+          serviceName = serviceConfigurations[1].serviceName,
+          dataHeld = false,
+          status = COMPLETE,
+          backlogRequest = request,
+        ),
+        ServiceSummary(
+          serviceName = serviceConfigurations[2].serviceName,
+          dataHeld = false,
+          status = PENDING,
+          backlogRequest = request,
+        ),
+      )
+      backlogRequestRepository.save(request)
 
-    assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(0)
+      assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(0)
 
-    val actual = backlogRequestRepository.findByIdOrNull(request.id)
-    assertThat(actual).isNotNull
-    assertThat(actual!!.status).isEqualTo(PENDING)
-    assertThat(actual.serviceSummary).hasSize(3)
-  }
+      val actual = backlogRequestRepository.findByIdOrNull(request.id)
+      assertThat(actual).isNotNull
+      assertThat(actual!!.status).isEqualTo(PENDING)
+      assertThat(actual.serviceSummary).hasSize(3)
+    }
 
-  @Test
-  fun `should complete backlog request when all service summaries exist and have status COMPLETE`() {
-    val request = BacklogRequest(
-      status = PENDING,
-      claimDateTime = null,
-    )
-    request.addServiceSummaries(
-      ServiceSummary(
-        serviceName = serviceConfigurations[0].serviceName,
-        dataHeld = false,
-        status = COMPLETE,
-        backlogRequest = request,
-      ),
-      ServiceSummary(
-        serviceName = serviceConfigurations[1].serviceName,
-        dataHeld = false,
-        status = COMPLETE,
-        backlogRequest = request,
-      ),
-      ServiceSummary(
-        serviceName = serviceConfigurations[2].serviceName,
-        dataHeld = false,
-        status = COMPLETE,
-        backlogRequest = request,
-      ),
-    )
-    backlogRequestRepository.save(request)
+    @Test
+    fun `should complete backlog request when all service summaries exist and have status COMPLETE`() {
+      val request = BacklogRequest(
+        status = PENDING,
+        claimDateTime = null,
+      )
+      request.addServiceSummaries(
+        ServiceSummary(
+          serviceName = serviceConfigurations[0].serviceName,
+          dataHeld = false,
+          status = COMPLETE,
+          backlogRequest = request,
+        ),
+        ServiceSummary(
+          serviceName = serviceConfigurations[1].serviceName,
+          dataHeld = false,
+          status = COMPLETE,
+          backlogRequest = request,
+        ),
+        ServiceSummary(
+          serviceName = serviceConfigurations[2].serviceName,
+          dataHeld = false,
+          status = COMPLETE,
+          backlogRequest = request,
+        ),
+      )
+      backlogRequestRepository.save(request)
 
-    assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(1)
+      assertThat(backlogRequestRepository.updateStatusAndDataHeld(request.id, true)).isEqualTo(1)
 
-    val actual = backlogRequestRepository.findByIdOrNull(request.id)
-    assertThat(actual).isNotNull
-    assertThat(actual!!.status).isEqualTo(COMPLETE)
-    assertThat(actual.serviceSummary).hasSize(3)
+      val actual = backlogRequestRepository.findByIdOrNull(request.id)
+      assertThat(actual).isNotNull
+      assertThat(actual!!.status).isEqualTo(COMPLETE)
+      assertThat(actual.serviceSummary).hasSize(3)
+    }
   }
 }
