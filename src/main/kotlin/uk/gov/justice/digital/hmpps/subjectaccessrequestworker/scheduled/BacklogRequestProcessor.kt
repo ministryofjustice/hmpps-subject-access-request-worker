@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled
 
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -48,18 +49,12 @@ class BacklogRequestProcessor(
             channel.close()
           }
 
-          for (serviceSummary in channel) {
-            processSummaryResponse(backlogRequest, serviceSummary)
-          }
+          channel.consumeEach { summary ->  addServiceSummary(backlogRequest, summary)}
+          attemptCompleteRequest(backlogRequest)
         }
-      } else {
-        val isDataHeld = backlogRequestService.isDataHeldOnSubject(backlogRequest.id)
-
-        log.info("completing backlog request ${backlogRequest.id}, dataHeld: $isDataHeld")
-        backlogRequestService.completeRequest(backlogRequest.id, isDataHeld).also {
-          log.info("completed backlog request ${backlogRequest.id}: result=$it")
-        }
+        return
       }
+      attemptCompleteRequest(backlogRequest)
     }
   }
 
@@ -71,24 +66,33 @@ class BacklogRequestProcessor(
     coroutineScope {
       pendingService.forEach { service ->
         launch {
-          log.info("sending service summary request: backlogRequestId: {}, service: {}", backlogRequest.id, service.label)
+          log.info(
+            "sending service summary request: backlogRequestId: {}, service: {}",
+            backlogRequest.id,
+            service.label,
+          )
           val summary = backlogRequestService.getSubjectDataHeldSummary(backlogRequest, service)
-          log.info("service summary request complete: backlogRequestId: {}, service: {}", backlogRequest.id, service.label)
+          log.info(
+            "service summary request complete: backlogRequestId: {}, service: {}",
+            backlogRequest.id,
+            service.label,
+          )
           channel.send(summary)
         }
       }
     }
   }
 
-  fun processSummaryResponse(backlogRequest: BacklogRequest, summary: ServiceSummary) {
+  fun addServiceSummary(backlogRequest: BacklogRequest, summary: ServiceSummary) {
     log.info("saving data held summary ${summary.serviceName}")
     backlogRequestService.addServiceSummary(backlogRequest, summary)
+  }
 
+  fun attemptCompleteRequest(backlogRequest: BacklogRequest) {
     val isDataHeld = backlogRequestService.isDataHeldOnSubject(backlogRequest.id)
 
-    log.info("completing backlog request ${backlogRequest.id}, dataHeld: $isDataHeld")
-    backlogRequestService.completeRequest(backlogRequest.id, isDataHeld).also {
-      log.info("completed backlog request ${backlogRequest.id}: result=$it")
-    }
+    log.info("attempting to set backlog request: ${backlogRequest.id}, status=COMPLETED, dataHeld: $isDataHeld")
+    val completeSuccessful = backlogRequestService.completeRequest(backlogRequest.id, isDataHeld)
+    log.info("complete request: ${backlogRequest.id}: success? $completeSuccessful")
   }
 }
