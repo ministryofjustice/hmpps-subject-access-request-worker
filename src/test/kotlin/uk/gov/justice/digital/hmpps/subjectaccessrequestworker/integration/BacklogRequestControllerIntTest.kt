@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
@@ -84,9 +85,9 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
   @BeforeEach
   fun setup() {
     backlogRequestService.deleteAll()
-    backlogReqOneId = postBacklogRequest(createBacklogRequest1).id
-    backlogReqTwoId = postBacklogRequest(createBacklogRequest2).id
-    backlogReqThreeId = postBacklogRequest(createBacklogRequest3).id
+    backlogReqOneId = postBacklogRequestExpectSuccess(createBacklogRequest1).id
+    backlogReqTwoId = postBacklogRequestExpectSuccess(createBacklogRequest2).id
+    backlogReqThreeId = postBacklogRequestExpectSuccess(createBacklogRequest3).id
 
     serviceConfigurationService.deleteAll()
     serviceConfigurationService.save(service1Config)
@@ -460,6 +461,102 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
           LocalDateTime.parse(it).isBefore(LocalDateTime.now())
         }
     }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        " sar1 | nomis1 | v1 | 2000-01-01 | 2025-01-01 | 400 | duplicate sarCaseReferenceId, nomisId, version, dateFrom and dateTo values",
+        " sar2 | nomis1 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique sarCaseReferenceId, duplicate nomisId, version, dateFrom and dateTo values",
+        " sar1 | nomis2 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique nomisId, duplicate sarCaseReferenceId, version, dateFrom and dateTo values",
+        " sar1 | nomis1 | v2 | 2000-01-01 | 2025-01-01 | 201 | unique Version, duplicate sarCaseReferenceId, nomisId, dateFrom and dateTo values",
+        " sar1 | nomis1 | v1 | 2000-01-02 | 2025-01-01 | 201 | unique dateFrom, duplicate sarCaseReferenceId, nomisId, Version and dateTo values",
+        " sar1 | nomis1 | v1 | 2000-01-01 | 2025-01-02 | 201 | unique dateTo, duplicate sarCaseReferenceId, nomisId, Version and dateFrom values",
+      ],
+      delimiterString = "|",
+    )
+    fun `create request respects the unique constraint on sarCaseReferenceId, nomisId, version, dateFrom and dateTo values`(
+      sarCaseReferenceNumber: String,
+      nomisId: String?,
+      version: String,
+      dateFromStr: String,
+      dateToStr: String,
+      expectedStatus: Int,
+      description: String,
+    ) {
+      // Send original create request.
+      postBacklogRequest(
+        CreateBacklogRequest(
+          subjectName = "Jailbird, Snake",
+          version = "v1",
+          sarCaseReferenceNumber = "sar1",
+          nomisId = "nomis1",
+          ndeliusCaseReferenceId = null,
+          dateFrom = LocalDate.of(2000, 1, 1),
+          dateTo = LocalDate.of(2025, 1, 1),
+        ),
+      ).expectStatus().isCreated
+
+      // Send 2nd create request.
+      postBacklogRequest(
+        CreateBacklogRequest(
+          subjectName = "Jailbird, Snake",
+          version = version,
+          sarCaseReferenceNumber = sarCaseReferenceNumber,
+          nomisId = nomisId,
+          ndeliusCaseReferenceId = null,
+          dateFrom = LocalDate.parse(dateFromStr),
+          dateTo = LocalDate.parse(dateToStr),
+        ),
+      ).expectStatus().isEqualTo(expectedStatus)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        " sar1 | ndelius1 | v1 | 2000-01-01 | 2025-01-01 | 400 | duplicate sarCaseReferenceId, ndeliusId, version, dateFrom and dateTo values",
+        " sar2 | ndelius1 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique sarCaseReferenceId, duplicate ndeliusId, version, dateFrom and dateTo values",
+        " sar1 | ndelius2 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique ndeliusId, duplicate sarCaseReferenceId, version, dateFrom and dateTo values",
+        " sar1 | ndelius1 | v2 | 2000-01-01 | 2025-01-01 | 201 | unique Version, duplicate sarCaseReferenceId, ndeliusId, dateFrom and dateTo values",
+        " sar1 | ndelius1 | v1 | 2000-01-02 | 2025-01-01 | 201 | unique dateFrom, duplicate sarCaseReferenceId, ndeliusId, Version and dateTo values",
+        " sar1 | ndelius1 | v1 | 2000-01-01 | 2025-01-02 | 201 | unique dateTo, duplicate sarCaseReferenceId, ndeliusId, Version and dateFrom values",
+      ],
+      delimiterString = "|",
+    )
+    fun `create request respects the unique constraint on sarCaseReferenceId, ndeliusCaseReferenceNumber, version, dateFrom and dateTo values`(
+      sarCaseReferenceNumber: String,
+      ndeliusCaseReferenceNumber: String?,
+      version: String,
+      dateFromStr: String,
+      dateToStr: String,
+      expectedStatus: Int,
+      description: String,
+    ) {
+      // Send original create request.
+      postBacklogRequest(
+        CreateBacklogRequest(
+          subjectName = "Jailbird, Snake",
+          version = "v1",
+          sarCaseReferenceNumber = "sar1",
+          nomisId = null,
+          ndeliusCaseReferenceId = "ndelius1",
+          dateFrom = LocalDate.of(2000, 1, 1),
+          dateTo = LocalDate.of(2025, 1, 1),
+        ),
+      ).expectStatus().isCreated
+
+      // Send 2nd create request.
+      postBacklogRequest(
+        CreateBacklogRequest(
+          subjectName = "Jailbird, Snake",
+          version = version,
+          sarCaseReferenceNumber = sarCaseReferenceNumber,
+          nomisId = null,
+          ndeliusCaseReferenceId = ndeliusCaseReferenceNumber,
+          dateFrom = LocalDate.parse(dateFromStr),
+          dateTo = LocalDate.parse(dateToStr),
+        ),
+      ).expectStatus().isEqualTo(expectedStatus)
+    }
   }
 
   @Nested
@@ -481,7 +578,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       val version = "666"
 
       // Create Backlog request 1
-      val idOne = postBacklogRequest(
+      val idOne = postBacklogRequestExpectSuccess(
         CreateBacklogRequest(
           dateFrom = LocalDate.now().minusYears(1),
           dateTo = LocalDate.now(),
@@ -508,7 +605,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       )
 
       // Create Backlog request 2
-      val idTwo = postBacklogRequest(
+      val idTwo = postBacklogRequestExpectSuccess(
         CreateBacklogRequest(
           dateFrom = LocalDate.now().minusYears(1),
           dateTo = LocalDate.now(),
@@ -581,7 +678,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
 
     @Test
     fun `should delete backlog request and service summaries`() {
-      val id = postBacklogRequest(
+      val id = postBacklogRequestExpectSuccess(
         CreateBacklogRequest(
           dateFrom = LocalDate.now().minusYears(1),
           dateTo = LocalDate.now(),
@@ -626,7 +723,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     }
   }
 
-  private fun postBacklogRequest(request: CreateBacklogRequest): BacklogRequestOverview {
+  private fun postBacklogRequestExpectSuccess(request: CreateBacklogRequest): BacklogRequestOverview {
     val resp = webTestClient
       .post()
       .uri("/subject-access-request/backlog")
@@ -637,6 +734,15 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       .returnResult(BacklogRequestOverview::class.java)
     return resp.responseBody.blockFirst()!!
   }
+
+  private fun postBacklogRequest(
+    request: CreateBacklogRequest,
+  ): WebTestClient.ResponseSpec = webTestClient
+    .post()
+    .uri("/subject-access-request/backlog")
+    .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+    .bodyValue(request)
+    .exchange()
 
   fun getBacklogRequestById(id: UUID): BacklogRequest {
     val backlogRequest = backlogRequestService.getByIdOrNull(id)
