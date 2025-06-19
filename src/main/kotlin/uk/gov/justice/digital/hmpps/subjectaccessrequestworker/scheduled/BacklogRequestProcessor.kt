@@ -49,7 +49,7 @@ class BacklogRequestProcessor(
             channel.close()
           }
 
-          channel.consumeEach { summary ->  addServiceSummary(backlogRequest, summary)}
+          channel.consumeEach { summary -> addServiceSummary(backlogRequest, summary) }
           attemptCompleteRequest(backlogRequest)
         }
         return
