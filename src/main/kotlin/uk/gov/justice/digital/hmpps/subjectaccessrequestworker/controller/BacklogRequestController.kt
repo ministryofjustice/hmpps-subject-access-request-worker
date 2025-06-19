@@ -112,6 +112,46 @@ class BacklogRequestController(
     ?: ResponseEntity.notFound().build()
 
   @Operation(
+    summary = "Delete backlog requests with the specified version",
+    description = "Delete backlog requests with the specified version",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Deleted backlog requests with the specified version",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = BacklogRequestsDeletedEntity::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Version not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  @DeleteMapping("/versions/{version}")
+  fun deleteRequestByVersion(
+    @PathVariable("version") version: String,
+  ): ResponseEntity<BacklogRequestsDeletedEntity> = backlogRequestService.deleteByVersion(version)
+    .takeIf { it > 0 }
+    ?.let { ResponseEntity.ok(BacklogRequestsDeletedEntity(it)) }
+    ?: ResponseEntity.notFound().build()
+
+  @Operation(
     summary = "Get the list of backlog requests for the specified version",
     description = "Get the list of backlog requests for the specified version",
     security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
@@ -183,6 +223,39 @@ class BacklogRequestController(
     ?.let { ResponseEntity.ok(BacklogRequestDetailsEntity(it)) } ?: ResponseEntity.notFound().build()
 
   @Operation(
+    summary = "Delete backlog requests by ID",
+    description = "Delete backlog requests by ID",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Deleted backlog requests by ID",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Request not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  @DeleteMapping(value = ["/{id}"])
+  fun deleteRequestById(@PathVariable("id") id: UUID): ResponseEntity<Void> = backlogRequestService.getByIdOrNull(id)
+    ?.let {
+      backlogRequestService.deleteById(id)
+      ResponseEntity.ok().build()
+    } ?: ResponseEntity.notFound().build()
+
+  @Operation(
     summary = "Create a new backlog request",
     description = "Create a new backlog request",
     security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
@@ -223,15 +296,7 @@ class BacklogRequestController(
     }
   }
 
-  @DeleteMapping("/versions/{version}")
-  fun deleteRequestByVersion(
-    @PathVariable("version") version: String,
-  ): ResponseEntity<BacklogRequestsDeletedEntity> = backlogRequestService
-    .deleteByVersion(version).takeIf { it > 0 }
-    ?.let { ResponseEntity.ok(BacklogRequestsDeletedEntity(it)) }
-    ?: ResponseEntity.badRequest().build()
-
-  fun BacklogRequestService.BacklogStatus.toBacklogStatusEntity(): BacklogStatusEntity = BacklogStatusEntity(
+  private fun BacklogRequestService.BacklogStatus.toBacklogStatusEntity(): BacklogStatusEntity = BacklogStatusEntity(
     totalRequests = this.totalRequests,
     pendingRequests = this.pendingRequests,
     completedRequests = this.completedRequests,

@@ -473,7 +473,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
         .exchange()
         .expectStatus()
-        .isBadRequest
+        .isNotFound
     }
 
     @Test
@@ -562,6 +562,67 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         assertThat(backlogRequestService.getByIdOrNull(id)).isNull()
         assertThat(serviceSummaryRepository.findByBacklogRequestId(id)).isEmpty()
       }
+    }
+  }
+
+  @Nested
+  inner class DeleteByIdTestCases {
+
+    @Test
+    fun `should return not found if backlog request ID does not exist`() {
+      webTestClient
+        .delete()
+        .uri("/subject-access-request/backlog/${UUID.randomUUID()}")
+        .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+        .exchange()
+        .expectStatus()
+        .isNotFound
+    }
+
+    @Test
+    fun `should delete backlog request and service summaries`() {
+      val id = postBacklogRequest(
+        CreateBacklogRequest(
+          dateFrom = LocalDate.now().minusYears(1),
+          dateTo = LocalDate.now(),
+          subjectName = "Tatum, Drederick",
+          version = "1",
+          sarCaseReferenceNumber = "test-666",
+          nomisId = "666",
+          ndeliusCaseReferenceId = null,
+        ),
+      ).id
+
+      val requestOne = getBacklogRequestById(id)
+      backlogRequestService.addServiceSummary(
+        requestOne,
+        ServiceSummary(
+          id = UUID.randomUUID(),
+          backlogRequest = requestOne,
+          serviceName = "service-1",
+          serviceOrder = 1,
+          dataHeld = true,
+          status = BacklogRequestStatus.COMPLETE,
+        ),
+      )
+
+      val savedReqOne = backlogRequestService.getByIdOrNull(id)
+      assertThat(savedReqOne).isNotNull
+      assertThat(savedReqOne!!.serviceSummary).hasSize(1)
+
+      val summaries = serviceSummaryRepository.findByBacklogRequestId(id)
+      assertThat(summaries).hasSize(1)
+
+      webTestClient
+        .delete()
+        .uri("/subject-access-request/backlog/$id")
+        .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+        .exchange()
+        .expectStatus()
+        .isOk
+
+      assertThat(backlogRequestService.getByIdOrNull(id)).isNull()
+      assertThat(serviceSummaryRepository.findByBacklogRequestId(id)).isEmpty()
     }
   }
 
