@@ -10,6 +10,7 @@ import jakarta.validation.ValidationException
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestDetailsEntity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestVersions
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestsDeletedEntity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogStatusEntity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
@@ -220,6 +222,14 @@ class BacklogRequestController(
         .body(BacklogRequestOverview(it))
     }
   }
+
+  @DeleteMapping("/versions/{version}")
+  fun deleteRequestByVersion(
+    @PathVariable("version") version: String,
+  ): ResponseEntity<BacklogRequestsDeletedEntity> = backlogRequestService
+    .deleteByVersion(version).takeIf { it > 0 }
+    ?.let { ResponseEntity.ok(BacklogRequestsDeletedEntity(it)) }
+    ?: ResponseEntity.badRequest().build()
 
   fun BacklogRequestService.BacklogStatus.toBacklogStatusEntity(): BacklogStatusEntity = BacklogStatusEntity(
     totalRequests = this.totalRequests,

@@ -54,7 +54,7 @@ s3:
 
 backlog-request:
   processor:
-    interval: 10
+    interval: 3
     initial-delay: 5
     enabled: true
   api:

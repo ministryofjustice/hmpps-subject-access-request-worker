@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogReq
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceConfigurationService
 import java.time.LocalDate
@@ -34,6 +35,9 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
 
   @Autowired
   lateinit var serviceConfigurationService: ServiceConfigurationService
+
+  @Autowired
+  lateinit var serviceSummaryRepository: ServiceSummaryRepository
 
   val createBacklogRequest1 = CreateBacklogRequest(
     subjectName = "Jailbird, Snake",
@@ -455,6 +459,109 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
           LocalDateTime.parse(it).isAfter(startOfTest)
           LocalDateTime.parse(it).isBefore(LocalDateTime.now())
         }
+    }
+  }
+
+  @Nested
+  inner class DeleteBacklogRequestsByVersionTestCases {
+
+    @Test
+    fun `should return bad request if backlog request ID does not exist`() {
+      webTestClient
+        .delete()
+        .uri("/subject-access-request/backlog/versions/${UUID.randomUUID()}")
+        .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+        .exchange()
+        .expectStatus()
+        .isBadRequest
+    }
+
+    @Test
+    fun `should delete all backlog requests and summaries by version`() {
+      val version = "666"
+
+      // Create Backlog request 1
+      val idOne = postBacklogRequest(
+        CreateBacklogRequest(
+          dateFrom = LocalDate.now().minusYears(1),
+          dateTo = LocalDate.now(),
+          subjectName = "Tatum, Drederick",
+          version = version,
+          sarCaseReferenceNumber = "test-666",
+          nomisId = "666",
+          ndeliusCaseReferenceId = null,
+        ),
+      ).id
+
+      // Add service summary to request 1
+      val requestOne = getBacklogRequestById(idOne)
+      backlogRequestService.addServiceSummary(
+        requestOne,
+        ServiceSummary(
+          id = UUID.randomUUID(),
+          backlogRequest = requestOne,
+          serviceName = "service-1",
+          serviceOrder = 1,
+          dataHeld = true,
+          status = BacklogRequestStatus.COMPLETE,
+        ),
+      )
+
+      // Create Backlog request 2
+      val idTwo = postBacklogRequest(
+        CreateBacklogRequest(
+          dateFrom = LocalDate.now().minusYears(1),
+          dateTo = LocalDate.now(),
+          subjectName = "Simpson, Homer",
+          version = version,
+          sarCaseReferenceNumber = "test-667",
+          nomisId = "667",
+          ndeliusCaseReferenceId = null,
+        ),
+      ).id
+
+      // Add service summary to request 2
+      val requestTwo = getBacklogRequestById(idTwo)
+      backlogRequestService.addServiceSummary(
+        requestTwo,
+        ServiceSummary(
+          id = UUID.randomUUID(),
+          backlogRequest = requestTwo,
+          serviceName = "service-1",
+          serviceOrder = 1,
+          dataHeld = true,
+          status = BacklogRequestStatus.COMPLETE,
+        ),
+      )
+
+      val targetIds = listOf(idOne, idTwo)
+
+      targetIds.forEach { id ->
+        val savedReqOne = backlogRequestService.getByIdOrNull(id)
+        assertThat(savedReqOne).isNotNull
+        assertThat(savedReqOne!!.serviceSummary).hasSize(1)
+        assertThat(savedReqOne.version).isEqualTo(version)
+
+        val summaries = serviceSummaryRepository.findByBacklogRequestId(id)
+        assertThat(summaries).hasSize(1)
+      }
+
+      // Delete by version
+      webTestClient
+        .delete()
+        .uri("/subject-access-request/backlog/versions/$version")
+        .headers(setAuthorisation(roles = listOf("ROLE_SAR_SUPPORT")))
+        .exchange()
+        .expectStatus()
+        .isOk
+        .expectBody()
+        .jsonPath("$.deleted").isEqualTo("2")
+
+      // assert backlog request and summaries no longer exist
+      targetIds.forEach { id ->
+        assertThat(backlogRequestService.getByIdOrNull(id)).isNull()
+        assertThat(serviceSummaryRepository.findByBacklogRequestId(id)).isEmpty()
+      }
     }
   }
 
