@@ -38,6 +38,12 @@ class BacklogRequestService(
 
   fun deleteAll(): Unit = backlogRequestRepository.deleteAll()
 
+  @Transactional
+  fun deleteById(id: UUID): Unit = backlogRequestRepository.deleteById(id)
+
+  @Transactional
+  fun deleteByVersion(version: String): Int = backlogRequestRepository.deleteBacklogRequestByVersion(version)
+
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
     backlogRequestRepository.save(request)
   } catch (ex: DataIntegrityViolationException) {

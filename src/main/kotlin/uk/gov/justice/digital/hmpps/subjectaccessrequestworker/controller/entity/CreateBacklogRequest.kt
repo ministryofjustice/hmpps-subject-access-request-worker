@@ -115,3 +115,5 @@ class BacklogRequestException(
 
   constructor(backlogRequestId: UUID, msg: String) : this(backlogRequestId, msg, null)
 }
+
+data class BacklogRequestsDeletedEntity(val deleted: Int)

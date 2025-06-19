@@ -54,4 +54,13 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
     serviceName: String,
     status: BacklogRequestStatus,
   ): ServiceSummary?
+
+  /**
+   * Only used in tests.
+   */
+  @Query(
+    nativeQuery = true,
+    value = "SELECT * FROM service_summary s WHERE s.backlog_request_id = :backlogRequestId",
+  )
+  fun findByBacklogRequestId(@Param("backlogRequestId") backlogRequestId: UUID): List<ServiceSummary>
 }
