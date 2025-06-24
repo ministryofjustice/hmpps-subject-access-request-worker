@@ -65,12 +65,6 @@ class DynamicServicesClient(
     .bodyValue(subjectDataHeldRequest)
     .retrieve()
     .toEntity(SubjectDataHeldResponse::class.java)
-    .retryWhen(
-      webClientRetriesSpec.retry5xxAndClientRequestErrors(
-        GET_SUBJECT_DATA_HELD_SUMMARY,
-        null,
-      ),
-    )
     .block()
 
   data class SubjectDataHeldRequest(
