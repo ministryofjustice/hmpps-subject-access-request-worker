@@ -301,6 +301,7 @@ class BacklogRequestController(
     pendingRequests = this.pendingRequests,
     completedRequests = this.completedRequests,
     completeRequestsWithDataHeld = this.completeRequestsWithDataHeld,
+    status = this.status.name,
   )
 
   private fun validateRequest(request: CreateBacklogRequest) {

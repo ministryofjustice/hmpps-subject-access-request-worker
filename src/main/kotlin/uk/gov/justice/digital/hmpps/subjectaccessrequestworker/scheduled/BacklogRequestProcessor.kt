@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
+import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
@@ -25,74 +28,59 @@ class BacklogRequestProcessor(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
+  @Async
   @Scheduled(
-    fixedDelayString = "\${backlog-request.processor.interval:30}",
-    initialDelayString = "\${backlog-request.processor.initial-delay:30}",
+    fixedDelayString = "\${backlog-request.processor.interval:3}",
+    initialDelayString = "\${backlog-request.processor.initial-delay:10}",
     timeUnit = TimeUnit.SECONDS,
   )
-  suspend fun processBacklogRequests() {
+  fun processBacklogRequests() {
     backlogRequestService.getNextToProcess()?.let { backlogRequest ->
-      log.info("Processing backlog request ${backlogRequest.id}")
+      log.info("attempting to claim backlog request {}", backlogRequest.id)
 
       if (!backlogRequestService.claimRequest(backlogRequest.id)) {
-        log.info("claim request unsuccessful ${backlogRequest.id}")
+        log.info("claim request unsuccessful {}", backlogRequest.id)
         return
       }
-      log.info("claim request successful ${backlogRequest.id}")
+      log.info("claim request successful {}", backlogRequest.id)
 
-      val pendingServices = backlogRequestService.getPendingServiceSummariesForId(backlogRequest.id)
-      if (pendingServices.isNotEmpty()) {
-        runBlocking {
-          val channel = Channel<ServiceSummary>(capacity = pendingServices.size)
-          launch {
-            fanOutServiceSummaryRequest(pendingServices, backlogRequest, channel)
-            channel.close()
+      backlogRequestService.getPendingServiceSummariesForId(backlogRequest.id)
+        .takeIf { it.isNotEmpty() }
+        ?.let { pendingServices ->
+          log.info(
+            "backlog request {} has outstanding summaries for services: {}",
+            backlogRequest.id,
+            pendingServices.joinToString(",") { it.serviceName },
+          )
+          runBlocking(Dispatchers.Default) {
+            val receiverChannel = launchServiceSummaryRequestsCoroutines(backlogRequest, pendingServices)
+
+            receiverChannel.consumeEach { summary -> backlogRequestService.addServiceSummary(backlogRequest, summary) }
+            withContext(Dispatchers.IO) {
+              backlogRequestService.attemptCompleteRequest(backlogRequest.id)
+            }
           }
-
-          channel.consumeEach { summary -> addServiceSummary(backlogRequest, summary) }
-          attemptCompleteRequest(backlogRequest)
-        }
-        return
-      }
-      attemptCompleteRequest(backlogRequest)
-    }
+          return
+        } ?: backlogRequestService.attemptCompleteRequest(backlogRequest.id)
+    } ?: log.info("no backlog requests available for processing")
   }
 
-  suspend fun fanOutServiceSummaryRequest(
-    pendingService: List<ServiceConfiguration>,
+  fun launchServiceSummaryRequestsCoroutines(
     backlogRequest: BacklogRequest,
-    channel: Channel<ServiceSummary>,
-  ) {
-    coroutineScope {
-      pendingService.forEach { service ->
-        launch {
-          log.info(
-            "sending service summary request: backlogRequestId: {}, service: {}",
-            backlogRequest.id,
-            service.label,
-          )
-          val summary = backlogRequestService.getSubjectDataHeldSummary(backlogRequest, service)
-          log.info(
-            "service summary request complete: backlogRequestId: {}, service: {}",
-            backlogRequest.id,
-            service.label,
-          )
-          channel.send(summary)
+    pendingServices: List<ServiceConfiguration>,
+  ): Channel<ServiceSummary> = runBlocking {
+    val channel = Channel<ServiceSummary>(capacity = pendingServices.size)
+    launch {
+      coroutineScope {
+        pendingServices.forEach { service ->
+          launch {
+            val summary = backlogRequestService.getSubjectDataHeldSummary(backlogRequest, service)
+            channel.send(summary)
+          }
         }
       }
+      channel.close()
     }
-  }
-
-  fun addServiceSummary(backlogRequest: BacklogRequest, summary: ServiceSummary) {
-    log.info("saving data held summary ${summary.serviceName}")
-    backlogRequestService.addServiceSummary(backlogRequest, summary)
-  }
-
-  fun attemptCompleteRequest(backlogRequest: BacklogRequest) {
-    val isDataHeld = backlogRequestService.isDataHeldOnSubject(backlogRequest.id)
-
-    log.info("attempting to set backlog request: ${backlogRequest.id}, status=COMPLETED, dataHeld: $isDataHeld")
-    val completeSuccessful = backlogRequestService.completeRequest(backlogRequest.id, isDataHeld)
-    log.info("complete request: ${backlogRequest.id}: success? $completeSuccessful")
+    channel
   }
 }

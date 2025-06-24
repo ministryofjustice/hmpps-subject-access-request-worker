@@ -180,7 +180,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       val backlogRequest = getBacklogRequestById(backlogReqOneId)
       backlogRequest.status = BacklogRequestStatus.COMPLETE
       backlogRequest.dataHeld = true
-      backlogRequestService.save(backlogRequest)
+      backlogRequestService.newBacklogRequest(backlogRequest)
 
       webTestClient.get()
         .uri("/subject-access-request/backlog/versions/1")
@@ -192,6 +192,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .jsonPath("$.pendingRequests").isEqualTo(1)
         .jsonPath("$.completedRequests").isEqualTo(1)
         .jsonPath("$.completeRequestsWithDataHeld").isEqualTo(1)
+        .jsonPath("$.status").isEqualTo("IN_PROGRESS")
     }
   }
 

@@ -66,19 +66,24 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
     @Param("currentDateTime") currentDateTime: LocalDateTime = now(),
   ): Int
 
-  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Lock(LockModeType.PESSIMISTIC_READ)
+  @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   @Query(
-    "UPDATE BacklogRequest " +
-      "SET status = 'COMPLETE', completedAt = :completedAt, dataHeld = :dataHeld " +
-      "WHERE id = :id " +
+    "SELECT b FROM BacklogRequest b " +
+      "WHERE b.id = :id " +
       "AND " +
-      "(SELECT COUNT(DISTINCT cfg.serviceName) FROM ServiceConfiguration cfg) = " +
-      "(SELECT COUNT(DISTINCT summary.serviceName) FROM ServiceSummary summary " +
-      "WHERE summary.backlogRequest.id = :id AND summary.status = 'COMPLETE')",
+      "(SELECT COUNT(DISTINCT s.serviceName) FROM ServiceSummary s WHERE s.backlogRequest.id = :id AND s.status = 'COMPLETE')" +
+      " = " +
+      "(SELECT COUNT(DISTINCT cfg.serviceName) FROM ServiceConfiguration cfg)",
   )
-  fun updateStatusAndDataHeld(
-    @Param("id") id: UUID,
-    @Param("dataHeld") dataHeld: Boolean,
-    @Param("completedAt") completedAt: LocalDateTime = now(),
-  ): Int
+  fun findCompleteRequestOrNull(@Param("id") id: UUID): BacklogRequest?
+
+  @Query(
+    "SELECT b FROM BacklogRequest b " +
+      "WHERE b.id = :id " +
+      "AND EXISTS (" +
+      "SELECT s FROM ServiceSummary s WHERE s.backlogRequest.id = :id AND s.dataHeld is true AND s.status = 'COMPLETE'" +
+      ")",
+  )
+  fun findDataHeldByIdOrNull(@Param("id") id: UUID): BacklogRequest?
 }
