@@ -5,7 +5,7 @@ spring:
     password: admin_password
   flyway:
     locations: classpath:db/sar,db/sar_{vendor},db/dev/data/sar
-    enabled: true
+    enabled: false
     url: jdbc:postgresql://localhost:5432/sar-db?sslmode=prefer
     user: admin
     password: admin_password
@@ -30,7 +30,7 @@ spring:
             scope: read
 
 hmpps-auth:
-  url: http://localhost:9090/auth
+  url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
   client-id: "hmpps-subject-access-request"
   client-secret: "clientsecret"
 
@@ -42,9 +42,13 @@ G2-api:
   url: http://localhost:9002
 G3-api:
   url: http://localhost:9003
+prison-api:
+  url: https://prison-api-dev.prison.service.justice.gov.uk
+document-storage:
+  url: http://localhost:9091
 
 html-renderer:
-  enabled: false
+  enabled: true
 
 s3:
   provider: localstack

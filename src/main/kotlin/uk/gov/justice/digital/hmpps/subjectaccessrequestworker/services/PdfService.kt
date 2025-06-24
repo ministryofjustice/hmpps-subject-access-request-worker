@@ -2,22 +2,32 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.kernel.pdf.PdfBoolean
 import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfName
 import com.itextpdf.kernel.pdf.PdfReader
+import com.itextpdf.kernel.pdf.PdfString
 import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
+import org.docx4j.Docx4J
+import org.docx4j.convert.out.FOSettings
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
@@ -186,6 +196,98 @@ class PdfService(
 
       elements.forEach { this.add(it as IBlockElement) }
       telemetryClient.trackSarEvent("pdfAddServiceDataCompleted", subjectAccessRequest, "service" to service.name)
+
+      htmlDocumentStoreService.listAttachments(subjectAccessRequest, service.name).forEach { attachmentKey ->
+        val attachment = htmlDocumentStoreService.getAttachment(attachmentKey)
+        this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+        this.add(Paragraph("Attachment: ${attachment.attachmentRef}").setFontSize(16f).setTextAlignment(TextAlignment.CENTER))
+        this.add(Paragraph("${attachment.filename} - ${attachment.name}").setTextAlignment(TextAlignment.LEFT))
+        if (attachment.contentType == "image/jpeg") {
+          val image = Image(ImageDataFactory.create(attachment.data.readBytes()))
+
+          val pageSize = this.pdfDocument.defaultPageSize
+          val pageWidth = pageSize.width
+          val pageHeight = pageSize.height
+
+           // Scale to 75% of page width or height, whichever is smaller
+          val maxWidth = pageWidth * 0.75f
+          val maxHeight = pageHeight * 0.75f
+
+          val scale = minOf(maxWidth / image.imageWidth, maxHeight / image.imageHeight)
+
+          val scaledWidth = image.imageWidth * scale
+          val scaledHeight = image.imageHeight * scale
+
+          // Center the image
+          val x = (pageWidth - scaledWidth) / 2
+          val y = (pageHeight - scaledHeight) / 2
+
+          image.scaleAbsolute(scaledWidth, scaledHeight)
+          image.setFixedPosition(x, y)
+          this.add(image)
+        } else if (attachment.contentType == "application/pdf") {
+          val attachmentPdf = PdfDocument(PdfReader(ByteArrayInputStream(attachment.data.readBytes())))
+          this.add(Paragraph("Attachment PDF content follows on subsequent ${attachmentPdf.numberOfPages} page(s)").setTextAlignment(TextAlignment.LEFT))
+
+          val a4 = PageSize.A4
+
+          for (i in 1..attachmentPdf.numberOfPages) {
+
+
+            val originalPage = attachmentPdf.getPage(i)
+            val formXObject = originalPage.copyAsFormXObject(this.pdfDocument)
+
+            val originalSize = originalPage.pageSize
+            val scaleX = a4.width / originalSize.width
+            val scaleY = a4.height / originalSize.height
+            val scale = minOf(scaleX, scaleY).toDouble()
+
+            val offsetX = (a4.width - originalSize.width * scale) / 2
+            val offsetY = (a4.height - originalSize.height * scale) / 2
+
+            val newPage = this.pdfDocument.addNewPage(a4)
+            val canvas = PdfCanvas(newPage)
+
+            canvas.saveState()
+            canvas.concatMatrix(scale, 0.0, 0.0, scale, offsetX, offsetY)
+            canvas.addXObject(formXObject)
+            canvas.restoreState()
+
+            newPage.flush()
+          }
+
+          attachmentPdf.close()
+        } else if (attachment.contentType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+
+          val wordMLPackage = WordprocessingMLPackage.load(ByteArrayInputStream(attachment.data.readBytes()))
+          val foSettings = FOSettings(wordMLPackage)
+          val outputStream = ByteArrayOutputStream()
+
+          Docx4J.toFO(foSettings, outputStream, Docx4J.FLAG_EXPORT_PREFER_XSL);
+
+          outputStream.close()
+          val pdfBytes = outputStream.toByteArray()
+
+          val reader = PdfReader(ByteArrayInputStream(pdfBytes))
+          val docxPdf = PdfDocument(reader)
+
+          this.add(Paragraph("Attachment Word content follows on subsequent ${docxPdf.numberOfPages} page(s)").setTextAlignment(TextAlignment.LEFT))
+
+          for (i in 1..docxPdf.numberOfPages) {
+            val page = docxPdf.getPage(i).copyTo(this.pdfDocument)
+            page.put(PdfName("IsAttachment"), PdfBoolean.TRUE)
+            page.put(PdfName("AttachmentRef"), PdfString(attachment.attachmentRef))
+
+            this.pdfDocument.addPage(page)
+            page.flush()
+          }
+
+          docxPdf.close()
+
+        } else {
+          this.add(Paragraph("Attachment content type ${attachment.contentType} not supported").setTextAlignment(TextAlignment.LEFT))
+        }
+      }
     }
   }
 

@@ -4,6 +4,7 @@ import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfName
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
@@ -20,6 +21,13 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
     if (pdfDoc.getPageNumber(docEvent.page) <= 2) {
       leftHeaderText = ""
       rightHeaderText = ""
+    } else if (docEvent.page.pdfObject.getAsBoolean(PdfName("IsAttachmentPage"))?.value ?: false) {
+      leftHeaderText = ""
+      rightHeaderText = """
+          |Name: $subjectName
+          |$subjectIdLine
+          |Attachment: ${docEvent.page.pdfObject.getAsString(PdfName("AttachmentRef")).value}
+      """.trimMargin()
     } else {
       leftHeaderText = ""
       rightHeaderText = """

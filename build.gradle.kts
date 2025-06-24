@@ -28,7 +28,12 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.12.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.4")
   implementation("commons-io:commons-io:2.19.0")
-  implementation("aws.sdk.kotlin:s3:1.4.90")
+  implementation("aws.sdk.kotlin:s3:1.4.103")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+
+  implementation("org.apache.xmlgraphics:fop:2.10")
+  implementation("org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3")
+  implementation("org.docx4j:docx4j-export-fo:11.5.3")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")

@@ -13,6 +13,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEv
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /**
  * New world configuration worker delegates rendering service html to html-renderer service.
@@ -42,6 +44,7 @@ class ReportServiceImpl(
     val subjectName = getSubjectName(subjectAccessRequest).also { log.info("subject name: $it") }
 
     renderPdfForSelectedServices(subjectAccessRequest, subjectName).use { pdfStream ->
+      Files.write(Paths.get("/Users/inderjit.virdi/sar-pdfs/attachments-testing/${subjectAccessRequest.id}.pdf"), pdfStream.toByteArray())
       documentStorageClient.storeDocument(subjectAccessRequest, pdfStream).also {
         log.info("subject access request ${subjectAccessRequest.id} completed successfully")
       }
