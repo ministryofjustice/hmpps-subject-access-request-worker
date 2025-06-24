@@ -39,6 +39,7 @@ class BacklogRequestServiceAddSummaryTest {
     serviceSummaryRepository,
     serviceConfigurationService,
     dynamicServicesClient,
+    5,
   )
 
   private val existingBacklogRequest = BacklogRequest()

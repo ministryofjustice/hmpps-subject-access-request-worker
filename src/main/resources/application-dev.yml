@@ -10,6 +10,9 @@ spring:
     user: admin
     password: admin_password
 
+  jpa:
+    show-sql: false
+
   security:
     oauth2:
       resourceserver:
@@ -54,7 +57,7 @@ s3:
 
 backlog-request:
   processor:
-    interval: 3
+    interval: 1
     initial-delay: 5
     enabled: true
   api:

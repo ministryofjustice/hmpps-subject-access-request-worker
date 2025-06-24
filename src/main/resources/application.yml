@@ -47,7 +47,7 @@ spring:
   task:
     scheduling:
       pool:
-        size: ${TASK_SCHEDULING_POOL_SIZE:1}
+        size: ${TASK_SCHEDULING_POOL_SIZE:4}
 
 server:
   port: 8081
@@ -137,5 +137,6 @@ backlog-request:
     interval: 30
     initial-delay: 30
     enabled: false
+    backoff-threshold-mins: 5
   api:
     enabled: false
