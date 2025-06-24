@@ -50,7 +50,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
       "LIMIT 1",
   )
   fun getNextToProcess(
-    @Param("backOffThreshold") backOffThreshold: LocalDateTime = now().minusMinutes(5),
+    @Param("backOffThreshold") backOffThreshold: LocalDateTime,
   ): BacklogRequest?
 
   @Modifying(clearAutomatically = true, flushAutomatically = true)
@@ -62,7 +62,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
   )
   fun updateClaimDateTime(
     @Param("id") id: UUID,
-    @Param("backOffThreshold") backOffThreshold: LocalDateTime = now().minusMinutes(30),
+    @Param("backOffThreshold") backOffThreshold: LocalDateTime,
     @Param("currentDateTime") currentDateTime: LocalDateTime = now(),
   ): Int
 

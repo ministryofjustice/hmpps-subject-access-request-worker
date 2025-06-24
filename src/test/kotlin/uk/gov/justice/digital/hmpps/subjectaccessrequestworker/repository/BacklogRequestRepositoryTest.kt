@@ -247,7 +247,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val expected = backlogRequestRepository.save(BacklogRequest(status = PENDING, claimDateTime = null))
 
       val beforeSave = now()
-      val result = backlogRequestRepository.updateClaimDateTime(expected.id)
+      val result = backlogRequestRepository.updateClaimDateTime(expected.id, now().minusMinutes(5))
       assertThat(result).isEqualTo(1)
 
       assertClaimSuccessful(expected.id, beforeSave)

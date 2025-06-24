@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -16,6 +17,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
 import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 import java.util.UUID
 
 @Service
@@ -24,6 +26,7 @@ class BacklogRequestService(
   private val serviceSummaryRepository: ServiceSummaryRepository,
   private val serviceConfigurationService: ServiceConfigurationService,
   private val dynamicServicesClient: DynamicServicesClient,
+  @Value("\${backlog-request.processor.backoff-threshold-mins:5}") val backOffThreshHold: Long,
 ) {
 
   private companion object {
@@ -74,11 +77,14 @@ class BacklogRequestService(
 
   @Transactional
   fun claimNextRequest(): BacklogRequest? = backlogRequestRepository
-    .getNextToProcess()
+    .getNextToProcess(backOffThreshold = now().minusMinutes(backOffThreshHold))
     ?.let { request ->
       LOG.info("attempting to claim backlog request {}", request.id)
 
-      backlogRequestRepository.updateClaimDateTime(request.id)
+      backlogRequestRepository.updateClaimDateTime(
+        id = request.id,
+        backOffThreshold = now().minusMinutes(backOffThreshHold),
+      )
         .takeIf { it == 1 }
         ?.let {
           LOG.info("request claimed successfully {}", request.id)
