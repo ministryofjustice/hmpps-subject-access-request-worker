@@ -62,7 +62,7 @@ class BacklogRequestProcessor(
           }
           return
         } ?: backlogRequestService.attemptCompleteRequest(backlogRequest.id)
-    }?: log.info("no backlog requests available for processing")
+    } ?: log.info("no backlog requests available for processing")
   }
 
   fun launchServiceSummaryRequestsCoroutines(

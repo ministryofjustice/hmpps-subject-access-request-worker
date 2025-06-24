@@ -36,11 +36,9 @@ class BacklogRequestService(
     throw BacklogRequestException(request.id, "Could not create a new BacklogRequest: unique constraint violated", ex)
   }
 
-  fun saveAll(backlogRequests: List<BacklogRequest>): List<BacklogRequest> =
-    backlogRequestRepository.saveAll(backlogRequests)
-
-  fun getRequestsForVersion(version: String): List<BacklogRequest> =
-    backlogRequestRepository.findByVersionOrderByCreatedAt(version)
+  fun getRequestsForVersion(
+    version: String,
+  ): List<BacklogRequest> = backlogRequestRepository.findByVersionOrderByCreatedAt(version)
 
   fun getByIdOrNull(id: UUID): BacklogRequest? = backlogRequestRepository.findByIdOrNull(id)
 

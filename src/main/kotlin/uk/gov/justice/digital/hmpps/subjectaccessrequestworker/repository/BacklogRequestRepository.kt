@@ -82,7 +82,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
     "SELECT b FROM BacklogRequest b " +
       "WHERE b.id = :id " +
       "AND EXISTS (" +
-        "SELECT s FROM ServiceSummary s WHERE s.backlogRequest.id = :id AND s.dataHeld is true AND s.status = 'COMPLETE'" +
+      "SELECT s FROM ServiceSummary s WHERE s.backlogRequest.id = :id AND s.dataHeld is true AND s.status = 'COMPLETE'" +
       ")",
   )
   fun findDataHeldByIdOrNull(@Param("id") id: UUID): BacklogRequest?
