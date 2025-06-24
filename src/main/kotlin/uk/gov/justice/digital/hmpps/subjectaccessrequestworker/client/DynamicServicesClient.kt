@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SAR_DATA
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SUBJECT_DATA_HELD_SUMMARY
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.time.LocalDate
@@ -65,12 +64,6 @@ class DynamicServicesClient(
     .bodyValue(subjectDataHeldRequest)
     .retrieve()
     .toEntity(SubjectDataHeldResponse::class.java)
-    .retryWhen(
-      webClientRetriesSpec.retry5xxAndClientRequestErrors(
-        GET_SUBJECT_DATA_HELD_SUMMARY,
-        null,
-      ),
-    )
     .block()
 
   data class SubjectDataHeldRequest(

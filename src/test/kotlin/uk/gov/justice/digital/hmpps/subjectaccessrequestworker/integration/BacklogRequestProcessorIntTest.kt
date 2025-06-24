@@ -139,57 +139,6 @@ class BacklogRequestProcessorIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `backlog request is successful after retrying failed renderer request`() {
-    val start = LocalDateTime.now()
-    val backlogRequest = createBacklogRequest()
-    assertThat(backlogRequest).isNotNull
-
-    hmppsAuth.stubGrantToken()
-    stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-1"), true)
-    stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-2"), true)
-    stubRendererSubjectDataHeldFailsOnFirstAttempt(createSubjectDataHeldRequest("service-3"), true)
-
-    await()
-      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
-      .until { requestIsComplete(backlogRequest!!.id) }
-
-    val result = assertBacklogRequestEqualsExpected(
-      backlogRequestId = backlogRequest!!.id,
-      createdAfter = start,
-      expectedDataHeld = true,
-      expectedStatus = COMPLETE,
-      expectedClaimDateTimeAfter = start,
-    )
-
-    assertThat(result.serviceSummary).hasSize(serviceConfigurations.size)
-    assertServiceSummaryExistsWithExpectedValues(
-      backlogRequestId = result.id,
-      serviceName = "service-1",
-      expectedOrder = 1,
-      expectedDataHeld = true,
-      expectedStatus = COMPLETE,
-    )
-    assertServiceSummaryExistsWithExpectedValues(
-      backlogRequestId = result.id,
-      serviceName = "service-2",
-      expectedOrder = 2,
-      expectedDataHeld = true,
-      expectedStatus = COMPLETE,
-    )
-    assertServiceSummaryExistsWithExpectedValues(
-      backlogRequestId = result.id,
-      serviceName = "service-3",
-      expectedOrder = 3,
-      expectedDataHeld = true,
-      expectedStatus = COMPLETE,
-    )
-
-    htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-1"))
-    htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-2"))
-    htmlRendererApi.verifySubjectDataHeldSummaryCalled(2, createSubjectDataHeldRequest("service-3"))
-  }
-
-  @Test
   fun `backlog request is successful with data held TRUE when some services do not hold subject data`() {
     val start = LocalDateTime.now()
     val backlogRequest = createBacklogRequest()
