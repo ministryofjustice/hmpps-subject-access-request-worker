@@ -40,7 +40,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   fun findByIdAndStatus(@Param("id") id: UUID, status: BacklogRequestStatus): BacklogRequest?
 
-  @Lock(LockModeType.PESSIMISTIC_READ)
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   @Query(
     "SELECT b FROM BacklogRequest b " +
@@ -50,7 +50,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
       "LIMIT 1",
   )
   fun getNextToProcess(
-    @Param("backOffThreshold") backOffThreshold: LocalDateTime = now().minusMinutes(30),
+    @Param("backOffThreshold") backOffThreshold: LocalDateTime = now().minusMinutes(5),
   ): BacklogRequest?
 
   @Modifying(clearAutomatically = true, flushAutomatically = true)

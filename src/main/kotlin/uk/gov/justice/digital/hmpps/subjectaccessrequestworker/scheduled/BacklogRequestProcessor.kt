@@ -35,15 +35,7 @@ class BacklogRequestProcessor(
     timeUnit = TimeUnit.SECONDS,
   )
   fun processBacklogRequests() {
-    backlogRequestService.getNextToProcess()?.let { backlogRequest ->
-      log.info("attempting to claim backlog request {}", backlogRequest.id)
-
-      if (!backlogRequestService.claimRequest(backlogRequest.id)) {
-        log.info("claim request unsuccessful {}", backlogRequest.id)
-        return
-      }
-      log.info("claim request successful {}", backlogRequest.id)
-
+    backlogRequestService.claimNextRequest()?.let { backlogRequest ->
       backlogRequestService.getPendingServiceSummariesForId(backlogRequest.id)
         .takeIf { it.isNotEmpty() }
         ?.let { pendingServices ->

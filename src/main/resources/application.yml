@@ -47,7 +47,7 @@ spring:
   task:
     scheduling:
       pool:
-        size: ${TASK_SCHEDULING_POOL_SIZE:1}
+        size: ${TASK_SCHEDULING_POOL_SIZE:4}
 
 server:
   port: 8081

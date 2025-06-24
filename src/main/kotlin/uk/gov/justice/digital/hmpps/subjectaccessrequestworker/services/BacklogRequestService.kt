@@ -73,10 +73,18 @@ class BacklogRequestService(
   fun deleteByVersion(version: String): Int = backlogRequestRepository.deleteBacklogRequestByVersion(version)
 
   @Transactional
-  fun getNextToProcess(): BacklogRequest? = backlogRequestRepository.getNextToProcess()
+  fun claimNextRequest(): BacklogRequest? = backlogRequestRepository
+    .getNextToProcess()
+    ?.let { request ->
+      LOG.info("attempting to claim backlog request {}", request.id)
 
-  @Transactional
-  fun claimRequest(id: UUID): Boolean = (1 == backlogRequestRepository.updateClaimDateTime(id))
+      backlogRequestRepository.updateClaimDateTime(request.id)
+        .takeIf { it == 1 }
+        ?.let {
+          LOG.info("request claimed successfully {}", request.id)
+          request
+        }
+    }
 
   @Transactional
   fun attemptCompleteRequest(id: UUID): BacklogRequest? {
