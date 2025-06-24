@@ -47,7 +47,7 @@ spring:
   task:
     scheduling:
       pool:
-        size: 1 # To manage memory we should only process 1 request at a time.
+        size: ${TASK_SCHEDULING_POOL_SIZE:1}
 
 server:
   port: 8081

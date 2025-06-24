@@ -9,11 +9,13 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicSer
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient.SubjectDataHeldRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.COMPLETE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.PENDING
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -28,9 +30,17 @@ class BacklogRequestService(
     private val LOG = LoggerFactory.getLogger(BacklogRequestService::class.java)
   }
 
-  fun save(backlogRequest: BacklogRequest): BacklogRequest = backlogRequestRepository.saveAndFlush(backlogRequest)
+  fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
+    backlogRequestRepository.saveAndFlush(request)
+  } catch (ex: DataIntegrityViolationException) {
+    throw BacklogRequestException(request.id, "Could not create a new BacklogRequest: unique constraint violated", ex)
+  }
 
-  fun getRequestsForVersion(version: String): List<BacklogRequest> = backlogRequestRepository.findByVersionOrderByCreatedAt(version)
+  fun saveAll(backlogRequests: List<BacklogRequest>): List<BacklogRequest> =
+    backlogRequestRepository.saveAll(backlogRequests)
+
+  fun getRequestsForVersion(version: String): List<BacklogRequest> =
+    backlogRequestRepository.findByVersionOrderByCreatedAt(version)
 
   fun getByIdOrNull(id: UUID): BacklogRequest? = backlogRequestRepository.findByIdOrNull(id)
 
@@ -38,17 +48,31 @@ class BacklogRequestService(
 
   fun deleteAll(): Unit = backlogRequestRepository.deleteAll()
 
+  fun getStatusByVersion(version: String): BacklogStatus? = backlogRequestRepository
+    .countByVersion(version)
+    .takeIf { it > 0 }
+    ?.let { total ->
+      val completedRequests = backlogRequestRepository.countByVersionAndStatus(version, COMPLETE)
+      val status = if (completedRequests == total) BacklogVersionStatus.COMPLETE else BacklogVersionStatus.IN_PROGRESS
+
+      BacklogStatus(
+        totalRequests = total,
+        pendingRequests = backlogRequestRepository.countByVersionAndStatus(version, PENDING),
+        completedRequests = completedRequests,
+        completeRequestsWithDataHeld = backlogRequestRepository.countByVersionAndStatusAndDataHeld(
+          version = version,
+          status = COMPLETE,
+          dataHeld = true,
+        ),
+        status = status,
+      )
+    }
+
   @Transactional
   fun deleteById(id: UUID): Unit = backlogRequestRepository.deleteById(id)
 
   @Transactional
   fun deleteByVersion(version: String): Int = backlogRequestRepository.deleteBacklogRequestByVersion(version)
-
-  fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
-    backlogRequestRepository.save(request)
-  } catch (ex: DataIntegrityViolationException) {
-    throw BacklogRequestException(request.id, "Could not create a new BacklogRequest: unique constraint violated", ex)
-  }
 
   @Transactional
   fun getNextToProcess(): BacklogRequest? = backlogRequestRepository.getNextToProcess()
@@ -57,10 +81,27 @@ class BacklogRequestService(
   fun claimRequest(id: UUID): Boolean = (1 == backlogRequestRepository.updateClaimDateTime(id))
 
   @Transactional
-  fun completeRequest(id: UUID, dataHeld: Boolean): Boolean = 1 == backlogRequestRepository.updateStatusAndDataHeld(
-    id = id,
-    dataHeld = dataHeld,
-  )
+  fun attemptCompleteRequest(id: UUID): BacklogRequest? {
+    LOG.info("attempting to update backlog request: {} status to {}", id, COMPLETE)
+
+    return backlogRequestRepository.findCompleteRequestOrNull(id)?.let {
+      it.status = COMPLETE
+      it.completedAt = LocalDateTime.now()
+      it.dataHeld = backlogRequestRepository.findDataHeldByIdOrNull(it.id)?.let { true } ?: false
+
+      backlogRequestRepository.saveAndFlush(it).also { savedRequest ->
+        LOG.info(
+          "backlog request: {} status successfully updated to {} dataHeld?: {}",
+          id,
+          COMPLETE,
+          savedRequest.dataHeld,
+        )
+      }
+    } ?: run {
+      LOG.info("backlog request: {} status not updated - request did not meet criteria for status {}", id, COMPLETE)
+      null
+    }
+  }
 
   @Transactional
   fun getPendingServiceSummariesForId(
@@ -86,7 +127,7 @@ class BacklogRequestService(
         serviceOrder = serviceConfig.order,
         backlogRequest = backlogRequest,
         dataHeld = it.dataHeld,
-        status = BacklogRequestStatus.COMPLETE,
+        status = COMPLETE,
       )
     } ?: throw BacklogRequestException(
       backlogRequestId = backlogRequest.id,
@@ -107,44 +148,51 @@ class BacklogRequestService(
       throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
     }
 
-    serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(request.id, summary.serviceName)?.let {
-      LOG.info("updating existing service summary for backlogRequestId=${request.id}, serviceName=${it.serviceName}")
-      it.serviceOrder = summary.serviceOrder
-      it.status = summary.status
-      it.dataHeld = summary.dataHeld
-      serviceSummaryRepository.saveAndFlush(it)
-    } ?: run {
-      LOG.info("adding service summary to backlogRequestId=${request.id}, serviceName=${summary.serviceName}")
-      backlogRequestRepository.findByIdOrNull(request.id)?.let {
-        it.addServiceSummaries(summary)
-        backlogRequestRepository.saveAndFlush(it)
-      }
-    }
+    serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(request.id, summary.serviceName)
+      ?.let { existingSummary -> updateExistingServiceSummary(request, existingSummary, summary) }
+      ?: addNewServiceSummary(request, summary)
   }
 
-  @Transactional
-  fun isDataHeldOnSubject(id: UUID): Boolean = serviceSummaryRepository.countByBacklogRequestIdAndDataHeld(id) > 0
+  private fun updateExistingServiceSummary(
+    backlogRequest: BacklogRequest,
+    saved: ServiceSummary,
+    latest: ServiceSummary,
+  ) {
+    LOG.info(
+      "updating existing service summary for backlogRequest={}, serviceName={}, dataHeld={}",
+      backlogRequest.id,
+      saved.serviceName,
+      saved.dataHeld,
+    )
 
-  fun getStatusByVersion(version: String): BacklogStatus? = backlogRequestRepository
-    .countByVersion(version)
-    .takeIf { it > 0 }
-    ?.let { total ->
-      BacklogStatus(
-        totalRequests = total,
-        pendingRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.PENDING),
-        completedRequests = backlogRequestRepository.countByVersionAndStatus(version, BacklogRequestStatus.COMPLETE),
-        completeRequestsWithDataHeld = backlogRequestRepository.countByVersionAndStatusAndDataHeld(
-          version,
-          BacklogRequestStatus.COMPLETE,
-          true,
-        ),
-      )
-    }
+    saved.serviceOrder = latest.serviceOrder
+    saved.status = latest.status
+    saved.dataHeld = latest.dataHeld
+    serviceSummaryRepository.saveAndFlush(saved)
+  }
+
+  private fun addNewServiceSummary(backlogRequest: BacklogRequest, summary: ServiceSummary) {
+    LOG.info(
+      "adding new service summary for backlogRequest={}, serviceName={}, dataHeld={}",
+      backlogRequest.id,
+      summary.serviceName,
+      summary.dataHeld,
+    )
+
+    summary.backlogRequest = backlogRequest
+    serviceSummaryRepository.saveAndFlush(summary)
+  }
 
   data class BacklogStatus(
     val totalRequests: Long,
     val pendingRequests: Long,
     val completedRequests: Long,
     val completeRequestsWithDataHeld: Long,
+    val status: BacklogVersionStatus,
   )
+
+  enum class BacklogVersionStatus {
+    COMPLETE,
+    IN_PROGRESS,
+  }
 }

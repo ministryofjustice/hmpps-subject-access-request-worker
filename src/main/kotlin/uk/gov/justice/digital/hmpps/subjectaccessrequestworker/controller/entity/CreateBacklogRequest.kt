@@ -99,6 +99,7 @@ data class BacklogStatusEntity(
   val pendingRequests: Long,
   val completedRequests: Long,
   val completeRequestsWithDataHeld: Long,
+  val status: String,
 )
 
 data class ServiceSummary(

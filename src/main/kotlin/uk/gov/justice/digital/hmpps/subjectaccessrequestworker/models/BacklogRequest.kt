@@ -39,7 +39,7 @@ data class BacklogRequest(
   var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
   val createdAt: LocalDateTime? = LocalDateTime.now(),
-  val completedAt: LocalDateTime? = null,
+  var completedAt: LocalDateTime? = null,
 ) {
   constructor() : this(
     dateTo = null,

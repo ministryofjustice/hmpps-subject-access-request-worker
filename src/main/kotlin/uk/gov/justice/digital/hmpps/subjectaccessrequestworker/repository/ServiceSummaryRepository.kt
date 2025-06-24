@@ -38,7 +38,7 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
     @Param("serviceName") serviceName: String,
   ): Boolean
 
-  @Lock(LockModeType.PESSIMISTIC_READ)
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   fun findOneByBacklogRequestIdAndServiceName(backlogRequestId: UUID, serviceName: String): ServiceSummary?
 

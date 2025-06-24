@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito.mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -21,7 +22,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCon
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
-import java.util.Optional
 import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
@@ -33,9 +33,6 @@ class BacklogRequestServiceAddSummaryTest {
 
   @Captor
   private lateinit var saveServiceSummaryCaptor: ArgumentCaptor<ServiceSummary>
-
-  @Captor
-  private lateinit var saveBacklogRequestCaptor: ArgumentCaptor<BacklogRequest>
 
   private val backlogRequestService = BacklogRequestService(
     backlogRequestRepository,
@@ -173,45 +170,34 @@ class BacklogRequestServiceAddSummaryTest {
       ),
     ).thenReturn(null)
 
-    whenever(backlogRequestRepository.findById(existingBacklogRequest.id))
-      .thenReturn(Optional.of(existingBacklogRequest))
+    whenever(serviceSummaryRepository.saveAndFlush(capture(saveServiceSummaryCaptor))).thenAnswer { args ->
+      args.getArgument<ServiceSummary>(0)
+    }
 
-    whenever(backlogRequestRepository.saveAndFlush(capture(saveBacklogRequestCaptor)))
-      .thenAnswer {
-        // Return required to pacify Mockito value not used.
-        existingBacklogRequest
-      }
+    val summary = ServiceSummary(
+      serviceName = serviceOneConfig.serviceName,
+      serviceOrder = serviceOneConfig.order,
+      status = BacklogRequestStatus.COMPLETE,
+      dataHeld = true,
+    )
 
     // Update the service summary
-    backlogRequestService.addServiceSummary(
-      existingBacklogRequest,
-      ServiceSummary(
-        serviceName = serviceOneConfig.serviceName,
-        serviceOrder = serviceOneConfig.order,
-        status = BacklogRequestStatus.COMPLETE,
-        dataHeld = true,
-      ),
-    )
+    backlogRequestService.addServiceSummary(existingBacklogRequest, summary)
 
-    assertThat(saveBacklogRequestCaptor.allValues).hasSize(1)
-    val actual = saveBacklogRequestCaptor.allValues[0]
+    assertThat(saveServiceSummaryCaptor.allValues).hasSize(1)
+    val actual = saveServiceSummaryCaptor.allValues[0]
 
-    assertThat(actual.id).isEqualTo(existingBacklogRequest.id)
-    assertThat(actual.serviceSummary).hasSize(1)
-    assertThat(actual.serviceSummary[0].backlogRequest?.id).isEqualTo(existingBacklogRequest.id)
-    assertThat(actual.serviceSummary[0].serviceName).isEqualTo("service1")
-    assertThat(actual.serviceSummary[0].serviceOrder).isEqualTo(1)
-    assertThat(actual.serviceSummary[0].status).isEqualTo(BacklogRequestStatus.COMPLETE)
-    assertThat(actual.serviceSummary[0].dataHeld).isTrue()
+    assertThat(actual.id).isEqualTo(summary.id)
+    assertThat(actual.backlogRequest?.id).isEqualTo(existingBacklogRequest.id)
+    assertThat(actual.serviceName).isEqualTo("service1")
+    assertThat(actual.serviceOrder).isEqualTo(1)
+    assertThat(actual.status).isEqualTo(BacklogRequestStatus.COMPLETE)
+    assertThat(actual.dataHeld).isTrue()
 
     verify(serviceSummaryRepository, times(1)).findOneByBacklogRequestIdAndServiceName(
       existingBacklogRequest.id,
       serviceOneConfig.serviceName,
     )
-    verify(serviceSummaryRepository, times(1)).findOneByBacklogRequestIdAndServiceName(
-      existingBacklogRequest.id,
-      serviceOneConfig.serviceName,
-    )
-    verify(backlogRequestRepository, times(1)).findById(existingBacklogRequest.id)
+    verify(serviceSummaryRepository, times(1)).saveAndFlush(any())
   }
 }
