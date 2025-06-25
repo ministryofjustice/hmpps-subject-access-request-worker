@@ -116,7 +116,7 @@ class BacklogRequestService(
   }
 
   @Transactional
-  fun getPendingServiceSummariesForId(
+  fun getServicesToQueryForRequest(
     id: UUID,
   ): List<ServiceConfiguration> = serviceSummaryRepository.getPendingServiceSummariesForRequestId(id)
 
