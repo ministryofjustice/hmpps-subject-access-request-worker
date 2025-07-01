@@ -6,7 +6,7 @@ generic-service:
   replicaCount: 4
 
   image:
-    repository: quay.io/hmpps/hmpps-subject-access-request-worker
+    repository: ghcr.io/ministryofjustice/hmpps-subject-access-request-worker
     tag: app_version # override at deployment time
     port: 8080
 
@@ -21,26 +21,21 @@ generic-service:
     requests:
       memory: 2Gi
 
-  # Environment variables to load into the deployment
   env:
     JAVA_OPTS: "-Xmx2g"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "logstash"
-    APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     TASK_SCHEDULING_POOL_SIZE: 1
 
-  # Pre-existing kubernetes secrets to load as environment variables in the deployment.
-  # namespace_secrets:
-  #   [name of kubernetes secret]:
-  #     [name of environment variable as seen by app]: [key of kubernetes secret to load]
-
   namespace_secrets:
     hmpps-subject-access-request-worker:
-      APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
-      SYSTEM_CLIENT_ID: "SYSTEM_CLIENT_ID"
-      SYSTEM_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
       SENTRY_DSN: "SENTRY_DSN"
+    hmpps-subject-access-request-worker-application-insights:
+      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    hmpps-subject-access-request-worker-client-creds:
+      API_CLIENT_ID: "API_CLIENT_ID"
+      API_CLIENT_SECRET: "API_CLIENT_SECRET"
 
     rds-instance-output:
       DATABASE_ENDPOINT: "rds_instance_endpoint"

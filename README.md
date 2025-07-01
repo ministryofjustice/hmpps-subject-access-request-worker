@@ -29,9 +29,6 @@ To run the hmpps-subject-access-request-worker, first start the required local s
 docker-compose up -d
 ```
 
-Then open the application-local.yaml file and add the 'username' and 'password' fields to the hmpps-auth section, using
-the SYSTEM_CLIENT_ID for the username and the SYSTEM_CLIENT_SECRET for the password. These values can be gotten from the Kubernetes secrets for dev namespace.
-Then create a Spring Boot run configuration with active profile of 'local'. Run the service in your chosen IDE.
 
 ## Common gradle tasks
 
