@@ -88,8 +88,8 @@ web-client:
 
 hmpps-auth:
   url: http://localhost:9090/auth
-  client-id: ${SYSTEM_CLIENT_ID}
-  client-secret: ${SYSTEM_CLIENT_SECRET}
+  client-id: ${API_CLIENT_ID}
+  client-secret: ${API_CLIENT_SECRET}
 document-storage:
   url: http://localhost:8084
 prison-api:

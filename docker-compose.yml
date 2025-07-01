@@ -12,8 +12,9 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
-      - SYSTEM_CLIENT_ID=hmpps-integration-api-client
-      - SYSTEM_CLIENT_SECRET=clientsecret
+      - API_CLIENT_ID=hmpps-integration-api-client
+      - API_CLIENT_SECRET=clientsecret
+
   hmpps-auth:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
@@ -24,8 +25,6 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/auth/health" ]
     environment:
-      - SYSTEM_CLIENT_ID=hmpps-integration-api-client
-      - SYSTEM_CLIENT_SECRET=clientsecret
       - SPRING_PROFILES_ACTIVE=dev
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
 
