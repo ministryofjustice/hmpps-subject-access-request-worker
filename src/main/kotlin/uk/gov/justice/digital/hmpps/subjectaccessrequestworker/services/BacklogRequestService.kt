@@ -33,6 +33,8 @@ class BacklogRequestService(
     private val LOG = LoggerFactory.getLogger(BacklogRequestService::class.java)
   }
 
+  fun saveAll(requests: List<BacklogRequest>): List<BacklogRequest> = backlogRequestRepository.saveAllAndFlush(requests)
+
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
     backlogRequestRepository.saveAndFlush(request)
   } catch (ex: DataIntegrityViolationException) {
@@ -164,6 +166,11 @@ class BacklogRequestService(
       ?.let { existingSummary -> updateExistingServiceSummary(request, existingSummary, summary) }
       ?: addNewServiceSummary(request, summary)
   }
+
+  @Transactional
+  fun streamBacklogRequestForVersion(
+    version: String,
+  ) = backlogRequestRepository.streamBacklogRequestByVersionAndStatus(version, COMPLETE)
 
   private fun updateExistingServiceSummary(
     backlogRequest: BacklogRequest,

@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.ValidationException
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -25,6 +27,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestReportService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
@@ -36,6 +39,7 @@ import java.util.UUID
 @RequestMapping(value = ["/subject-access-request/backlog"], produces = ["application/json"])
 class BacklogRequestController(
   val backlogRequestService: BacklogRequestService,
+  val backlogRequestReportService: BacklogRequestReportService,
 ) {
 
   @Operation(
@@ -189,6 +193,18 @@ class BacklogRequestController(
       )
     }
     ?: ResponseEntity.notFound().build()
+
+  @GetMapping("/versions/{version}/report", produces = ["text/csv"])
+  fun generateBacklogRequestCsvReport(
+    @PathVariable version: String,
+  ): ResponseEntity<String> = backlogRequestReportService.generateReport(version)
+    ?.let {
+      ResponseEntity
+        .ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"SAR-v$version-report.csv\"")
+        .contentType(MediaType.parseMediaType("text/csv"))
+        .body(it)
+    } ?: ResponseEntity.notFound().build()
 
   @Operation(
     summary = "Get backlog request by ID",

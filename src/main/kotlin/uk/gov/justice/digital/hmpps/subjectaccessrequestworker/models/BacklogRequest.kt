@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import java.time.LocalDate
@@ -36,6 +37,7 @@ data class BacklogRequest(
   var dateTo: LocalDate? = null,
   var dataHeld: Boolean? = null,
   @OneToMany(mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+  @OrderBy("serviceOrder ASC")
   var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
   val createdAt: LocalDateTime? = LocalDateTime.now(),

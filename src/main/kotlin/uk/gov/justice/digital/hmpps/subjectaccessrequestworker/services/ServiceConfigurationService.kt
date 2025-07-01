@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
@@ -51,6 +52,10 @@ class ServiceConfigurationService(
         serviceName,
       )
     }.sortedBy { it.orderPosition }
+
+  fun getAllOrdered(): List<ServiceConfiguration> = serviceConfigurationRepository.findAll(
+    Sort.by(Sort.Direction.ASC, "order"),
+  )
 
   fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration): String {
     val apiUrl = when (serviceConfiguration.serviceName) {
