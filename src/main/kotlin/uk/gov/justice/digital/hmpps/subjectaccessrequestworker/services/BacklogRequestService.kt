@@ -170,7 +170,10 @@ class BacklogRequestService(
   @Transactional
   fun streamBacklogRequestForVersion(
     version: String,
-  ) = backlogRequestRepository.streamBacklogRequestByVersionAndStatus(version, COMPLETE)
+  ) = backlogRequestRepository.streamBacklogRequestByVersionAndStatusOrderBySarCaseReferenceNumberAscSubjectNameDesc(
+    version = version,
+    status = COMPLETE,
+  )
 
   private fun updateExistingServiceSummary(
     backlogRequest: BacklogRequest,
