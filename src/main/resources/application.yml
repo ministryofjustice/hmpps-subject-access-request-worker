@@ -40,8 +40,8 @@ spring:
         registration:
           sar-client:
             provider: hmpps-auth
-            client-id: ${system.client.id}
-            client-secret: ${system.client.secret}
+            client-id: ${api.client.id}
+            client-secret: ${api.client.secret}
             authorization-grant-type: client_credentials
             scope: read
   task:
