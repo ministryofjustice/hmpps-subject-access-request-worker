@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogReq
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
+import java.util.stream.Stream
 
 const val BACKLOG_REQUEST_LOCK_TIMEOUT = "3000"
 
@@ -86,4 +87,6 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
       ")",
   )
   fun findDataHeldByIdOrNull(@Param("id") id: UUID): BacklogRequest?
+
+  fun streamBacklogRequestByVersionAndStatus(version: String, status: BacklogRequestStatus): Stream<BacklogRequest>?
 }

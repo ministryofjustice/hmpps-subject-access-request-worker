@@ -4,13 +4,16 @@ import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestReportService
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
 @RestControllerAdvice
@@ -61,7 +64,6 @@ class SubjectAccessRequestWorkerExceptionHandler {
           ),
         ).also { log.error("Backlog Request data integrity violation error", e) }
     }
-
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)
       .body(
@@ -71,6 +73,38 @@ class SubjectAccessRequestWorkerExceptionHandler {
           developerMessage = e.message,
         ),
       ).also { log.error("Unexpected exception", e) }
+  }
+
+  @ExceptionHandler(AuthorizationDeniedException::class)
+  fun handleAuthorizationDeniedException(e: Exception): ResponseEntity<ErrorResponse> = ResponseEntity
+    .status(FORBIDDEN)
+    .body(
+      ErrorResponse(
+        status = FORBIDDEN,
+        userMessage = "Access denied failure: ${e.message}",
+        developerMessage = e.message,
+      ),
+    ).also { log.info("Access denied exception: {}", e.message) }
+
+  @ExceptionHandler(BacklogRequestReportService.BacklogReportException::class)
+  fun handleBacklogVersionNotFound(
+    e: BacklogRequestReportService.BacklogReportException,
+  ): ResponseEntity<ErrorResponse> {
+    val status = when (e) {
+      is BacklogRequestReportService.BacklogVersionIncompleteException -> BAD_REQUEST
+      is BacklogRequestReportService.BacklogVersionNotFoundException -> NOT_FOUND
+      else -> INTERNAL_SERVER_ERROR
+    }
+
+    return ResponseEntity
+      .status(status)
+      .body(
+        ErrorResponse(
+          status = status,
+          userMessage = e.message,
+          developerMessage = e.message,
+        ),
+      ).also { log.info("exception: {}, status: {}", e.message, status.value(), e) }
   }
 
   private companion object {

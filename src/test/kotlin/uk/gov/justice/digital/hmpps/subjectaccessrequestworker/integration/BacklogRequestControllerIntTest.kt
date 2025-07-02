@@ -163,7 +163,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .uri("/subject-access-request/backlog/versions/1")
         .headers(setAuthorisation(roles = listOf("ROLE_BOB")))
         .exchange()
-        .expectStatus()
+        .expectStatus().isForbidden
     }
 
     @Test
