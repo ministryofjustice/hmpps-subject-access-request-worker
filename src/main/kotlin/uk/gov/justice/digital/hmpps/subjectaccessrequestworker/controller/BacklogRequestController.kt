@@ -194,6 +194,43 @@ class BacklogRequestController(
     }
     ?: ResponseEntity.notFound().build()
 
+  @Operation(
+    summary = "Generate a CSV report for all backlog requests in the specified version",
+    description = "Generate a CSV report for all backlog requests in the specified version",
+    security = [SecurityRequirement(name = "ROLE_SAR_SUPPORT")],
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "CSV report for all backlog requests in the specified version",
+        content = [
+          Content(
+            mediaType = "text/csv",
+            schema = Schema(type = "string", format = "binary"),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Bad request, the requested version does not have status COMPLETE",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Requested Version Not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
   @GetMapping("/versions/{version}/report", produces = ["text/csv"])
   fun generateBacklogRequestCsvReport(
     @PathVariable version: String,

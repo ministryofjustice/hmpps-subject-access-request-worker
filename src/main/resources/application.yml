@@ -25,6 +25,9 @@ spring:
     url: 'jdbc:postgresql://${DATABASE_ENDPOINT}/${DATABASE_NAME}?sslmode=verify-full'
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
 
   security:
     oauth2:
@@ -47,7 +50,7 @@ spring:
   task:
     scheduling:
       pool:
-        size: ${TASK_SCHEDULING_POOL_SIZE:4}
+        size: ${TASK_SCHEDULING_POOL_SIZE:1}
 
 server:
   port: 8081
@@ -134,6 +137,7 @@ s3:
 
 backlog-request:
   processor:
+    pool-size: 10
     interval: 30
     initial-delay: 30
     enabled: false
