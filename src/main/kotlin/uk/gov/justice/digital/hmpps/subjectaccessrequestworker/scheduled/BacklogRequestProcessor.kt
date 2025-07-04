@@ -29,9 +29,9 @@ class BacklogRequestProcessor(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Async
+  @Async("backlogScheduler")
   @Scheduled(
-    fixedDelayString = "\${backlog-request.processor.interval:3}",
+    fixedRateString = "\${backlog-request.processor.interval:3}",
     initialDelayString = "\${backlog-request.processor.initial-delay:10}",
     timeUnit = TimeUnit.SECONDS,
   )
