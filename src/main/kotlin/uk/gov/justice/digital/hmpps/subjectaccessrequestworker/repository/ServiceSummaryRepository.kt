@@ -75,7 +75,7 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
       "INNER JOIN service_summary s on s.backlog_request_id = b.id " +
       "WHERE b.version = :version" +
       ")",
-    nativeQuery = true
+    nativeQuery = true,
   )
   fun deleteServiceSummaryByBacklogRequestVersion(@Param("version") version: String): Unit
 }

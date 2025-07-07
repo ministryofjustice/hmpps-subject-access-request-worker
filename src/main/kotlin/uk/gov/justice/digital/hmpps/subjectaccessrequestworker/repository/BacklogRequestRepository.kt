@@ -33,7 +33,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
   @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Query(
     value = "DELETE FROM backlog_request WHERE version = :version",
-    nativeQuery = true
+    nativeQuery = true,
   )
   fun deleteBacklogRequestByVersion(version: String): Int
 
