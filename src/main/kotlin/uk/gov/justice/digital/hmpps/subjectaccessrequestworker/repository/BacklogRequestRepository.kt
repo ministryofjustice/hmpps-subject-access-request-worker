@@ -29,9 +29,12 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
 
   fun findByVersionOrderByCreatedAt(version: String): MutableList<BacklogRequest>
 
-  @Lock(LockModeType.PESSIMISTIC_READ)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
   @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(
+    value = "DELETE FROM backlog_request WHERE version = :version",
+    nativeQuery = true
+  )
   fun deleteBacklogRequestByVersion(version: String): Int
 
   @Query("SELECT DISTINCT (b.version) FROM BacklogRequest b ORDER BY b.version")

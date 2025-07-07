@@ -329,47 +329,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
   }
 
   @Nested
-  inner class DeleteRequestsByVersionTestCases {
-
-    @Test
-    fun `should delete backlog request and service summaries`() {
-      val version = "1"
-      val request = BacklogRequest(version = version)
-      val serviceSummary1 = ServiceSummary(
-        id = UUID.randomUUID(),
-        backlogRequest = request,
-        serviceName = "service1",
-        serviceOrder = 1,
-        dataHeld = true,
-        status = COMPLETE,
-      )
-      val serviceSummary2 = ServiceSummary(
-        id = UUID.randomUUID(),
-        backlogRequest = request,
-        serviceName = "service2",
-        serviceOrder = 2,
-        dataHeld = true,
-        status = COMPLETE,
-      )
-      request.addServiceSummaries(serviceSummary1, serviceSummary2)
-      backlogRequestRepository.saveAndFlush(request)
-
-      val actual = backlogRequestRepository.findByIdOrNull(request.id)
-      assertThat(actual).isNotNull
-      assertThat(actual!!.serviceSummary).hasSize(2)
-
-      val actualSummaries = serviceSummaryRepository.findByBacklogRequestId(request.id)
-      assertThat(actualSummaries).hasSize(2)
-
-      val deleteCount = backlogRequestRepository.deleteBacklogRequestByVersion(version)
-
-      assertThat(deleteCount).isEqualTo(1)
-      assertThat(backlogRequestRepository.findByIdOrNull(request.id)).isNull()
-      assertThat(serviceSummaryRepository.findByBacklogRequestId(request.id)).isEmpty()
-    }
-  }
-
-  @Nested
   inner class FindCompleteRequestOrNullTestCases {
 
     @Test

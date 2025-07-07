@@ -75,7 +75,10 @@ class BacklogRequestService(
   fun deleteById(id: UUID): Unit = backlogRequestRepository.deleteById(id)
 
   @Transactional
-  fun deleteByVersion(version: String): Int = backlogRequestRepository.deleteBacklogRequestByVersion(version)
+  fun deleteByVersion(version: String): Int {
+    serviceSummaryRepository.deleteServiceSummaryByBacklogRequestVersion(version)
+    return backlogRequestRepository.deleteBacklogRequestByVersion(version)
+  }
 
   @Transactional
   fun claimNextRequest(): BacklogRequest? = backlogRequestRepository
