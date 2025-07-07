@@ -4,6 +4,7 @@ import jakarta.persistence.LockModeType
 import jakarta.persistence.QueryHint
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Lock
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.jpa.repository.QueryHints
 import org.springframework.data.repository.query.Param
@@ -63,4 +64,18 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
     value = "SELECT * FROM service_summary s WHERE s.backlog_request_id = :backlogRequestId",
   )
   fun findByBacklogRequestId(@Param("backlogRequestId") backlogRequestId: UUID): List<ServiceSummary>
+
+  @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(
+    "DELETE FROM service_summary " +
+      "WHERE id IN " +
+      "(" +
+      "SELECT s.id FROM backlog_request b " +
+      "INNER JOIN service_summary s on s.backlog_request_id = b.id " +
+      "WHERE b.version = :version" +
+      ")",
+    nativeQuery = true,
+  )
+  fun deleteServiceSummaryByBacklogRequestVersion(@Param("version") version: String): Unit
 }
