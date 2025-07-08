@@ -199,7 +199,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     ?.bufferedReader()
     .use { it?.readText() ?: "EMPTY" }
 
-  fun storeAttachment(sar: SubjectAccessRequest, serviceName: String, filename: String, contentType: String) {
+  fun storeAttachment(sar: SubjectAccessRequest, serviceName: String, filename: String, contentType: String) = runBlocking {
     val documentKey = attachmentDocumentKey(sar, serviceName, filename)
     val content = getAttachmentBytes(filename)
     s3TestUtil.putFile(
