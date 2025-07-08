@@ -39,6 +39,8 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
 
+  private var attachmentNumber = 1
+
   @BeforeEach
   fun setup() {
     clearOauthClientCache("sar-client", "anonymousUser")
@@ -52,6 +54,8 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
       .thenReturn("1 January 2025")
     whenever(dateService.reportDateFormat(LocalDate.of(2024, 1, 1), "Start of record"))
       .thenReturn("1 January 2024")
+
+    attachmentNumber = 1
   }
 
   @AfterEach
@@ -118,6 +122,41 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
+  @Test
+  fun `should process pending request successfully when attachments exist and html-renderer is enabled`() {
+    val serviceName = "create-and-vary-a-licence-api"
+    val serviceLabel = "Create and Vary a Licence"
+    val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
+    val service = DpsService(url = "http://localhost:4100", name = serviceName, businessName = serviceLabel)
+    val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
+      subjectAccessRequest = sar,
+      service = service,
+    )
+
+    hmppsAuth.stubGrantToken()
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest)
+    storeAttachment(sar, serviceName, "doc.pdf", "application/pdf")
+    storeAttachment(sar, serviceName, "doc.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    storeAttachment(sar, serviceName, "map.jpg", "image/jpeg")
+    storeAttachment(sar, serviceName, "map.gif", "image/gif")
+    storeAttachment(sar, serviceName, "map.png", "image/png")
+    storeAttachment(sar, serviceName, "map.tif", "image/tiff")
+    storeAttachment(sar, serviceName, "video.mp4", "video/mp4")
+    prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+    documentApi.stubUploadFileSuccess(sar)
+
+    await()
+      .atMost(10, TimeUnit.SECONDS)
+      .until { requestHasStatus(sar, Completed) }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
+    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+
+    assertUploadedDocumentMatchesExpectedPdf("$serviceName-attachments")
+    assertSubjectAccessRequestHasStatus(sar, Completed)
+  }
+
   private fun htmlRendererSuccessfullyRendersHtml(
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
@@ -137,7 +176,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
     fileToAddToBucket: String,
   ) = runBlocking {
-    val documentKey = documentKey(sar, htmlRenderRequest.serviceName)
+    val documentKey = htmlDocumentKey(sar, htmlRenderRequest.serviceName)
 
     // Stub the wiremock API response.
     htmlRendererApi.stubRenderResponsesWith(
@@ -160,5 +199,27 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     ?.bufferedReader()
     .use { it?.readText() ?: "EMPTY" }
 
-  fun documentKey(sar: SubjectAccessRequest, serviceName: String) = "${sar.id}/$serviceName.html"
+  fun storeAttachment(sar: SubjectAccessRequest, serviceName: String, filename: String, contentType: String) {
+    val documentKey = attachmentDocumentKey(sar, serviceName, filename)
+    val content = getAttachmentBytes(filename)
+    s3TestUtil.putFile(
+      S3TestUtils.S3AttachmentFile(
+        key = documentKey,
+        content = content,
+        contentType = contentType,
+        contentLength = content.size.toLong(),
+        filename = filename,
+        attachmentNumber = attachmentNumber++,
+        name = "Test attachment file $filename",
+      ),
+    )
+    assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
+  }
+
+  fun htmlDocumentKey(sar: SubjectAccessRequest, serviceName: String) = "${sar.id}/$serviceName.html"
+
+  fun attachmentDocumentKey(sar: SubjectAccessRequest, serviceName: String, filename: String) = "${sar.id}/$serviceName/attachments/$filename"
+
+  fun getAttachmentBytes(filename: String): ByteArray = this::class.java
+    .getResourceAsStream("/integration-tests/attachments/$filename").use { it?.readAllBytes()!! }
 }

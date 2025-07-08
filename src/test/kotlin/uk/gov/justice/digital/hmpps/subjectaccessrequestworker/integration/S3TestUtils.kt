@@ -22,6 +22,30 @@ class S3TestUtils(
 ) {
 
   data class S3File(val key: String, val content: String)
+  data class S3AttachmentFile(
+    val key: String,
+    val content: ByteArray,
+    val contentType: String,
+    val contentLength: Long,
+    val filename: String,
+    val attachmentNumber: Int,
+    val name: String,
+  )
+
+  fun putFile(file: S3AttachmentFile) = runBlocking {
+    s3.putObject {
+      bucket = s3Properties.bucketName
+      key = file.key
+      body = ByteStream.fromBytes(file.content)
+      contentType = file.contentType
+      contentLength = file.contentLength
+      metadata = mapOf(
+        "x-amz-meta-filename" to file.filename,
+        "x-amz-meta-attachment-number" to file.attachmentNumber.toString(),
+        "x-amz-meta-name" to file.name,
+      )
+    }
+  }
 
   fun putFile(file: S3File) = runBlocking {
     s3.putObject {

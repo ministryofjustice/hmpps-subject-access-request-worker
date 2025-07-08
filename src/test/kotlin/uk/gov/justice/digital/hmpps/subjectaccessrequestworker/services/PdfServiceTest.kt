@@ -13,6 +13,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.assertPdfContentMatchesExpected
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.createPdfDocumentFromBytes
@@ -22,14 +23,16 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 @ExtendWith(MockitoExtension::class)
 class PdfServiceTest {
   private val serviceConfiguration: ServiceConfigurationService = mock()
-  private val htmlDocumentStoreService: HtmlDocumentStoreService = mock()
+  private val documentStoreService: DocumentStoreService = mock()
   private val dateService: DateService = mock()
+  private val attachmentsPdfService: AttachmentsPdfService = mock()
   private val telemetryClient: TelemetryClient = mock()
 
   private val pdfService = PdfService(
     serviceConfiguration,
-    htmlDocumentStoreService,
+    documentStoreService,
     dateService,
+    attachmentsPdfService,
     telemetryClient,
   )
 
@@ -58,7 +61,7 @@ class PdfServiceTest {
       subjectName = IntegrationTestFixture.subjectName,
     )
 
-    whenever(htmlDocumentStoreService.getDocument(subjectAccessRequest, testCase.serviceName))
+    whenever(documentStoreService.getDocument(subjectAccessRequest, testCase.serviceName))
       .thenReturn(getResource("/integration-tests/html-stubs/${testCase.serviceName}-expected.html"))
 
     whenever(serviceConfiguration.getSelectedServices(any())).thenReturn(
