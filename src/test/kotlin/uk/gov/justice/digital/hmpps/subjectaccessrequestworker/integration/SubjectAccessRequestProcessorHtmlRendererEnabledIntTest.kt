@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil.Companion.getFormattedReportGenerationDate
 import java.time.LocalDate
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit
     "html-renderer.enabled=true",
   ],
 )
-@Import(S3TestUtils::class)
+@Import(S3TestUtils::class, NoSchedulingConfig::class)
 class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorIntTest() {
 
   @MockitoBean
@@ -38,6 +39,9 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
+
+  @Autowired
+  private lateinit var sarProcessor: SubjectAccessRequestProcessor
 
   private var attachmentNumber = 1
 
@@ -67,7 +71,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   }
 
   @Test
-  fun `should process pending request successfully when data is held and html-renderer is enabled`() {
+  fun `should process pending request successfully when data is held and html-renderer is enabled`() = runBlocking {
     val serviceName = "hmpps-book-secure-move-api"
     val serviceLabel = "Book a Secure Move"
     val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
@@ -82,6 +86,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
+    sarProcessor.execute()
     await()
       .atMost(10, TimeUnit.SECONDS)
       .until { requestHasStatus(sar, Completed) }
@@ -95,7 +100,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   }
 
   @Test
-  fun `should process pending request successfully when no data is held and html-renderer is enabled`() {
+  fun `should process pending request successfully when no data is held and html-renderer is enabled`() = runBlocking {
     val serviceName = "hmpps-book-secure-move-api"
     val serviceLabel = "Book a Secure Move"
     val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
@@ -110,6 +115,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
+    sarProcessor.execute()
     await()
       .atMost(10, TimeUnit.SECONDS)
       .until { requestHasStatus(sar, Completed) }
@@ -123,7 +129,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   }
 
   @Test
-  fun `should process pending request successfully when attachments exist and html-renderer is enabled`() {
+  fun `should process pending request successfully when attachments exist and html-renderer is enabled`() = runBlocking {
     val serviceName = "create-and-vary-a-licence-api"
     val serviceLabel = "Create and Vary a Licence"
     val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
@@ -145,6 +151,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
+    sarProcessor.execute()
     await()
       .atMost(10, TimeUnit.SECONDS)
       .until { requestHasStatus(sar, Completed) }
