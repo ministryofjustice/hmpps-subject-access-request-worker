@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEv
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -33,8 +34,9 @@ import java.time.LocalDate
 @ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class PdfService(
   private val serviceConfigurationService: ServiceConfigurationService,
-  private val htmlDocumentStoreService: HtmlDocumentStoreService,
+  private val documentStoreService: DocumentStoreService,
   private val dateService: DateService,
+  private val attachmentsPdfService: AttachmentsPdfService,
   private val telemetryClient: TelemetryClient,
 ) {
 
@@ -179,13 +181,15 @@ class PdfService(
       telemetryClient.trackSarEvent("pdfAddServiceDataStarted", subjectAccessRequest, "service" to service.name!!)
       this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
 
-      val elements = htmlDocumentStoreService.getDocument(
+      val elements = documentStoreService.getDocument(
         subjectAccessRequest = subjectAccessRequest,
         serviceName = service.name,
       ).use { HtmlConverter.convertToElements(it) }
 
       elements.forEach { this.add(it as IBlockElement) }
       telemetryClient.trackSarEvent("pdfAddServiceDataCompleted", subjectAccessRequest, "service" to service.name)
+
+      attachmentsPdfService.processAttachments(subjectAccessRequest, service.name, this)
     }
   }
 
