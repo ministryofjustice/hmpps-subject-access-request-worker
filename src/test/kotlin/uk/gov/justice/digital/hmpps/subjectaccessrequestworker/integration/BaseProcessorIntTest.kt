@@ -33,6 +33,15 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     }
   }
 
+  protected fun assertAttachmentPageMatchesExpected(serviceName: String, pageNumber: Int, attachmentNumber: Int) {
+    val expected = getPreGeneratedPdfDocument("$serviceName-reference.pdf").getPage(pageNumber)
+    val actual = getUploadedPdfDocument().getPage(pageNumber)
+    val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
+
+    assertThat(actualPageText).`as`("attachment $attachmentNumber text").contains("Attachment: $attachmentNumber")
+    assertThat(actual.contentBytes).`as`("page $pageNumber content bytes").isEqualTo(expected.contentBytes)
+  }
+
   protected fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceName: String, serviceLabel: String) {
     val actual = getUploadedPdfDocument()
 
