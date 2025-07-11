@@ -52,7 +52,6 @@ class BacklogRequestReportService(
       "AND status = 'COMPLETE' " +
       "ORDER BY sar_case_reference_number ASC, subject_name DESC;"
 
-
   @Transactional
   fun generateReportJdbc(version: String, response: HttpServletResponse) {
     val versionStatus = backlogRequestService.getStatusByVersion(version)
