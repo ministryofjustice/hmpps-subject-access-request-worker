@@ -90,29 +90,6 @@ class BacklogRequestReportService(
     }
   }
 
-  private fun ResultSet.getStringOrEmpty(name: String): String = this.getString(name) ?: ""
-
-  private fun writeRowDetails(writer: BufferedWriter, rs: ResultSet) {
-    while (rs.next()) {
-      writer.write(rs.getString("sar_case_reference_number"))
-      writer.write(delimiter)
-      writer.write(rs.getString("subject_name").replace(",", ""))
-      writer.write(delimiter)
-      writer.write(rs.getStringOrEmpty("nomis_id"))
-      writer.write(delimiter)
-      writer.write(rs.getStringOrEmpty("ndelius_case_reference_id"))
-      writer.write(delimiter)
-      writer.write(rs.getStringOrEmpty("date_from"))
-      writer.write(delimiter)
-      writer.write(rs.getStringOrEmpty("date_to"))
-      writer.write(delimiter)
-      writer.write(dateTimeFormat.format(rs.getTimestamp("completed_at").toLocalDateTime()))
-
-      val backlogRequestId = rs.getObject("id") as UUID
-      getServiceSummariesForBacklogRequestId(backlogRequestId, writer)
-    }
-  }
-
   private fun writeRow(writer: BufferedWriter, backlogRequest: BacklogRequest) {
     writer.write(backlogRequest.sarCaseReferenceNumber)
     writer.write(delimiter)
@@ -138,6 +115,8 @@ class BacklogRequestReportService(
     writer.write("\n")
     writer.flush()
   }
+
+  private fun ResultSet.getStringOrEmpty(name: String): String = this.getString(name) ?: ""
 
   @Transactional
   fun generateReportJdbc(version: String, response: HttpServletResponse) {
@@ -172,6 +151,27 @@ class BacklogRequestReportService(
       stmt.executeQuery().use { rs ->
         writeRowDetails(writer, rs)
       }
+    }
+  }
+
+  private fun writeRowDetails(writer: BufferedWriter, rs: ResultSet) {
+    while (rs.next()) {
+      writer.write(rs.getString("sar_case_reference_number"))
+      writer.write(delimiter)
+      writer.write(rs.getString("subject_name").replace(",", ""))
+      writer.write(delimiter)
+      writer.write(rs.getStringOrEmpty("nomis_id"))
+      writer.write(delimiter)
+      writer.write(rs.getStringOrEmpty("ndelius_case_reference_id"))
+      writer.write(delimiter)
+      writer.write(rs.getStringOrEmpty("date_from"))
+      writer.write(delimiter)
+      writer.write(rs.getStringOrEmpty("date_to"))
+      writer.write(delimiter)
+      writer.write(dateTimeFormat.format(rs.getTimestamp("completed_at").toLocalDateTime()))
+
+      val backlogRequestId = rs.getObject("id") as UUID
+      getServiceSummariesForBacklogRequestId(backlogRequestId, writer)
     }
   }
 
