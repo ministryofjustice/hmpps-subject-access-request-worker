@@ -161,6 +161,10 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
     assertUploadedDocumentMatchesExpectedPdf("$serviceName-attachments")
+    assertAttachmentPageMatchesExpected("$serviceName-attachments", 25, 3)
+    assertAttachmentPageMatchesExpected("$serviceName-attachments", 26, 4)
+    assertAttachmentPageMatchesExpected("$serviceName-attachments", 27, 5)
+    assertAttachmentPageMatchesExpected("$serviceName-attachments", 28, 6)
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
