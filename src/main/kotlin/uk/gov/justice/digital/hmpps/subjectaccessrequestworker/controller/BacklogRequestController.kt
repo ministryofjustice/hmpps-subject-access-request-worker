@@ -6,10 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ValidationException
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -234,14 +233,8 @@ class BacklogRequestController(
   @GetMapping("/versions/{version}/report", produces = ["text/csv"])
   fun generateBacklogRequestCsvReport(
     @PathVariable version: String,
-  ): ResponseEntity<String> = backlogRequestReportService.generateReport(version)
-    ?.let {
-      ResponseEntity
-        .ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"SAR-v$version-report.csv\"")
-        .contentType(MediaType.parseMediaType("text/csv"))
-        .body(it)
-    } ?: ResponseEntity.notFound().build()
+    response: HttpServletResponse,
+  ): Unit = backlogRequestReportService.generateReportJdbc(version, response)
 
   @Operation(
     summary = "Get backlog request by ID",
