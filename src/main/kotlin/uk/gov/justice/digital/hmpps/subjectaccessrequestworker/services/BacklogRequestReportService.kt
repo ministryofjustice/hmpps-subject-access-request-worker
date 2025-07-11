@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService.BacklogVersionStatus
 import java.io.BufferedWriter
 import java.sql.ResultSet
@@ -20,7 +19,6 @@ class BacklogRequestReportService(
 ) {
 
   private val delimiter = ","
-  private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
   private val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")
   private val requestCsvHeadersColumns = listOf(
     "SAR Case Reference Number",
@@ -54,69 +52,6 @@ class BacklogRequestReportService(
       "AND status = 'COMPLETE' " +
       "ORDER BY sar_case_reference_number ASC, subject_name DESC;"
 
-  @Transactional
-  fun generateReport(version: String, response: HttpServletResponse) {
-    val versionStatus = backlogRequestService.getStatusByVersion(version)
-      ?: throw BacklogVersionNotFoundException("backlog version $version not found")
-
-    return versionStatus.takeIf { it.status == BacklogVersionStatus.COMPLETE }
-      ?.let {
-        response.contentType = "text/csv"
-        response.setHeader("Content-Disposition", "attachment; filename=\"SAR-v$version.csv\"")
-
-        BufferedWriter(response.writer).use {
-          writeHeaderRow(it)
-          writeRows(it, version)
-          it.flush()
-        }
-        response.status = HttpStatus.OK.value()
-      } ?: throw BacklogVersionIncompleteException("backlog version: $version is not COMPLETE")
-  }
-
-  private fun writeHeaderRow(writer: BufferedWriter) {
-    val requestFieldColumns = requestCsvHeadersColumns.joinToString(delimiter)
-    val serviceColumns = serviceConfigurationService.getAllOrdered().joinToString(delimiter) { it.label }
-    writer.write("$requestFieldColumns,$serviceColumns\n")
-    writer.flush()
-  }
-
-  private fun writeRows(writer: BufferedWriter, version: String) {
-    backlogRequestService.streamBacklogRequestForVersion(version)?.use { stream ->
-      val it = stream.iterator()
-
-      while (it.hasNext()) {
-        writeRow(writer, it.next())
-      }
-    }
-  }
-
-  private fun writeRow(writer: BufferedWriter, backlogRequest: BacklogRequest) {
-    writer.write(backlogRequest.sarCaseReferenceNumber)
-    writer.write(delimiter)
-    writer.write(backlogRequest.subjectName.replace(",", ""))
-    writer.write(delimiter)
-    writer.write(backlogRequest.nomisId ?: "")
-    writer.write(delimiter)
-    writer.write(backlogRequest.ndeliusCaseReferenceId ?: "")
-    writer.write(delimiter)
-    writer.write(dateFormat.format(backlogRequest.dateFrom))
-    writer.write(delimiter)
-    writer.write(dateFormat.format(backlogRequest.dateTo))
-    writer.write(delimiter)
-    writer.write(dateTimeFormat.format(backlogRequest.completedAt))
-    writer.write(delimiter)
-    writer.write(backlogRequest.dataHeld.toString())
-    writer.write(delimiter)
-    writer.write(
-      backlogRequest.serviceSummary.joinToString(delimiter) {
-        it.dataHeld.toString()
-      },
-    )
-    writer.write("\n")
-    writer.flush()
-  }
-
-  private fun ResultSet.getStringOrEmpty(name: String): String = this.getString(name) ?: ""
 
   @Transactional
   fun generateReportJdbc(version: String, response: HttpServletResponse) {
@@ -175,6 +110,13 @@ class BacklogRequestReportService(
     }
   }
 
+  private fun writeHeaderRow(writer: BufferedWriter) {
+    val requestFieldColumns = requestCsvHeadersColumns.joinToString(delimiter)
+    val serviceColumns = serviceConfigurationService.getAllOrdered().joinToString(delimiter) { it.label }
+    writer.write("$requestFieldColumns,$serviceColumns\n")
+    writer.flush()
+  }
+
   private fun getServiceSummariesForBacklogRequestId(
     backlogRequestId: UUID,
     writer: BufferedWriter,
@@ -210,6 +152,8 @@ class BacklogRequestReportService(
     writer.write("\n")
     writer.flush()
   }
+
+  private fun ResultSet.getStringOrEmpty(name: String): String = this.getString(name) ?: ""
 
   open class BacklogReportException(message: String) : RuntimeException(message)
 
