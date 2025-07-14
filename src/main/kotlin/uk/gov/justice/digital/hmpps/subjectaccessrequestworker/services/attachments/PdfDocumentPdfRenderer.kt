@@ -16,22 +16,21 @@ import java.io.ByteArrayInputStream
 class PdfDocumentPdfRenderer : AttachmentPdfRenderer {
 
   override fun add(document: Document, attachment: Attachment) {
-    val attachmentPdf = PdfDocument(PdfReader(ByteArrayInputStream(attachment.data.readBytes())))
-    document.add(Paragraph("Attachment PDF content follows on subsequent ${attachmentPdf.numberOfPages} page(s)").setTextAlignment(TextAlignment.LEFT))
+    PdfDocument(PdfReader(ByteArrayInputStream(attachment.data.readBytes()))).use {
+      document.add(Paragraph("Attachment PDF content follows on subsequent ${it.numberOfPages} page(s)").setTextAlignment(TextAlignment.LEFT))
 
-    val a4Dimensions = Dimensions(A4.width, A4.height)
+      val a4Dimensions = Dimensions(A4.width, A4.height)
 
-    for (i in 1..attachmentPdf.numberOfPages) {
-      val attachmentPage = attachmentPdf.getPage(i)
+      for (i in 1..it.numberOfPages) {
+        val attachmentPage = it.getPage(i)
 
-      val originalDimensions = Dimensions(attachmentPage.pageSize.width, attachmentPage.pageSize.height)
-      val scale = originalDimensions.getScaleToFit(a4Dimensions)
-      val position = originalDimensions.applyScale(scale).getPositionToCentreIn(a4Dimensions)
+        val originalDimensions = Dimensions(attachmentPage.pageSize.width, attachmentPage.pageSize.height)
+        val scale = originalDimensions.getScaleToFit(a4Dimensions)
+        val position = originalDimensions.applyScale(scale).getPositionToCentreIn(a4Dimensions)
 
-      document.addAttachmentPage(attachmentPage, scale, position)
+        document.addAttachmentPage(attachmentPage, scale, position)
+      }
     }
-
-    attachmentPdf.close()
   }
 
   override fun supportedContentTypes(): Set<String> = setOf("application/pdf")
