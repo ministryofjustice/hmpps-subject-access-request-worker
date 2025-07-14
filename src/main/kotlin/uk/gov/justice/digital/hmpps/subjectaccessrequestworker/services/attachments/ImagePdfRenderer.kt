@@ -35,14 +35,7 @@ class ImagePdfRenderer : AttachmentPdfRenderer {
   }
 
   private fun centreImage(image: Image, pageDimensions: Dimensions, imageDimensions: Dimensions) {
-    val xPosition = (pageDimensions.width - imageDimensions.width) / 2
-    val yPosition = (pageDimensions.height - imageDimensions.height) / 2
-    image.setFixedPosition(xPosition, yPosition)
-  }
-
-  data class Dimensions(val width: Float, val height: Float) {
-    fun applyScale(scale: Float): Dimensions = Dimensions(width * scale, height * scale)
-    fun getScaleToFit(dimensions: Dimensions): Float = minOf(dimensions.width / this.width, dimensions.height / this.height)
-    fun applyScaleToFit(dimensions: Dimensions): Dimensions = this.applyScale(getScaleToFit(dimensions))
+    val position = imageDimensions.getPositionToCentreIn(pageDimensions)
+    image.setFixedPosition(position.x, position.y)
   }
 }

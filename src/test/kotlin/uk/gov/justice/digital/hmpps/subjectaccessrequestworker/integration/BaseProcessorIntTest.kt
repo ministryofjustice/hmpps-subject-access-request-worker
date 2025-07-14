@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import org.assertj.core.api.Assertions.assertThat
@@ -21,6 +22,10 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     val expected = getPreGeneratedPdfDocument("$serviceName-reference.pdf")
     val actual = getUploadedPdfDocument()
 
+    assertUploadedDocumentMatchesExpectedPdf(actual, expected)
+  }
+
+  protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
 
     for (i in 1..actual.numberOfPages) {
@@ -33,12 +38,18 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     }
   }
 
-  protected fun assertAttachmentPageMatchesExpected(serviceName: String, pageNumber: Int, attachmentNumber: Int) {
-    val expected = getPreGeneratedPdfDocument("$serviceName-reference.pdf").getPage(pageNumber)
-    val actual = getUploadedPdfDocument().getPage(pageNumber)
+  protected fun assertAttachmentPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int, attachmentNumber: Int) {
+    val expected = actualPdfDoc.getPage(pageNumber)
+    val actual = expectedPdfDoc.getPage(pageNumber)
     val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
 
     assertThat(actualPageText).`as`("attachment $attachmentNumber text").contains("Attachment: $attachmentNumber")
+    assertThat(actual.contentBytes).`as`("page $pageNumber content bytes").isEqualTo(expected.contentBytes)
+  }
+
+  protected fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {
+    val expected = actualPdfDoc.getPage(pageNumber)
+    val actual = expectedPdfDoc.getPage(pageNumber)
     assertThat(actual.contentBytes).`as`("page $pageNumber content bytes").isEqualTo(expected.contentBytes)
   }
 
