@@ -21,14 +21,15 @@ class BacklogRequestReportService(
   private val delimiter = ","
   private val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")
   private val requestCsvHeadersColumns = listOf(
+    "ID",
     "SAR Case Reference Number",
     "Subject Name",
     "Nomis Id",
     "Ndelius Case Reference Id",
     "Date From",
     "Date To",
-    "Data Held",
     "Query Completed at",
+    "Data Held",
   )
 
   private val getServiceSummariesQuery =
@@ -90,6 +91,10 @@ class BacklogRequestReportService(
 
   private fun writeRowDetails(writer: BufferedWriter, rs: ResultSet) {
     while (rs.next()) {
+      val backlogRequestId = rs.getObject("id") as UUID
+
+      writer.write(backlogRequestId.toString())
+      writer.write(delimiter)
       writer.write(rs.getString("sar_case_reference_number"))
       writer.write(delimiter)
       writer.write(rs.getString("subject_name").replace(",", ""))
@@ -104,7 +109,6 @@ class BacklogRequestReportService(
       writer.write(delimiter)
       writer.write(dateTimeFormat.format(rs.getTimestamp("completed_at").toLocalDateTime()))
 
-      val backlogRequestId = rs.getObject("id") as UUID
       getServiceSummariesForBacklogRequestId(backlogRequestId, writer)
     }
   }
