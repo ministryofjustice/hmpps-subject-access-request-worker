@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 /**
  * Disable the Backlog processing scheduled task - test will seed data directly into db.
@@ -139,6 +140,7 @@ class BacklogRequestReportGeneratorIntTest : BaseBacklogRequestIntTest() {
     csv.assertHeaderContainsExpectedValues()
     csv.assertDataRowContainsExpectedValues(
       rowIndex = 1,
+      expectedBacklogRequestId = request.id,
       expectedSarCaseReferenceNumber = sarCaseRef,
       expectedSubjectName = "Jailbird Snake",
       expectedNomisId = nomisId,
@@ -208,22 +210,31 @@ class BacklogRequestReportGeneratorIntTest : BaseBacklogRequestIntTest() {
     }
 
     fun assertHeaderContainsExpectedValues() {
-      assertThat(header.size).isEqualTo(11)
-      assertThat(header[0]).isEqualTo("SAR Case Reference Number")
-      assertThat(header[1]).isEqualTo("Subject Name")
-      assertThat(header[2]).isEqualTo("Nomis Id")
-      assertThat(header[3]).isEqualTo("Ndelius Case Reference Id")
-      assertThat(header[4]).isEqualTo("Date From")
-      assertThat(header[5]).isEqualTo("Date To")
-      assertThat(header[6]).isEqualTo("Data Held")
-      assertThat(header[7]).isEqualTo("Query Completed at")
-      assertThat(header[8]).isEqualTo("Service 1")
-      assertThat(header[9]).isEqualTo("Service 2")
-      assertThat(header[10]).isEqualTo("Service 3")
+      val expectedHeaders = listOf(
+        "ID",
+        "SAR Case Reference Number",
+        "Subject Name",
+        "Nomis Id",
+        "Ndelius Case Reference Id",
+        "Date From",
+        "Date To",
+        "Query Completed at",
+        "Data Held",
+        "Service 1",
+        "Service 2",
+        "Service 3",
+      )
+
+      assertThat(header).hasSize(expectedHeaders.size)
+
+      expectedHeaders.forEachIndexed { headerIndex, expectedValue ->
+        assertThat(header[headerIndex]).isEqualTo(expectedValue)
+      }
     }
 
     fun assertDataRowContainsExpectedValues(
       rowIndex: Int,
+      expectedBacklogRequestId: UUID,
       expectedSarCaseReferenceNumber: String,
       expectedSubjectName: String,
       expectedNomisId: String?,
@@ -236,17 +247,19 @@ class BacklogRequestReportGeneratorIntTest : BaseBacklogRequestIntTest() {
       expectService3DataHeld: Boolean,
     ) {
       val targetRow = data[rowIndex]
-      assertThat(targetRow[0]).isEqualTo(expectedSarCaseReferenceNumber)
-      assertThat(targetRow[1]).isEqualTo(expectedSubjectName)
-      assertThat(targetRow[2]).isEqualTo(expectedNomisId)
-      assertThat(targetRow[3]).isEqualTo(expectedNdeliusCaseReferenceId)
-      assertThat(targetRow[4]).isEqualTo(expectedDateFrom)
-      assertThat(targetRow[5]).isEqualTo(expectedDateTo)
-      assertThat(targetRow[6]).isNotEmpty()
-      assertThat(targetRow[7]).isEqualTo(expectedDataHeld.toString())
-      assertThat(targetRow[8]).isEqualTo(expectService1DataHeld.toString())
-      assertThat(targetRow[9]).isEqualTo(expectService2DataHeld.toString())
-      assertThat(targetRow[10]).isEqualTo(expectService3DataHeld.toString())
+      var columnIndex = 0
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedBacklogRequestId.toString())
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedSarCaseReferenceNumber)
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedSubjectName)
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedNomisId)
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedNdeliusCaseReferenceId)
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedDateFrom)
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedDateTo)
+      assertThat(targetRow[columnIndex++]).isNotEmpty()
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectedDataHeld.toString())
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectService1DataHeld.toString())
+      assertThat(targetRow[columnIndex++]).isEqualTo(expectService2DataHeld.toString())
+      assertThat(targetRow[columnIndex]).isEqualTo(expectService3DataHeld.toString())
     }
   }
 }
