@@ -21,7 +21,6 @@ import java.util.UUID
 class BacklogRequestRepositoryTest @Autowired constructor(
   val backlogRequestRepository: BacklogRequestRepository,
   val serviceConfigurationRepository: ServiceConfigurationRepository,
-  val serviceSummaryRepository: ServiceSummaryRepository,
 ) {
 
   companion object {
@@ -81,7 +80,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         id = UUID.randomUUID(),
         backlogRequest = request,
         serviceName = "service1",
-        serviceOrder = 1,
         dataHeld = true,
         status = COMPLETE,
       )
@@ -90,7 +88,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         id = UUID.randomUUID(),
         backlogRequest = request,
         serviceName = "service2",
-        serviceOrder = 2,
         dataHeld = true,
         status = COMPLETE,
       )
@@ -341,7 +338,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             id = UUID.randomUUID(),
             backlogRequest = request,
             serviceName = it.serviceName,
-            serviceOrder = it.order,
             dataHeld = true,
             status = COMPLETE,
           ),
@@ -372,7 +368,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             id = UUID.randomUUID(),
             backlogRequest = request,
             serviceName = it.serviceName,
-            serviceOrder = it.order,
             dataHeld = true,
             status = PENDING,
           ),
@@ -394,7 +389,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           id = UUID.randomUUID(),
           backlogRequest = request,
           serviceName = serviceConfigurations[0].serviceName,
-          serviceOrder = serviceConfigurations[0].order,
           dataHeld = true,
           status = COMPLETE,
         ),
@@ -402,7 +396,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           id = UUID.randomUUID(),
           backlogRequest = request,
           serviceName = serviceConfigurations[1].serviceName,
-          serviceOrder = serviceConfigurations[2].order,
           dataHeld = true,
           status = COMPLETE,
         ),
@@ -440,7 +433,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             id = UUID.randomUUID(),
             backlogRequest = request,
             serviceName = it.serviceName,
-            serviceOrder = it.order,
             dataHeld = false,
             status = PENDING,
           ),
@@ -461,7 +453,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             id = UUID.randomUUID(),
             backlogRequest = request,
             serviceName = it.serviceName,
-            serviceOrder = it.order,
             dataHeld = true,
             status = COMPLETE,
           ),
@@ -484,7 +475,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             id = UUID.randomUUID(),
             backlogRequest = request,
             serviceName = service.serviceName,
-            serviceOrder = service.order,
             dataHeld = (i == 0),
             status = COMPLETE,
           ),
@@ -507,7 +497,6 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             id = UUID.randomUUID(),
             backlogRequest = request,
             serviceName = service.serviceName,
-            serviceOrder = service.order,
             dataHeld = true,
             status = PENDING,
           ),

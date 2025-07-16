@@ -90,9 +90,4 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
       ")",
   )
   fun findDataHeldByIdOrNull(@Param("id") id: UUID): BacklogRequest?
-
-  fun streamBacklogRequestByVersionAndStatusOrderBySarCaseReferenceNumberAscSubjectNameDesc(
-    version: String,
-    status: BacklogRequestStatus,
-  ): Stream<BacklogRequest>?
 }

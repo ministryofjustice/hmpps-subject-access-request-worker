@@ -33,8 +33,6 @@ class BacklogRequestService(
     private val LOG = LoggerFactory.getLogger(BacklogRequestService::class.java)
   }
 
-  fun saveAll(requests: List<BacklogRequest>): List<BacklogRequest> = backlogRequestRepository.saveAllAndFlush(requests)
-
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
     backlogRequestRepository.saveAndFlush(request)
   } catch (ex: DataIntegrityViolationException) {
@@ -141,7 +139,6 @@ class BacklogRequestService(
     response.body?.let {
       ServiceSummary(
         serviceName = serviceConfig.serviceName,
-        serviceOrder = serviceConfig.order,
         backlogRequest = backlogRequest,
         dataHeld = it.dataHeld,
         status = COMPLETE,
@@ -161,22 +158,13 @@ class BacklogRequestService(
       throw BacklogRequestException(request.id, "Service name cannot be empty")
     }
 
-    if (serviceConfigurationService.findByServiceName(summary.serviceName) == null) {
-      throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
-    }
+    serviceConfigurationService.findByServiceName(summary.serviceName)
+      ?: throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
 
     serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(request.id, summary.serviceName)
       ?.let { existingSummary -> updateExistingServiceSummary(request, existingSummary, summary) }
       ?: addNewServiceSummary(request, summary)
   }
-
-  @Transactional
-  fun streamBacklogRequestForVersion(
-    version: String,
-  ) = backlogRequestRepository.streamBacklogRequestByVersionAndStatusOrderBySarCaseReferenceNumberAscSubjectNameDesc(
-    version = version,
-    status = COMPLETE,
-  )
 
   private fun updateExistingServiceSummary(
     backlogRequest: BacklogRequest,
@@ -190,7 +178,6 @@ class BacklogRequestService(
       saved.dataHeld,
     )
 
-    saved.serviceOrder = latest.serviceOrder
     saved.status = latest.status
     saved.dataHeld = latest.dataHeld
     serviceSummaryRepository.saveAndFlush(saved)

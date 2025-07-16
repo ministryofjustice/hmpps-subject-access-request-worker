@@ -102,7 +102,6 @@ class BacklogRequestServiceAddSummaryTest {
       existingBacklogRequest,
       ServiceSummary(
         serviceName = serviceOneConfig.serviceName,
-        serviceOrder = serviceOneConfig.order,
         status = BacklogRequestStatus.COMPLETE,
         dataHeld = true,
       ),
@@ -114,7 +113,6 @@ class BacklogRequestServiceAddSummaryTest {
     assertThat(actual.id).isEqualTo(existingServiceSummary.id)
     assertThat(actual.backlogRequest?.id).isEqualTo(existingServiceSummary.backlogRequest?.id)
     assertThat(actual.serviceName).isEqualTo(serviceOneConfig.serviceName)
-    assertThat(actual.serviceOrder).isEqualTo(serviceOneConfig.order)
     assertThat(actual.dataHeld).isTrue()
     assertThat(actual.status).isEqualTo(BacklogRequestStatus.COMPLETE)
 
@@ -137,7 +135,6 @@ class BacklogRequestServiceAddSummaryTest {
       .thenAnswer {
         ServiceSummary(
           serviceName = serviceOneConfig.serviceName,
-          serviceOrder = serviceOneConfig.order,
           status = BacklogRequestStatus.COMPLETE,
           dataHeld = true,
         )
@@ -149,7 +146,6 @@ class BacklogRequestServiceAddSummaryTest {
       ServiceSummary(
         id = UUID.randomUUID(), // Intentionally set the ID to a different value/.
         serviceName = serviceOneConfig.serviceName,
-        serviceOrder = serviceOneConfig.order,
         status = BacklogRequestStatus.COMPLETE,
         dataHeld = true,
       ),
@@ -177,7 +173,6 @@ class BacklogRequestServiceAddSummaryTest {
 
     val summary = ServiceSummary(
       serviceName = serviceOneConfig.serviceName,
-      serviceOrder = serviceOneConfig.order,
       status = BacklogRequestStatus.COMPLETE,
       dataHeld = true,
     )
@@ -191,7 +186,6 @@ class BacklogRequestServiceAddSummaryTest {
     assertThat(actual.id).isEqualTo(summary.id)
     assertThat(actual.backlogRequest?.id).isEqualTo(existingBacklogRequest.id)
     assertThat(actual.serviceName).isEqualTo("service1")
-    assertThat(actual.serviceOrder).isEqualTo(1)
     assertThat(actual.status).isEqualTo(BacklogRequestStatus.COMPLETE)
     assertThat(actual.dataHeld).isTrue()
 

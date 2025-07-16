@@ -252,7 +252,6 @@ class BacklogRequestProcessorIntTest : BaseBacklogRequestIntTest() {
     assertThat(serviceSummary).isNotNull
 
     assertThat(serviceSummary!!.serviceName).isEqualTo(serviceName)
-    assertThat(serviceSummary.serviceOrder).isEqualTo(expectedOrder)
     assertThat(serviceSummary.backlogRequest).isNotNull
     assertThat(serviceSummary.backlogRequest!!.id).isEqualTo(backlogRequestId)
     assertThat(serviceSummary.dataHeld).isEqualTo(expectedDataHeld)

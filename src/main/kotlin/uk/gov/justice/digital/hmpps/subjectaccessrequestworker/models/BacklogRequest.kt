@@ -37,7 +37,7 @@ data class BacklogRequest(
   var dateTo: LocalDate? = null,
   var dataHeld: Boolean? = null,
   @OneToMany(mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
-  @OrderBy("serviceOrder ASC")
+//  @OrderBy("serviceOrder ASC") // TODO?
   var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
   val createdAt: LocalDateTime? = LocalDateTime.now(),
@@ -85,18 +85,16 @@ data class ServiceSummary(
 
   var serviceName: String,
 
-  var serviceOrder: Int = 0,
-
   var dataHeld: Boolean = false,
 
   @Enumerated(EnumType.STRING)
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
 ) {
-  constructor() : this(serviceName = "", serviceOrder = 0, dataHeld = false, status = BacklogRequestStatus.PENDING)
+  constructor() : this(serviceName = "", dataHeld = false, status = BacklogRequestStatus.PENDING)
 
   /** Required to stop stackoverflow due to cyclic dependency caused by reference to parent backlogRequest object. */
   override fun toString(): String = "ServiceSummary(id=$id, backlogRequest=${backlogRequest?.id}, " +
-    "serviceName='$serviceName', serviceOrder=$serviceOrder, dataHeld=$dataHeld, status=$status)"
+    "serviceName='$serviceName', dataHeld=$dataHeld, status=$status)"
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -104,7 +102,6 @@ data class ServiceSummary(
 
     other as ServiceSummary
 
-    if (serviceOrder != other.serviceOrder) return false
     if (dataHeld != other.dataHeld) return false
     if (id != other.id) return false
     if (backlogRequest?.id != other.backlogRequest?.id) return false
@@ -115,7 +112,7 @@ data class ServiceSummary(
   }
 
   override fun hashCode(): Int {
-    var result = serviceOrder
+    var result: Int = 99
     result = 31 * result + dataHeld.hashCode()
     result = 31 * result + id.hashCode()
     result = 31 * result + (backlogRequest?.id.hashCode() ?: 0)
