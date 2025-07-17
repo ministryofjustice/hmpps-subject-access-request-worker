@@ -9,6 +9,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/sar-db?sslmode=prefer
     user: admin
     password: admin_password
+    out-of-order: true
 
   jpa:
     show-sql: false

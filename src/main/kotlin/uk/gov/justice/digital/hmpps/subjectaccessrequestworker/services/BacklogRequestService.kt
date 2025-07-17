@@ -33,6 +33,8 @@ class BacklogRequestService(
     private val LOG = LoggerFactory.getLogger(BacklogRequestService::class.java)
   }
 
+  fun saveAll(requests: List<BacklogRequest>): List<BacklogRequest> = backlogRequestRepository.saveAllAndFlush(requests)
+
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
     backlogRequestRepository.saveAndFlush(request)
   } catch (ex: DataIntegrityViolationException) {
