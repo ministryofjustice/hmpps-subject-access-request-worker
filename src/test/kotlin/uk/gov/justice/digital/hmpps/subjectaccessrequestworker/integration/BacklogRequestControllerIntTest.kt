@@ -314,7 +314,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       val summary1 = ServiceSummary(
         id = UUID.randomUUID(),
         backlogRequest = backlogRequest,
-        serviceName = "service-1",
+        serviceConfiguration = service1Config,
         dataHeld = expectDataHeld.toBoolean(),
         status = BacklogRequestStatus.COMPLETE,
       )
@@ -598,7 +598,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = requestOne,
-          serviceName = "service-1",
+          serviceConfiguration = service1Config,
           dataHeld = true,
           status = BacklogRequestStatus.COMPLETE,
         ),
@@ -624,7 +624,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = requestTwo,
-          serviceName = "service-1",
+          serviceConfiguration = service1Config,
           dataHeld = true,
           status = BacklogRequestStatus.COMPLETE,
         ),
@@ -695,7 +695,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = requestOne,
-          serviceName = "service-1",
+          serviceConfiguration = service1Config,
           dataHeld = true,
           status = BacklogRequestStatus.COMPLETE,
         ),

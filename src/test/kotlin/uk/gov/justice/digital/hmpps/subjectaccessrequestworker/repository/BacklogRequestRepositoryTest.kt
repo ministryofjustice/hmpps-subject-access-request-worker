@@ -79,7 +79,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val serviceSummary1 = ServiceSummary(
         id = UUID.randomUUID(),
         backlogRequest = request,
-        serviceName = "service1",
+        serviceConfiguration = keyworkerApiServiceConfig,
         dataHeld = true,
         status = COMPLETE,
       )
@@ -87,7 +87,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val serviceSummary2 = ServiceSummary(
         id = UUID.randomUUID(),
         backlogRequest = request,
-        serviceName = "service2",
+        serviceConfiguration = offenderCaseNotesServiceConfig,
         dataHeld = true,
         status = COMPLETE,
       )
@@ -337,7 +337,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
+            serviceConfiguration = it,
             dataHeld = true,
             status = COMPLETE,
           ),
@@ -367,7 +367,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
+            serviceConfiguration = it,
             dataHeld = true,
             status = PENDING,
           ),
@@ -388,14 +388,14 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = request,
-          serviceName = serviceConfigurations[0].serviceName,
+          serviceConfiguration = serviceConfigurations[0],
           dataHeld = true,
           status = COMPLETE,
         ),
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = request,
-          serviceName = serviceConfigurations[1].serviceName,
+          serviceConfiguration = serviceConfigurations[1],
           dataHeld = true,
           status = COMPLETE,
         ),
@@ -432,7 +432,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
+            serviceConfiguration = it,
             dataHeld = false,
             status = PENDING,
           ),
@@ -452,7 +452,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
+            serviceConfiguration = it,
             dataHeld = true,
             status = COMPLETE,
           ),
@@ -474,7 +474,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = service.serviceName,
+            serviceConfiguration = service,
             dataHeld = (i == 0),
             status = COMPLETE,
           ),
@@ -496,7 +496,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = service.serviceName,
+            serviceConfiguration = service,
             dataHeld = true,
             status = PENDING,
           ),

@@ -229,7 +229,7 @@ class BacklogRequestProcessorIntTest : BaseBacklogRequestIntTest() {
     serviceName: String,
     status: BacklogRequestStatus,
   ) {
-    val serviceSummary = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceNameAndStatus(
+    val serviceSummary = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationServiceNameAndStatus(
       backlogRequestId = backlogRequestId,
       serviceName = serviceName,
       status = status,
@@ -244,14 +244,14 @@ class BacklogRequestProcessorIntTest : BaseBacklogRequestIntTest() {
     expectedDataHeld: Boolean,
     expectedStatus: BacklogRequestStatus,
   ) {
-    val serviceSummary = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceNameAndStatus(
+    val serviceSummary = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationServiceNameAndStatus(
       backlogRequestId = backlogRequestId,
       serviceName = serviceName,
       status = COMPLETE,
     )
     assertThat(serviceSummary).isNotNull
 
-    assertThat(serviceSummary!!.serviceName).isEqualTo(serviceName)
+    assertThat(serviceSummary!!.serviceConfiguration?.id).isNotNull()
     assertThat(serviceSummary.backlogRequest).isNotNull
     assertThat(serviceSummary.backlogRequest!!.id).isEqualTo(backlogRequestId)
     assertThat(serviceSummary.dataHeld).isEqualTo(expectedDataHeld)

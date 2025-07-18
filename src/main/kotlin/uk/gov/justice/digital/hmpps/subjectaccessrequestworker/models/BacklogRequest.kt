@@ -9,7 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
-import jakarta.persistence.OrderBy
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import java.time.LocalDate
@@ -37,7 +37,6 @@ data class BacklogRequest(
   var dateTo: LocalDate? = null,
   var dataHeld: Boolean? = null,
   @OneToMany(mappedBy = "backlogRequest", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
-//  @OrderBy("serviceOrder ASC") // TODO?
   var serviceSummary: MutableList<ServiceSummary> = mutableListOf(),
   val claimDateTime: LocalDateTime? = null,
   val createdAt: LocalDateTime? = LocalDateTime.now(),
@@ -83,18 +82,19 @@ data class ServiceSummary(
   @JoinColumn(name = "backlog_request_id", referencedColumnName = "id")
   var backlogRequest: BacklogRequest? = null,
 
-  var serviceName: String,
+  @OneToOne
+  @JoinColumn(name = "service_configuration_id", referencedColumnName = "id", nullable = false)
+  var serviceConfiguration: ServiceConfiguration? = null,
 
   var dataHeld: Boolean = false,
 
   @Enumerated(EnumType.STRING)
   var status: BacklogRequestStatus = BacklogRequestStatus.PENDING,
 ) {
-  constructor() : this(serviceName = "", dataHeld = false, status = BacklogRequestStatus.PENDING)
+  constructor() : this(dataHeld = false, status = BacklogRequestStatus.PENDING)
 
   /** Required to stop stackoverflow due to cyclic dependency caused by reference to parent backlogRequest object. */
-  override fun toString(): String = "ServiceSummary(id=$id, backlogRequest=${backlogRequest?.id}, " +
-    "serviceName='$serviceName', dataHeld=$dataHeld, status=$status)"
+  override fun toString(): String = "ServiceSummary(id=$id, backlogRequest=${backlogRequest?.id}, dataHeld=$dataHeld, status=$status)"
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -105,7 +105,6 @@ data class ServiceSummary(
     if (dataHeld != other.dataHeld) return false
     if (id != other.id) return false
     if (backlogRequest?.id != other.backlogRequest?.id) return false
-    if (serviceName != other.serviceName) return false
     if (status != other.status) return false
 
     return true
@@ -116,7 +115,6 @@ data class ServiceSummary(
     result = 31 * result + dataHeld.hashCode()
     result = 31 * result + id.hashCode()
     result = 31 * result + (backlogRequest?.id.hashCode() ?: 0)
-    result = 31 * result + serviceName.hashCode()
     result = 31 * result + status.hashCode()
     return result
   }

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,6 +31,7 @@ class BacklogRequestServiceAddSummaryTest {
   private val serviceSummaryRepository: ServiceSummaryRepository = mock()
   private val serviceConfigurationService: ServiceConfigurationService = mock()
   private val dynamicServicesClient: DynamicServicesClient = mock()
+  private val serviceConfigMock: ServiceConfiguration = mock()
 
   @Captor
   private lateinit var saveServiceSummaryCaptor: ArgumentCaptor<ServiceSummary>
@@ -44,13 +46,6 @@ class BacklogRequestServiceAddSummaryTest {
 
   private val existingBacklogRequest = BacklogRequest()
 
-  private val existingServiceSummary = ServiceSummary(
-    serviceName = "service1",
-    status = BacklogRequestStatus.PENDING,
-    dataHeld = false,
-    backlogRequest = existingBacklogRequest,
-  )
-
   private val serviceOneConfig = ServiceConfiguration(
     serviceName = "service1",
     label = "Service One",
@@ -59,20 +54,69 @@ class BacklogRequestServiceAddSummaryTest {
     enabled = true,
   )
 
+  private val existingServiceSummary = ServiceSummary(
+    serviceConfiguration = serviceOneConfig,
+    status = BacklogRequestStatus.PENDING,
+    dataHeld = false,
+    backlogRequest = existingBacklogRequest,
+  )
+
+  @BeforeEach
+  fun setup() {
+    whenever(serviceConfigMock.serviceName).thenReturn("service-1")
+    whenever(serviceConfigMock.id).thenReturn(UUID.randomUUID())
+  }
+
   @Test
-  fun `should throw exception if serviceName is empty`() {
+  fun `should throw exception if serviceConfiguration is null`() {
     val actual = assertThrows<BacklogRequestException> {
-      backlogRequestService.addServiceSummary(existingBacklogRequest, ServiceSummary())
+      backlogRequestService.addServiceSummary(
+        existingBacklogRequest,
+        ServiceSummary(serviceConfiguration = null),
+      )
     }
 
-    assertThat(actual.message).isEqualTo("Service name cannot be empty")
+    assertThat(actual.message).isEqualTo("Service configuration cannot be empty")
+    assertThat(actual.backlogRequestId).isEqualTo(existingBacklogRequest.id)
+  }
+
+  @Test
+  fun `should throw exception if service configuration serviceName is empty`() {
+    whenever(serviceConfigMock.serviceName).thenReturn(null)
+
+    val actual = assertThrows<BacklogRequestException> {
+      backlogRequestService.addServiceSummary(
+        existingBacklogRequest,
+        ServiceSummary(serviceConfiguration = serviceConfigMock),
+      )
+    }
+
+    assertThat(actual.message).isEqualTo("Service configuration name cannot be empty")
+    assertThat(actual.backlogRequestId).isEqualTo(existingBacklogRequest.id)
+  }
+
+  @Test
+  fun `should throw exception if service configuration id is null`() {
+    whenever(serviceConfigMock.id).thenReturn(null)
+
+    val actual = assertThrows<BacklogRequestException> {
+      backlogRequestService.addServiceSummary(
+        existingBacklogRequest,
+        ServiceSummary(serviceConfiguration = serviceConfigMock),
+      )
+    }
+
+    assertThat(actual.message).isEqualTo("Service configuration id cannot be empty")
     assertThat(actual.backlogRequestId).isEqualTo(existingBacklogRequest.id)
   }
 
   @Test
   fun `should throw exception if serviceName does not exist in service configuration`() {
     val actual = assertThrows<BacklogRequestException> {
-      backlogRequestService.addServiceSummary(existingBacklogRequest, ServiceSummary(serviceName = "madeUpService"))
+      backlogRequestService.addServiceSummary(
+        existingBacklogRequest,
+        ServiceSummary(serviceConfiguration = serviceConfigMock),
+      )
     }
 
     assertThat(actual.message).isEqualTo("Service Configuration does not exist for serviceName")
@@ -82,9 +126,9 @@ class BacklogRequestServiceAddSummaryTest {
   @Test
   fun `should update existing service summary if already exists`() {
     whenever(
-      serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         existingBacklogRequest.id,
-        serviceOneConfig.serviceName,
+        serviceOneConfig.id,
       ),
     ).thenReturn(existingServiceSummary)
 
@@ -101,7 +145,7 @@ class BacklogRequestServiceAddSummaryTest {
     backlogRequestService.addServiceSummary(
       existingBacklogRequest,
       ServiceSummary(
-        serviceName = serviceOneConfig.serviceName,
+        serviceConfiguration = serviceOneConfig,
         status = BacklogRequestStatus.COMPLETE,
         dataHeld = true,
       ),
@@ -112,7 +156,7 @@ class BacklogRequestServiceAddSummaryTest {
 
     assertThat(actual.id).isEqualTo(existingServiceSummary.id)
     assertThat(actual.backlogRequest?.id).isEqualTo(existingServiceSummary.backlogRequest?.id)
-    assertThat(actual.serviceName).isEqualTo(serviceOneConfig.serviceName)
+    assertThat(actual.serviceConfiguration).isEqualTo(serviceOneConfig)
     assertThat(actual.dataHeld).isTrue()
     assertThat(actual.status).isEqualTo(BacklogRequestStatus.COMPLETE)
 
@@ -122,9 +166,9 @@ class BacklogRequestServiceAddSummaryTest {
   @Test
   fun `should retain exiting service summary ID when updating an existing entry`() {
     whenever(
-      serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         existingBacklogRequest.id,
-        serviceOneConfig.serviceName,
+        serviceOneConfig.id,
       ),
     ).thenReturn(existingServiceSummary)
 
@@ -134,7 +178,7 @@ class BacklogRequestServiceAddSummaryTest {
     whenever(serviceSummaryRepository.saveAndFlush(capture(saveServiceSummaryCaptor)))
       .thenAnswer {
         ServiceSummary(
-          serviceName = serviceOneConfig.serviceName,
+          serviceConfiguration = serviceOneConfig,
           status = BacklogRequestStatus.COMPLETE,
           dataHeld = true,
         )
@@ -145,7 +189,7 @@ class BacklogRequestServiceAddSummaryTest {
       existingBacklogRequest,
       ServiceSummary(
         id = UUID.randomUUID(), // Intentionally set the ID to a different value/.
-        serviceName = serviceOneConfig.serviceName,
+        serviceConfiguration = serviceOneConfig,
         status = BacklogRequestStatus.COMPLETE,
         dataHeld = true,
       ),
@@ -161,9 +205,9 @@ class BacklogRequestServiceAddSummaryTest {
       .thenReturn(serviceOneConfig)
 
     whenever(
-      serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         existingBacklogRequest.id,
-        serviceOneConfig.serviceName,
+        serviceOneConfig.id,
       ),
     ).thenReturn(null)
 
@@ -172,7 +216,7 @@ class BacklogRequestServiceAddSummaryTest {
     }
 
     val summary = ServiceSummary(
-      serviceName = serviceOneConfig.serviceName,
+      serviceConfiguration = serviceOneConfig,
       status = BacklogRequestStatus.COMPLETE,
       dataHeld = true,
     )
@@ -185,13 +229,13 @@ class BacklogRequestServiceAddSummaryTest {
 
     assertThat(actual.id).isEqualTo(summary.id)
     assertThat(actual.backlogRequest?.id).isEqualTo(existingBacklogRequest.id)
-    assertThat(actual.serviceName).isEqualTo("service1")
+    assertThat(actual.serviceConfiguration).isEqualTo(serviceOneConfig)
     assertThat(actual.status).isEqualTo(BacklogRequestStatus.COMPLETE)
     assertThat(actual.dataHeld).isTrue()
 
-    verify(serviceSummaryRepository, times(1)).findOneByBacklogRequestIdAndServiceName(
+    verify(serviceSummaryRepository, times(1)).findOneByBacklogRequestIdAndServiceConfigurationId(
       existingBacklogRequest.id,
-      serviceOneConfig.serviceName,
+      serviceOneConfig.id,
     )
     verify(serviceSummaryRepository, times(1)).saveAndFlush(any())
   }

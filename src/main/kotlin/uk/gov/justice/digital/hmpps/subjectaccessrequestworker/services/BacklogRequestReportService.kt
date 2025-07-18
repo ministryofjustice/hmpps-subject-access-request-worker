@@ -36,7 +36,7 @@ class BacklogRequestReportService(
     "SELECT " +
       "s.data_held, s.backlog_request_id, cfg.list_order, cfg.label " +
       "FROM service_summary s " +
-      "INNER JOIN service_configuration cfg ON cfg.service_name = s.service_name " +
+      "INNER JOIN service_configuration cfg ON cfg.id = s.service_configuration_id " +
       "WHERE backlog_request_id = ? " +
       "ORDER BY cfg.list_order ASC;"
 
