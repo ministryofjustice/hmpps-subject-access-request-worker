@@ -85,7 +85,7 @@ data class BacklogRequestDetailsEntity(
     dateTo = backlogRequest.dateTo,
     serviceSummary = backlogRequest.serviceSummary.map {
       ServiceSummary(
-        serviceName = it.serviceName,
+        serviceName = it.serviceConfiguration?.serviceName ?: "unknown",
         processingStatus = it.status.name,
         dataHeld = it.dataHeld,
       )
