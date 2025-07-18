@@ -153,6 +153,7 @@ class BacklogRequestReportService(
   fun writeServiceSummaryRowData(rs: ResultSet, writer: BufferedWriter, headerRow: List<String>) {
     val serviceSummaryValues = mutableListOf<Boolean>()
 
+    var serviceIndex = 0
     while (rs.next()) {
       val serviceDataHeld = rs.getBoolean("data_held")
       val serviceName = rs.getString("label")
@@ -166,7 +167,7 @@ class BacklogRequestReportService(
        *
        * If service X has list_order 1 then the 'X Data Held' column is at index 9 (metadata column count + service list order value).
        **/
-      val serviceColumnIndex = (metadataColumns.size - 1) + listOrder
+      val serviceColumnIndex = metadataColumns.size + serviceIndex
       if (headerRow[serviceColumnIndex] != serviceName) {
         throw RuntimeException(
           "error writing row to Backlog report csv: backlogRequestId: $backlogRequestId, expected " +
@@ -175,6 +176,7 @@ class BacklogRequestReportService(
       }
 
       serviceSummaryValues.add(serviceDataHeld)
+      ++serviceIndex
     }
 
     // Set global data held value true if at least 1 service data held value is true

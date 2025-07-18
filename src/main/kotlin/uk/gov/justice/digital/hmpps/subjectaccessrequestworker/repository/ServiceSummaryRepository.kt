@@ -28,7 +28,7 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
       "AND summary.serviceConfiguration.id = cfg.id " +
       "AND summary.status = 'COMPLETE'" +
       ") " +
-      "ORDER BY cfg.order",
+      "ORDER BY RANDOM()",
   )
   fun getPendingServiceSummariesForRequestId(@Param("backlogRequestId") id: UUID): List<ServiceConfiguration>
 
