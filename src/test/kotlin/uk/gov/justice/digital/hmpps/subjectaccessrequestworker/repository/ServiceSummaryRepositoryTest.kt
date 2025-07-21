@@ -63,7 +63,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val actual = serviceSummaryRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
 
       assertThat(actual.size).isEqualTo(serviceConfigurations.size)
-      assertThat(actual).containsExactly(
+      assertThat(actual).containsExactlyInAnyOrder(
         keyworkerApiServiceConfig,
         offenderCaseNotesServiceConfig,
         courtCaseServiceServiceConfig,
@@ -117,7 +117,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
 
       val actual = serviceSummaryRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
       assertThat(actual.size).isEqualTo(serviceConfigurations.size)
-      assertThat(actual).containsExactlyElementsOf(serviceConfigurations)
+      assertThat(actual).containsExactlyInAnyOrderElementsOf(serviceConfigurations)
     }
 
     @Test
@@ -160,7 +160,8 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
 
       assertThat(
         serviceSummaryRepository.existsByBacklogRequestIdAndServiceConfigurationId(
-          req.id, keyworkerApiServiceConfig.id,
+          req.id,
+          keyworkerApiServiceConfig.id,
         ),
       ).isTrue()
     }

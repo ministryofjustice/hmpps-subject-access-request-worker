@@ -44,8 +44,7 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
   fun findOneByBacklogRequestIdAndServiceConfigurationId(
     backlogRequestId: UUID,
     serviceConfigurationId: UUID,
-    ): ServiceSummary?
-
+  ): ServiceSummary?
 
   @Lock(LockModeType.PESSIMISTIC_READ)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
