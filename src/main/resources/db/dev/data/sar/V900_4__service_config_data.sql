@@ -26,4 +26,5 @@ VALUES
     ('hmpps-accredited-programmes-api', 'Accredited Programmes', 'https://accredited-programmes-api-dev.hmpps.service.justice.gov.uk', 23),
     ('hmpps-interventions-service', 'Refer and Monitor an Intervention', 'https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk', 24),
     ('hmpps-approved-premises-api', 'Approved Premises', 'https://approved-premises-api-dev.hmpps.service.justice.gov.uk', 25),
-    ('make-recall-decision-api', 'Consider a Recall', 'https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk', 26);
+    ('make-recall-decision-api', 'Consider a Recall', 'https://make-recall-decision-api-dev.hmpps.service.justice.gov.uk', 26),
+    ('hmpps-health-and-medication-api', 'Health and Medication', 'https://health-and-medication-api-dev.hmpps.service.justice.gov.uk', 27);

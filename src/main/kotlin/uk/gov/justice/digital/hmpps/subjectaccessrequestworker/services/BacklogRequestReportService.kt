@@ -44,7 +44,8 @@ class BacklogRequestReportService(
     "SELECT " +
       "id, " +
       "sar_case_reference_number, " +
-      "subject_name, nomis_id, " +
+      "subject_name, " +
+      "nomis_id, " +
       "ndelius_case_reference_id, " +
       "date_from, " +
       "date_to, " +
@@ -53,7 +54,7 @@ class BacklogRequestReportService(
       "FROM backlog_request " +
       "WHERE version = ? " +
       "AND status = 'COMPLETE' " +
-      "ORDER BY sar_case_reference_number ASC, subject_name DESC;"
+      "ORDER BY sar_case_reference_number ASC, subject_name, nomis_id, ndelius_case_reference_id DESC;"
 
   @Transactional
   fun generateReportJdbc(version: String, response: HttpServletResponse) {
