@@ -165,8 +165,7 @@ class BacklogRequestReportGeneratorIntTest : BaseBacklogRequestIntTest() {
         request = request,
         summary = ServiceSummary(
           backlogRequest = request,
-          serviceName = cfg.serviceName,
-          serviceOrder = cfg.order,
+          serviceConfiguration = cfg,
           dataHeld = serviceDataHeld[i],
           status = BacklogRequestStatus.COMPLETE,
         ),

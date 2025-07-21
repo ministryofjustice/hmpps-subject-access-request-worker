@@ -20,7 +20,7 @@ class BacklogRequestReportService(
 
   private val delimiter = ","
   private val dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")
-  private val requestCsvHeadersColumns = listOf(
+  private val metadataColumns = listOf(
     "ID",
     "SAR Case Reference Number",
     "Subject Name",
@@ -33,16 +33,19 @@ class BacklogRequestReportService(
   )
 
   private val getServiceSummariesQuery =
-    "SELECT data_held " +
-      "FROM service_summary " +
+    "SELECT " +
+      "s.data_held, s.backlog_request_id, cfg.list_order, cfg.label " +
+      "FROM service_summary s " +
+      "INNER JOIN service_configuration cfg ON cfg.id = s.service_configuration_id " +
       "WHERE backlog_request_id = ? " +
-      "ORDER BY service_order ASC"
+      "ORDER BY cfg.list_order ASC;"
 
   private val getBacklogRequestsByVersionQuery =
     "SELECT " +
       "id, " +
       "sar_case_reference_number, " +
-      "subject_name, nomis_id, " +
+      "subject_name, " +
+      "nomis_id, " +
       "ndelius_case_reference_id, " +
       "date_from, " +
       "date_to, " +
@@ -51,7 +54,7 @@ class BacklogRequestReportService(
       "FROM backlog_request " +
       "WHERE version = ? " +
       "AND status = 'COMPLETE' " +
-      "ORDER BY sar_case_reference_number ASC, subject_name DESC;"
+      "ORDER BY sar_case_reference_number ASC, subject_name, nomis_id, ndelius_case_reference_id DESC;"
 
   @Transactional
   fun generateReportJdbc(version: String, response: HttpServletResponse) {
@@ -63,8 +66,9 @@ class BacklogRequestReportService(
       response.contentType = "text/csv"
       response.setHeader("Content-Disposition", "attachment; filename=\"SAR-v$version.csv\"")
 
-      writeHeaderRow(writer)
-      writeBacklogReportForVersion(version, writer)
+      val headerRow = generateHeader()
+      writeHeaderRow(writer, headerRow)
+      writeBacklogReportForVersion(version, writer, headerRow)
       response.status = HttpStatus.OK.value()
     } ?: throw BacklogVersionIncompleteException("backlog version: $version is not COMPLETE")
   }
@@ -72,6 +76,7 @@ class BacklogRequestReportService(
   private fun writeBacklogReportForVersion(
     version: String,
     writer: BufferedWriter,
+    headerRow: List<String>,
   ) = dataSource.connection.use { conn ->
     conn.autoCommit = false
 
@@ -84,12 +89,12 @@ class BacklogRequestReportService(
       stmt.fetchSize = 1000
 
       stmt.executeQuery().use { rs ->
-        writeRowDetails(writer, rs)
+        writeRowDetails(writer, rs, headerRow)
       }
     }
   }
 
-  private fun writeRowDetails(writer: BufferedWriter, rs: ResultSet) {
+  private fun writeRowDetails(writer: BufferedWriter, rs: ResultSet, headerRow: List<String>) {
     while (rs.next()) {
       val backlogRequestId = rs.getObject("id") as UUID
 
@@ -109,20 +114,26 @@ class BacklogRequestReportService(
       writer.write(delimiter)
       writer.write(dateTimeFormat.format(rs.getTimestamp("completed_at").toLocalDateTime()))
 
-      getServiceSummariesForBacklogRequestId(backlogRequestId, writer)
+      getServiceSummariesForBacklogRequestId(backlogRequestId, writer, headerRow)
     }
   }
 
-  private fun writeHeaderRow(writer: BufferedWriter) {
-    val requestFieldColumns = requestCsvHeadersColumns.joinToString(delimiter)
-    val serviceColumns = serviceConfigurationService.getAllOrdered().joinToString(delimiter) { it.label }
-    writer.write("$requestFieldColumns,$serviceColumns\n")
+  private fun writeHeaderRow(writer: BufferedWriter, headerRow: List<String>) {
+    writer.write("${headerRow.joinToString(delimiter)}\n")
     writer.flush()
+  }
+
+  private fun generateHeader(): List<String> {
+    val headerRow = mutableListOf<String>()
+    headerRow.addAll(metadataColumns)
+    headerRow.addAll(serviceConfigurationService.getAllOrdered().map { it.label })
+    return headerRow
   }
 
   private fun getServiceSummariesForBacklogRequestId(
     backlogRequestId: UUID,
     writer: BufferedWriter,
+    headerRow: List<String>,
   ) = dataSource.connection.use { conn ->
     conn.autoCommit = false
 
@@ -135,15 +146,38 @@ class BacklogRequestReportService(
       stmt.fetchSize = 1000
 
       stmt.executeQuery().use { rs ->
-        writeServiceSummaryRowData(rs, writer)
+        writeServiceSummaryRowData(rs, writer, headerRow)
       }
     }
   }
 
-  fun writeServiceSummaryRowData(rs: ResultSet, writer: BufferedWriter) {
+  fun writeServiceSummaryRowData(rs: ResultSet, writer: BufferedWriter, headerRow: List<String>) {
     val serviceSummaryValues = mutableListOf<Boolean>()
+
+    var serviceIndex = 0
     while (rs.next()) {
-      serviceSummaryValues.add(rs.getBoolean("data_held"))
+      val serviceDataHeld = rs.getBoolean("data_held")
+      val serviceName = rs.getString("label")
+      val listOrder = rs.getInt("list_order")
+      val backlogRequestId = rs.getString("backlog_request_id")
+
+      /**
+       * The backlog report csv consists of 8 metadata columns followed by n 'data held' columns one for each SAR
+       * service. The order of the services in the csv is determined by the 'list_order' value of each service in the
+       * 'service_configuration' table.
+       *
+       * If service X has list_order 1 then the 'X Data Held' column is at index 9 (metadata column count + service list order value).
+       **/
+      val serviceColumnIndex = metadataColumns.size + serviceIndex
+      if (headerRow[serviceColumnIndex] != serviceName) {
+        throw RuntimeException(
+          "error writing row to Backlog report csv: backlogRequestId: $backlogRequestId, expected " +
+            "service=${headerRow[serviceColumnIndex]} at column index[$serviceColumnIndex] but was $serviceName",
+        )
+      }
+
+      serviceSummaryValues.add(serviceDataHeld)
+      ++serviceIndex
     }
 
     // Set global data held value true if at least 1 service data held value is true

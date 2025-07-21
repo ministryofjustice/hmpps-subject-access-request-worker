@@ -9,6 +9,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/sar-db?sslmode=prefer
     user: admin
     password: admin_password
+    out-of-order: true
 
   jpa:
     show-sql: false
@@ -57,7 +58,8 @@ s3:
 
 backlog-request:
   processor:
-    interval: 1
+    pool-size: 5
+    interval: 3
     initial-delay: 5
     enabled: true
   api:

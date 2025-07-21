@@ -26,7 +26,8 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
   private companion object {
     const val SAR_CASE_REF_INVALID_MSG = "non null/empty value is required for sarCaseReferenceNumber"
     const val NOMIS_NDELIUS_ID_INVALID_MSG = "a non null/empty value is required for nomisId or ndeliusCaseReferenceId"
-    const val MULTIPLE_SUBJECT_IDS_PROVIDED_MSG = "multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId"
+    const val MULTIPLE_SUBJECT_IDS_PROVIDED_MSG =
+      "multiple ID's provided provided please provide either a nomisId or ndeliusCaseReferenceId"
     const val SUBJECT_NAME_NULL_OR_EMPTY_MSG = "a non null/empty value is required for subject name"
     const val VERSION_NULL_OR_EMPTY_MSG = "a non null/empty value is required for version"
   }
@@ -313,8 +314,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
       val summary1 = ServiceSummary(
         id = UUID.randomUUID(),
         backlogRequest = backlogRequest,
-        serviceName = "service-1",
-        serviceOrder = 1,
+        serviceConfiguration = service1Config,
         dataHeld = expectDataHeld.toBoolean(),
         status = BacklogRequestStatus.COMPLETE,
       )
@@ -598,8 +598,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = requestOne,
-          serviceName = "service-1",
-          serviceOrder = 1,
+          serviceConfiguration = service1Config,
           dataHeld = true,
           status = BacklogRequestStatus.COMPLETE,
         ),
@@ -625,8 +624,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = requestTwo,
-          serviceName = "service-1",
-          serviceOrder = 1,
+          serviceConfiguration = service1Config,
           dataHeld = true,
           status = BacklogRequestStatus.COMPLETE,
         ),
@@ -697,8 +695,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = requestOne,
-          serviceName = "service-1",
-          serviceOrder = 1,
+          serviceConfiguration = service1Config,
           dataHeld = true,
           status = BacklogRequestStatus.COMPLETE,
         ),

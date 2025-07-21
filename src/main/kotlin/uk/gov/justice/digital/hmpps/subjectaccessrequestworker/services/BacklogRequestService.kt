@@ -140,11 +140,10 @@ class BacklogRequestService(
   )?.let { response ->
     response.body?.let {
       ServiceSummary(
-        serviceName = serviceConfig.serviceName,
-        serviceOrder = serviceConfig.order,
         backlogRequest = backlogRequest,
         dataHeld = it.dataHeld,
         status = COMPLETE,
+        serviceConfiguration = serviceConfig,
       )
     } ?: throw BacklogRequestException(
       backlogRequestId = backlogRequest.id,
@@ -157,26 +156,30 @@ class BacklogRequestService(
 
   @Transactional
   fun addServiceSummary(request: BacklogRequest, summary: ServiceSummary) {
-    if (summary.serviceName.isEmpty()) {
-      throw BacklogRequestException(request.id, "Service name cannot be empty")
-    }
+    val serviceConfig = validateServiceSummary(request.id, summary)
 
-    if (serviceConfigurationService.findByServiceName(summary.serviceName) == null) {
-      throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
-    }
+    serviceConfigurationService.findByServiceName(serviceConfig.serviceName)
+      ?: throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
 
-    serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(request.id, summary.serviceName)
+    serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(request.id, serviceConfig.id)
       ?.let { existingSummary -> updateExistingServiceSummary(request, existingSummary, summary) }
       ?: addNewServiceSummary(request, summary)
   }
 
-  @Transactional
-  fun streamBacklogRequestForVersion(
-    version: String,
-  ) = backlogRequestRepository.streamBacklogRequestByVersionAndStatusOrderBySarCaseReferenceNumberAscSubjectNameDesc(
-    version = version,
-    status = COMPLETE,
-  )
+  private fun validateServiceSummary(backlogRequestId: UUID, summary: ServiceSummary): ServiceConfiguration {
+    if (summary.serviceConfiguration == null) {
+      throw BacklogRequestException(backlogRequestId, "Service configuration cannot be empty")
+    }
+
+    if (summary.serviceConfiguration?.serviceName.isNullOrEmpty()) {
+      throw BacklogRequestException(backlogRequestId, "Service configuration name cannot be empty")
+    }
+
+    if (summary.serviceConfiguration?.id == null) {
+      throw BacklogRequestException(backlogRequestId, "Service configuration id cannot be empty")
+    }
+    return summary.serviceConfiguration!!
+  }
 
   private fun updateExistingServiceSummary(
     backlogRequest: BacklogRequest,
@@ -186,11 +189,10 @@ class BacklogRequestService(
     LOG.info(
       "updating existing service summary for backlogRequest={}, serviceName={}, dataHeld={}",
       backlogRequest.id,
-      saved.serviceName,
+      saved.serviceConfiguration!!.serviceName,
       saved.dataHeld,
     )
 
-    saved.serviceOrder = latest.serviceOrder
     saved.status = latest.status
     saved.dataHeld = latest.dataHeld
     serviceSummaryRepository.saveAndFlush(saved)
@@ -200,7 +202,7 @@ class BacklogRequestService(
     LOG.info(
       "adding new service summary for backlogRequest={}, serviceName={}, dataHeld={}",
       backlogRequest.id,
-      summary.serviceName,
+      summary.serviceConfiguration!!.serviceName,
       summary.dataHeld,
     )
 

@@ -21,7 +21,6 @@ import java.util.UUID
 class BacklogRequestRepositoryTest @Autowired constructor(
   val backlogRequestRepository: BacklogRequestRepository,
   val serviceConfigurationRepository: ServiceConfigurationRepository,
-  val serviceSummaryRepository: ServiceSummaryRepository,
 ) {
 
   companion object {
@@ -80,8 +79,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val serviceSummary1 = ServiceSummary(
         id = UUID.randomUUID(),
         backlogRequest = request,
-        serviceName = "service1",
-        serviceOrder = 1,
+        serviceConfiguration = keyworkerApiServiceConfig,
         dataHeld = true,
         status = COMPLETE,
       )
@@ -89,8 +87,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val serviceSummary2 = ServiceSummary(
         id = UUID.randomUUID(),
         backlogRequest = request,
-        serviceName = "service2",
-        serviceOrder = 2,
+        serviceConfiguration = offenderCaseNotesServiceConfig,
         dataHeld = true,
         status = COMPLETE,
       )
@@ -340,8 +337,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
-            serviceOrder = it.order,
+            serviceConfiguration = it,
             dataHeld = true,
             status = COMPLETE,
           ),
@@ -371,8 +367,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
-            serviceOrder = it.order,
+            serviceConfiguration = it,
             dataHeld = true,
             status = PENDING,
           ),
@@ -393,16 +388,14 @@ class BacklogRequestRepositoryTest @Autowired constructor(
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = request,
-          serviceName = serviceConfigurations[0].serviceName,
-          serviceOrder = serviceConfigurations[0].order,
+          serviceConfiguration = serviceConfigurations[0],
           dataHeld = true,
           status = COMPLETE,
         ),
         ServiceSummary(
           id = UUID.randomUUID(),
           backlogRequest = request,
-          serviceName = serviceConfigurations[1].serviceName,
-          serviceOrder = serviceConfigurations[2].order,
+          serviceConfiguration = serviceConfigurations[1],
           dataHeld = true,
           status = COMPLETE,
         ),
@@ -439,8 +432,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
-            serviceOrder = it.order,
+            serviceConfiguration = it,
             dataHeld = false,
             status = PENDING,
           ),
@@ -460,8 +452,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = it.serviceName,
-            serviceOrder = it.order,
+            serviceConfiguration = it,
             dataHeld = true,
             status = COMPLETE,
           ),
@@ -483,8 +474,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = service.serviceName,
-            serviceOrder = service.order,
+            serviceConfiguration = service,
             dataHeld = (i == 0),
             status = COMPLETE,
           ),
@@ -506,8 +496,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ServiceSummary(
             id = UUID.randomUUID(),
             backlogRequest = request,
-            serviceName = service.serviceName,
-            serviceOrder = service.order,
+            serviceConfiguration = service,
             dataHeld = true,
             status = PENDING,
           ),

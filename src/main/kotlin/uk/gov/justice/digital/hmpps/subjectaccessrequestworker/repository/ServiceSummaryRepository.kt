@@ -22,10 +22,10 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
   @Query(
     "SELECT cfg FROM ServiceConfiguration cfg " +
       "WHERE NOT EXISTS (" +
-      "SELECT summary.serviceName FROM BacklogRequest request " +
+      "SELECT summary.serviceConfiguration.id FROM BacklogRequest request " +
       "INNER JOIN ServiceSummary summary ON summary.backlogRequest.id = request.id " +
       "WHERE request.id = :backlogRequestId " +
-      "AND summary.serviceName = cfg.serviceName " +
+      "AND summary.serviceConfiguration.id = cfg.id " +
       "AND summary.status = 'COMPLETE'" +
       ") " +
       "ORDER BY cfg.order",
@@ -34,14 +34,17 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
 
   @Lock(LockModeType.PESSIMISTIC_READ)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
-  fun existsByBacklogRequestIdAndServiceName(
+  fun existsByBacklogRequestIdAndServiceConfigurationId(
     @Param("backlogRequestId") id: UUID,
-    @Param("serviceName") serviceName: String,
+    @Param("serviceConfigurationId") serviceConfigurationId: UUID,
   ): Boolean
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
-  fun findOneByBacklogRequestIdAndServiceName(backlogRequestId: UUID, serviceName: String): ServiceSummary?
+  fun findOneByBacklogRequestIdAndServiceConfigurationId(
+    backlogRequestId: UUID,
+    serviceConfigurationId: UUID,
+  ): ServiceSummary?
 
   @Lock(LockModeType.PESSIMISTIC_READ)
   @QueryHints(value = [QueryHint(name = "jakarta.persistence.lock.timeout", value = BACKLOG_REQUEST_LOCK_TIMEOUT)])
@@ -50,7 +53,7 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
   /**
    * Only used in Integration tests.
    */
-  fun findOneByBacklogRequestIdAndServiceNameAndStatus(
+  fun findOneByBacklogRequestIdAndServiceConfigurationServiceNameAndStatus(
     backlogRequestId: UUID,
     serviceName: String,
     status: BacklogRequestStatus,

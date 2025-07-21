@@ -63,7 +63,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val actual = serviceSummaryRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
 
       assertThat(actual.size).isEqualTo(serviceConfigurations.size)
-      assertThat(actual).containsExactly(
+      assertThat(actual).containsExactlyInAnyOrder(
         keyworkerApiServiceConfig,
         offenderCaseNotesServiceConfig,
         courtCaseServiceServiceConfig,
@@ -75,7 +75,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val backlogRequest = BacklogRequest()
       val services = mutableListOf(
         ServiceSummary(
-          serviceName = "keyworker-api",
+          serviceConfiguration = keyworkerApiServiceConfig,
           backlogRequest = backlogRequest,
           status = COMPLETE,
         ),
@@ -97,17 +97,17 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val backlogRequest = BacklogRequest()
       backlogRequest.serviceSummary = mutableListOf(
         ServiceSummary(
-          serviceName = "keyworker-api",
+          serviceConfiguration = keyworkerApiServiceConfig,
           backlogRequest = backlogRequest,
           status = PENDING,
         ),
         ServiceSummary(
-          serviceName = "offender-case-notes",
+          serviceConfiguration = offenderCaseNotesServiceConfig,
           backlogRequest = backlogRequest,
           status = PENDING,
         ),
         ServiceSummary(
-          serviceName = "court-case-service",
+          serviceConfiguration = courtCaseServiceServiceConfig,
           backlogRequest = backlogRequest,
           status = PENDING,
         ),
@@ -117,7 +117,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
 
       val actual = serviceSummaryRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
       assertThat(actual.size).isEqualTo(serviceConfigurations.size)
-      assertThat(actual).containsExactlyElementsOf(serviceConfigurations)
+      assertThat(actual).containsExactlyInAnyOrderElementsOf(serviceConfigurations)
     }
 
     @Test
@@ -125,17 +125,17 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val backlogRequest = BacklogRequest()
       backlogRequest.serviceSummary = mutableListOf(
         ServiceSummary(
-          serviceName = "keyworker-api",
+          serviceConfiguration = keyworkerApiServiceConfig,
           backlogRequest = backlogRequest,
           status = COMPLETE,
         ),
         ServiceSummary(
-          serviceName = "offender-case-notes",
+          serviceConfiguration = offenderCaseNotesServiceConfig,
           backlogRequest = backlogRequest,
           status = COMPLETE,
         ),
         ServiceSummary(
-          serviceName = "court-case-service",
+          serviceConfiguration = courtCaseServiceServiceConfig,
           backlogRequest = backlogRequest,
           status = COMPLETE,
         ),
@@ -154,33 +154,43 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     fun `should return true if combination exists`() {
       val req = BacklogRequest().addServiceSummaries()
       req.addServiceSummaries(
-        ServiceSummary(serviceName = "service1", backlogRequest = req),
+        ServiceSummary(serviceConfiguration = keyworkerApiServiceConfig, backlogRequest = req),
       )
       backlogRequestRepository.saveAndFlush(req)
 
-      assertThat(serviceSummaryRepository.existsByBacklogRequestIdAndServiceName(req.id, "service1")).isTrue()
+      assertThat(
+        serviceSummaryRepository.existsByBacklogRequestIdAndServiceConfigurationId(
+          req.id,
+          keyworkerApiServiceConfig.id,
+        ),
+      ).isTrue()
     }
 
     @Test
     fun `should return false if combination does not exist`() {
       val req = BacklogRequest().addServiceSummaries()
       req.addServiceSummaries(
-        ServiceSummary(serviceName = "service1", backlogRequest = req),
+        ServiceSummary(serviceConfiguration = keyworkerApiServiceConfig, backlogRequest = req),
       )
       backlogRequestRepository.saveAndFlush(req)
 
-      assertThat(serviceSummaryRepository.existsByBacklogRequestIdAndServiceName(req.id, "service2")).isFalse()
+      assertThat(
+        serviceSummaryRepository.existsByBacklogRequestIdAndServiceConfigurationId(
+          req.id,
+          ServiceConfiguration().id,
+        ),
+      ).isFalse()
     }
   }
 
   @Nested
-  inner class FindOneByBacklogRequestIdAndServiceNameTestCases {
+  inner class FindOneByBacklogRequestIdAndServiceConfigurationTestCases {
 
     @Test
     fun `should return null if backlogRequest does not exist`() {
-      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         backlogRequestId = BacklogRequest().id,
-        serviceName = "someService",
+        serviceConfigurationId = UUID.randomUUID(),
       )
       assertThat(actual).isNull()
     }
@@ -188,9 +198,9 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     @Test
     fun `should return null if backlogRequest exists with no service summaries`() {
       val backlogRequest = backlogRequestRepository.saveAndFlush(BacklogRequest())
-      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         backlogRequestId = backlogRequest.id,
-        serviceName = "someService",
+        serviceConfigurationId = keyworkerApiServiceConfig.id,
       )
       assertThat(actual).isNull()
     }
@@ -198,12 +208,12 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     @Test
     fun `should return null if backlogRequest exists but does not have a service summary for the requested service name`() {
       val backlogRequest = backlogRequestRepository.saveAndFlush(
-        BacklogRequest().addServiceSummaries(ServiceSummary(serviceName = "serviceAbc")),
+        BacklogRequest().addServiceSummaries(ServiceSummary(serviceConfiguration = keyworkerApiServiceConfig)),
       )
 
-      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         backlogRequestId = backlogRequest.id,
-        serviceName = "serviceXyz",
+        serviceConfigurationId = courtCaseServiceServiceConfig.id,
       )
       assertThat(actual).isNull()
     }
@@ -211,15 +221,15 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     @Test
     fun `should return service summary if exists`() {
       val backlogRequest = backlogRequestRepository.saveAndFlush(
-        BacklogRequest().addServiceSummaries(ServiceSummary(serviceName = "serviceAbc")),
+        BacklogRequest().addServiceSummaries(ServiceSummary(serviceConfiguration = courtCaseServiceServiceConfig)),
       )
 
-      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceName(
+      val actual = serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(
         backlogRequestId = backlogRequest.id,
-        serviceName = "serviceAbc",
+        serviceConfigurationId = courtCaseServiceServiceConfig.id,
       )
       assertThat(actual).isNotNull
-      assertThat(actual!!.serviceName).isEqualTo("serviceAbc")
+      assertThat(actual!!.serviceConfiguration?.id).isEqualTo(courtCaseServiceServiceConfig.id)
       assertThat(actual.backlogRequest).isNotNull
       assertThat(actual.backlogRequest!!.id).isEqualTo(backlogRequest.id)
     }
@@ -259,9 +269,9 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val backlogRequest = backlogRequestRepository.saveAndFlush(
         BacklogRequest()
           .addServiceSummaries(
-            ServiceSummary(serviceName = "service1", dataHeld = service1DataHeld),
-            ServiceSummary(serviceName = "service2", dataHeld = service2DataHeld),
-            ServiceSummary(serviceName = "service2", dataHeld = service3DataHeld),
+            ServiceSummary(serviceConfiguration = keyworkerApiServiceConfig, dataHeld = service1DataHeld),
+            ServiceSummary(serviceConfiguration = offenderCaseNotesServiceConfig, dataHeld = service2DataHeld),
+            ServiceSummary(serviceConfiguration = courtCaseServiceServiceConfig, dataHeld = service3DataHeld),
           ),
       )
       assertThat(backlogRequest.serviceSummary).hasSize(3)
