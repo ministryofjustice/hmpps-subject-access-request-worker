@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -8,7 +9,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import com.google.gson.Gson
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 
 class PrisonApiMockServer : WireMockServer(8079) {
+
+  private val mapper = ObjectMapper()
 
   fun verifyNeverCalled() {
     verify(0, anyRequestedFor(anyUrl()))
@@ -59,7 +61,7 @@ class PrisonApiMockServer : WireMockServer(8079) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withStatus(200)
-            .withBody(Gson().toJson(responseBody)),
+            .withBody(mapper.writeValueAsString(responseBody)),
         ),
     )
   }
