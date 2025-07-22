@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aMultipart
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -11,7 +12,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import com.google.gson.Gson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
@@ -27,6 +27,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
 
   companion object {
     const val SERVICE_NAME_HEADER = "DPS-Subject-Access-Requests"
+    private val objectMapper = ObjectMapper()
   }
 
   fun stubHealthPing(status: Int) {
@@ -302,7 +303,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
     fileSize: Int,
     fileContent: ByteArray,
     metadata: Any?,
-  ): String = Gson().toJson(
+  ): String = objectMapper.writeValueAsString(
     DocumentStorageClient.PostDocumentResponse(
       documentUuid = subjectAccessRequestId,
       documentType = "Subject Access Request",
