@@ -38,7 +38,6 @@ dependencies {
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.4.10")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("com.google.code.gson:gson:2.13.1")
   testImplementation("com.opencsv:opencsv:5.11.2")
 }
 
