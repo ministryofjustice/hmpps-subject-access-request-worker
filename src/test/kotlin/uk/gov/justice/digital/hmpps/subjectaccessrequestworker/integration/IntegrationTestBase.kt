@@ -19,6 +19,8 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.createSubjectAccessRequestForService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GotenbergApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GotenbergApiExtension.Companion.gotenbergApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension
@@ -57,6 +59,7 @@ const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
   LocationsApiExtension::class,
   NomisMappingsApiExtension::class,
   HtmlRendererApiExtension::class,
+  GotenbergApiExtension::class,
 )
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -98,6 +101,7 @@ abstract class IntegrationTestBase {
     documentApi.stubHealthPing(status)
     locationsApi.stubHealthPing(status)
     nomisMappingsApi.stubHealthPing(status)
+    gotenbergApi.stubHealthPing(status)
   }
 
   protected fun clearOauthClientCache(clientId: String, principalName: String) = oAuth2AuthorizedClientService
