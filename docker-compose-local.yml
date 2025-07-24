@@ -39,5 +39,13 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
 
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    networks:
+      - hmpps
+    container_name: gotenberg
+    ports:
+      - "3001:3000"
+
 networks:
   hmpps:

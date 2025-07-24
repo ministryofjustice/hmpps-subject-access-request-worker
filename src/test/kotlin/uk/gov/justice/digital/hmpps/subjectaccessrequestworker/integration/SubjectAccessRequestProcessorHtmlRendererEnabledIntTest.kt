@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.whenever
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.junit.jupiter.Testcontainers
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
@@ -32,7 +35,20 @@ import java.util.concurrent.TimeUnit
   ],
 )
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
+@Testcontainers
 class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorIntTest() {
+
+  companion object {
+    lateinit var gotenberg: GenericContainer<*>
+
+    @JvmStatic
+    @BeforeAll
+    fun setupContainers() {
+      gotenberg = GenericContainer("gotenberg/gotenberg:8").withExposedPorts(3000)
+      gotenberg.start()
+      System.setProperty("gotenberg-api.url", "http://${gotenberg.host}:${gotenberg.getMappedPort(3000)}")
+    }
+  }
 
   @MockitoBean
   protected lateinit var dateService: DateService
@@ -168,11 +184,16 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertPageMatchesExpected(actual, expected, 25)
     assertPageMatchesExpected(actual, expected, 26)
     assertAttachmentPageMatchesExpected(actual, expected, 27, 2)
-    assertAttachmentPageMatchesExpected(actual, expected, 28, 3)
-    assertAttachmentPageMatchesExpected(actual, expected, 29, 4)
-    assertAttachmentPageMatchesExpected(actual, expected, 30, 5)
-    assertAttachmentPageMatchesExpected(actual, expected, 31, 6)
-    assertAttachmentPageMatchesExpected(actual, expected, 32, 7)
+    assertPageMatchesExpected(actual, expected, 28)
+    assertPageMatchesExpected(actual, expected, 29)
+    assertPageMatchesExpected(actual, expected, 30)
+    assertPageMatchesExpected(actual, expected, 31)
+    assertPageMatchesExpected(actual, expected, 32)
+    assertAttachmentPageMatchesExpected(actual, expected, 33, 3)
+    assertAttachmentPageMatchesExpected(actual, expected, 34, 4)
+    assertAttachmentPageMatchesExpected(actual, expected, 35, 5)
+    assertAttachmentPageMatchesExpected(actual, expected, 36, 6)
+    assertAttachmentPageMatchesExpected(actual, expected, 37, 7)
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
