@@ -27,6 +27,7 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "logstash"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     TASK_SCHEDULING_POOL_SIZE: 1
+    GOTENBERG_API_URL: "http://hmpps-subject-access-request-worker-gotenberg"
 
   namespace_secrets:
     hmpps-subject-access-request-worker:
@@ -54,6 +55,42 @@ generic-service:
   allowlist:
     groups:
       - internal
+
+gotenberg:
+  nameOverride: gotenberg
+  replicaCount: 2
+
+  image:
+    repository: gotenberg/gotenberg
+    tag: 8
+    port: 3000
+
+  ingress:
+    enabled: false
+
+  livenessProbe:
+    httpGet:
+      path: /health
+    periodSeconds: 30
+    initialDelaySeconds: 60
+    timeoutSeconds: 20
+    failureThreshold: 10
+
+  readinessProbe:
+    httpGet:
+      path: /health
+    periodSeconds: 20
+    initialDelaySeconds: 60
+    timeoutSeconds: 30
+    failureThreshold: 15
+
+  podSecurityContext:
+    fsGroup: 1001
+
+  securityContext:
+    runAsUser: 1001
+    privileged: false
+    runAsNonRoot: true
 
 generic-prometheus-alerts:
   targetApplication: hmpps-subject-access-request-worker

@@ -22,3 +22,6 @@ class LocationsApiHealthPing(@Qualifier("locationsApiHealthWebClient") webClient
 
 @Component("nomisMappingsApi")
 class NomisMappingsApiHealthPing(@Qualifier("nomisMappingsApiHealthWebClient") webClient: WebClient) : HealthPingCheck(webClient)
+
+@Component("gotenbergApi")
+class GotenbergHealth(@Qualifier("gotenbergWebClient") webClient: WebClient) : HealthPingCheck(webClient)

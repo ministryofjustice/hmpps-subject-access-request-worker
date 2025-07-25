@@ -49,6 +49,8 @@ G3-api:
   url: "http://localhost:9003"
 sar-html-renderer-api:
   url: "http://localhost:8087"
+gotenberg-api:
+  url: http://localhost:3001
 
 template-resources:
   directory: /templates

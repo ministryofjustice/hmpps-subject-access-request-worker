@@ -39,6 +39,8 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.opencsv:opencsv:5.11.2")
+  testImplementation("org.testcontainers:testcontainers:1.21.3")
+  testImplementation("org.testcontainers:junit-jupiter:1.21.3")
 }
 
 kotlin {
