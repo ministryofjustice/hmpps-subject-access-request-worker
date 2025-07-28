@@ -58,9 +58,7 @@ class ServiceConfigurationService(
       )
     }.sortedBy { it.orderPosition }
 
-  fun getAllOrdered(): List<ServiceConfiguration> = serviceConfigurationRepository.findAll(
-    Sort.by(Sort.Direction.ASC, "order"),
-  )
+  fun getAllEnabled(): List<ServiceConfiguration>? = serviceConfigurationRepository.findEnabled()
 
   fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration): String {
     val apiUrl = when (serviceConfiguration.serviceName) {

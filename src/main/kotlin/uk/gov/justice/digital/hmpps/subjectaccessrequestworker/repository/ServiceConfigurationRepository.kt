@@ -15,4 +15,7 @@ interface ServiceConfigurationRepository : JpaRepository<ServiceConfiguration, U
   @Query("UPDATE ServiceConfiguration s SET s.enabled = :enabled WHERE s.id = :id")
   @Modifying
   fun updateEnabledById(@Param("id") id: UUID, @Param("enabled") enabled: Boolean): Int
+
+  @Query("SELECT s FROM ServiceConfiguration s WHERE s.enabled is TRUE ORDER BY s.order ASC")
+  fun findEnabled(): List<ServiceConfiguration>?
 }

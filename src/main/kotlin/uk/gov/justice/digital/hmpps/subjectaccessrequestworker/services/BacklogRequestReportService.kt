@@ -126,7 +126,12 @@ class BacklogRequestReportService(
   private fun generateHeader(): List<String> {
     val headerRow = mutableListOf<String>()
     headerRow.addAll(metadataColumns)
-    headerRow.addAll(serviceConfigurationService.getAllOrdered().map { it.label })
+
+    serviceConfigurationService.getAllEnabled()
+      ?.map { it.label }
+      ?.let { headerRow.addAll(it) }
+      ?: throw RuntimeException("get all enabled services returned null")
+
     return headerRow
   }
 
