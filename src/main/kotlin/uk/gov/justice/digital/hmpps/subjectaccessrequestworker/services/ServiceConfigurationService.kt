@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
@@ -10,6 +11,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
+import java.util.UUID
 
 @Service
 class ServiceConfigurationService(
@@ -20,6 +22,9 @@ class ServiceConfigurationService(
 ) {
 
   fun deleteAll() = serviceConfigurationRepository.deleteAll()
+
+  @Transactional
+  fun disableService(id: UUID) = serviceConfigurationRepository.updateEnabledById(id, false)
 
   fun save(
     serviceConfiguration: ServiceConfiguration,

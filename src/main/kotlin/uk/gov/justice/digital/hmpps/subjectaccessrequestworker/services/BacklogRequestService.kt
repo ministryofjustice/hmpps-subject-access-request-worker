@@ -158,10 +158,19 @@ class BacklogRequestService(
   fun addServiceSummary(request: BacklogRequest, summary: ServiceSummary) {
     val serviceConfig = validateServiceSummary(request.id, summary)
 
-    serviceConfigurationService.findByServiceName(serviceConfig.serviceName)
+    val targetService = serviceConfigurationService.findByServiceName(serviceConfig.serviceName)
       ?: throw BacklogRequestException(request.id, "Service Configuration does not exist for serviceName")
 
-    serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(request.id, serviceConfig.id)
+    targetService.takeIf { !it.enabled }?.let {
+      LOG.info(
+        "service summary for service {} not added to backlog request id: {} service is not enabled",
+        serviceConfig.serviceName,
+        request.id,
+      )
+      return@addServiceSummary
+    }
+
+    serviceSummaryRepository.findOneByBacklogRequestIdAndServiceConfigurationId(request.id, targetService.id)
       ?.let { existingSummary -> updateExistingServiceSummary(request, existingSummary, summary) }
       ?: addNewServiceSummary(request, summary)
   }
