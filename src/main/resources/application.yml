@@ -111,6 +111,8 @@ G2-api:
   url: ${G2_API_URL}
 G3-api:
   url: ${G3_API_URL}
+gotenberg-api:
+  url: http://localhost:3001
 
 api:
   timeout: 60s
