@@ -190,6 +190,61 @@ class BacklogRequestProcessorIntTest : BaseBacklogRequestIntTest() {
     htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-3"))
   }
 
+  @Test
+  fun `backlog request only queries enabled services`() {
+    val start = LocalDateTime.now()
+    val backlogRequest = createBacklogRequest()
+    assertThat(backlogRequest).isNotNull
+
+    serviceConfigurationService.disableService(serviceConfigurations[0].id)
+
+    hmppsAuth.stubGrantToken()
+    stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-2"), true)
+    stubRendererSubjectDataHeldResponse(createSubjectDataHeldRequest("service-3"), false)
+
+    await()
+      .atMost(TIMEOUT_SEC, TimeUnit.SECONDS)
+      .until { requestIsComplete(backlogRequest!!.id) }
+
+    val result = assertBacklogRequestEqualsExpected(
+      backlogRequestId = backlogRequest!!.id,
+      createdAfter = start,
+      expectedDataHeld = true,
+      expectedStatus = COMPLETE,
+      expectedClaimDateTimeAfter = start,
+    )
+
+    assertThat(result.serviceSummary).hasSize(2)
+    assertServiceSummaryDoesNotExist(
+      backlogRequestId = result.id,
+      serviceName = "service-1",
+      status = COMPLETE,
+    )
+    assertServiceSummaryDoesNotExist(
+      backlogRequestId = result.id,
+      serviceName = "service-1",
+      status = PENDING,
+    )
+    assertServiceSummaryExistsWithExpectedValues(
+      backlogRequestId = result.id,
+      serviceName = "service-2",
+      expectedOrder = 2,
+      expectedDataHeld = true,
+      expectedStatus = COMPLETE,
+    )
+    assertServiceSummaryExistsWithExpectedValues(
+      backlogRequestId = result.id,
+      serviceName = "service-3",
+      expectedOrder = 3,
+      expectedDataHeld = false,
+      expectedStatus = COMPLETE,
+    )
+
+    htmlRendererApi.verifySubjectDataHeldSummaryCalled(0, createSubjectDataHeldRequest("service-1"))
+    htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-2"))
+    htmlRendererApi.verifySubjectDataHeldSummaryCalled(1, createSubjectDataHeldRequest("service-3"))
+  }
+
   private fun assertBacklogRequestEqualsExpected(
     backlogRequestId: UUID,
     createdAfter: LocalDateTime,
