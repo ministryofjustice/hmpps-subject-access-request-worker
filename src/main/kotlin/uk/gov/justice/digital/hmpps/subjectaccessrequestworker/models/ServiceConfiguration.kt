@@ -25,7 +25,7 @@ data class ServiceConfiguration(
   val order: Int,
 
   @Column(name = "enabled", nullable = false)
-  val enabled: Boolean,
+  var enabled: Boolean,
 ) {
   constructor() : this(serviceName = "", label = "", url = "", order = 0, enabled = false) {
   }

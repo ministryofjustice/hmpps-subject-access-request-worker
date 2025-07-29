@@ -77,7 +77,7 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
       "AND " +
       "(SELECT COUNT(DISTINCT s.serviceConfiguration.id) FROM ServiceSummary s WHERE s.backlogRequest.id = :id AND s.status = 'COMPLETE')" +
       " = " +
-      "(SELECT COUNT(DISTINCT cfg.id) FROM ServiceConfiguration cfg)",
+      "(SELECT COUNT(DISTINCT cfg.id) FROM ServiceConfiguration cfg WHERE cfg.enabled is TRUE)",
   )
   fun findCompleteRequestOrNull(@Param("id") id: UUID): BacklogRequest?
 

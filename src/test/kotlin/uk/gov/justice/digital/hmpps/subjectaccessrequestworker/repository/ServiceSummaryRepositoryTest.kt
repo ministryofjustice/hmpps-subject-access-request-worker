@@ -145,6 +145,22 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
       val actual = serviceSummaryRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
       assertThat(actual).isEmpty()
     }
+
+    @Test
+    fun `should only return service names for backlogRequest with no service summary entries that are enabled`() {
+      val backlogRequest = backlogRequestRepository.save(BacklogRequest())
+
+      val updateCount = serviceConfigurationRepository.updateEnabledById(keyworkerApiServiceConfig.id, false)
+      assertThat(updateCount).isEqualTo(1)
+
+      val actual = serviceSummaryRepository.getPendingServiceSummariesForRequestId(backlogRequest.id)
+
+      assertThat(actual.size).isEqualTo(serviceConfigurations.size - 1)
+      assertThat(actual).containsExactlyInAnyOrder(
+        offenderCaseNotesServiceConfig,
+        courtCaseServiceServiceConfig,
+      )
+    }
   }
 
   @Nested
