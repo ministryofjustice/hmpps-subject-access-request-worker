@@ -32,6 +32,16 @@ class BacklogRequestReportService(
     "Data Held",
   )
 
+  private val selectHeaderRowQuery =
+    "SELECT DISTINCT (cfg.label), cfg.list_order FROM service_configuration cfg " +
+      "WHERE EXISTS ( " +
+      "SELECT s.service_configuration_id FROM backlog_request b " +
+      "INNER JOIN service_summary s ON s.backlog_request_id = b.id " +
+      "WHERE version = ? " +
+      "AND s.service_configuration_id = cfg.id " +
+      "AND cfg.enabled is TRUE " +
+      ") ORDER BY cfg.list_order ASC;"
+
   private val getServiceSummariesQuery =
     "SELECT " +
       "s.data_held, s.backlog_request_id, cfg.list_order, cfg.label " +
@@ -66,7 +76,7 @@ class BacklogRequestReportService(
       response.contentType = "text/csv"
       response.setHeader("Content-Disposition", "attachment; filename=\"SAR-v$version.csv\"")
 
-      val headerRow = generateHeader()
+      val headerRow = generateHeader(version)
       writeHeaderRow(writer, headerRow)
       writeBacklogReportForVersion(version, writer, headerRow)
       response.status = HttpStatus.OK.value()
@@ -123,10 +133,14 @@ class BacklogRequestReportService(
     writer.flush()
   }
 
-  private fun generateHeader(): List<String> {
-    val headerRow = mutableListOf<String>()
-    headerRow.addAll(metadataColumns)
-    headerRow.addAll(serviceConfigurationService.getAllOrdered().map { it.label })
+  private fun generateHeader(version: String): List<String> {
+    val headerRow = mutableListOf(*metadataColumns.toTypedArray())
+
+    queryForHeaderServiceNames(version)
+      .takeIf { it.isNotEmpty() }
+      ?.let { headerRow.addAll(it) }
+      ?: throw RuntimeException("get header service names returned empty list")
+
     return headerRow
   }
 
@@ -188,6 +202,29 @@ class BacklogRequestReportService(
     writer.write(serviceSummaryValues.joinToString(","))
     writer.write("\n")
     writer.flush()
+  }
+
+  private fun queryForHeaderServiceNames(
+    version: String,
+  ): Set<String> = dataSource.connection.use { conn ->
+    conn.autoCommit = false
+
+    conn.prepareStatement(
+      selectHeaderRowQuery,
+      ResultSet.TYPE_FORWARD_ONLY,
+      ResultSet.CONCUR_READ_ONLY,
+    ).use { stmt ->
+      stmt.setString(1, version)
+      stmt.fetchSize = 1000
+
+      val result = mutableSetOf<String>()
+      stmt.executeQuery().use { rs ->
+        while (rs.next()) {
+          result.add(rs.getString("label"))
+        }
+      }
+      result
+    }
   }
 
   private fun ResultSet.getStringOrEmpty(name: String): String = this.getString(name) ?: ""

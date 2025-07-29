@@ -54,6 +54,14 @@ class BacklogRequestServiceAddSummaryTest {
     enabled = true,
   )
 
+  private val disabledServiceConfig = ServiceConfiguration(
+    serviceName = "service2",
+    label = "Service Two",
+    url = "http://localhost:1234",
+    order = 1,
+    enabled = false,
+  )
+
   private val existingServiceSummary = ServiceSummary(
     serviceConfiguration = serviceOneConfig,
     status = BacklogRequestStatus.PENDING,
@@ -238,5 +246,19 @@ class BacklogRequestServiceAddSummaryTest {
       serviceOneConfig.id,
     )
     verify(serviceSummaryRepository, times(1)).saveAndFlush(any())
+  }
+
+  @Test
+  fun `should not add service summary if the service is disabled`() {
+    whenever(serviceConfigurationService.findByServiceName(disabledServiceConfig.serviceName))
+      .thenReturn(disabledServiceConfig)
+
+    backlogRequestService.addServiceSummary(
+      existingBacklogRequest,
+      ServiceSummary(serviceConfiguration = disabledServiceConfig),
+    )
+
+    verifyNoInteractions(serviceSummaryRepository)
+    verify(serviceConfigurationService, times(1)).findByServiceName(disabledServiceConfig.serviceName)
   }
 }

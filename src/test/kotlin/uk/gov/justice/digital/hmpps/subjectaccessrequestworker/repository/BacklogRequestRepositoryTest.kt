@@ -32,21 +32,21 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     label = "Keyworker",
     url = "",
     order = 1,
-    enabled = false,
+    enabled = true,
   )
   private val offenderCaseNotesServiceConfig = ServiceConfiguration(
     serviceName = "offender-case-notes",
     label = "offender-case-notes",
     url = "",
     order = 2,
-    enabled = false,
+    enabled = true,
   )
   private val courtCaseServiceServiceConfig = ServiceConfiguration(
     serviceName = "court-case-service",
     label = "court-case-service",
     url = "",
     order = 3,
-    enabled = false,
+    enabled = true,
   )
 
   private val serviceConfigurations = listOf(
@@ -326,7 +326,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
   }
 
   @Nested
-  inner class FindCompleteRequestOrNullTestCases {
+  open inner class FindCompleteRequestOrNullTestCases {
 
     @Test
     fun `should return request when service summary with status COMPLETE exists for each service in service configuration`() {
@@ -405,49 +405,19 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       val actual = backlogRequestRepository.findCompleteRequestOrNull(request.id)
       assertThat(actual).isNull()
     }
-  }
-
-  @Nested
-  inner class FindDataHeldByIdOrNullTestCases {
 
     @Test
-    fun `should return null when backlogRequest does not exist`() {
-      assertThat(backlogRequestRepository.findDataHeldByIdOrNull(UUID.randomUUID())).isNull()
-    }
-
-    @Test
-    fun `should return null when no service summary exists for backlogRequest`() {
-      val request = backlogRequestRepository.save(BacklogRequest())
-      assertThat(request).isNotNull
-
-      assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
-    }
-
-    @Test
-    fun `should return null when dateHeld is FALSE for all service summaries`() {
+    fun `should return request when a service summary with status COMPLETE exists for each enabled service in service configuration`() {
       val request = BacklogRequest()
 
-      serviceConfigurations.forEach {
-        request.addServiceSummary(
-          ServiceSummary(
-            id = UUID.randomUUID(),
-            backlogRequest = request,
-            serviceConfiguration = it,
-            dataHeld = false,
-            status = PENDING,
-          ),
-        )
-      }
-      backlogRequestRepository.save(request)
+      keyworkerApiServiceConfig.enabled = false
+      serviceConfigurationRepository.saveAndFlush(keyworkerApiServiceConfig)
 
-      assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
-    }
+      val updated = serviceConfigurationRepository.findByIdOrNull(keyworkerApiServiceConfig.id)
+      assertThat(updated).isNotNull
+      assertThat(updated!!.enabled).isFalse()
 
-    @Test
-    fun `should return backlogRequest when dataHeld is TRUE for all service summaries`() {
-      val request = BacklogRequest()
-
-      serviceConfigurations.forEach {
+      arrayOf(offenderCaseNotesServiceConfig, courtCaseServiceServiceConfig).forEach {
         request.addServiceSummary(
           ServiceSummary(
             id = UUID.randomUUID(),
@@ -458,53 +428,113 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ),
         )
       }
-      val savedRequest = backlogRequestRepository.save(request)
 
-      val actual = backlogRequestRepository.findDataHeldByIdOrNull(request.id)
-      assertThat(actual).isNotNull
-      assertThat(actual).isEqualTo(savedRequest)
-    }
-
-    @Test
-    fun `should return backlogRequest when dataHeld is TRUE at least one service summary`() {
-      val request = BacklogRequest()
-
-      serviceConfigurations.forEachIndexed { i, service ->
-        request.addServiceSummary(
-          ServiceSummary(
-            id = UUID.randomUUID(),
-            backlogRequest = request,
-            serviceConfiguration = service,
-            dataHeld = (i == 0),
-            status = COMPLETE,
-          ),
-        )
-      }
-      val savedRequest = backlogRequestRepository.save(request)
-
-      val actual = backlogRequestRepository.findDataHeldByIdOrNull(request.id)
-      assertThat(actual).isNotNull
-      assertThat(actual).isEqualTo(savedRequest)
-    }
-
-    @Test
-    fun `should return null when dataHeld is TRUE on at least one service summary but status is not COMPLETE`() {
-      val request = BacklogRequest()
-
-      serviceConfigurations.forEachIndexed { i, service ->
-        request.addServiceSummary(
-          ServiceSummary(
-            id = UUID.randomUUID(),
-            backlogRequest = request,
-            serviceConfiguration = service,
-            dataHeld = true,
-            status = PENDING,
-          ),
-        )
-      }
       backlogRequestRepository.save(request)
 
-      assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
+      val actual = backlogRequestRepository.findCompleteRequestOrNull(request.id)
+      assertThat(actual).isNotNull
+      assertThat(actual!!.serviceSummary).hasSize(2)
+    }
+
+    @Nested
+    inner class FindDataHeldByIdOrNullTestCases {
+
+      @Test
+      fun `should return null when backlogRequest does not exist`() {
+        assertThat(backlogRequestRepository.findDataHeldByIdOrNull(UUID.randomUUID())).isNull()
+      }
+
+      @Test
+      fun `should return null when no service summary exists for backlogRequest`() {
+        val request = backlogRequestRepository.save(BacklogRequest())
+        assertThat(request).isNotNull
+
+        assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
+      }
+
+      @Test
+      fun `should return null when dateHeld is FALSE for all service summaries`() {
+        val request = BacklogRequest()
+
+        serviceConfigurations.forEach {
+          request.addServiceSummary(
+            ServiceSummary(
+              id = UUID.randomUUID(),
+              backlogRequest = request,
+              serviceConfiguration = it,
+              dataHeld = false,
+              status = PENDING,
+            ),
+          )
+        }
+        backlogRequestRepository.save(request)
+
+        assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
+      }
+
+      @Test
+      fun `should return backlogRequest when dataHeld is TRUE for all service summaries`() {
+        val request = BacklogRequest()
+
+        serviceConfigurations.forEach {
+          request.addServiceSummary(
+            ServiceSummary(
+              id = UUID.randomUUID(),
+              backlogRequest = request,
+              serviceConfiguration = it,
+              dataHeld = true,
+              status = COMPLETE,
+            ),
+          )
+        }
+        val savedRequest = backlogRequestRepository.save(request)
+
+        val actual = backlogRequestRepository.findDataHeldByIdOrNull(request.id)
+        assertThat(actual).isNotNull
+        assertThat(actual).isEqualTo(savedRequest)
+      }
+
+      @Test
+      fun `should return backlogRequest when dataHeld is TRUE at least one service summary`() {
+        val request = BacklogRequest()
+
+        serviceConfigurations.forEachIndexed { i, service ->
+          request.addServiceSummary(
+            ServiceSummary(
+              id = UUID.randomUUID(),
+              backlogRequest = request,
+              serviceConfiguration = service,
+              dataHeld = (i == 0),
+              status = COMPLETE,
+            ),
+          )
+        }
+        val savedRequest = backlogRequestRepository.save(request)
+
+        val actual = backlogRequestRepository.findDataHeldByIdOrNull(request.id)
+        assertThat(actual).isNotNull
+        assertThat(actual).isEqualTo(savedRequest)
+      }
+
+      @Test
+      fun `should return null when dataHeld is TRUE on at least one service summary but status is not COMPLETE`() {
+        val request = BacklogRequest()
+
+        serviceConfigurations.forEachIndexed { i, service ->
+          request.addServiceSummary(
+            ServiceSummary(
+              id = UUID.randomUUID(),
+              backlogRequest = request,
+              serviceConfiguration = service,
+              dataHeld = true,
+              status = PENDING,
+            ),
+          )
+        }
+        backlogRequestRepository.save(request)
+
+        assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
+      }
     }
   }
 }
