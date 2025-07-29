@@ -34,13 +34,13 @@ class BacklogRequestReportService(
 
   private val selectHeaderRowQuery =
     "SELECT DISTINCT (cfg.label), cfg.list_order FROM service_configuration cfg " +
-    "WHERE EXISTS ( " +
+      "WHERE EXISTS ( " +
       "SELECT s.service_configuration_id FROM backlog_request b " +
       "INNER JOIN service_summary s ON s.backlog_request_id = b.id " +
       "WHERE version = ? " +
       "AND s.service_configuration_id = cfg.id " +
       "AND cfg.enabled is TRUE " +
-    ") ORDER BY cfg.list_order ASC;"
+      ") ORDER BY cfg.list_order ASC;"
 
   private val getServiceSummariesQuery =
     "SELECT " +
