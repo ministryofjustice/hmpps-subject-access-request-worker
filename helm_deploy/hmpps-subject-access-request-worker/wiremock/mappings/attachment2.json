@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/download/doc1.pdf"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "doc1.pdf",
+    "headers": {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": "attachment; filename=\"doc1.pdf\""
+    }
+  }
+}

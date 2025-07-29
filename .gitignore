@@ -86,3 +86,4 @@ sar_endpoint_config
 # Metainformation
 .DS_Store
 
+/helm_deploy/hmpps-subject-access-request-worker/charts/
