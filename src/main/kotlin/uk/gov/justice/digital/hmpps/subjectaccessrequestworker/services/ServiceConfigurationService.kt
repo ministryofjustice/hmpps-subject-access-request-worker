@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
