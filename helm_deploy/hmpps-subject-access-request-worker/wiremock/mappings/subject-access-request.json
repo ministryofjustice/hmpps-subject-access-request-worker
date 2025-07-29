@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/subject-access-request"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "subject-access-request-response.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/download/map.jpg"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "map.jpg",
+    "headers": {
+      "Content-Type": "image/jpeg",
+      "Content-Disposition": "attachment; filename=\"map.jpg\""
+    }
+  }
+}

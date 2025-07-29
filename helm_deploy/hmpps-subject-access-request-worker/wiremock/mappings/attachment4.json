@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/download/doc1.docx"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "doc1.docx",
+    "headers": {
+      "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "Content-Disposition": "attachment; filename=\"doc1.docx\""
+    }
+  }
+}
