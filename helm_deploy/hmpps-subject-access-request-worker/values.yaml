@@ -99,6 +99,7 @@ wiremock:
 
   image:
     repository: wiremock/wiremock
+    tag: 3x
     port: 8080
 
   ingress:
