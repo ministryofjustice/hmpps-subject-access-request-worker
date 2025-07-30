@@ -106,7 +106,7 @@ wiremock:
 
   livenessProbe:
     httpGet:
-      path: /health
+      path: /__admin/health
     periodSeconds: 30
     initialDelaySeconds: 60
     timeoutSeconds: 20
@@ -114,7 +114,7 @@ wiremock:
 
   readinessProbe:
     httpGet:
-      path: /health
+      path: /__admin/health
     periodSeconds: 20
     initialDelaySeconds: 60
     timeoutSeconds: 30
