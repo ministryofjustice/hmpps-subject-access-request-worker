@@ -103,7 +103,7 @@ wiremock:
     port: 8080
 
   ingress:
-    enabled: false
+    enabled: true
 
   livenessProbe:
     httpGet:
