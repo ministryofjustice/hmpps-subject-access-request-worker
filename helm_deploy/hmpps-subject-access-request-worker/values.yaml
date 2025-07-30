@@ -128,15 +128,5 @@ wiremock:
     privileged: false
     runAsNonRoot: true
 
-  volumes:
-    - name: wiremock-config
-      configMap:
-        name: hmpps-subject-access-request-worker-wiremock-configmap
-        defaultMode: 0777
-
-  volumeMounts:
-    - name: wiremock-config
-      mountPath: /home/wiremock
-
 generic-prometheus-alerts:
   targetApplication: hmpps-subject-access-request-worker
