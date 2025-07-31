@@ -1,0 +1,15 @@
+name: Upload WireMock Mappings
+
+on:
+  workflow_call:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Make script executable
+      run: chmod +x ./scripts/wiremock-mappings.sh
+    - name: Run upload script
+      run: ./scripts/wiremock-mappings.sh

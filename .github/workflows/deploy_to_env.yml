@@ -37,3 +37,8 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       app_version: ${{ inputs.version }}
+  upload_wiremock_mappings:
+    name: Upload wireMock mappings
+    needs: deploy_env
+    if: ${{ inputs.environment == 'dev' }}
+    uses: ./.github/workflows/wiremock_mappings.yml
