@@ -34,6 +34,7 @@ dependencies {
   runtimeOnly("com.h2database:h2:2.3.232")
   runtimeOnly("org.postgresql:postgresql:42.7.7")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
+  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.1")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.4.10")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
