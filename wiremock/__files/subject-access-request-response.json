@@ -33,7 +33,7 @@
   },
   "attachments": [
     {
-      "attachmentRef": "Attachment 1",
+      "attachmentNumber": 1,
       "name": "Map image",
       "contentType": "image/jpeg",
       "url": "http://hmpps-subject-access-request-worker-wiremock/download/map.jpg",
@@ -41,7 +41,7 @@
       "filesize": 162280
     },
     {
-      "attachmentRef": "Attachment 2",
+      "attachmentNumber": 2,
       "name": "Test document",
       "contentType": "application/pdf",
       "url": "http://hmpps-subject-access-request-worker-wiremock/download/doc1.pdf",
@@ -49,7 +49,7 @@
       "filesize": 124084
     },
     {
-      "attachmentRef": "Attachment 3",
+      "attachmentNumber": 3,
       "name": "Video recording",
       "contentType": "video/mp4",
       "url": "http://hmpps-subject-access-request-worker-wiremock/download/test.mp4",
@@ -57,7 +57,7 @@
       "filesize": 8
     },
     {
-      "attachmentRef": "Attachment 4",
+      "attachmentNumber": 4,
       "name": "Word document",
       "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "url": "http://hmpps-subject-access-request-worker-wiremock/download/doc1.docx",

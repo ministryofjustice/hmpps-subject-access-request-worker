@@ -129,5 +129,13 @@ wiremock:
     privileged: false
     runAsNonRoot: true
 
+  volumeMounts:
+    - name: files-volume
+      mountPath: /home/wiremock/__files
+
+  volumes:
+    - name: files-volume
+      emptyDir: {}
+
 generic-prometheus-alerts:
   targetApplication: hmpps-subject-access-request-worker

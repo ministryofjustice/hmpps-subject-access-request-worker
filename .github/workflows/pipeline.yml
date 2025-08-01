@@ -63,6 +63,10 @@ jobs:
       environment: 'dev'
       app_version: '${{ needs.build.outputs.app_version }}'
       helm_timeout: '5m'
+  upload_wiremock_mappings:
+    name: Upload wiremock mappings
+    needs: deploy_dev
+    uses: ./.github/workflows/wiremock_mappings.yml
   deploy_preprod:
     name: Deploy to the preprod environment
     needs:
