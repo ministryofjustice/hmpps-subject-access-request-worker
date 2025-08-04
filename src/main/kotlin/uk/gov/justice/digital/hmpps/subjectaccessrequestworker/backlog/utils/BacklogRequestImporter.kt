@@ -8,7 +8,6 @@ import java.io.File
 import java.io.FileWriter
 import java.time.LocalDateTime
 
-const val INPUT_CSV_PATH = ""
 const val LINE_LIMIT = 10
 const val EXPECTED_NUMBER_OF_COLUMNS = 15
 const val SAR_CASE_REF_INDEX = 0
@@ -18,15 +17,33 @@ const val DATE_FROM_INDEX = 5
 const val DATE_TO_INDEX = 6
 const val DELIUS_CRN_INDEX = 14
 const val CREATE_BACKLOG_API = "https://subject-access-request-worker-preprod.hmpps.service.justice.gov.uk"
-const val ERRORS_FILE = "errors.csv"
 
-fun main() {
+fun main(args: Array<String>) {
+  if (args.size < 3) {
+    throw RuntimeException("expected 2 input arguments.")
+  }
+
+  val version = args[0]
+  val inputCsv = args[1]
+  val token = args[2]
+
   val backlogApiClient = BacklogApiClient(CREATE_BACKLOG_API)
-  processBacklogCsv(backlogApiClient)
+  processBacklogCsv(
+    version = version,
+    authToken = token,
+    inputCsv = inputCsv,
+    backlogApiClient = backlogApiClient,
+  )
+  println("Failed requests are logged here: file:///${System.getenv("IMPORT_ERRORS_CSV")}")
 }
 
-internal fun processBacklogCsv(backlogApiClient: BacklogApiClient) {
-  val csv = readCsvWithQuotes(INPUT_CSV_PATH)
+internal fun processBacklogCsv(
+  version: String,
+  inputCsv: String,
+  authToken: String,
+  backlogApiClient: BacklogApiClient,
+) {
+  val csv = readCsvWithQuotes(inputCsv)
   validateCsvHeader(csv[0])
 
   BufferedWriter(FileWriter(getErrorLogFile())).use { errorWriter ->
@@ -38,8 +55,8 @@ internal fun processBacklogCsv(backlogApiClient: BacklogApiClient) {
           return@processLoop
         }
 
-        val request = mapRowToCreateBacklogRequest(row, "1")
-        backlogApiClient.submitBacklogRequest(rowIndex, request, System.getenv("AUTH_TOKEN"), errorWriter)
+        val request = mapRowToCreateBacklogRequest(row, version)
+        backlogApiClient.submitBacklogRequest(rowIndex, request, authToken, errorWriter)
       }
     }.also { errorWriter.end() }
   }
@@ -94,10 +111,7 @@ private fun assertEquals(header: List<String>, index: Int, expected: Any?) {
   }
 }
 
-private fun getErrorLogFile(): File {
-  val path = object {}.javaClass.getResource("/")?.path ?: throw RuntimeException("could not find resource path")
-  return File(path, ERRORS_FILE).also { if (!it.exists()) it.createNewFile() }
-}
+private fun getErrorLogFile() = File(System.getenv("IMPORT_ERRORS_CSV")).also { if (!it.exists()) it.createNewFile() }
 
 data class CreateBacklogRequest(
   val sarCaseReferenceNumber: String,

@@ -52,14 +52,20 @@ tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
   }
-}
-
-tasks.register<TemplateGenerator>("generateHtml") {
-  group = "templates"
-  description = "Generate subject access report HTML for the specified service name"
-  classpath = sourceSets["test"].runtimeClasspath
-  mainClass = "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateDevelopmentUtilKt"
-  environment = mapOf("TEST_RESOURCES_DIR" to project.rootDir.resolve("src/test/resources"))
+  register<BacklogRequestImport>("importBacklog") {
+    group = "backlog"
+    description = "Import SAR backlog requests from a CSV input file"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass = "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.backlog.utils.BacklogRequestImporterKt"
+    environment = mapOf("IMPORT_ERRORS_CSV" to project.rootDir.resolve("src/main/resources/backlog-import-errors.csv"))
+  }
+  register<TemplateGenerator>("generateHtml") {
+    group = "templates"
+    description = "Generate subject access report HTML for the specified service name"
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass = "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateDevelopmentUtilKt"
+    environment = mapOf("TEST_RESOURCES_DIR" to project.rootDir.resolve("src/main/resources"))
+  }
 }
 
 abstract class TemplateGenerator : JavaExec() {
@@ -80,5 +86,49 @@ abstract class TemplateGenerator : JavaExec() {
   fun generate() {
     args(this.serviceName)
     super.exec()
+  }
+}
+
+abstract class BacklogRequestImport : JavaExec() {
+  private lateinit var token: String
+  private lateinit var csv: String
+  private lateinit var version: String
+
+  @Option(
+    option = "token",
+    description = "preprod auth token",
+  )
+  fun setToken(token: String) {
+    this.token = token
+  }
+
+  @Option(
+    option = "csv",
+    description = "Input CSV file of requests to import",
+  )
+  fun setCsv(csv: String) {
+    this.csv = csv
+  }
+
+  @Option(
+    option = "importVersion",
+    description = "The version to assign to the imported requests",
+  )
+  fun setVersion(version: String) {
+    this.version = version
+  }
+
+  @Input
+  fun getToken(): String = token
+
+  @Input
+  fun getCsv(): String = csv
+
+  @Input
+  fun getVersion(): String = version
+
+  @TaskAction
+  fun import() {
+    args(this.version, this.csv, this.token)
   }
 }
