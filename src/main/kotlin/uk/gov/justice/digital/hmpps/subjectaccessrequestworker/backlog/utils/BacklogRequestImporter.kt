@@ -3,14 +3,13 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.backlog.utils
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.doyaaaaaken.kotlincsv.client.CsvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import org.slf4j.LoggerFactory
-import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
+import java.time.LocalDateTime
 
 const val INPUT_CSV_PATH = ""
+const val LINE_LIMIT = 10
 const val EXPECTED_NUMBER_OF_COLUMNS = 15
 const val SAR_CASE_REF_INDEX = 0
 const val SUBJECT_NAME_INDEX = 1
@@ -19,6 +18,7 @@ const val DATE_FROM_INDEX = 5
 const val DATE_TO_INDEX = 6
 const val DELIUS_CRN_INDEX = 14
 const val CREATE_BACKLOG_API = "https://subject-access-request-worker-preprod.hmpps.service.justice.gov.uk"
+const val ERRORS_FILE = "errors.csv"
 
 fun main() {
   val backlogApiClient = BacklogApiClient(CREATE_BACKLOG_API)
@@ -29,19 +29,21 @@ internal fun processBacklogCsv(backlogApiClient: BacklogApiClient) {
   val csv = readCsvWithQuotes(INPUT_CSV_PATH)
   validateCsvHeader(csv[0])
 
-  run processLoop@{
-    csv.subList(1, csv.size).forEachIndexed { rowIndex, row ->
-      if (rowIndex >= 11) {
-        println("Exit at row $rowIndex")
-        return@processLoop
-      }
+  BufferedWriter(FileWriter(getErrorLogFile())).use { errorWriter ->
+    errorWriter.start()
+    run processLoop@{
+      csv.subList(1, csv.size).forEachIndexed { rowIndex, row ->
+        if (rowIndex >= LINE_LIMIT) {
+          println("Exiting at row $rowIndex")
+          return@processLoop
+        }
 
-      val request = mapRowToCreateBacklogRequest(row, "1")
-      backlogApiClient.submitBacklogRequest(rowIndex, request, System.getenv("AUTH_TOKEN"))
-    }
+        val request = mapRowToCreateBacklogRequest(row, "1")
+        backlogApiClient.submitBacklogRequest(rowIndex, request, System.getenv("AUTH_TOKEN"), errorWriter)
+      }
+    }.also { errorWriter.end() }
   }
 }
-
 
 private fun readCsvWithQuotes(filePath: String): List<List<String>> {
   val reader: CsvReader = csvReader()
@@ -92,62 +94,9 @@ private fun assertEquals(header: List<String>, index: Int, expected: Any?) {
   }
 }
 
-
-internal class BacklogApiClient(apiUrl: String) {
-  private val webclient: WebClient = WebClient.create(apiUrl)
-
-  companion object {
-    private val logger = LoggerFactory.getLogger(BacklogApiClient::class.java)
-  }
-
-  fun submitBacklogRequest(rowIndex: Int, request: CreateBacklogRequest, authToken: String) {
-    val resp = webclient
-      .post()
-      .uri("/subject-access-request/backlog")
-      .header("Authorization", "bearer $authToken")
-      .bodyValue(request)
-      .exchangeToMono(responseHandler(rowIndex))
-      .block()
-
-    resp?.let {
-      logger.info(
-        "Backlog request was created successfully rowIndex:[{}] {}\n",
-        rowIndex,
-        resp.body?.sarCaseReferenceNumber,
-      )
-    }
-  }
-
-  private fun responseHandler(rowIndex: Int) = { response: ClientResponse ->
-    logger.info("response from API: ${response.statusCode().value()}")
-    when {
-      response.statusCode().is2xxSuccessful -> {
-        response.toEntity(BacklogRequestOverview::class.java)
-      }
-
-      response.statusCode().value() == 400 -> {
-        response.bodyToMono(String::class.java)
-          .doOnNext { body ->
-            logger.error("create backlog request unsuccessful rowIndex:[{}] BAD REQUEST", rowIndex)
-            logger.error("body: {}\n", body)
-          }
-          .then(Mono.empty())
-      }
-
-      else -> {
-        response.bodyToMono(String::class.java)
-          .flatMap { body ->
-            Mono.error(
-              RuntimeException(
-                "create backlog request error: rowIndex:[$rowIndex], status: ${
-                  response.statusCode().value()
-                } body: $body",
-              ),
-            )
-          }
-      }
-    }
-  }
+private fun getErrorLogFile(): File {
+  val path = object {}.javaClass.getResource("/")?.path ?: throw RuntimeException("could not find resource path")
+  return File(path, ERRORS_FILE).also { if (!it.exists()) it.createNewFile() }
 }
 
 data class CreateBacklogRequest(
@@ -159,7 +108,16 @@ data class CreateBacklogRequest(
   val dateFrom: String,
   val dateTo: String,
 ) {
-  override fun toString(): String {
-    return ObjectMapper().writeValueAsString(this)
-  }
+  override fun toString(): String = ObjectMapper().writeValueAsString(this)
+}
+
+private fun BufferedWriter.start() {
+  this.write("### Start: ${LocalDateTime.now()} ###")
+  this.flush()
+}
+
+private fun BufferedWriter.end() {
+  this.newLine()
+  this.write("### End: ${LocalDateTime.now()} ###")
+  this.flush()
 }
