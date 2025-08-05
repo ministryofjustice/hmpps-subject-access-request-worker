@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestAlreadyExistsException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestReportService
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
@@ -60,6 +62,16 @@ class SubjectAccessRequestWorkerExceptionHandler {
           ErrorResponse(
             status = BAD_REQUEST,
             userMessage = "Backlog Request data integrity violation error: ${e.message}",
+            developerMessage = e.message,
+          ),
+        ).also { log.error("Backlog Request data integrity violation error", e) }
+    } else if (e is BacklogRequestAlreadyExistsException) {
+      return ResponseEntity
+        .status(CONFLICT)
+        .body(
+          ErrorResponse(
+            status = CONFLICT,
+            userMessage = "Backlog Request already exists with these values: ${e.message}",
             developerMessage = e.message,
           ),
         ).also { log.error("Backlog Request data integrity violation error", e) }

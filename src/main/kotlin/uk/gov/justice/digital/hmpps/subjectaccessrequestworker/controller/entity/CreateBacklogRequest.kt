@@ -108,7 +108,7 @@ data class ServiceSummary(
   val dataHeld: Boolean,
 )
 
-class BacklogRequestException(
+open class BacklogRequestException(
   val backlogRequestId: UUID,
   msg: String,
   cause: Throwable?,
@@ -116,5 +116,13 @@ class BacklogRequestException(
 
   constructor(backlogRequestId: UUID, msg: String) : this(backlogRequestId, msg, null)
 }
+
+class BacklogRequestAlreadyExistsException(
+  request: BacklogRequest,
+) : BacklogRequestException(
+  request.id,
+  "nomisId:${request.nomisId}, ndeliusCaseReferenceId=${request.ndeliusCaseReferenceId}, dateFrom=${request.dateFrom}, dateTo=${request.dateTo}",
+  null,
+)
 
 data class BacklogRequestsDeletedEntity(val deleted: Int)

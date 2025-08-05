@@ -4,6 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.repository.findByIdOrNull
@@ -13,9 +15,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogReq
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.PENDING
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
+import java.time.format.DateTimeFormatter
 import java.util.UUID
+
 
 @DataJpaTest
 class BacklogRequestRepositoryTest @Autowired constructor(
@@ -535,6 +540,74 @@ class BacklogRequestRepositoryTest @Autowired constructor(
 
         assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
       }
+    }
+  }
+
+  @Nested
+  inner class existsByTestCases {
+
+    private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    @BeforeEach
+    fun setup() {
+      backlogRequestRepository.deleteAll()
+      backlogRequestRepository.save(
+        BacklogRequest(
+          sarCaseReferenceNumber = "sar_case_ref_1",
+          nomisId = "nomis_id_1",
+          dateFrom = LocalDate.of(2000, 1, 1),
+          dateTo = LocalDate.of(2025, 1, 1),
+          version = "1"
+        ),
+      )
+
+      backlogRequestRepository.save(
+        BacklogRequest(
+          sarCaseReferenceNumber = "sar_case_ref_1",
+          ndeliusCaseReferenceId = "ndelius_id_1",
+          dateFrom = LocalDate.of(2000, 1, 1),
+          dateTo = LocalDate.of(2025, 1, 1),
+          version = "1"
+        ),
+      )
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+      value = [
+        "sar_case_ref_1 | nomis_id_1 |              | 2000-01-01 | 2025-01-01 | 1 | true",
+        "sar_case_ref_2 | nomis_id_1 |              | 2000-01-01 | 2025-01-01 | 1 | false",
+        "sar_case_ref_1 | nomis_id_2 |              | 2000-01-01 | 2025-01-01 | 1 | false",
+        "sar_case_ref_1 | nomis_id_1 |              | 2000-01-02 | 2025-01-01 | 1 | false",
+        "sar_case_ref_1 | nomis_id_1 |              | 2000-01-01 | 2025-01-02 | 1 | false",
+        "sar_case_ref_1 | nomis_id_1 |              | 2000-01-01 | 2025-01-01 | 2 | false",
+        "sar_case_ref_1 |            | ndelius_id_1 | 2000-01-01 | 2025-01-01 | 1 | true",
+        "sar_case_ref_2 |            | ndelius_id_1 | 2000-01-01 | 2025-01-01 | 1 | false",
+        "sar_case_ref_1 |            | ndelius_id_2 | 2000-01-01 | 2025-01-01 | 1 | false",
+        "sar_case_ref_1 |            | ndelius_id_1 | 2000-01-02 | 2025-01-01 | 1 | false",
+        "sar_case_ref_1 |            | ndelius_id_1 | 2000-01-01 | 2025-01-02 | 1 | false",
+        "sar_case_ref_1 |            | ndelius_id_1 | 2000-01-01 | 2025-01-01 | 2 | false",
+      ],
+      delimiter = '|',
+    )
+    fun `should return true if request exists with the specified values`(
+      sarCaseReferenceNumber: String,
+      nomisId: String?,
+      ndeliusCaseReferenceId: String?,
+      dateFrom: String,
+      dateTo: String,
+      version: String,
+      expectedResult: Boolean,
+    ) {
+      val result = backlogRequestRepository.existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
+        sarCaseReferenceNumber = sarCaseReferenceNumber,
+        nomisId = nomisId,
+        ndeliusCaseReferenceId = ndeliusCaseReferenceId,
+        dateFrom = LocalDate.parse(dateFrom, dateFormat),
+        dateTo = LocalDate.parse(dateTo, dateFormat),
+        version = version
+      )
+      assertThat(result).isEqualTo(expectedResult)
     }
   }
 }
