@@ -149,4 +149,6 @@ backlog-request:
 
 logging:
   level:
-    com.zaxxer.hikari: ${HIKARI_LOGGING_LEVEL:INFO}
+    com.zaxxer.hikari: ${HIKARI_LOG_LEVEL:INFO}
+    org.springframework.web: ${SPRING_FRAMEWORK_WEB_LOG_LEVEL:DEBUG}
+    reactor.netty: ${REACTOR_NETTY_LOG_LEVEL:DEBUG}
