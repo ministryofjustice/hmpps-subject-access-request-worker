@@ -48,7 +48,7 @@ class BacklogRequestService(
   fun saveAll(requests: List<BacklogRequest>): List<BacklogRequest> = backlogRequestRepository.saveAllAndFlush(requests)
 
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {
-    backlogRequestRepository.saveAndFlush(request)
+    backlogRequestRepository.save(request)
   } catch (ex: DataIntegrityViolationException) {
     throw BacklogRequestException(request.id, "Could not create a new BacklogRequest: unique constraint violated", ex)
   }
