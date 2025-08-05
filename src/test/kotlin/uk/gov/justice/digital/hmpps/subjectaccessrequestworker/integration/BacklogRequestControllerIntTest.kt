@@ -466,7 +466,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     @ParameterizedTest
     @CsvSource(
       value = [
-        " sar1 | nomis1 | v1 | 2000-01-01 | 2025-01-01 | 400 | duplicate sarCaseReferenceId, nomisId, version, dateFrom and dateTo values",
+        " sar1 | nomis1 | v1 | 2000-01-01 | 2025-01-01 | 409 | duplicate sarCaseReferenceId, nomisId, version, dateFrom and dateTo values",
         " sar2 | nomis1 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique sarCaseReferenceId, duplicate nomisId, version, dateFrom and dateTo values",
         " sar1 | nomis2 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique nomisId, duplicate sarCaseReferenceId, version, dateFrom and dateTo values",
         " sar1 | nomis1 | v2 | 2000-01-01 | 2025-01-01 | 201 | unique Version, duplicate sarCaseReferenceId, nomisId, dateFrom and dateTo values",
@@ -514,7 +514,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     @ParameterizedTest
     @CsvSource(
       value = [
-        " sar1 | ndelius1 | v1 | 2000-01-01 | 2025-01-01 | 400 | duplicate sarCaseReferenceId, ndeliusId, version, dateFrom and dateTo values",
+        " sar1 | ndelius1 | v1 | 2000-01-01 | 2025-01-01 | 409 | duplicate sarCaseReferenceId, ndeliusId, version, dateFrom and dateTo values",
         " sar2 | ndelius1 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique sarCaseReferenceId, duplicate ndeliusId, version, dateFrom and dateTo values",
         " sar1 | ndelius2 | v1 | 2000-01-01 | 2025-01-01 | 201 | unique ndeliusId, duplicate sarCaseReferenceId, version, dateFrom and dateTo values",
         " sar1 | ndelius1 | v2 | 2000-01-01 | 2025-01-01 | 201 | unique Version, duplicate sarCaseReferenceId, ndeliusId, dateFrom and dateTo values",

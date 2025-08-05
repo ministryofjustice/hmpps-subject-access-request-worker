@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.UUID
@@ -89,4 +90,13 @@ interface BacklogRequestRepository : JpaRepository<BacklogRequest, UUID> {
       ")",
   )
   fun findDataHeldByIdOrNull(@Param("id") id: UUID): BacklogRequest?
+
+  fun existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
+    sarCaseReferenceNumber: String,
+    nomisId: String? = null,
+    ndeliusCaseReferenceId: String? = null,
+    dateFrom: LocalDate,
+    dateTo: LocalDate,
+    version: String,
+  ): Boolean
 }

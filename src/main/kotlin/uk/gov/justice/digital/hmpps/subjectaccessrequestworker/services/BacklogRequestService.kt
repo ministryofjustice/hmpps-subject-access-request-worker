@@ -33,6 +33,18 @@ class BacklogRequestService(
     private val LOG = LoggerFactory.getLogger(BacklogRequestService::class.java)
   }
 
+  fun backlogRequestAlreadyExist(
+    backlogRequest: BacklogRequest,
+  ): Boolean = backlogRequestRepository
+    .existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
+      sarCaseReferenceNumber = backlogRequest.sarCaseReferenceNumber,
+      nomisId = backlogRequest.nomisId,
+      ndeliusCaseReferenceId = backlogRequest.ndeliusCaseReferenceId,
+      dateFrom = backlogRequest.dateFrom!!,
+      dateTo = backlogRequest.dateTo!!,
+      version = backlogRequest.version,
+    )
+
   fun saveAll(requests: List<BacklogRequest>): List<BacklogRequest> = backlogRequestRepository.saveAllAndFlush(requests)
 
   fun newBacklogRequest(request: BacklogRequest): BacklogRequest = try {

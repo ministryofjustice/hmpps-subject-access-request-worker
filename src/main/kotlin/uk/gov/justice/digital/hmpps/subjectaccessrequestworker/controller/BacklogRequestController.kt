@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestAlreadyExistsException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestDetailsEntity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestVersions
@@ -334,12 +335,17 @@ class BacklogRequestController(
   ): ResponseEntity<BacklogRequestOverview> {
     validateRequest(createBacklogRequest)
 
-    val backlogRequest = BacklogRequest(createBacklogRequest)
-    return backlogRequestService.newBacklogRequest(backlogRequest).let {
-      ResponseEntity
-        .created(URI("/subject-access-request/backlog/${it.id}"))
-        .body(BacklogRequestOverview(it))
-    }
+    return BacklogRequest(createBacklogRequest)
+      .let { backlogRequest ->
+        backlogRequestService.backlogRequestAlreadyExist(backlogRequest)
+          .takeIf { it }
+          ?.let { throw BacklogRequestAlreadyExistsException(backlogRequest) }
+          ?: backlogRequestService.newBacklogRequest(backlogRequest).let {
+            ResponseEntity
+              .created(URI("/subject-access-request/backlog/${it.id}"))
+              .body(BacklogRequestOverview(it))
+          }
+      }
   }
 
   private fun BacklogRequestService.BacklogStatus.toBacklogStatusEntity(): BacklogStatusEntity = BacklogStatusEntity(
