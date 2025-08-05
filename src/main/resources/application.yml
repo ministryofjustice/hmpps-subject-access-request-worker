@@ -146,3 +146,7 @@ backlog-request:
     backoff-threshold-mins: 5
   api:
     enabled: false
+
+logging:
+  level:
+    com.zaxxer.hikari: ${HIKARI_LOGGING_LEVEL:INFO}
