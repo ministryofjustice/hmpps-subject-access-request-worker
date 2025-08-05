@@ -21,7 +21,6 @@ import java.time.LocalDateTime.now
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-
 @DataJpaTest
 class BacklogRequestRepositoryTest @Autowired constructor(
   val backlogRequestRepository: BacklogRequestRepository,
@@ -544,7 +543,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
   }
 
   @Nested
-  inner class existsByTestCases {
+  inner class ExistsByTestCases {
 
     private val dateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -557,7 +556,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           nomisId = "nomis_id_1",
           dateFrom = LocalDate.of(2000, 1, 1),
           dateTo = LocalDate.of(2025, 1, 1),
-          version = "1"
+          version = "1",
         ),
       )
 
@@ -567,7 +566,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           ndeliusCaseReferenceId = "ndelius_id_1",
           dateFrom = LocalDate.of(2000, 1, 1),
           dateTo = LocalDate.of(2025, 1, 1),
-          version = "1"
+          version = "1",
         ),
       )
     }
@@ -599,14 +598,15 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       version: String,
       expectedResult: Boolean,
     ) {
-      val result = backlogRequestRepository.existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
-        sarCaseReferenceNumber = sarCaseReferenceNumber,
-        nomisId = nomisId,
-        ndeliusCaseReferenceId = ndeliusCaseReferenceId,
-        dateFrom = LocalDate.parse(dateFrom, dateFormat),
-        dateTo = LocalDate.parse(dateTo, dateFormat),
-        version = version
-      )
+      val result =
+        backlogRequestRepository.existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
+          sarCaseReferenceNumber = sarCaseReferenceNumber,
+          nomisId = nomisId,
+          ndeliusCaseReferenceId = ndeliusCaseReferenceId,
+          dateFrom = LocalDate.parse(dateFrom, dateFormat),
+          dateTo = LocalDate.parse(dateTo, dateFormat),
+          version = version,
+        )
       assertThat(result).isEqualTo(expectedResult)
     }
   }

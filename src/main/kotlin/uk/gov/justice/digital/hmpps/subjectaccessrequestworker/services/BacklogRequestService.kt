@@ -35,8 +35,8 @@ class BacklogRequestService(
 
   fun backlogRequestAlreadyExist(
     backlogRequest: BacklogRequest,
-  ): Boolean =
-    backlogRequestRepository.existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
+  ): Boolean = backlogRequestRepository
+    .existsBySarCaseReferenceNumberAndNomisIdAndNdeliusCaseReferenceIdAndDateFromAndDateToAndVersion(
       sarCaseReferenceNumber = backlogRequest.sarCaseReferenceNumber,
       nomisId = backlogRequest.nomisId,
       ndeliusCaseReferenceId = backlogRequest.ndeliusCaseReferenceId,
