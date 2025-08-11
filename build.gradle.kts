@@ -34,7 +34,7 @@ dependencies {
   runtimeOnly("com.h2database:h2:2.3.232")
   runtimeOnly("org.postgresql:postgresql:42.7.7")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.1")
+  implementation("org.apache.commons:commons-csv:1.14.1")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.4.10")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
@@ -93,6 +93,7 @@ abstract class BacklogRequestImport : JavaExec() {
   private lateinit var token: String
   private lateinit var csv: String
   private lateinit var version: String
+  private var env: String? = null
 
   @Option(
     option = "token",
@@ -118,6 +119,14 @@ abstract class BacklogRequestImport : JavaExec() {
     this.version = version
   }
 
+  @Option(
+    option = "env",
+    description = "target env for the script",
+  )
+  fun setEnv(env: String) {
+    this.env = env
+  }
+
   @Input
   fun getToken(): String = token
 
@@ -127,8 +136,12 @@ abstract class BacklogRequestImport : JavaExec() {
   @Input
   fun getVersion(): String = version
 
+  @Optional
+  @Input
+  fun getEnv(): String? = env
+
   @TaskAction
   fun import() {
-    args(this.version, this.csv, this.token)
+    args(this.version, this.csv, this.token, this.env ?: "dev")
   }
 }

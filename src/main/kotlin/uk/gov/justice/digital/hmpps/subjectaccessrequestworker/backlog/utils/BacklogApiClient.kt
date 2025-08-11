@@ -1,14 +1,25 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.backlog.utils
 
 import org.slf4j.LoggerFactory
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.io.BufferedWriter
+import java.time.Duration
 
-internal class BacklogApiClient(apiUrl: String) {
-  private val webclient: WebClient = WebClient.create(apiUrl)
+class BacklogApiClient(apiUrl: String) {
+
+  private var httpClient: HttpClient = HttpClient.create()
+    .responseTimeout(Duration.ofSeconds(30))
+
+  private var webclient: WebClient = WebClient.builder()
+    .clientConnector(ReactorClientHttpConnector(httpClient))
+    .baseUrl(apiUrl)
+    .build()
 
   companion object {
     private val logger = LoggerFactory.getLogger(BacklogApiClient::class.java)
@@ -42,37 +53,48 @@ internal class BacklogApiClient(apiUrl: String) {
     request: CreateBacklogRequest,
     errorWriter: BufferedWriter,
   ) = { response: ClientResponse ->
-    logger.info("response from API: ${response.statusCode().value()}")
     when {
       response.statusCode().is2xxSuccessful -> {
         response.toEntity(BacklogRequestOverview::class.java)
       }
 
       response.statusCode().value() == 400 -> {
-        response.bodyToMono(String::class.java)
-          .doOnNext { body ->
+        response.bodyToMono(ErrorResponse::class.java)
+          .doOnNext { error ->
             logger.error("create backlog request unsuccessful rowIndex:[{}] BAD REQUEST", rowIndex)
-            logger.error("body: {}\n", body)
-            errorWriter.logFailedRequest(rowIndex, response.statusCode().value(), request.sarCaseReferenceNumber, body)
+            logger.error("body: {}\n", error.summary())
+            errorWriter.logFailedRequest(
+              rowIndex,
+              response.statusCode().value(),
+              request.sarCaseReferenceNumber,
+              error.summary(),
+            )
+            response.releaseBody()
           }
-          .then(Mono.empty())
+          .then(response.releaseBody().then(Mono.empty()))
       }
 
       response.statusCode().value() == 401 -> {
+        logger.error("create backlog request unsuccessful rowIndex:[{}] UNAUTHORIZED", rowIndex)
         errorWriter.logFailedRequest(rowIndex, response.statusCode().value(), request.sarCaseReferenceNumber, null)
-        Mono.empty()
+        response.releaseBody().then(Mono.error(RuntimeException("API request failed with unauthorized")))
       }
 
       else -> {
-        response.bodyToMono(String::class.java)
-          .flatMap { body ->
-            errorWriter.logFailedRequest(rowIndex, response.statusCode().value(), request.sarCaseReferenceNumber, body)
+        response.bodyToMono(ErrorResponse::class.java)
+          .flatMap { error ->
+            errorWriter.logFailedRequest(
+              rowIndex,
+              response.statusCode().value(),
+              request.sarCaseReferenceNumber,
+              error.summary(),
+            )
 
             Mono.error(
               RuntimeException(
                 "create backlog request error: rowIndex:[$rowIndex], status: ${
                   response.statusCode().value()
-                } body: $body",
+                } body: ${error.summary()}",
               ),
             )
           }
@@ -90,4 +112,6 @@ internal class BacklogApiClient(apiUrl: String) {
     this.write("row: $rowIndex, sar_case_number: $sarCaseRef, status: $status, responseBody: $error")
     this.flush()
   }
+
+  private fun ErrorResponse.summary(): String = "$status: $userMessage"
 }
