@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.backlog.utils
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
+import java.io.File
 import java.io.FileReader
 
 const val EXPECTED_NUMBER_OF_COLUMNS = 15
@@ -11,22 +12,28 @@ const val NOMIS_ID_INDEX = 2
 const val DATE_FROM_INDEX = 5
 const val DATE_TO_INDEX = 6
 const val DELIUS_CRN_INDEX = 14
-const val LIMIT = 2000
+const val LIMIT = 30000
 
 class CsvBacklogRequestSupplier(val version: String, val file: String) : BacklogRequestSupplier {
+  private val reader: FileReader
+  private val parser: CSVParser
 
-  private val reader = FileReader(file)
-  private val parser = CSVParser
-    .builder()
-    .setFormat(CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(false).get())
-    .setReader(reader)
-    .get()
+  init {
+    if (!File(file).exists()) throw RuntimeException("File $file does not exist")
+
+    reader = FileReader(file)
+    parser = CSVParser
+      .builder()
+      .setFormat(CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(false).get())
+      .setReader(reader)
+      .get()
+  }
 
   override fun get(): Sequence<CreateBacklogRequest> = parser
     .validateCsvHeader()
     .iterator()
     .asSequence()
-    .map { line ->
+    .mapIndexed { rowIndex, line ->
       val nomisId = line[NOMIS_ID_INDEX].takeIf { it.isNotBlank() && it.length > 3 }
       val ndeliusId = line[DELIUS_CRN_INDEX].takeIf { it.isNotBlank() && nomisId.isNullOrEmpty() }
 
@@ -38,9 +45,9 @@ class CsvBacklogRequestSupplier(val version: String, val file: String) : Backlog
         dateFrom = line[DATE_FROM_INDEX],
         dateTo = line[DATE_TO_INDEX],
         ndeliusCaseReferenceId = ndeliusId,
+        rowIndex = rowIndex+2,
       )
-    }.drop(1)
-    .take(LIMIT)
+    }.take(LIMIT)
 
   private fun CSVParser.validateCsvHeader(): CSVParser {
     with(this.headerNames) {

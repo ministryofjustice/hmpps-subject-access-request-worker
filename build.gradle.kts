@@ -57,7 +57,7 @@ tasks {
     description = "Import SAR backlog requests from a CSV input file"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass = "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.backlog.utils.BacklogRequestImporterKt"
-    environment = mapOf("IMPORT_ERRORS_CSV" to project.rootDir.resolve("src/main/resources/backlog-import-errors.csv"))
+    environment = mapOf("IMPORT_REPORT_CSV" to project.rootDir.resolve("src/main/resources/backlog-import-results.csv"))
   }
   register<TemplateGenerator>("generateHtml") {
     group = "templates"
