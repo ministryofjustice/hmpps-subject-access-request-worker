@@ -46,7 +46,7 @@ fun insertRequests(
 
   ResultsWriter(resultsCsv).use { writer ->
     requestSupplier.get().forEachIndexed { i, request ->
-      val rowIndex = i+2
+      val rowIndex = i + 2
 
       backlogApiClient.submitBacklogRequest(
         rowIndex = rowIndex,

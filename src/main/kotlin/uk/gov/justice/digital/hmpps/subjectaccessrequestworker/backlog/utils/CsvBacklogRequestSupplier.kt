@@ -45,7 +45,7 @@ class CsvBacklogRequestSupplier(val version: String, val file: String) : Backlog
         dateFrom = line[DATE_FROM_INDEX],
         dateTo = line[DATE_TO_INDEX],
         ndeliusCaseReferenceId = ndeliusId,
-        rowIndex = rowIndex+2,
+        rowIndex = rowIndex + 2,
       )
     }.take(LIMIT)
 
