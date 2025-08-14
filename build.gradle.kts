@@ -48,6 +48,10 @@ kotlin {
   jvmToolchain(21)
 }
 
+springBoot {
+  mainClass.set("uk.gov.justice.digital.hmpps.subjectaccessrequestworker.SubjectAccessRequestWorkerKt")
+}
+
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
