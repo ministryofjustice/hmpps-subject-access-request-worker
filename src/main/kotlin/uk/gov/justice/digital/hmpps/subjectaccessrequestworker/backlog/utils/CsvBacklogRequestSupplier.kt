@@ -47,7 +47,7 @@ class CsvBacklogRequestSupplier(val version: String, val file: String) : Backlog
         ndeliusCaseReferenceId = ndeliusId,
         rowIndex = rowIndex + 2,
       )
-    }.take(LIMIT)
+    }
 
   private fun CSVParser.validateCsvHeader(): CSVParser {
     with(this.headerNames) {

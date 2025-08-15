@@ -3,11 +3,19 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.backlog.utils
 import org.slf4j.LoggerFactory
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientRequestException
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
+import reactor.netty.http.client.PrematureCloseException
+import reactor.util.retry.Retry
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class BacklogApiClient(apiUrl: String) {
 
@@ -18,6 +26,9 @@ class BacklogApiClient(apiUrl: String) {
     .clientConnector(ReactorClientHttpConnector(httpClient))
     .baseUrl(apiUrl)
     .build()
+
+  private val errorLogFile: File = File(System.getenv("ERROR_LOG")).also { if (!it.exists()) it.createNewFile() }
+  private val errorLogWriter: ErrorWriter = ErrorWriter(errorLogFile)
 
   companion object {
     private val logger = LoggerFactory.getLogger(BacklogApiClient::class.java)
@@ -44,6 +55,9 @@ class BacklogApiClient(apiUrl: String) {
       .header("Authorization", "bearer $authToken")
       .bodyValue(request)
       .retrieve()
+      .onStatus({ it.value() == 401 }) { response ->
+        Mono.error(RuntimeException("Token invalid ${response.statusCode()}"))
+      }
       .onStatus({ it.isError }) { response ->
         // Consume and release the body even on error
         response.bodyToMono(ErrorResponse::class.java)
@@ -59,7 +73,22 @@ class BacklogApiClient(apiUrl: String) {
           .then(Mono.empty())
       }
       .bodyToMono(BacklogRequestOverview::class.java)
-      .doOnNext { _ ->
+      .retryWhen(
+        Retry.backoff(3, Duration.ofSeconds(3))
+          .filter { throwable ->
+            logger.error(throwable.message)
+            when (throwable) {
+              is WebClientRequestException -> throwable.cause is PrematureCloseException
+              is PrematureCloseException -> true
+              else -> false
+            }
+          }
+          .doBeforeRetry { signal ->
+            logger.warn("encountered PrematureCloseException backing off before attempting retry")
+            errorLogWriter.log(request, signal.failure())
+          }
+          .onRetryExhaustedThrow { _, signal -> signal.failure() },
+      ).doOnNext { _ ->
         logger.info("create backlog request success row:[{}]", rowIndex)
         resultsWriter.writeSuccess(request)
       }
@@ -68,4 +97,15 @@ class BacklogApiClient(apiUrl: String) {
   }
 
   private fun ErrorResponse.summary(): String = "$status: $userMessage"
+
+  class ErrorWriter(file: File) : BufferedWriter(FileWriter(file)) {
+
+    private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+
+    fun log(request: CreateBacklogRequest, throwable: Throwable) {
+      this.write("${LocalDateTime.now().format(formatter)}: [${request.rowIndex}], ${request.sarCaseReferenceNumber} ${throwable::class.simpleName}: ${throwable.message}")
+      this.newLine()
+      this.flush()
+    }
+  }
 }

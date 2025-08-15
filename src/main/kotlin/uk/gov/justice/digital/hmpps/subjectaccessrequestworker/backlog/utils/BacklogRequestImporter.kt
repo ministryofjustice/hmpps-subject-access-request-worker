@@ -42,7 +42,7 @@ fun insertRequests(
 ) {
   val start = LocalDateTime.now()
   val resultsCsv = File(System.getenv("IMPORT_REPORT_CSV"))
-  if (!resultsCsv.exists()) resultsCsv.createNewFile()
+    .also { if (!it.exists()) it.createNewFile() }
 
   ResultsWriter(resultsCsv).use { writer ->
     requestSupplier.get().forEachIndexed { i, request ->
