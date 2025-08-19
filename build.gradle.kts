@@ -11,11 +11,14 @@ dependencyCheck {
   suppressionFiles.add("hmpps-sar-worker-suppressions.xml")
 }
 
+// okhttp only used by the AWS SDK kotlin library so okay to pin
+ext["okhttp.version"] = "5.0.0-alpha.14"
+ext["kotlin-coroutines.version"] = "1.10.2"
+
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.json:json:20250517")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
   implementation("com.itextpdf:itext7-core:9.2.0")
   implementation("com.itextpdf:html2pdf:6.2.0")
