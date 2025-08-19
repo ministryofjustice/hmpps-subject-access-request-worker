@@ -1,6 +1,6 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.3"
-  kotlin("plugin.spring") version "2.2.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.6"
+  kotlin("plugin.spring") version "2.2.10"
 }
 
 configurations {
@@ -11,24 +11,27 @@ dependencyCheck {
   suppressionFiles.add("hmpps-sar-worker-suppressions.xml")
 }
 
+// okhttp only used by the AWS SDK kotlin library so okay to pin
+ext["okhttp.version"] = "5.0.0-alpha.14"
+ext["kotlin-coroutines.version"] = "1.10.2"
+
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.json:json:20250517")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
   implementation("com.itextpdf:itext7-core:9.2.0")
   implementation("com.itextpdf:html2pdf:6.2.0")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
-  implementation("com.github.jknack:handlebars:4.4.0")
+  implementation("com.github.jknack:handlebars:4.5.0")
   implementation("org.apache.commons:commons-lang3:3.18.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.19.2")
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.17.0")
-  implementation("io.sentry:sentry-logback:8.17.0")
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.10")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.19.1")
+  implementation("io.sentry:sentry-logback:8.19.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.5.0")
   implementation("commons-io:commons-io:2.20.0")
-  implementation("aws.sdk.kotlin:s3:1.4.125")
+  implementation("aws.sdk.kotlin:s3:1.5.19")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")
@@ -36,10 +39,10 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.4.10")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.5.0")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("com.opencsv:opencsv:5.11.2")
+  testImplementation("com.opencsv:opencsv:5.12.0")
   testImplementation("org.testcontainers:testcontainers:1.21.3")
   testImplementation("org.testcontainers:junit-jupiter:1.21.3")
 }
