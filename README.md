@@ -83,3 +83,40 @@ and for prod [here](https://ministryofjustice.sentry.io/settings/projects/prod-w
 The application sends telemetry information to Azure Application Insights which allows log queries and end-to-end request tracing across services.
 
 https://portal.azure.com/#view/AppInsightsExtension
+
+### sar-backlog-api-requests.http
+The `sar-backlog-api-requests.http` script provides a selection of HTTP requests for the SAR Backlog API - useful for 
+interrogating the service locally or in an environment. The script uses the Intellij `http` plugin.
+
+#### Set up
+The script requires environment specific configuration. 
+
+Create the following **private environment** file 
+`sar-backlog-api-requests.http` in the root of the worker project with the following JSON changing the placeholders 
+with the appropriate values for your target environment:
+```json
+{
+  "dev": {
+    "auth_host": "<URL_OF_AUTH_SERVICE>",
+    "basic_auth": "<YOUR_AUTH_CLIENT_BASIC_CREDENTIALS>",
+    "sar_worker_endpoint": "<THE_SAR_WORKER_URL>"
+  },
+  ...
+}
+```
+
+For multiple environments add block for each environment e.g
+```json
+{
+  "dev": {
+    ...
+  },
+  "preprod": {
+    ...
+  }
+  ...
+}
+```
+To execute a request select the appropriate Environment from the `Run with <ENV>` drop down at the top of the file. 
+
+:warning: **Make sure to add the environment config file to your `.gitignore` file to ensure it is not accidentally commited.**
