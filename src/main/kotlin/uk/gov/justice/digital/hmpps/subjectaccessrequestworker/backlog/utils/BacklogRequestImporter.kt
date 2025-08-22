@@ -102,7 +102,7 @@ class ResultsWriter(file: File) : BufferedWriter(FileWriter(file)) {
       req.nomisId ?: "",
       req.dateFrom,
       req.dateTo,
-      req.ndeliusCaseReferenceId?: "",
+      req.ndeliusCaseReferenceId ?: "",
       req.version,
       "201",
       "",
