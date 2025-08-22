@@ -1,0 +1,69 @@
+
+### Get Auth Token and assign to local
+POST {{auth_host}}/auth/oauth/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic {{basic_auth}}
+
+grant_type=client_credentials
+
+> {% client.global.set("token", response.body.access_token) %}
+
+
+
+### Get SAR Backlog Versions list
+GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+### Get SAR Backlog version status
+GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+### Get SAR Backlog version requests
+GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1/requests
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+### Get SAR Backlog Version request by ID
+GET {{sar_worker_endpoint}}//subject-access-request/backlog/{ID_HERE}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+### DELETE all requests in a SAR Backlog version
+DELETE {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+### POST a new SAR Backlog request
+POST {{sar_worker_endpoint}}//subject-access-request/backlog
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "subjectName": "Homer Simpson",
+  "version": "1",
+  "sarCaseReferenceNumber": "SAR101",
+  "nomisId": "A1234AA",
+  "ndeliusCaseReferenceId": null,
+  "dateFrom": "2000-01-01",
+  "dateTo": "2025-01-01"
+}
+
+
+
+### Get SAR Backlog csv results report for the specified version
+GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1/report
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

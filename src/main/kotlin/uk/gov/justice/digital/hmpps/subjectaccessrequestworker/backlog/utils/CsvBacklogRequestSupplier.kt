@@ -5,14 +5,13 @@ import org.apache.commons.csv.CSVParser
 import java.io.File
 import java.io.FileReader
 
-const val EXPECTED_NUMBER_OF_COLUMNS = 15
+const val EXPECTED_NUMBER_OF_COLUMNS = 6
 const val SAR_CASE_REF_INDEX = 0
 const val SUBJECT_NAME_INDEX = 1
 const val NOMIS_ID_INDEX = 2
-const val DATE_FROM_INDEX = 5
-const val DATE_TO_INDEX = 6
-const val DELIUS_CRN_INDEX = 14
-const val LIMIT = 30000
+const val DATE_FROM_INDEX = 3
+const val DATE_TO_INDEX = 4
+const val DELIUS_CRN_INDEX = 5
 
 class CsvBacklogRequestSupplier(val version: String, val file: String) : BacklogRequestSupplier {
   private val reader: FileReader
@@ -38,7 +37,7 @@ class CsvBacklogRequestSupplier(val version: String, val file: String) : Backlog
       val ndeliusId = line[DELIUS_CRN_INDEX].takeIf { it.isNotBlank() && nomisId.isNullOrEmpty() }
 
       CreateBacklogRequest(
-        version = "1",
+        version = version,
         sarCaseReferenceNumber = line[SAR_CASE_REF_INDEX],
         subjectName = line[SUBJECT_NAME_INDEX],
         nomisId = nomisId,
