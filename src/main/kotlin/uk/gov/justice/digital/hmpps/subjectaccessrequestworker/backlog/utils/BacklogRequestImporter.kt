@@ -82,12 +82,13 @@ class ResultsWriter(file: File) : BufferedWriter(FileWriter(file)) {
   init {
     writeLine(
       arrayOf(
-        "sar_case_number,version",
+        "sar_case_number",
         "sar_full_name",
         "nomis_id",
-        "delius_crn",
         "date_from",
         "date_to",
+        "delius_crn",
+        "version",
         "response_status",
         "error_details",
       ),
@@ -97,26 +98,26 @@ class ResultsWriter(file: File) : BufferedWriter(FileWriter(file)) {
   fun writeSuccess(req: CreateBacklogRequest) = writeLine(
     arrayOf(
       req.sarCaseReferenceNumber,
-      req.version,
       req.subjectName,
-      req.nomisId,
-      req.ndeliusCaseReferenceId,
+      req.nomisId ?: "",
       req.dateFrom,
       req.dateTo,
+      req.ndeliusCaseReferenceId?: "",
+      req.version,
       "201",
-      null,
+      "",
     ),
   )
 
   fun writeError(req: CreateBacklogRequest, status: Int, response: ErrorResponse?) = writeLine(
     arrayOf(
       req.sarCaseReferenceNumber,
-      req.version,
       req.subjectName,
-      req.nomisId,
-      req.ndeliusCaseReferenceId,
+      req.nomisId ?: "",
       req.dateFrom,
       req.dateTo,
+      req.ndeliusCaseReferenceId ?: "",
+      req.version,
       status.toString(),
       "${response?.userMessage}",
     ),
@@ -125,5 +126,6 @@ class ResultsWriter(file: File) : BufferedWriter(FileWriter(file)) {
   private fun writeLine(values: Array<String?>) {
     write(values.joinToString(","))
     newLine()
+    flush()
   }
 }

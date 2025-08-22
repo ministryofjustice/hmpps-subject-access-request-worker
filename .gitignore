@@ -87,3 +87,5 @@ sar_endpoint_config
 .DS_Store
 
 /helm_deploy/hmpps-subject-access-request-worker/charts/
+
+http-client.private.env.json
