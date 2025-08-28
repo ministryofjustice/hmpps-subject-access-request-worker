@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.7"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.0.0"
   kotlin("plugin.spring") version "2.2.10"
 }
 
@@ -31,7 +31,7 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.20.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.5.0")
   implementation("commons-io:commons-io:2.20.0")
-  implementation("aws.sdk.kotlin:s3:1.5.25")
+  implementation("aws.sdk.kotlin:s3:1.5.26")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.11")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.3.232")
