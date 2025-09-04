@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.Integ
 
 class HealthCheckTest : IntegrationTestBase() {
 
+  @Test
   fun `Health page reports ok`() {
     stubPingWithResponse(200)
 
