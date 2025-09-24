@@ -32,13 +32,10 @@ class OAuth2AuthorizedCustomConfiguration {
     oAuth2AuthorizedClientService: OAuth2AuthorizedClientService,
     clientRegistrationRepository: ClientRegistrationRepository,
     oAuth2AuthorizedClientProvider: OAuth2AuthorizedClientProvider,
-  ): OAuth2AuthorizedClientManager {
-    return AuthorizedClientServiceOAuth2AuthorizedClientManager(
-      clientRegistrationRepository,
-      oAuth2AuthorizedClientService,
-    ).kotlinApply {
-      setAuthorizedClientProvider(oAuth2AuthorizedClientProvider)
-    }
+  ): OAuth2AuthorizedClientManager = AuthorizedClientServiceOAuth2AuthorizedClientManager(
+    clientRegistrationRepository,
+    oAuth2AuthorizedClientService,
+  ).kotlinApply {
+    setAuthorizedClientProvider(oAuth2AuthorizedClientProvider)
   }
-
 }
