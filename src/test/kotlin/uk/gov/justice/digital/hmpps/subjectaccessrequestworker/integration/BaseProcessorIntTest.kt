@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
-import org.apache.commons.lang3.StringUtils
 import org.assertj.core.api.Assertions.assertThat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
@@ -12,6 +11,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 class BaseProcessorIntTest : IntegrationTestBase() {
+
+  protected companion object {
+    val replaceWhitespaceRegex = Regex("\\s+")
+  }
 
   protected fun assertRequestClaimedAtLeastOnce(subjectAccessRequest: SubjectAccessRequest) {
     val target = getSubjectAccessRequest(subjectAccessRequest.id)
@@ -29,21 +32,30 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
 
-    val replaceWhitespaceRegex = Regex("\\s+")
+    val actualText = StringBuilder()
+    val expectedText = StringBuilder()
+
     for (i in 1..actual.numberOfPages) {
-      val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy()).replace(replaceWhitespaceRegex, " ")
-      val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy()).replace(replaceWhitespaceRegex, " ")
-
-      fun detailedErrorMessage(pageIndex: Int, actual: String, expected: String) = "actual page: $pageIndex did not " +
-        "match expected:\nActual:\n$actual\nExpected:\n$expected$\nDifference:\n${StringUtils.difference(actual, expected)}"
-
-      assertThat(actualPageN)
-        .withFailMessage(detailedErrorMessage(i, actualPageN, expectedPageN))
-        .isEqualToIgnoringCase(expectedPageN)
+      actualText.append(actual.getPageTextNoFormatting(i))
+      expectedText.append(actual.getPageTextNoFormatting(i))
     }
+
+    assertThat(actualText.toString()).isEqualTo(expectedText.toString())
   }
 
-  protected fun assertAttachmentPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int, attachmentNumber: Int) {
+  private fun PdfDocument.getPageTextNoFormatting(
+    pageNumber: Int,
+  ): String = PdfTextExtractor.getTextFromPage(
+    this.getPage(pageNumber),
+    SimpleTextExtractionStrategy(),
+  ).replace(replaceWhitespaceRegex, " ")
+
+  protected fun assertAttachmentPageMatchesExpected(
+    actualPdfDoc: PdfDocument,
+    expectedPdfDoc: PdfDocument,
+    pageNumber: Int,
+    attachmentNumber: Int,
+  ) {
     val expected = actualPdfDoc.getPage(pageNumber)
     val actual = expectedPdfDoc.getPage(pageNumber)
     val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
