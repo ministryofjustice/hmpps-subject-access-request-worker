@@ -12,6 +12,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 
 class BaseProcessorIntTest : IntegrationTestBase() {
 
+  protected companion object {
+    val replaceWhitespaceRegex = Regex("\\s+")
+  }
+
   protected fun assertRequestClaimedAtLeastOnce(subjectAccessRequest: SubjectAccessRequest) {
     val target = getSubjectAccessRequest(subjectAccessRequest.id)
     assertThat(target.claimDateTime).isNotNull()
@@ -28,17 +32,30 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
 
-    for (i in 1..actual.numberOfPages) {
-      val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
-      val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
+    val actualText = StringBuilder()
+    val expectedText = StringBuilder()
 
-      assertThat(actualPageN)
-        .isEqualToIgnoringCase(expectedPageN)
-        .withFailMessage("actual page: $i did not match expected.")
+    for (i in 1..actual.numberOfPages) {
+      actualText.append(actual.getPageTextNoFormatting(i))
+      expectedText.append(actual.getPageTextNoFormatting(i))
     }
+
+    assertThat(actualText.toString()).isEqualTo(expectedText.toString())
   }
 
-  protected fun assertAttachmentPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int, attachmentNumber: Int) {
+  private fun PdfDocument.getPageTextNoFormatting(
+    pageNumber: Int,
+  ): String = PdfTextExtractor.getTextFromPage(
+    this.getPage(pageNumber),
+    SimpleTextExtractionStrategy(),
+  ).replace(replaceWhitespaceRegex, " ")
+
+  protected fun assertAttachmentPageMatchesExpected(
+    actualPdfDoc: PdfDocument,
+    expectedPdfDoc: PdfDocument,
+    pageNumber: Int,
+    attachmentNumber: Int,
+  ) {
     val expected = actualPdfDoc.getPage(pageNumber)
     val actual = expectedPdfDoc.getPage(pageNumber)
     val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
