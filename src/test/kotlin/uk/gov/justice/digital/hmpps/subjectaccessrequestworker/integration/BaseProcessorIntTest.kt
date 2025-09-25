@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
+import org.apache.commons.lang3.StringUtils
 import org.assertj.core.api.Assertions.assertThat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
@@ -32,9 +33,12 @@ class BaseProcessorIntTest : IntegrationTestBase() {
       val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
       val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
 
+      fun detailedErrorMessage(pageIndex: Int, actual: String, expected: String) = "actual page: $pageIndex did not " +
+        "match expected:\nActual:\n$actual\nExpected:\n$expected$\nDifference:\n${StringUtils.difference(actual, expected)}"
+
       assertThat(actualPageN)
+        .withFailMessage(detailedErrorMessage(i, actualPageN, expectedPageN))
         .isEqualToIgnoringCase(expectedPageN)
-        .withFailMessage("actual page: $i did not match expected.")
     }
   }
 
