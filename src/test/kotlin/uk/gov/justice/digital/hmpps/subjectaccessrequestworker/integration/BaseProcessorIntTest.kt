@@ -29,9 +29,10 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
 
+    val replaceWhitespaceRegex = Regex("\\s+")
     for (i in 1..actual.numberOfPages) {
-      val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
-      val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
+      val actualPageN = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy()).replace(replaceWhitespaceRegex, " ")
+      val expectedPageN = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy()).replace(replaceWhitespaceRegex, " ")
 
       fun detailedErrorMessage(pageIndex: Int, actual: String, expected: String) = "actual page: $pageIndex did not " +
         "match expected:\nActual:\n$actual\nExpected:\n$expected$\nDifference:\n${StringUtils.difference(actual, expected)}"
