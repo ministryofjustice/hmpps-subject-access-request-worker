@@ -178,7 +178,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
     val expected = getPreGeneratedPdfDocument("$serviceName-attachments-reference.pdf")
     val actual = getUploadedPdfDocument()
-    // assertUploadedDocumentMatchesExpectedPdf(actual, expected)
+    assertUploadedDocumentMatchesExpectedPdf(actual, expected)
     assertAttachmentPageMatchesExpected(actual, expected, 23, 1)
     assertPageMatchesExpected(actual, expected, 24)
     assertPageMatchesExpected(actual, expected, 25)
