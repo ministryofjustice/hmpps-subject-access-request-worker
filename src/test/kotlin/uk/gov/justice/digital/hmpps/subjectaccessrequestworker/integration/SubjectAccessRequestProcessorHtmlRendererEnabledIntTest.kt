@@ -44,7 +44,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     @JvmStatic
     @BeforeAll
     fun setupContainers() {
-      gotenberg = GenericContainer("gotenberg/gotenberg:8").withExposedPorts(3000)
+      gotenberg = GenericContainer("gotenberg/gotenberg:8.23.1").withExposedPorts(3000)
       gotenberg.start()
       System.setProperty("gotenberg-api.url", "http://${gotenberg.host}:${gotenberg.getMappedPort(3000)}")
     }
