@@ -11,42 +11,42 @@ grant_type=client_credentials
 
 
 ### Get SAR Backlog Versions list
-GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions
+GET {{sar_worker_endpoint}}/subject-access-request/backlog/versions
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 
 ### Get SAR Backlog version status
-GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1
+GET {{sar_worker_endpoint}}/subject-access-request/backlog/versions/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 
 ### Get SAR Backlog version requests
-GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1/requests
+GET {{sar_worker_endpoint}}/subject-access-request/backlog/versions/1/requests
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 
 ### Get SAR Backlog Version request by ID
-GET {{sar_worker_endpoint}}//subject-access-request/backlog/{ID_HERE}
+GET {{sar_worker_endpoint}}/subject-access-request/backlog/{ID_HERE}
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 
 ### DELETE all requests in a SAR Backlog version
-DELETE {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1
+DELETE {{sar_worker_endpoint}}/subject-access-request/backlog/versions/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 
 ### POST a new SAR Backlog request
-POST {{sar_worker_endpoint}}//subject-access-request/backlog
+POST {{sar_worker_endpoint}}/subject-access-request/backlog
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -63,7 +63,7 @@ Authorization: Bearer {{token}}
 
 
 ### Get SAR Backlog csv results report for the specified version
-GET {{sar_worker_endpoint}}//subject-access-request/backlog/versions/1/report
+GET {{sar_worker_endpoint}}/subject-access-request/backlog/versions/1/report
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

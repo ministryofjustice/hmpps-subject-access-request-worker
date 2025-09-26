@@ -186,8 +186,10 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertAttachmentPageMatchesExpected(actual, expected, 27, 2)
     assertPageMatchesExpected(actual, expected, 28)
     assertPageMatchesExpected(actual, expected, 29)
-    assertPageMatchesExpected(actual, expected, 30)
+
     assertPageMatchesExpected(actual, expected, 31)
+    assertPageMatchesExpected(actual, expected, 30)
+
     assertPageMatchesExpected(actual, expected, 32)
     assertAttachmentPageMatchesExpected(actual, expected, 33, 3)
     assertAttachmentPageMatchesExpected(actual, expected, 34, 4)
