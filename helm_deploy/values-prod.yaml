@@ -14,6 +14,15 @@ generic-service:
     LOCATIONS_API_URL: "https://locations-inside-prison-api.hmpps.service.justice.gov.uk"
     NOMIS_MAPPINGS_API_URL: "https://nomis-sync-prisoner-mapping.hmpps.service.justice.gov.uk"
     SENTRY_ENV: prod
+    SAR_HTML_RENDERER_API_URL: "https://subject-access-request-html-renderer.hmpps.service.justice.gov.uk"
+    HTML_RENDERER_ENABLED: true
+    S3_PROVIDER: "aws"
+    BACKLOG_REQUEST_API_ENABLED: false
+    BACKLOG_REQUEST_PROCESSOR_ENABLED: false
+    BACKLOG_REQUEST_PROCESSOR_INTERVAL: 10
+    BACKLOG_REQUEST_PROCESSOR_INITIAL_DELAY: 5
+    BACKLOG_REQUEST_PROCESSOR_POOL_SIZE: 5
+    TASK_SCHEDULING_POOL_SIZE: 1
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
