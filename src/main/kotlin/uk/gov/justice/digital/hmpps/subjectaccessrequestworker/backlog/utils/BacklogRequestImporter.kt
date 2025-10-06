@@ -33,7 +33,7 @@ fun getTargetApiUrl(args: Array<String>): String = when {
   args[3] == "dev" -> "https://subject-access-request-worker-dev.hmpps.service.justice.gov.uk"
   args[3] == "preprod" -> "https://subject-access-request-worker-preprod.hmpps.service.justice.gov.uk"
   args[3] == "prod" -> "https://subject-access-request-worker.hmpps.service.justice.gov.uk"
-  else -> throw RuntimeException("unknown env arg (accepted values: dev, preprod)")
+  else -> throw RuntimeException("unknown env arg (accepted values: dev, preprod, prod)")
 }.also { println("targetApiUrl: $it") }
 
 fun insertRequests(
