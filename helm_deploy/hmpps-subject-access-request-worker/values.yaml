@@ -28,6 +28,7 @@ generic-service:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     TASK_SCHEDULING_POOL_SIZE: 1
     GOTENBERG_API_URL: "http://hmpps-subject-access-request-worker-gotenberg"
+    BACKLOG_REQUEST_PROCESSOR_BACKOFF_THRESHOLD_MINS: 10
 
   namespace_secrets:
     hmpps-subject-access-request-worker:
