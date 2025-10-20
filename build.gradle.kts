@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.3"
   kotlin("plugin.spring") version "2.2.20"
 }
 
@@ -25,16 +25,16 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
   implementation("com.github.jknack:handlebars:4.5.0")
-  implementation("org.apache.commons:commons-lang3:3.18.0")
+  implementation("org.apache.commons:commons-lang3:3.19.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.0")
-  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.22.0")
-  implementation("io.sentry:sentry-logback:8.22.0")
+  implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.23.0")
+  implementation("io.sentry:sentry-logback:8.23.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.7.0")
   implementation("commons-io:commons-io:2.20.0")
-  implementation("aws.sdk.kotlin:s3:1.5.45")
+  implementation("aws.sdk.kotlin:s3:1.5.64")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
   runtimeOnly("org.flywaydb:flyway-core")
-  runtimeOnly("com.h2database:h2:2.3.232")
+  runtimeOnly("com.h2database:h2:2.4.240")
   runtimeOnly("org.postgresql:postgresql:42.7.8")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
@@ -43,7 +43,7 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.opencsv:opencsv:5.12.0")
-  testImplementation("org.testcontainers:testcontainers:1.21.3")
+  testImplementation("org.testcontainers:testcontainers:2.0.1")
   testImplementation("org.testcontainers:junit-jupiter:1.21.3")
 }
 
