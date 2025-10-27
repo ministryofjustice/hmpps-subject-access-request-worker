@@ -521,7 +521,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
       }
 
       @Test
-      fun `should return null when dataHeld is TRUE on at least one service summary but status is not COMPLETE`() {
+      fun `should return TRUE when dataHeld is TRUE on at least one service summary but status is not COMPLETE`() {
         val request = BacklogRequest()
 
         serviceConfigurations.forEachIndexed { i, service ->
@@ -535,9 +535,8 @@ class BacklogRequestRepositoryTest @Autowired constructor(
             ),
           )
         }
-        backlogRequestRepository.save(request)
-
-        assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isNull()
+        val savedRequest = backlogRequestRepository.save(request)
+        assertThat( backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isEqualTo(savedRequest)
       }
     }
   }
