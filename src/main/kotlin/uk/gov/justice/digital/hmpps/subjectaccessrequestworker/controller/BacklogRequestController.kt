@@ -372,5 +372,8 @@ class BacklogRequestController(
     if (request.version.isNullOrEmpty()) {
       throw ValidationException("a non null/empty value is required for version")
     }
+    if (request.dateTo.isBefore(request.dateFrom)) {
+      throw ValidationException("invalid request date range dateTo precedes dateFrom")
+    }
   }
 }
