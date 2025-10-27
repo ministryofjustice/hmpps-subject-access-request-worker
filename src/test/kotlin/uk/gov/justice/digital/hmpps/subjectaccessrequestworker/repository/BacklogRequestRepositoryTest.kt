@@ -536,7 +536,7 @@ class BacklogRequestRepositoryTest @Autowired constructor(
           )
         }
         val savedRequest = backlogRequestRepository.save(request)
-        assertThat( backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isEqualTo(savedRequest)
+        assertThat(backlogRequestRepository.findDataHeldByIdOrNull(request.id)).isEqualTo(savedRequest)
       }
     }
   }
