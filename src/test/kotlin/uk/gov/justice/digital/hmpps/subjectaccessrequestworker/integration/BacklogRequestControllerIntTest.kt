@@ -558,6 +558,23 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         ),
       ).expectStatus().isEqualTo(expectedStatus)
     }
+
+    @Test
+    fun `should return status 400 when request dateTo precedes request dateFrom value`() {
+      postBacklogRequest(
+        CreateBacklogRequest(
+          subjectName = "Jailbird, Snake",
+          version = "v1",
+          sarCaseReferenceNumber = "sar1",
+          nomisId = "nomis1",
+          ndeliusCaseReferenceId = null,
+          dateFrom = LocalDate.of(2000, 1, 1),
+          dateTo = LocalDate.of(1999, 1, 1),
+        ),
+      ).expectStatus().isBadRequest
+        .expectBody()
+        .jsonPath("$.developerMessage").isEqualTo("invalid request date range dateTo precedes dateFrom")
+    }
   }
 
   @Nested
