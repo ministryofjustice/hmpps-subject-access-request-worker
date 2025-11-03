@@ -67,3 +67,23 @@ GET {{sar_worker_endpoint}}/subject-access-request/backlog/versions/1/report
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+
+
+### Get service template
+GET {{sar_api_endpoint}}/api/templates/service/<SERVICE_CONFIG_ID>
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### Create a new service template: Replace test-template.mustache with file of choice
+POST {{sar_api_endpoint}}/api/templates/service/<SERVICE_CONFIG_ID>
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=customBoundary
+
+--customBoundary
+Content-Disposition: form-data; name="file"; filename="example.txt"
+Content-Type: text/plain
+
+< ./test-template.mustache
+--customBoundary--
+
