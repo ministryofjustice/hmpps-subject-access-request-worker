@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.time.LocalDate
@@ -22,11 +22,16 @@ class HtmlRendererApiClient(
 
   fun submitRenderRequest(
     subjectAccessRequest: SubjectAccessRequest,
-    service: DpsService,
+    serviceConfiguration: ServiceConfiguration,
   ): HtmlRenderResponse? = try {
     sarHtmlRendererApiWebClient.post()
       .uri("/subject-access-request/render")
-      .bodyValue(HtmlRenderRequest(subjectAccessRequest, service))
+      .bodyValue(
+        HtmlRenderRequest(
+          subjectAccessRequest,
+          serviceConfiguration.id,
+        ),
+      )
       .retrieve()
       .onStatus(
         webClientRetriesSpec.is4xxStatus(),
@@ -34,8 +39,8 @@ class HtmlRendererApiClient(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
           params = mapOf(
-            "serviceName" to service.name!!,
-            "serviceUrl" to service.url!!,
+            "serviceName" to serviceConfiguration.serviceName,
+            "serviceUrl" to serviceConfiguration.url,
           ),
         ),
       )
@@ -45,8 +50,8 @@ class HtmlRendererApiClient(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
           params = mapOf(
-            "serviceName" to service.name,
-            "serviceUrl" to service.url,
+            "serviceName" to serviceConfiguration.serviceName,
+            "serviceUrl" to serviceConfiguration.url,
           ),
         ),
       )
@@ -101,20 +106,16 @@ class HtmlRendererApiClient(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateTo: LocalDate?,
     val sarCaseReferenceNumber: String?,
-    val serviceName: String,
-    val serviceLabel: String,
-    val serviceUrl: String,
+    val serviceConfigurationId: UUID,
   ) {
-    constructor(subjectAccessRequest: SubjectAccessRequest, service: DpsService) : this(
+    constructor(subjectAccessRequest: SubjectAccessRequest, serviceConfigurationId: UUID) : this(
       id = subjectAccessRequest.id,
       nomisId = subjectAccessRequest.nomisId,
       ndeliusId = subjectAccessRequest.ndeliusCaseReferenceId,
       dateFrom = subjectAccessRequest.dateFrom,
       dateTo = subjectAccessRequest.dateTo,
       sarCaseReferenceNumber = subjectAccessRequest.sarCaseReferenceNumber,
-      serviceName = service.name!!,
-      serviceLabel = service.businessName!!,
-      serviceUrl = service.url!!,
+      serviceConfigurationId = serviceConfigurationId,
     )
   }
 

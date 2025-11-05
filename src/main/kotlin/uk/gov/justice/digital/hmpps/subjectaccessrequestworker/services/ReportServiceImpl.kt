@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRender
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
 
@@ -53,7 +53,7 @@ class ReportServiceImpl(
     log.info("processing subject access request ${subjectAccessRequest.id}")
 
     selectedServices.forEach { service ->
-      log.info("submitted html render request for ${service.name!!}")
+      log.info("submitted html render request for ${service.serviceName}")
       trackRenderServiceHtml(service, subjectAccessRequest)
 
       htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
@@ -83,31 +83,31 @@ class ReportServiceImpl(
   )
 
   private fun trackSelectedService(
-    selectedServices: List<DpsService>,
+    selectedServices: List<ServiceConfiguration>,
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
     "SelectedServices",
     subjectAccessRequest,
-    "services" to selectedServices.map { it.name }.joinToString(","),
+    "services" to selectedServices.joinToString(",") { it.serviceName },
   )
 
   private fun trackRenderServiceHtml(
-    service: DpsService,
+    service: ServiceConfiguration,
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
     "RenderHtmlForService",
     subjectAccessRequest,
-    "serviceName" to (service.name ?: "NA"),
-    "serviceUrl" to service.url.toString(),
+    "serviceName" to service.serviceName,
+    "serviceUrl" to service.url,
   )
 
   private fun trackRenderServiceHtmlComplete(
-    service: DpsService,
+    service: ServiceConfiguration,
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
     "RenderHtmlForService",
     subjectAccessRequest,
-    "serviceName" to (service.name ?: "NA"),
-    "serviceUrl" to service.url.toString(),
+    "serviceName" to service.serviceName,
+    "serviceUrl" to service.url,
   )
 }

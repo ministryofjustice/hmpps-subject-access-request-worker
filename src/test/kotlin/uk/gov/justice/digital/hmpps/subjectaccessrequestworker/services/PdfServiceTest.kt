@@ -12,7 +12,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.assertPdfContentMatchesExpected
@@ -77,7 +77,7 @@ class PdfServiceTest {
       .thenReturn(getResource("/integration-tests/html-stubs/${testCase.serviceName}-expected.html"))
 
     whenever(serviceConfiguration.getSelectedServices(any())).thenReturn(
-      listOf(dpsService(testCase.serviceName, testCase.serviceLabel)),
+      listOf(serviceConfiguration(testCase.serviceName, testCase.serviceLabel)),
     )
 
     val actual = pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
@@ -88,11 +88,12 @@ class PdfServiceTest {
     assertPdfContentMatchesExpected(actualPdf, expectedPdf)
   }
 
-  private fun dpsService(serviceName: String, serviceLabel: String) = DpsService(
+  private fun serviceConfiguration(serviceName: String, serviceLabel: String) = ServiceConfiguration(
     url = "http://localhost:8080/",
-    name = serviceName,
-    orderPosition = 1,
-    businessName = serviceLabel,
+    serviceName = serviceName,
+    order = 1,
+    label = serviceLabel,
+    enabled = true,
   )
 
   companion object {

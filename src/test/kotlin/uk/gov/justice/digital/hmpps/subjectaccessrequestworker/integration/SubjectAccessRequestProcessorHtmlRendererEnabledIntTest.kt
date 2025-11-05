@@ -14,15 +14,16 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Testcontainers
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient.HtmlRenderRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import java.time.LocalDate
@@ -60,6 +61,9 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   @Autowired
   private lateinit var sarProcessor: SubjectAccessRequestProcessor
 
+  @Autowired
+  protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
+
   private var attachmentNumber = 1
 
   @BeforeEach
@@ -89,17 +93,16 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
   @Test
   fun `should process pending request successfully when data is held and html-renderer is enabled`() = runBlocking {
-    val serviceName = "hmpps-book-secure-move-api"
-    val serviceLabel = "Book a Secure Move"
-    val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
-    val service = DpsService(url = "http://localhost:4100", name = serviceName, businessName = serviceLabel)
-    val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
+    val serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
+
+    val sar = insertSubjectAccessRequest(serviceConfig.serviceName, Status.Pending)
+    val htmlRenderRequest = HtmlRenderRequest(
       subjectAccessRequest = sar,
-      service = service,
+      serviceConfigurationId = serviceConfig.id,
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -112,23 +115,23 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
     documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
-    assertUploadedDocumentMatchesExpectedPdf(serviceName)
+    assertUploadedDocumentMatchesExpectedPdf(serviceConfig.serviceName)
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
   @Test
   fun `should process pending request successfully when no data is held and html-renderer is enabled`() = runBlocking {
-    val serviceName = "hmpps-book-secure-move-api"
-    val serviceLabel = "Book a Secure Move"
-    val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
-    val service = DpsService(url = "http://localhost:4100", name = serviceName, businessName = serviceLabel)
-    val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
+    val serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
+
+    val sar = insertSubjectAccessRequest(serviceConfig.serviceName, Status.Pending)
+
+    val htmlRenderRequest = HtmlRenderRequest(
       subjectAccessRequest = sar,
-      service = service,
+      serviceConfigurationId = serviceConfig.id,
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtmlNoDataHeld(sar, htmlRenderRequest)
+    htmlRendererSuccessfullyRendersHtmlNoDataHeld(sar, htmlRenderRequest, serviceConfig.serviceName)
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -141,30 +144,35 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
     documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
-    assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceName, serviceLabel)
+    assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceConfig.serviceName, serviceConfig.label)
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
   @Test
   fun `should process pending request successfully when attachments exist and html-renderer is enabled`() = runBlocking {
-    val serviceName = "create-and-vary-a-licence-api"
-    val serviceLabel = "Create and Vary a Licence"
-    val sar = insertSubjectAccessRequest(serviceName, Status.Pending)
-    val service = DpsService(url = "http://localhost:4100", name = serviceName, businessName = serviceLabel)
-    val htmlRenderRequest = HtmlRendererApiClient.HtmlRenderRequest(
+    val serviceConfig = getServiceConfiguration("create-and-vary-a-licence-api")
+
+    val sar = insertSubjectAccessRequest(serviceConfig.serviceName, Status.Pending)
+
+    val htmlRenderRequest = HtmlRenderRequest(
       subjectAccessRequest = sar,
-      service = service,
+      serviceConfigurationId = serviceConfig.id,
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest)
-    storeAttachment(sar, serviceName, "doc.pdf", "application/pdf")
-    storeAttachment(sar, serviceName, "doc.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-    storeAttachment(sar, serviceName, "map.jpg", "image/jpeg")
-    storeAttachment(sar, serviceName, "map.gif", "image/gif")
-    storeAttachment(sar, serviceName, "map.png", "image/png")
-    storeAttachment(sar, serviceName, "map.tif", "image/tiff")
-    storeAttachment(sar, serviceName, "video.mp4", "video/mp4")
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    storeAttachment(sar, serviceConfig.serviceName, "doc.pdf", "application/pdf")
+    storeAttachment(
+      sar,
+      serviceConfig.serviceName,
+      "doc.docx",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    storeAttachment(sar, serviceConfig.serviceName, "map.jpg", "image/jpeg")
+    storeAttachment(sar, serviceConfig.serviceName, "map.gif", "image/gif")
+    storeAttachment(sar, serviceConfig.serviceName, "map.png", "image/png")
+    storeAttachment(sar, serviceConfig.serviceName, "map.tif", "image/tiff")
+    storeAttachment(sar, serviceConfig.serviceName, "video.mp4", "video/mp4")
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -177,7 +185,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
     documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
-    val expected = getPreGeneratedPdfDocument("$serviceName-attachments-reference.pdf")
+    val expected = getPreGeneratedPdfDocument("${serviceConfig.serviceName}-attachments-reference.pdf")
     val actual = getUploadedPdfDocument()
     assertUploadedDocumentMatchesExpectedPdf(actual, expected)
     assertAttachmentPageMatchesExpected(actual, expected, 23, 1)
@@ -202,24 +210,33 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
   private fun htmlRendererSuccessfullyRendersHtml(
     sar: SubjectAccessRequest,
-    htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
-  ) = stubHtmlRendererSuccess(sar, htmlRenderRequest, htmlRenderRequest.serviceName)
-
-  private fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
-    sar: SubjectAccessRequest,
-    htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
   ) = stubHtmlRendererSuccess(
     sar = sar,
     htmlRenderRequest = htmlRenderRequest,
-    fileToAddToBucket = "${htmlRenderRequest.serviceName}-no-data",
+    serviceName = serviceName,
+    fileToAddToBucket = serviceName,
+  )
+
+  private fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+  ) = stubHtmlRendererSuccess(
+    sar = sar,
+    htmlRenderRequest = htmlRenderRequest,
+    serviceName = serviceName,
+    fileToAddToBucket = "$serviceName-no-data",
   )
 
   private fun stubHtmlRendererSuccess(
     sar: SubjectAccessRequest,
-    htmlRenderRequest: HtmlRendererApiClient.HtmlRenderRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
     fileToAddToBucket: String,
   ) = runBlocking {
-    val documentKey = htmlDocumentKey(sar, htmlRenderRequest.serviceName)
+    val documentKey = htmlDocumentKey(sar, serviceName)
 
     // Stub the wiremock API response.
     htmlRendererApi.stubRenderResponsesWith(
@@ -242,7 +259,12 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     ?.bufferedReader()
     .use { it?.readText() ?: "EMPTY" }
 
-  fun storeAttachment(sar: SubjectAccessRequest, serviceName: String, filename: String, contentType: String) = runBlocking {
+  fun storeAttachment(
+    sar: SubjectAccessRequest,
+    serviceName: String,
+    filename: String,
+    contentType: String,
+  ) = runBlocking {
     val documentKey = attachmentDocumentKey(sar, serviceName, filename)
     val content = getAttachmentBytes(filename)
     s3TestUtil.putFile(
@@ -261,8 +283,18 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
   fun htmlDocumentKey(sar: SubjectAccessRequest, serviceName: String) = "${sar.id}/$serviceName.html"
 
-  fun attachmentDocumentKey(sar: SubjectAccessRequest, serviceName: String, filename: String) = "${sar.id}/$serviceName/attachments/$filename"
+  fun attachmentDocumentKey(
+    sar: SubjectAccessRequest,
+    serviceName: String,
+    filename: String,
+  ) = "${sar.id}/$serviceName/attachments/$filename"
 
   fun getAttachmentBytes(filename: String): ByteArray = this::class.java
     .getResourceAsStream("/integration-tests/attachments/$filename").use { it?.readAllBytes()!! }
+
+  private fun getServiceConfiguration(serviceName: String): ServiceConfiguration {
+    val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
+    assertThat(serviceConfig).isNotNull
+    return serviceConfig!!
+  }
 }

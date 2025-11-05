@@ -43,13 +43,6 @@ class ServiceConfigurationServiceTest {
     private const val G2_API_URL = "http://www.magical-accidents-and-catastrophes.ministry-of-magic.owl"
     private const val G3_API_URL = "http://www.international-magical-cooperation.ministry-of-magic.owl"
 
-    private val dpsService1 = dpsService(order = 1)
-    private val dpsService2 = dpsService(order = 2)
-    private val dpsServiceG1Resolved = dpsService(name = "G1", businessName = "G1", url = G1_API_URL, order = 3)
-    private val dpsServiceG2Resolved = dpsService(name = "G2", businessName = "G2", url = G2_API_URL, order = 4)
-    private val dpsServiceG3Resolved = dpsService(name = "G3", businessName = "G3", url = G3_API_URL, order = 5)
-    private val dpsService99 = dpsService(order = 99)
-
     private val service1Configuration = serviceConfiguration(order = 1)
     private val service2Configuration = serviceConfiguration(order = 2)
     private val serviceG1Configuration = serviceConfiguration(serviceName = "G1", label = "G1", url = "G1", order = 3)
@@ -89,45 +82,39 @@ class ServiceConfigurationServiceTest {
         description = "Service name with leading whitespace",
         input = "   service1",
         expectedServiceConfiguration = service1Configuration,
-        expectedResult = dpsService1,
       ),
       ServiceNameTestCase(
         description = "Service name with trailing whitespace",
         input = "service1   ",
         expectedServiceConfiguration = service1Configuration,
-        expectedResult = dpsService1,
       ),
       ServiceNameTestCase(
         description = "Service name with leading and trailing whitespace",
         input = "    service1   ",
         expectedServiceConfiguration = service1Configuration,
-        expectedResult = dpsService1,
       ),
       ServiceNameTestCase(
         description = "Service name with trailing whitespace and comma",
         input = "service1   ,",
         expectedServiceConfiguration = service1Configuration,
-        expectedResult = dpsService1,
       ),
       ServiceNameTestCase(
         description = "Service name with trailing comma",
         input = "service1,",
         expectedServiceConfiguration = service1Configuration,
-        expectedResult = dpsService1,
       ),
       ServiceNameTestCase(
         description = "Service name with comma and trailing whitespace",
         input = "service1,   ",
         expectedServiceConfiguration = service1Configuration,
-        expectedResult = dpsService1,
       ),
     )
 
     @JvmStatic
     fun sensitiveServiceConfigurationsTestCases() = listOf(
-      SensitiveServiceTestCase("G1", serviceG1Configuration, dpsServiceG1Resolved),
-      SensitiveServiceTestCase("G2", serviceG2Configuration, dpsServiceG2Resolved),
-      SensitiveServiceTestCase("G3", serviceG3Configuration, dpsServiceG3Resolved),
+      SensitiveServiceTestCase("G1", serviceG1Configuration, "G1", G1_API_URL),
+      SensitiveServiceTestCase("G2", serviceG2Configuration, "G2", G2_API_URL),
+      SensitiveServiceTestCase("G3", serviceG3Configuration, "G3", G3_API_URL),
     )
   }
 
@@ -145,8 +132,8 @@ class ServiceConfigurationServiceTest {
     val actual = service.getSelectedServices(subjectAccessRequest)
 
     assertThat(actual).hasSize(2)
-    assertThat(actual[0]).isEqualTo(dpsService1)
-    assertThat(actual[1]).isEqualTo(dpsService2)
+    assertThat(actual[0]).isEqualTo(service1Configuration)
+    assertThat(actual[1]).isEqualTo(service2Configuration)
 
     verify(serviceConfigurationRepository, times(1)).findByServiceName("service1")
     verify(serviceConfigurationRepository, times(1)).findByServiceName("service2")
@@ -169,9 +156,9 @@ class ServiceConfigurationServiceTest {
     val actual = service.getSelectedServices(subjectAccessRequest)
 
     assertThat(actual).hasSize(3)
-    assertThat(actual[0]).isEqualTo(dpsService1)
-    assertThat(actual[1]).isEqualTo(dpsService2)
-    assertThat(actual[2]).isEqualTo(dpsService99)
+    assertThat(actual[0]).isEqualTo(service1Configuration)
+    assertThat(actual[1]).isEqualTo(service2Configuration)
+    assertThat(actual[2]).isEqualTo(service99Configuration)
 
     verify(serviceConfigurationRepository, times(1)).findByServiceName("service1")
     verify(serviceConfigurationRepository, times(1)).findByServiceName("service2")
@@ -202,16 +189,16 @@ class ServiceConfigurationServiceTest {
     whenever(subjectAccessRequest.services)
       .thenReturn(testCase.input)
 
-    whenever(serviceConfigurationRepository.findByServiceName(testCase.expectedResult.name ?: ""))
+    whenever(serviceConfigurationRepository.findByServiceName(testCase.expectedServiceConfiguration!!.serviceName))
       .thenReturn(testCase.expectedServiceConfiguration)
 
     val actual = service.getSelectedServices(subjectAccessRequest)
     assertThat(actual).hasSize(1)
-    assertThat(actual[0]).isEqualTo(testCase.expectedResult)
+    assertThat(actual[0]).isEqualTo(testCase.expectedServiceConfiguration)
 
     verify(serviceConfigurationRepository, times(1)).findByServiceName(capture(serviceNameCaptor))
     assertThat(serviceNameCaptor.allValues).hasSize(1)
-    assertThat(serviceNameCaptor.allValues[0]).isEqualTo(testCase.expectedResult.name)
+    assertThat(serviceNameCaptor.allValues[0]).isEqualTo(testCase.expectedServiceConfiguration.serviceName)
   }
 
   @ParameterizedTest
@@ -225,18 +212,17 @@ class ServiceConfigurationServiceTest {
 
     val actual = service.getSelectedServices(subjectAccessRequest)
     assertThat(actual).hasSize(1)
-    assertThat(actual[0]).isEqualTo(testCase.expected)
+    assertThat(actual[0]).isEqualTo(testCase.serviceConfiguration)
 
     verify(serviceConfigurationRepository, times(1)).findByServiceName(capture(serviceNameCaptor))
     assertThat(serviceNameCaptor.allValues).hasSize(1)
-    assertThat(serviceNameCaptor.allValues[0]).isEqualTo(testCase.expected.name)
+    assertThat(serviceNameCaptor.allValues[0]).isEqualTo(testCase.expectedServiceName)
   }
 
   data class ServiceNameTestCase(
     val description: String,
     val input: String,
     val expectedServiceConfiguration: ServiceConfiguration? = null,
-    val expectedResult: DpsService,
   ) {
     override fun toString(): String = this.description
   }
@@ -244,6 +230,7 @@ class ServiceConfigurationServiceTest {
   data class SensitiveServiceTestCase(
     val serviceNamePlaceholder: String,
     val serviceConfiguration: ServiceConfiguration,
-    val expected: DpsService,
+    val expectedServiceName: String,
+    val expectedServiceUrl: String,
   )
 }
