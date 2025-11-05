@@ -13,12 +13,14 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.assertPdfContentMatchesExpected
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.createPdfDocumentFromBytes
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.getPdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.getResource
+import java.time.LocalDate
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class PdfServiceTest {
@@ -27,6 +29,8 @@ class PdfServiceTest {
   private val dateService: DateService = mock()
   private val attachmentsPdfService: AttachmentsPdfService = mock()
   private val telemetryClient: TelemetryClient = mock()
+  private val reportDateFrom = LocalDate.of(2024, 1, 1)
+  private val reportDateTo = LocalDate.of(2025, 1, 1)
 
   private val pdfService = PdfService(
     serviceConfiguration,
@@ -54,7 +58,15 @@ class PdfServiceTest {
   @ParameterizedTest
   @MethodSource("generateReportTestCases")
   fun `should generate the expected PDF`(testCase: TestCase) = runTest {
-    val subjectAccessRequest = TemplateTestingUtil.getSubjectAccessRequest(testCase.serviceName)
+    val subjectAccessRequest = SubjectAccessRequest(
+      id = UUID.fromString("83f1f9af-1036-4273-8252-633f6c7cc1d6"),
+      nomisId = "nomis-666",
+      ndeliusCaseReferenceId = "ndeliusCaseReferenceId-666",
+      sarCaseReferenceNumber = "666",
+      dateFrom = reportDateFrom,
+      dateTo = reportDateTo,
+      services = testCase.serviceName,
+    )
 
     val pdfRenderRequest = PdfService.PdfRenderRequest(
       subjectAccessRequest = subjectAccessRequest,

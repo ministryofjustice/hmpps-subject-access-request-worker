@@ -46,6 +46,8 @@ const val NO_DATA_HELD = "No Data Held"
 /**
  * This is the legacy implementation, see [PdfService] for new.
  */
+// TODO this implementation is no longer relevant. Tech debt task to circle back and remove/update them.
+@Deprecated("The functionality is out of date a no longer used")
 @Service
 class GeneratePdfService(
   val templateRenderService: TemplateRenderService,

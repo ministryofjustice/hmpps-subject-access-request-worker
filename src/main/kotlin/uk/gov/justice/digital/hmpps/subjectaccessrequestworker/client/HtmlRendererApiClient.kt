@@ -15,7 +15,6 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Service
-@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class HtmlRendererApiClient(
   private val sarHtmlRendererApiWebClient: WebClient,
   private val webClientRetriesSpec: WebClientRetriesSpec,

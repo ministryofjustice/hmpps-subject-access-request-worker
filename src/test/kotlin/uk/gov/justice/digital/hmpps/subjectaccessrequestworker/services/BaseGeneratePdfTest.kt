@@ -20,6 +20,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.TemplateRes
 import java.io.File
 import java.io.FileOutputStream
 
+// TODO these tests are no longer relevant. Tech debt task to circle back and remove/update them.
+@Deprecated("Test is out of date with worker functionality")
 abstract class BaseGeneratePdfTest {
   protected val prisonDetailsRepository: PrisonDetailsRepository = mock()
   protected val userDetailsRepository: UserDetailsRepository = mock()

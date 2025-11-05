@@ -47,9 +47,6 @@ G2-api:
 G3-api:
   url: http://localhost:9003
 
-html-renderer:
-  enabled: false
-
 s3:
   provider: localstack
   region: eu-west-2

@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream
  * New world configuration worker delegates rendering service html to html-renderer service.
  */
 @Service
-@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class ReportServiceImpl(
   private val htmlRendererApiClient: HtmlRendererApiClient,
   private val prisonApiClient: PrisonApiClient,
