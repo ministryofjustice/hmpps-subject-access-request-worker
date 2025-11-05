@@ -38,24 +38,6 @@ class ServiceConfigurationService(
     serviceName: String,
   ): ServiceConfiguration? = serviceConfigurationRepository.findByServiceName(serviceName)
 
-//  fun getSelectedServices(subjectAccessRequest: SubjectAccessRequest): List<DpsService> = subjectAccessRequest.services
-//    .split(",")
-//    .filter { it.isNotBlank() }
-//    .map { serviceName ->
-//      serviceConfigurationRepository.findByServiceName(serviceName.trim())?.let {
-//        DpsService(
-//          name = it.serviceName,
-//          businessName = it.label,
-//          url = resolveUrlPlaceHolder(it),
-//          orderPosition = it.order,
-//          content = null,
-//        )
-//      } ?: throw serviceNameNotFoundException(
-//        subjectAccessRequest,
-//        serviceName,
-//      )
-//    }.sortedBy { it.orderPosition }
-
   fun getSelectedServices(
     subjectAccessRequest: SubjectAccessRequest,
   ): List<ServiceConfiguration> = subjectAccessRequest.services
