@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
