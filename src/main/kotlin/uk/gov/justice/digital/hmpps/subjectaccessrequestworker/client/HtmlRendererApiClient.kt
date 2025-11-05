@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -61,6 +62,36 @@ class HtmlRendererApiClient(
       ),
     )
   }
+
+  fun getServiceSummary(
+    subjectDataHeldRequest: SubjectDataHeldRequest,
+  ): ResponseEntity<SubjectDataHeldResponse>? = sarHtmlRendererApiWebClient
+    .post()
+    .uri("/subject-access-request/subject-data-held-summary")
+    .bodyValue(subjectDataHeldRequest)
+    .retrieve()
+    .toEntity(SubjectDataHeldResponse::class.java)
+    .block()
+
+  data class SubjectDataHeldRequest(
+    val nomisId: String? = null,
+    val ndeliusId: String? = null,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val dateFrom: LocalDate? = null,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val dateTo: LocalDate? = null,
+    val serviceName: String? = null,
+    val serviceUrl: String? = null,
+  ) {
+    constructor() : this("", "", null, null, null)
+  }
+
+  data class SubjectDataHeldResponse(
+    val nomisId: String?,
+    val ndeliusId: String?,
+    val dataHeld: Boolean,
+    val serviceName: String?,
+  )
 
   data class HtmlRenderRequest(
     val id: UUID,

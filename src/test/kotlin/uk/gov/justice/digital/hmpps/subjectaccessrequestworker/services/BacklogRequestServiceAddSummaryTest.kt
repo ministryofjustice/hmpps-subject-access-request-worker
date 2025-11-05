@@ -15,7 +15,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
@@ -30,7 +30,7 @@ class BacklogRequestServiceAddSummaryTest {
   private val backlogRequestRepository: BacklogRequestRepository = mock()
   private val serviceSummaryRepository: ServiceSummaryRepository = mock()
   private val serviceConfigurationService: ServiceConfigurationService = mock()
-  private val dynamicServicesClient: DynamicServicesClient = mock()
+  private val htmlRendererApiClient: HtmlRendererApiClient = mock()
   private val serviceConfigMock: ServiceConfiguration = mock()
 
   @Captor
@@ -40,7 +40,7 @@ class BacklogRequestServiceAddSummaryTest {
     backlogRequestRepository,
     serviceSummaryRepository,
     serviceConfigurationService,
-    dynamicServicesClient,
+    htmlRendererApiClient,
     5,
   )
 
