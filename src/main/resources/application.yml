@@ -129,9 +129,6 @@ scheduled:
 sentry:
   traces-sample-rate: "0.05"
 
-html-renderer:
-  enabled: false
-
 s3:
   provider: aws
   region: eu-west-2

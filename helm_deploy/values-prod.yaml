@@ -15,7 +15,6 @@ generic-service:
     NOMIS_MAPPINGS_API_URL: "https://nomis-sync-prisoner-mapping.hmpps.service.justice.gov.uk"
     SENTRY_ENV: prod
     SAR_HTML_RENDERER_API_URL: "https://subject-access-request-html-renderer.hmpps.service.justice.gov.uk"
-    HTML_RENDERER_ENABLED: true
     S3_PROVIDER: "aws"
     BACKLOG_REQUEST_API_ENABLED: false
     BACKLOG_REQUEST_PROCESSOR_ENABLED: false

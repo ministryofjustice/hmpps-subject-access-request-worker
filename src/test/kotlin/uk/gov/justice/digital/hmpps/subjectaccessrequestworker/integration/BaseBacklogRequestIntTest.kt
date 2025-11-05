@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestOverview
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
@@ -78,10 +78,10 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
 
   protected fun renderMockIsCalledNTimes(n: Int) = htmlRendererApi.allServeEvents.count() == n
 
-  protected fun DynamicServicesClient.SubjectDataHeldResponse.toJson(): String = objectMapper.writeValueAsString(this)
+  protected fun HtmlRendererApiClient.SubjectDataHeldResponse.toJson(): String = objectMapper.writeValueAsString(this)
 
   protected fun stubRendererSubjectDataHeldResponse(
-    expectedSubjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
+    expectedSubjectDataHeldRequest: HtmlRendererApiClient.SubjectDataHeldRequest,
     dataHeld: Boolean,
   ) {
     htmlRendererApi.stubSubjectDataHeldResponse(
@@ -90,7 +90,7 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
         .responseDefinition()
         .withHeader("Content-Type", "application/json")
         .withBody(
-          DynamicServicesClient.SubjectDataHeldResponse(
+          HtmlRendererApiClient.SubjectDataHeldResponse(
             nomisId = testNomisId,
             ndeliusId = null,
             dataHeld = dataHeld,
@@ -102,7 +102,7 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
   }
 
   protected fun stubRendererSubjectDataHeldResponseError(
-    expectedSubjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
+    expectedSubjectDataHeldRequest: HtmlRendererApiClient.SubjectDataHeldRequest,
     status: Int,
   ) {
     htmlRendererApi.stubSubjectDataHeldResponse(
@@ -115,7 +115,7 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
     )
   }
 
-  protected fun createSubjectDataHeldRequest(serviceName: String) = DynamicServicesClient.SubjectDataHeldRequest(
+  protected fun createSubjectDataHeldRequest(serviceName: String) = HtmlRendererApiClient.SubjectDataHeldRequest(
     nomisId = testNomisId,
     ndeliusId = null,
     serviceName = serviceName,

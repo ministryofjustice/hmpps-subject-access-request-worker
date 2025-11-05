@@ -6,8 +6,8 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient.SubjectDataHeldRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient.SubjectDataHeldRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.COMPLETE
@@ -25,7 +25,7 @@ class BacklogRequestService(
   private val backlogRequestRepository: BacklogRequestRepository,
   private val serviceSummaryRepository: ServiceSummaryRepository,
   private val serviceConfigurationService: ServiceConfigurationService,
-  private val dynamicServicesClient: DynamicServicesClient,
+  private val htmlRendererApiClient: HtmlRendererApiClient,
   @Value("\${backlog-request.processor.backoff-threshold-mins:5}") val backOffThreshHold: Long,
 ) {
 
@@ -140,7 +140,7 @@ class BacklogRequestService(
   fun getSubjectDataHeldSummary(
     backlogRequest: BacklogRequest,
     serviceConfig: ServiceConfiguration,
-  ): ServiceSummary = dynamicServicesClient.getServiceSummary(
+  ): ServiceSummary = htmlRendererApiClient.getServiceSummary(
     subjectDataHeldRequest = SubjectDataHeldRequest(
       nomisId = backlogRequest.nomisId,
       ndeliusId = backlogRequest.ndeliusCaseReferenceId,

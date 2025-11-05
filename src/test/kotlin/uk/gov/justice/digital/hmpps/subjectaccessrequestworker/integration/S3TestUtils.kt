@@ -10,12 +10,10 @@ import aws.sdk.kotlin.services.s3.model.ObjectIdentifier
 import aws.sdk.kotlin.services.s3.putObject
 import aws.smithy.kotlin.runtime.content.ByteStream
 import kotlinx.coroutines.runBlocking
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.test.context.TestComponent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.S3Properties
 
 @TestComponent
-@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class S3TestUtils(
   val s3: S3Client,
   val s3Properties: S3Properties,

@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Com
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.testutils.TemplateTestingUtil.Companion.getFormattedReportGenerationDate
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
@@ -39,6 +38,8 @@ import java.util.concurrent.TimeUnit
 class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorIntTest() {
 
   companion object {
+    const val REPORT_GENERATION_DATE = "1 January 2025"
+
     lateinit var gotenberg: GenericContainer<*>
 
     @JvmStatic
@@ -69,7 +70,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
     /** Ensure the test generated reports have the same 'report generation date' as pre-generated reference reports */
     whenever(dateService.reportGenerationDate())
-      .thenReturn(getFormattedReportGenerationDate())
+      .thenReturn(REPORT_GENERATION_DATE)
     whenever(dateService.reportDateFormat(LocalDate.of(2025, 1, 1)))
       .thenReturn("1 January 2025")
     whenever(dateService.reportDateFormat(LocalDate.of(2024, 1, 1), "Start of record"))

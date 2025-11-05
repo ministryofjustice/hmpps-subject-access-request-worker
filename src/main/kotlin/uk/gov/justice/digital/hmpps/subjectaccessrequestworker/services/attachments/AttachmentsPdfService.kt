@@ -6,14 +6,12 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 
 @Service
-@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class AttachmentsPdfService(
   private val documentStoreService: DocumentStoreService,
   private val telemetryClient: TelemetryClient,

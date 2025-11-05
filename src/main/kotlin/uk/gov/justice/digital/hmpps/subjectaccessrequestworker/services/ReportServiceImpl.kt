@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils.isNotEmpty
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
@@ -18,7 +17,6 @@ import java.io.ByteArrayOutputStream
  * New world configuration worker delegates rendering service html to html-renderer service.
  */
 @Service
-@ConditionalOnProperty(name = ["html-renderer.enabled"], havingValue = "true")
 class ReportServiceImpl(
   private val htmlRendererApiClient: HtmlRendererApiClient,
   private val prisonApiClient: PrisonApiClient,

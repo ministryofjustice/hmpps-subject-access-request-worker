@@ -61,9 +61,6 @@ scheduled:
     initial-delay-seconds: 0
     interval-seconds: 1
 
-html-renderer:
-  enabled: false
-
 s3:
   provider: localstack
   region: eu-west-2

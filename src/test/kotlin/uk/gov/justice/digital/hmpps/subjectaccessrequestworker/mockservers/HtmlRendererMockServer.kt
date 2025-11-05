@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DynamicServicesClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 
 class HtmlRendererMockServer : WireMockServer(8087) {
@@ -69,7 +68,7 @@ class HtmlRendererMockServer : WireMockServer(8087) {
   }
 
   fun stubSubjectDataHeldResponse(
-    subjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
+    subjectDataHeldRequest: HtmlRendererApiClient.SubjectDataHeldRequest,
     responseDefinition: ResponseDefinitionBuilder,
   ) {
     stubFor(
@@ -80,7 +79,7 @@ class HtmlRendererMockServer : WireMockServer(8087) {
   }
 
   fun stubSubjectDataHeldResponseRetryAfterFailure(
-    subjectDataHeldRequest: DynamicServicesClient.SubjectDataHeldRequest,
+    subjectDataHeldRequest: HtmlRendererApiClient.SubjectDataHeldRequest,
     responseOne: ResponseDefinitionBuilder,
     responseTwo: ResponseDefinitionBuilder,
   ) {
@@ -109,7 +108,7 @@ class HtmlRendererMockServer : WireMockServer(8087) {
     )
   }
 
-  fun verifySubjectDataHeldSummaryCalled(times: Int, expectedBody: DynamicServicesClient.SubjectDataHeldRequest) {
+  fun verifySubjectDataHeldSummaryCalled(times: Int, expectedBody: HtmlRendererApiClient.SubjectDataHeldRequest) {
     verify(
       times,
       postRequestedFor(urlPathEqualTo("/subject-access-request/subject-data-held-summary"))
