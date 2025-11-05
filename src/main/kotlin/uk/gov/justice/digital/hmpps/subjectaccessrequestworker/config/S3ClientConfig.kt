@@ -9,7 +9,6 @@ import aws.sdk.kotlin.services.s3.model.NotFound
 import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -29,7 +28,6 @@ data class S3Properties(
 @EnableConfigurationProperties(S3Properties::class)
 class S3ClientConfig(
   private val s3Properties: S3Properties,
-  @Value("\${html-renderer.enabled:false}") private val htmlRenderEnabled: Boolean,
 ) {
 
   private companion object {
@@ -37,19 +35,19 @@ class S3ClientConfig(
   }
 
   init {
-    log.info("html-renderer.enabled={} s3.provider={}", htmlRenderEnabled, s3Properties.provider)
+    log.info("s3.provider={}", s3Properties.provider)
   }
 
   @Bean
   fun s3(): S3Client {
-    if (htmlRenderEnabled && PROVIDER_AWS == s3Properties.provider) {
+    if (PROVIDER_AWS == s3Properties.provider) {
       return s3Client()
     }
     return s3ClientLocalstack()
   }
 
   private fun s3Client(): S3Client = runBlocking {
-    log.info("configuring S3 client for provider: ${s3Properties.provider}, region: ${s3Properties.region}")
+    log.info("configuring S3 client for provider: {}, region: {}", s3Properties.provider, s3Properties.region)
 
     S3Client.fromEnvironment {
       region = s3Properties.region
@@ -57,7 +55,7 @@ class S3ClientConfig(
   }
 
   private fun s3ClientLocalstack(): S3Client = runBlocking {
-    log.info("configuring S3 client for provider: ${s3Properties.provider}, region: ${s3Properties.region}")
+    log.info("configuring S3 client for provider: {}, region: {}", s3Properties.provider, s3Properties.region)
 
     S3Client.fromEnvironment {
       region = s3Properties.region
