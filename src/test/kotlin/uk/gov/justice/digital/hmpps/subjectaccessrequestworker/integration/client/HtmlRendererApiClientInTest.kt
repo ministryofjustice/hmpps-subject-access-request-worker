@@ -24,7 +24,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.asser
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
@@ -47,7 +47,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   private val sarDateFrom = LocalDate.of(2024, 1, 1)
   private val serviceName = "keyworker-api"
   private val serviceUrl = "http://keyworker-api.com"
-  private val service = DpsService(name = serviceName, url = serviceUrl, businessName = serviceName)
+  private val serviceConfiguration = ServiceConfiguration(serviceName = serviceName, url = serviceUrl, enabled = true, order = 1, label = "Keyworker API")
 
   @BeforeEach
   fun setup() {
@@ -58,17 +58,13 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   @Test
   fun `should throw expected exception when unable to obtain client auth token`() {
     val subjectAccessRequest = subjectAccessRequest()
-    val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
-      subjectAccessRequest = subjectAccessRequest,
-      service = service,
-    )
 
     hmppsAuth.stubGrantTokenResponse(
       responseDefinitionBuilder = ResponseDefinitionBuilder().withStatus(403),
     )
 
     val actual = assertThrows<FatalSubjectAccessRequestException> {
-      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
     }
 
     assertThat(actual.message)
@@ -84,9 +80,10 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   @Test
   fun `should return expected response when request successful`() {
     val subjectAccessRequest = subjectAccessRequest()
+
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      service = service,
+      serviceConfigurationId = serviceConfiguration.id,
     )
     val expectedDocumentKey = "12345-67890"
 
@@ -96,7 +93,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
       responseDefinition = rendererSuccessResponse(expectedDocumentKey),
     )
 
-    val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+    val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
 
     assertThat(response).isNotNull
     assertThat(response!!.documentKey).isEqualTo(expectedDocumentKey)
@@ -108,9 +105,10 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   @Test
   fun `should be successful when first request fails with 5xx but retry succeeds`() {
     val subjectAccessRequest = subjectAccessRequest()
+
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      service = service,
+      serviceConfigurationId = serviceConfiguration.id,
     )
     val expectedDocumentKey = "12345-67890"
 
@@ -121,7 +119,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
       responseTwo = rendererSuccessResponse(expectedDocumentKey),
     )
 
-    val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+    val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
 
     assertThat(response).isNotNull
     assertThat(response!!.documentKey).isEqualTo(expectedDocumentKey)
@@ -137,7 +135,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      service = service,
+      serviceConfigurationId = serviceConfiguration.id,
     )
 
     hmppsAuth.stubGrantToken()
@@ -147,7 +145,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     )
 
     val actual = assertThrows<FatalSubjectAccessRequestException> {
-      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
     }
 
     assertExceptedExceptionFor4xxError(actual, subjectAccessRequest, stubErrorResponse)
@@ -162,7 +160,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
       subjectAccessRequest = subjectAccessRequest,
-      service = service,
+      serviceConfigurationId = serviceConfiguration.id,
     )
 
     hmppsAuth.stubGrantToken()
@@ -172,7 +170,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     )
 
     val actual = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
     }
 
     assertExceptedExceptionFor5xxError(actual, subjectAccessRequest, stubErrorResponse)

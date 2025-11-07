@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
@@ -39,23 +38,15 @@ class ServiceConfigurationService(
     serviceName: String,
   ): ServiceConfiguration? = serviceConfigurationRepository.findByServiceName(serviceName)
 
-  fun getSelectedServices(subjectAccessRequest: SubjectAccessRequest): List<DpsService> = subjectAccessRequest.services
+  fun getSelectedServices(
+    subjectAccessRequest: SubjectAccessRequest,
+  ): List<ServiceConfiguration> = subjectAccessRequest.services
     .split(",")
     .filter { it.isNotBlank() }
     .map { serviceName ->
-      serviceConfigurationRepository.findByServiceName(serviceName.trim())?.let {
-        DpsService(
-          name = it.serviceName,
-          businessName = it.label,
-          url = resolveUrlPlaceHolder(it),
-          orderPosition = it.order,
-          content = null,
-        )
-      } ?: throw serviceNameNotFoundException(
-        subjectAccessRequest,
-        serviceName,
-      )
-    }.sortedBy { it.orderPosition }
+      serviceConfigurationRepository.findByServiceName(serviceName.trim())
+        ?: throw serviceNameNotFoundException(subjectAccessRequest, serviceName)
+    }.sortedBy { it.order }
 
   fun getAllEnabled(): List<ServiceConfiguration>? = serviceConfigurationRepository.findEnabled()
 

@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import java.io.ByteArrayInputStream
@@ -117,7 +117,7 @@ class PdfService(
   }
 
   private fun Document.addInternalContentsPage(
-    services: List<DpsService>,
+    services: List<ServiceConfiguration>,
   ) {
     val contentsPageText = Paragraph()
       .setFont(fontHelvetica())
@@ -129,7 +129,7 @@ class PdfService(
     this.add(contentsPageText)
 
     val serviceListParagraph = Paragraph()
-    services.map { "\u2022 ${it.businessName ?: it.name}\n" }.forEach {
+    services.map { "\u2022 ${it.label}\n" }.forEach {
       serviceListParagraph.add(it)
         .setTextAlignment(TextAlignment.CENTER)
         .setFontSize(14f)
@@ -168,7 +168,7 @@ class PdfService(
 
   private suspend fun Document.addServiceData(
     subjectAccessRequest: SubjectAccessRequest,
-    services: List<DpsService>,
+    services: List<ServiceConfiguration>,
   ) {
     telemetryClient.trackSarEvent(
       "pdfAddServicesDataStarted",
@@ -176,18 +176,22 @@ class PdfService(
       "services" to services.serviceNames(),
     )
     services.forEach { service ->
-      telemetryClient.trackSarEvent("pdfAddServiceDataStarted", subjectAccessRequest, "service" to service.name!!)
+      telemetryClient.trackSarEvent("pdfAddServiceDataStarted", subjectAccessRequest, "service" to service.serviceName)
       this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
 
       val elements = documentStoreService.getDocument(
         subjectAccessRequest = subjectAccessRequest,
-        serviceName = service.name,
+        serviceName = service.serviceName,
       ).use { HtmlConverter.convertToElements(it) }
 
       elements.forEach { this.add(it as IBlockElement) }
-      telemetryClient.trackSarEvent("pdfAddServiceDataCompleted", subjectAccessRequest, "service" to service.name)
+      telemetryClient.trackSarEvent(
+        "pdfAddServiceDataCompleted",
+        subjectAccessRequest,
+        "service" to service.serviceName,
+      )
 
-      attachmentsPdfService.processAttachments(subjectAccessRequest, service.name, this)
+      attachmentsPdfService.processAttachments(subjectAccessRequest, service.serviceName, this)
     }
   }
 
@@ -288,5 +292,5 @@ class PdfService(
     fun toInputStream(): ByteArrayInputStream = ByteArrayInputStream(outputStream.toByteArray())
   }
 
-  private fun List<DpsService>.serviceNames() = this.map { it.name ?: "Unknown" }.joinToString(",")
+  private fun List<ServiceConfiguration>.serviceNames() = this.joinToString(",") { it.serviceName }
 }
