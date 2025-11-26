@@ -9,6 +9,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRender
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
@@ -86,8 +89,8 @@ class ReportServiceImpl(
     selectedServices: List<ServiceConfiguration>,
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
-    "SelectedServices",
-    subjectAccessRequest,
+    event = GENERATE_REPORT_SERVICES_SELECTED,
+    subjectAccessRequest = subjectAccessRequest,
     "services" to selectedServices.joinToString(",") { it.serviceName },
   )
 
@@ -95,8 +98,8 @@ class ReportServiceImpl(
     service: ServiceConfiguration,
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
-    "RenderHtmlForService",
-    subjectAccessRequest,
+    event = GENERATE_REPORT_SUBMIT_RENDER_REQUEST,
+    subjectAccessRequest = subjectAccessRequest,
     "serviceName" to service.serviceName,
     "serviceUrl" to service.url,
   )
@@ -105,8 +108,8 @@ class ReportServiceImpl(
     service: ServiceConfiguration,
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
-    "RenderHtmlForService",
-    subjectAccessRequest,
+    event = GENERATE_REPORT_RENDER_REQUEST_COMPLETED,
+    subjectAccessRequest = subjectAccessRequest,
     "serviceName" to service.serviceName,
     "serviceUrl" to service.url,
   )

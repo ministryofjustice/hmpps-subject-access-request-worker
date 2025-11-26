@@ -26,7 +26,6 @@ import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.yaml.snakeyaml.LoaderOptions
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -73,7 +72,7 @@ class GeneratePdfService(
     val document = Document(pdfDocument)
 
     log.info("Started writing to PDF")
-    telemetryClient.trackSarEvent("PDFContentGenerationStarted", sar, "numServices" to services.size.toString())
+
     addInternalContentsPage(pdfDocument, document, services)
     addExternalCoverPage(
       pdfDocument,
@@ -99,8 +98,6 @@ class GeneratePdfService(
     val numPages = pdfDocument.numberOfPages
     addRearPage(pdfDocument, document, numPages)
 
-    telemetryClient.trackSarEvent("PDFContentGenerationComplete", sar, "numPages" to numPages.toString())
-
     log.info("Finished writing report")
     document.close()
 
@@ -124,10 +121,8 @@ class GeneratePdfService(
     val cover = PdfDocument(PdfReader(ByteArrayInputStream(coverPdfStream.toByteArray())))
     val mainContent = PdfDocument(PdfReader(ByteArrayInputStream(mainPdfStream.toByteArray())))
 
-    telemetryClient.trackSarEvent("PDFMergingStarted", sar)
     merger.merge(cover, 1, 1)
     merger.merge(mainContent, 1, mainContent.numberOfPages)
-    telemetryClient.trackSarEvent("PDFMergingComplete", sar, "numPages" to fullDocument.numberOfPages.toString())
 
     cover.close()
     mainContent.close()
@@ -167,12 +162,6 @@ class GeneratePdfService(
       val convertingStopWatch = StopWatch.create()
       val appendingStopWatch = StopWatch.create()
 
-      telemetryClient.trackSarEvent(
-        "PDFServiceContentGenerationStarted",
-        subjectAccessRequest,
-        "service" to (service.name ?: "unknown"),
-      )
-
       if (service.content != NO_DATA_HELD) {
         templatingStopWatch.start()
         val renderedTemplate = templateRenderService.renderTemplate(
@@ -182,26 +171,10 @@ class GeneratePdfService(
         )
         templatingStopWatch.stop()
 
-        telemetryClient.trackSarEvent(
-          "HTMLServiceContentGenerated",
-          subjectAccessRequest,
-          "eventTime" to templatingStopWatch.formatTime(),
-          "service" to (service.name ?: "unknown"),
-          "htmlStringSize" to renderedTemplate?.length.toString(),
-        )
         if (StringUtils.isNotEmpty(renderedTemplate)) {
           convertingStopWatch.start()
           val htmlElement = HtmlConverter.convertToElements(renderedTemplate)
           convertingStopWatch.stop()
-
-          telemetryClient.trackSarEvent(
-            "HTMLServiceContentConvertedToITextElements",
-            subjectAccessRequest,
-            "eventTime" to convertingStopWatch.formatTime(),
-            "service" to (service.name ?: "unknown"),
-            "htmlStringSize" to renderedTemplate!!.length.toString(),
-            "elements" to htmlElement.size.toString(),
-          )
 
           appendingStopWatch.start()
           for (element in htmlElement) {
@@ -210,14 +183,6 @@ class GeneratePdfService(
           appendingStopWatch.stop()
 
           log.info("Template rendered - copying complete")
-          telemetryClient.trackSarEvent(
-            "ServiceContentITextElementsAppendedToPDF",
-            subjectAccessRequest,
-            "eventTime" to appendingStopWatch.formatTime(),
-            "service" to (service.name ?: "unknown"),
-            "htmlStringSize" to renderedTemplate.length.toString(),
-            "elements" to htmlElement.size.toString(),
-          )
         } else {
           addYamlLayout(document, service)
         }
@@ -227,16 +192,6 @@ class GeneratePdfService(
       }
 
       stopWatch.stop()
-      telemetryClient.trackSarEvent(
-        "PDFServiceContentGenerationComplete",
-        subjectAccessRequest,
-        "service" to (service.name ?: "unknown"),
-        "numPages" to pdfDocument.numberOfPages.toString(),
-        "totalTime" to stopWatch.formatTime(),
-        "templatingTime" to templatingStopWatch.formatTime(),
-        "convertingTime" to convertingStopWatch.formatTime(),
-        "appendingTime" to appendingStopWatch.formatTime(),
-      )
     }
     log.info("Added data to PDF")
   }

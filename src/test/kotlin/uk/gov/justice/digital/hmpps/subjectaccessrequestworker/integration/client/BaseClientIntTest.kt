@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
 abstract class BaseClientIntTest : IntegrationTestBase() {
 
@@ -40,10 +42,23 @@ abstract class BaseClientIntTest : IntegrationTestBase() {
       StubErrorResponse(HttpStatus.GATEWAY_TIMEOUT, ClientAuthorizationException::class.java),
     )
 
-    data class StubErrorResponse(val status: HttpStatus, val expectedException: Class<out Throwable>) {
+    data class StubErrorResponse(
+      val status: HttpStatus,
+      val expectedException: Class<out Throwable>,
+      val errorCode: Int = 0,
+    ) {
       fun getResponse(): ResponseDefinitionBuilder = ResponseDefinitionBuilder()
         .withStatus(status.value())
         .withStatusMessage(status.reasonPhrase)
+        .withBody(errorResponseJson(status, errorCode))
     }
+
+    private fun errorResponseJson(status: HttpStatus, errorCode: Int): String = ObjectMapper().writeValueAsString(
+      ErrorResponse(
+        status = status,
+        developerMessage = "error response: status=$status, errorCode=$errorCode",
+        errorCode = errorCode.toString(),
+      ),
+    )
   }
 }

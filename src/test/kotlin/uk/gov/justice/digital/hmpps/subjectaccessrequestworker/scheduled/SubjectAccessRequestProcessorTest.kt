@@ -18,6 +18,8 @@ import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_CLAIMED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -94,7 +96,7 @@ class SubjectAccessRequestProcessorTest {
       verify(reportService, times(1)).generateReport(sampleSAR)
       verify(subjectAccessRequestService, times(1)).updateStatus(sampleSAR.id, Status.Completed)
       verifyNoInteractions(alertsService)
-      verifyTelemetryEvents(sampleSAR, "NewReportClaimStarted", "NewReportClaimComplete")
+      verifyTelemetryEvents(sampleSAR, REQUEST_CLAIMED.name, REQUEST_COMPLETED.name)
     }
 
     @Test

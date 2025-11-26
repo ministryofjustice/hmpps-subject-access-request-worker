@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service
 import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_FAILURE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_SUCCESS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
@@ -27,8 +29,6 @@ class DocumentStorageClient(
     private val log = LoggerFactory.getLogger(this::class.java)
     private const val UPLOAD_DOCUMENT_PATH = "/documents/SUBJECT_ACCESS_REQUEST_REPORT"
     private const val SAR_FILENAME = "report.pdf"
-    private const val FILE_SIZE_VERIFY_ERROR_EVENT = "documentUploadFileSizeVerificationError"
-    private const val FILE_SIZE_VERIFY_SUCCESS_EVENT = "documentUploadFileSizeVerificationSuccess"
   }
 
   fun storeDocument(subjectAccessRequest: SubjectAccessRequest, docBody: ByteArrayOutputStream): PostDocumentResponse {
@@ -111,7 +111,7 @@ class DocumentStorageClient(
 
     if (postDocumentResponse.fileSize != expectedFileSize) {
       telemetryClient.trackSarEvent(
-        FILE_SIZE_VERIFY_ERROR_EVENT,
+        FILE_SIZE_VERIFY_FAILURE,
         subjectAccessRequest,
         "expectedFileSize" to expectedFileSize.toString(),
         "actualFileSize" to postDocumentResponse.fileSize.toString(),
@@ -134,7 +134,7 @@ class DocumentStorageClient(
     }
 
     telemetryClient.trackSarEvent(
-      FILE_SIZE_VERIFY_SUCCESS_EVENT,
+      FILE_SIZE_VERIFY_SUCCESS,
       subjectAccessRequest,
       "expectedFileSize" to expectedFileSize.toString(),
       "actualFileSize" to postDocumentResponse.fileSize.toString(),

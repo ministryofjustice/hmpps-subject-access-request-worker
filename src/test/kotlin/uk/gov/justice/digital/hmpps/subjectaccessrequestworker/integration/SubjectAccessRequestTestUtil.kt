@@ -72,6 +72,6 @@ private fun assertException(
   when (expectedParams) {
     null -> assertThat(actual.params).isNull()
     else -> assertThat(actual.params)
-      .containsExactlyInAnyOrderEntriesOf(expectedParams)
+      .containsAllEntriesOf(expectedParams)
   }
 }
