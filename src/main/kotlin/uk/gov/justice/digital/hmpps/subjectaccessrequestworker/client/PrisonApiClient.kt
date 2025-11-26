@@ -66,9 +66,7 @@ class PrisonApiClient(
       cause = ex,
       event = ACQUIRE_AUTH_TOKEN,
       subjectAccessRequest = subjectAccessRequest,
-      params = mapOf(
-        "cause" to ex.cause?.message,
-      ),
+      params = null,
     )
   }
 

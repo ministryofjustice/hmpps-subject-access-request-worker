@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config
 import com.microsoft.applicationinsights.TelemetryClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 /**
@@ -17,7 +18,7 @@ class ApplicationInsightsConfiguration {
 const val UNKNOWN_PLACEHOLDER = "unknown"
 
 fun TelemetryClient.trackSarEvent(
-  name: String,
+  event: ProcessingEvent,
   subjectAccessRequest: SubjectAccessRequest?,
   vararg kvpairs: Pair<String, String>,
 ) {
@@ -25,7 +26,7 @@ fun TelemetryClient.trackSarEvent(
   val contextId = subjectAccessRequest?.contextId.toString()
 
   this.trackEvent(
-    name,
+    event.name,
     mapOf(
       "sarId" to id,
       "UUID" to subjectAccessRequest?.id.toString(),

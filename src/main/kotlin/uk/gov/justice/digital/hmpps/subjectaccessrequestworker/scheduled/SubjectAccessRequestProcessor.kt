@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_CLAIMED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -92,7 +94,7 @@ class SubjectAccessRequestProcessor(
   private fun reportClaimedEvent(
     subjectAccessRequest: SubjectAccessRequest?,
   ) = telemetryClient.trackSarEvent(
-    name = "NewReportClaimStarted",
+    event = REQUEST_CLAIMED,
     subjectAccessRequest = subjectAccessRequest,
   )
 
@@ -100,8 +102,8 @@ class SubjectAccessRequestProcessor(
     subjectAccessRequest: SubjectAccessRequest?,
     stopWatch: StopWatch,
   ) = telemetryClient.trackSarEvent(
-    "NewReportClaimComplete",
-    subjectAccessRequest,
+    event = REQUEST_COMPLETED,
+    subjectAccessRequest = subjectAccessRequest,
     TIME_ELAPSED_KEY to stopWatch.getTime(TimeUnit.MILLISECONDS).toString(),
   )
 

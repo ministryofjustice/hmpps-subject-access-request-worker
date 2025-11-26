@@ -49,9 +49,6 @@ class LocationsApiClient(
       message = "locationsApiClient error authorization exception",
       cause = ex,
       event = ACQUIRE_AUTH_TOKEN,
-      params = mapOf(
-        "cause" to ex.cause?.message,
-      ),
     )
   }
 

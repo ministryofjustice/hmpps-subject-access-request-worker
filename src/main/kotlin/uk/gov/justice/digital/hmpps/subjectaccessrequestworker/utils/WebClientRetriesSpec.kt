@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClientRequestException
@@ -14,11 +17,17 @@ import reactor.util.retry.RetryBackoffSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_REQUEST_RETRY
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_RETRIES_EXHAUSTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.DOCUMENT_STORE_CONFLICT
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.NON_RETRYABLE_CLIENT_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
 import java.time.Duration
 import java.util.function.Predicate
@@ -31,12 +40,10 @@ class WebClientRetriesSpec(
 
   private val maxRetries: Long = webClientConfiguration.maxRetries
   private val backOff: Duration = webClientConfiguration.getBackoffDuration()
+  private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
   companion object {
     private val LOG = LoggerFactory.getLogger(WebClientRetriesSpec::class.java)
-    private const val DOCUMENT_STORE_CONFLICT_EVENT = "DocumentStoreConflictError"
-    private const val NON_RETRYABLE_CLIENT_ERROR_EVENT = "NonRetryableClientError"
-    private const val CLIENT_RETRIES_EXHAUSTED_ERROR_EVENT = "ClientRetriesExhaustedError"
   }
 
   fun retry5xxAndClientRequestErrors(
@@ -47,10 +54,7 @@ class WebClientRetriesSpec(
     .backoff(maxRetries, backOff)
     .filter { err -> is5xxOrClientRequestError(err) }
     .doBeforeRetry { signal ->
-      LOG.error(
-        "subject access request $event, id=${subjectAccessRequest?.id} failed with " +
-          "error=${signal.failure()}, attempting retry after backoff: $backOff, ${params?.formatted()}",
-      )
+      logClientRetryEvent(signal, subjectAccessRequest, event, params)
     }
     .onRetryExhaustedThrow { _, signal ->
       telemetryClient.clientRetriesExhausted(subjectAccessRequest, signal, event)
@@ -64,9 +68,32 @@ class WebClientRetriesSpec(
       )
     }
 
-  fun is5xxOrClientRequestError(error: Throwable): Boolean = error is WebClientResponseException && error.statusCode.is5xxServerError || error is WebClientRequestException
+  private fun extractFailureResponse(
+    signal: Retry.RetrySignal,
+  ): ErrorSummary = signal.failure().takeIf { it is WebClientResponseException }?.let { ex ->
+    ex as WebClientResponseException
+    val bodyString = ex.getResponseBodyAs(String::class.java)
 
-  fun is4xxStatus(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode -> code.is4xxClientError }
+    bodyString.takeIf { responseBodyIsJson(it, ex) }?.let {
+      ErrorSummary(errorResponse = objectMapper.readValue(it, ErrorResponse::class.java))
+    } ?: ErrorSummary(rawMessage = bodyString)
+  } ?: ErrorSummary(rawMessage = signal.failure().message)
+
+  private fun responseBodyIsJson(
+    body: String?,
+    wcex: WebClientResponseException,
+  ): Boolean = wcex.headers.contentType == MediaType.APPLICATION_JSON &&
+    body != null &&
+    body.startsWith("{") &&
+    body.endsWith("}")
+
+  fun is5xxOrClientRequestError(error: Throwable): Boolean = error is WebClientResponseException &&
+    error.statusCode.is5xxServerError ||
+    error is WebClientRequestException
+
+  fun is4xxStatus(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode ->
+    code.is4xxClientError
+  }
 
   fun throw4xxStatusFatalError(
     event: ProcessingEvent,
@@ -91,7 +118,9 @@ class WebClientRetriesSpec(
     )
   }
 
-  fun is409Conflict(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode -> HttpStatus.CONFLICT.isSameCodeAs(code) }
+  fun is409Conflict(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode ->
+    HttpStatus.CONFLICT.isSameCodeAs(code)
+  }
 
   fun throwDocumentApiConflictException(subjectAccessRequest: SubjectAccessRequest) = { response: ClientResponse ->
     telemetryClient.documentStoreConflictError(subjectAccessRequest, response.request().uri)
@@ -115,11 +144,12 @@ class WebClientRetriesSpec(
     event: ProcessingEvent,
   ) {
     telemetryClient.trackSarEvent(
-      CLIENT_RETRIES_EXHAUSTED_ERROR_EVENT,
-      subjectAccessRequest,
+      event = CLIENT_RETRIES_EXHAUSTED,
+      subjectAccessRequest = subjectAccessRequest,
       "retryAttempts" to signal.totalRetries().toString(),
       "cause" to (signal.failure().cause?.message ?: "null"),
       "event" to event.name,
+      "totalRetries" to signal.totalRetries().toString(),
     )
   }
 
@@ -137,8 +167,8 @@ class WebClientRetriesSpec(
     }
 
     telemetryClient.trackSarEvent(
-      NON_RETRYABLE_CLIENT_ERROR_EVENT,
-      subjectAccessRequest,
+      event = NON_RETRYABLE_CLIENT_ERROR,
+      subjectAccessRequest = subjectAccessRequest,
       "event" to event.name,
       *kvPairs.toTypedArray(),
     )
@@ -149,10 +179,39 @@ class WebClientRetriesSpec(
     uri: URI,
   ) {
     telemetryClient.trackSarEvent(
-      DOCUMENT_STORE_CONFLICT_EVENT,
-      subjectAccessRequest,
-      "event" to ProcessingEvent.STORE_DOCUMENT.name,
+      event = DOCUMENT_STORE_CONFLICT,
+      subjectAccessRequest = subjectAccessRequest,
+      "event" to STORE_DOCUMENT.name,
       "uri" to uri.toString(),
     )
+  }
+
+  fun logClientRetryEvent(
+    signal: Retry.RetrySignal,
+    subjectAccessRequest: SubjectAccessRequest?,
+    event: ProcessingEvent,
+    params: Map<String, Any>? = null,
+  ) {
+    val error = extractFailureResponse(signal)
+
+    telemetryClient.trackSarEvent(
+      event = CLIENT_REQUEST_RETRY,
+      subjectAccessRequest = subjectAccessRequest,
+      "event" to event.name,
+      "errorCode" to error.getErrorCode(),
+      "errorMessage" to error.getMessage(),
+      "totalRetries" to signal.totalRetries().toString(),
+    )
+
+    LOG.error(
+      "subject access request $event, id=${subjectAccessRequest?.id} failed with " +
+        "error=${error.getMessage()}, errorCode=${error.getErrorCode()}, attempting retry after backoff: $backOff, " +
+        "${params?.formatted()}",
+    )
+  }
+
+  data class ErrorSummary(val rawMessage: String? = null, val errorResponse: ErrorResponse? = null) {
+    fun getErrorCode(): String = errorResponse?.errorCode ?: "N/A"
+    fun getMessage(): String = errorResponse?.developerMessage ?: rawMessage ?: "N/A"
   }
 }

@@ -18,6 +18,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_FAILURE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_SUCCESS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
@@ -49,7 +51,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   private val subjectAccessRequest = SubjectAccessRequest(id = subjectAccessRequestId, contextId = contextId)
 
   @MockitoBean
-  private lateinit var telemetryClient: TelemetryClient
+  protected lateinit var telemetryClient: TelemetryClient
 
   companion object {
     private const val FILE_CONTENT =
@@ -420,7 +422,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     )
 
     verify(telemetryClient, times(1))
-      .trackEvent("documentUploadFileSizeVerificationSuccess", props, null)
+      .trackEvent(FILE_SIZE_VERIFY_SUCCESS.name, props, null)
   }
 
   fun verifyFileSizeVerifyErrorTelemetryEvent(
@@ -439,6 +441,6 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     )
 
     verify(telemetryClient, times(1))
-      .trackEvent("documentUploadFileSizeVerificationError", props, null)
+      .trackEvent(FILE_SIZE_VERIFY_FAILURE.name, props, null)
   }
 }

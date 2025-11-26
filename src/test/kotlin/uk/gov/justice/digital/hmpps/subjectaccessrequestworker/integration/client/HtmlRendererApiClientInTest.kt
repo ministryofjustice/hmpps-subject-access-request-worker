@@ -1,16 +1,22 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
+import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
@@ -27,6 +33,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.time.LocalDate
 import java.util.UUID
 
@@ -42,6 +49,9 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
   @Autowired
   private lateinit var webClientConfiguration: WebClientConfiguration
+
+  @MockitoBean
+  protected lateinit var telemetryClient: TelemetryClient
 
   private val sarDateTo = LocalDate.of(2025, 1, 1)
   private val sarDateFrom = LocalDate.of(2024, 1, 1)
@@ -176,6 +186,76 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     assertExceptedExceptionFor5xxError(actual, subjectAccessRequest, stubErrorResponse)
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 3, expectedBody = expectedRequest)
+  }
+
+  @Test
+  fun `should capture the expected app insights events when request fails with 5xx response status`() {
+    val subjectAccessRequest = subjectAccessRequest()
+    val eventNameCaptor = argumentCaptor<String>()
+    val propertiesCaptor = argumentCaptor<Map<String, String>>()
+    val metricsCaptor = argumentCaptor<Map<String, Double>>()
+
+    val expectedRequest = HtmlRendererApiClient.HtmlRenderRequest(
+      subjectAccessRequest = subjectAccessRequest,
+      serviceConfigurationId = serviceConfiguration.id,
+    )
+
+    hmppsAuth.stubGrantToken()
+    htmlRendererApi.stubRenderResponsesWith(
+      renderRequest = expectedRequest,
+      responseDefinition = ResponseDefinitionBuilder()
+        .withStatus(500)
+        .withHeader("Content-Type", "application/json")
+        .withStatusMessage("INTERNAL_SERVER_ERROR")
+        .withBody(
+          ObjectMapper().writeValueAsString(
+            ErrorResponse(
+              status = 500,
+              errorCode = "1234567890",
+              developerMessage = "A cow goes...",
+            ),
+          ),
+        ),
+    )
+
+    assertThrows<SubjectAccessRequestRetryExhaustedException> {
+      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
+    }
+
+    verify(telemetryClient, atLeastOnce()).trackEvent(
+      eventNameCaptor.capture(),
+      propertiesCaptor.capture(),
+      metricsCaptor.capture(),
+    )
+
+    assertThat(eventNameCaptor.allValues).hasSize(3)
+    assertThat(eventNameCaptor.firstValue).isEqualTo(ProcessingEvent.CLIENT_REQUEST_RETRY.name)
+    assertThat(eventNameCaptor.secondValue).isEqualTo(ProcessingEvent.CLIENT_REQUEST_RETRY.name)
+    assertThat(eventNameCaptor.thirdValue).isEqualTo(ProcessingEvent.CLIENT_RETRIES_EXHAUSTED.name)
+
+    repeat(2) { i ->
+      assertThat(propertiesCaptor.allValues[i]).containsAllEntriesOf(
+        mapOf(
+          "sarId" to subjectAccessRequest.sarCaseReferenceNumber,
+          "UUID" to subjectAccessRequest.id.toString(),
+          "contextId" to subjectAccessRequest.contextId.toString(),
+          "event" to ProcessingEvent.HTML_RENDERER_REQUEST.name,
+          "errorCode" to "1234567890",
+          "errorMessage" to "A cow goes...",
+          "totalRetries" to i.toString(),
+        ),
+      )
+    }
+
+    assertThat(propertiesCaptor.thirdValue).containsAllEntriesOf(
+      mapOf(
+        "sarId" to subjectAccessRequest.sarCaseReferenceNumber,
+        "UUID" to subjectAccessRequest.id.toString(),
+        "contextId" to subjectAccessRequest.contextId.toString(),
+        "event" to ProcessingEvent.HTML_RENDERER_REQUEST.name,
+        "totalRetries" to "2",
+      ),
+    )
   }
 
   private fun subjectAccessRequest() = SubjectAccessRequest(

@@ -38,6 +38,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.8")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")

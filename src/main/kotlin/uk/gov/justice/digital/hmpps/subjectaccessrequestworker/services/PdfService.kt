@@ -20,6 +20,15 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -44,32 +53,32 @@ class PdfService(
   )
 
   suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): ByteArrayOutputStream {
-    telemetryClient.trackSarEvent("pdfGenerationStarted", pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackSarEvent(GENERATE_PDF_STARTED, pdfRenderRequest.subjectAccessRequest)
     val bodyOutputStream = ByteArrayOutputStream()
     val bodyWrapper = createPdfDocument(bodyOutputStream).use { pdfDocument ->
-      telemetryClient.trackSarEvent("pdfBodyGenerationStarted", pdfRenderRequest.subjectAccessRequest)
+      telemetryClient.trackSarEvent(GENERATE_PDF_BODY_STARTED, pdfRenderRequest.subjectAccessRequest)
 
       createDocumentBodyPdf(pdfRenderRequest, pdfDocument)
       PdfOutputStreamWrapper(bodyOutputStream, pdfDocument.numberOfPages).also {
-        telemetryClient.trackSarEvent("pdfBodyGenerationCompleted", pdfRenderRequest.subjectAccessRequest)
+        telemetryClient.trackSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest.subjectAccessRequest)
       }
     }
 
     val coverOutputStream = ByteArrayOutputStream()
     val coverWrapper = createPdfDocument(coverOutputStream).use { pdfDocument ->
-      telemetryClient.trackSarEvent("pdfCoverGenerationStarted", pdfRenderRequest.subjectAccessRequest)
+      telemetryClient.trackSarEvent(GENERATE_PDF_COVER_STARTED, pdfRenderRequest.subjectAccessRequest)
       createSubjectAccessRequestDocument(pdfDocument).addInternalCoverPage(
         pdfRenderRequest.subjectName,
         pdfRenderRequest.subjectAccessRequest,
         bodyWrapper.numberOfPages - 1,
       )
       PdfOutputStreamWrapper(coverOutputStream, pdfDocument.numberOfPages).also {
-        telemetryClient.trackSarEvent("pdfCoverGenerationCompleted", pdfRenderRequest.subjectAccessRequest)
+        telemetryClient.trackSarEvent(GENERATE_PDF_COVER_COMPLETED, pdfRenderRequest.subjectAccessRequest)
       }
     }
 
     return mergeBodyAndCoverDocuments(bodyWrapper, coverWrapper).also {
-      telemetryClient.trackSarEvent("pdfGenerationCompleted", pdfRenderRequest.subjectAccessRequest)
+      telemetryClient.trackSarEvent(GENERATE_PDF_COMPLETED, pdfRenderRequest.subjectAccessRequest)
     }
   }
 
@@ -171,12 +180,16 @@ class PdfService(
     services: List<ServiceConfiguration>,
   ) {
     telemetryClient.trackSarEvent(
-      "pdfAddServicesDataStarted",
-      subjectAccessRequest,
+      event = GENERATE_PDF_ADD_SERVICE_DATA_STATED,
+      subjectAccessRequest = subjectAccessRequest,
       "services" to services.serviceNames(),
     )
     services.forEach { service ->
-      telemetryClient.trackSarEvent("pdfAddServiceDataStarted", subjectAccessRequest, "service" to service.serviceName)
+      telemetryClient.trackSarEvent(
+        event = GENERATE_PDF_SERVICE_DATA_ADDED,
+        subjectAccessRequest = subjectAccessRequest,
+        "service" to service.serviceName,
+      )
       this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
 
       val elements = documentStoreService.getDocument(
@@ -186,8 +199,8 @@ class PdfService(
 
       elements.forEach { this.add(it as IBlockElement) }
       telemetryClient.trackSarEvent(
-        "pdfAddServiceDataCompleted",
-        subjectAccessRequest,
+        event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
+        subjectAccessRequest = subjectAccessRequest,
         "service" to service.serviceName,
       )
 
