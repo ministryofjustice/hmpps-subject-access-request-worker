@@ -2,7 +2,7 @@ version: '3.1'
 services:
 
   sar-worker-db:
-    image: postgres:17
+    image: postgres:18
     networks:
       - hmpps
     container_name: sar-db
@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=sar-db
 
   sar-renderer-db:
-    image: postgres:17
+    image: postgres:18
     networks:
       - hmpps
     container_name: sar-db-renderer
