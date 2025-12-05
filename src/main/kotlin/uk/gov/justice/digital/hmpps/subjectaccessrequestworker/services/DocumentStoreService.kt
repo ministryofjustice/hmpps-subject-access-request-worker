@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.S3Properties
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_ATTACHMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_RENDERED_HTML_DOCUMENT
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SERVICE_TEMPLATE_VERSION
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.LIST_ATTACHMENTS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -86,6 +87,25 @@ class DocumentStoreService(
       ),
     )
   }
+
+  suspend fun getTemplateVersion(subjectAccessRequest: SubjectAccessRequest, serviceName: String): String = try {
+    s3.headObject {
+      bucket = s3Properties.bucketName
+      key = "${subjectAccessRequest.id}/$serviceName.html"
+    }.metadata?.get("template_version") ?: "NA"
+  } catch (ex: Exception) {
+    throw SubjectAccessRequestException(
+      message = "failed to get template version from html document metadata",
+      event = GET_SERVICE_TEMPLATE_VERSION,
+      subjectAccessRequest = subjectAccessRequest,
+      cause = ex,
+      params = mapOf(
+        "serviceName" to serviceName,
+        "documentKey" to "${subjectAccessRequest.id}/$serviceName.html",
+      )
+    )
+  }
+
 
   private suspend fun getResponseAsInputStream(response: GetObjectResponse) = response.body
     ?.toByteArray() ?: ByteArray(0)

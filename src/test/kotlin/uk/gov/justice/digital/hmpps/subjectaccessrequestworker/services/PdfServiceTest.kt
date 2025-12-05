@@ -76,6 +76,9 @@ class PdfServiceTest {
     whenever(documentStoreService.getDocument(subjectAccessRequest, testCase.serviceName))
       .thenReturn(getResource("/integration-tests/html-stubs/${testCase.serviceName}-expected.html"))
 
+    whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, testCase.serviceName))
+      .thenReturn("v1")
+
     whenever(serviceConfiguration.getSelectedServices(any())).thenReturn(
       listOf(serviceConfiguration(testCase.serviceName, testCase.serviceLabel)),
     )

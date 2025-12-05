@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHead
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.PdfDocumentPdfRenderer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -114,18 +115,22 @@ class PdfService(
 
   private fun fontHelvetica(): PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
 
-  private suspend fun createDocumentBodyPdf(pdfRenderRequest: PdfRenderRequest, pdfDocument: PdfDocument) {
+  private suspend fun createDocumentBodyPdf(
+    pdfRenderRequest: PdfRenderRequest,
+    pdfDocument: PdfDocument,
+  ) {
     val document = createSubjectAccessRequestDocument(pdfDocument)
     pdfDocument.addSubjectAccessRequestCustomHandler(document, pdfRenderRequest)
 
     val services = serviceConfigurationService.getSelectedServices(pdfRenderRequest.subjectAccessRequest)
-    document.addInternalContentsPage(services)
+    document.addInternalContentsPage(pdfRenderRequest.subjectAccessRequest, services)
     document.addExternalCoverPage(pdfRenderRequest)
     document.addServiceData(pdfRenderRequest.subjectAccessRequest, services)
     document.addRearPage(pdfDocument.numberOfPages)
   }
 
-  private fun Document.addInternalContentsPage(
+  private suspend fun Document.addInternalContentsPage(
+    subjectAccessRequest: SubjectAccessRequest,
     services: List<ServiceConfiguration>,
   ) {
     val contentsPageText = Paragraph()
@@ -138,7 +143,7 @@ class PdfService(
     this.add(contentsPageText)
 
     val serviceListParagraph = Paragraph()
-    services.map { "\u2022 ${it.label}\n" }.forEach {
+    services.map { getServiceLabelWithTemplateVersion(subjectAccessRequest, it) }.forEach {
       serviceListParagraph.add(it)
         .setTextAlignment(TextAlignment.CENTER)
         .setFontSize(14f)
@@ -150,6 +155,14 @@ class PdfService(
         .setTextAlignment(TextAlignment.CENTER)
         .setFontSize(16f),
     )
+  }
+
+  private suspend fun getServiceLabelWithTemplateVersion(
+    subjectAccessRequest: SubjectAccessRequest,
+    service: ServiceConfiguration
+  ): String {
+    val version = documentStoreService.getTemplateVersion(subjectAccessRequest, service.serviceName)
+    return "\u2022 ${service.label} ($version)\n"
   }
 
   private fun Document.addExternalCoverPage(pdfRenderRequest: PdfRenderRequest) {
