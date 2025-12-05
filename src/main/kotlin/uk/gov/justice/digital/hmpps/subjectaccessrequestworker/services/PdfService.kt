@@ -33,7 +33,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHead
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.PdfDocumentPdfRenderer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -159,7 +158,7 @@ class PdfService(
 
   private suspend fun getServiceLabelWithTemplateVersion(
     subjectAccessRequest: SubjectAccessRequest,
-    service: ServiceConfiguration
+    service: ServiceConfiguration,
   ): String {
     val version = documentStoreService.getTemplateVersion(subjectAccessRequest, service.serviceName)
     return "\u2022 ${service.label} ($version)\n"

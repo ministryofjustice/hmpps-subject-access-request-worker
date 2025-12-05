@@ -102,10 +102,9 @@ class DocumentStoreService(
       params = mapOf(
         "serviceName" to serviceName,
         "documentKey" to "${subjectAccessRequest.id}/$serviceName.html",
-      )
+      ),
     )
   }
-
 
   private suspend fun getResponseAsInputStream(response: GetObjectResponse) = response.body
     ?.toByteArray() ?: ByteArray(0)
