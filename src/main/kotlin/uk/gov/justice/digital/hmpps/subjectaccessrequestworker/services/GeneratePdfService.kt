@@ -5,7 +5,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.io.font.constants.StandardFonts
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA
+import com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD
 import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.kernel.font.PdfFontFactory.createFont
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -89,8 +92,9 @@ class GeneratePdfService(
       CustomHeaderEventHandler(
         pdfDocument,
         document,
-        getSubjectIdLine(sar.nomisId, sar.ndeliusCaseReferenceId),
         subjectName,
+        sar.nomisId,
+        sar.ndeliusCaseReferenceId,
       ),
     )
     document.setMargins(50F, 35F, 70F, 35F)
