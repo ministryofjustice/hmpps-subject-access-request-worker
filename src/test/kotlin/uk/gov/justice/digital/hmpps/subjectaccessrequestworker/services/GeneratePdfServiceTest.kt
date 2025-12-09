@@ -273,7 +273,7 @@ class GeneratePdfServiceTest : BaseGeneratePdfTest() {
     )
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
-      CustomHeaderEventHandler(pdfDocument, document, "NOMIS ID: nomisNumber", "LASTNAME, Firstname"),
+      CustomHeaderEventHandler(pdfDocument, document, "LASTNAME, Firstname", "nomisNumber", null),
     )
     generatePdfService.addData(pdfDocument, document, testContentObject)
     val numPages = pdfDocument.numberOfPages

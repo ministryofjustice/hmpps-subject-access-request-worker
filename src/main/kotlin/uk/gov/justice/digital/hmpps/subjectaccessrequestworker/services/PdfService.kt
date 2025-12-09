@@ -245,11 +245,9 @@ class PdfService(
       CustomHeaderEventHandler(
         this,
         document,
-        getSubjectIdLine(
-          pdfRenderRequest.subjectAccessRequest.nomisId,
-          pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
-        ),
         pdfRenderRequest.subjectName,
+        pdfRenderRequest.subjectAccessRequest.nomisId,
+        pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
       ),
     )
   }
