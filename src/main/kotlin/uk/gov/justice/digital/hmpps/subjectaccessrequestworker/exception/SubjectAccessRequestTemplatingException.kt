@@ -4,10 +4,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 class SubjectAccessRequestTemplatingException(
-    subjectAccessRequest: SubjectAccessRequest?,
-    message: String,
-    errorCode: ErrorCode,
-    params: Map<String, *>? = null,
+  subjectAccessRequest: SubjectAccessRequest?,
+  message: String,
+  errorCode: ErrorCode,
+  params: Map<String, *>? = null,
 ) : SubjectAccessRequestException(
   subjectAccessRequest = subjectAccessRequest,
   message = message,

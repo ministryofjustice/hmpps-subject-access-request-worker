@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyExtractors
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -78,18 +77,19 @@ class WebClientRetriesSpec(
   private fun getErrorCodeFromResponseOrDefault(
     signal: RetrySignal,
     errorCodePrefix: ErrorCodePrefix,
-  ): ErrorCode =
-    extractErrorResponse(signal)?.errorCode.takeIf { !it.isNullOrBlank() }?.let { ErrorCode(it, errorCodePrefix) }
-      ?: defaultErrorCodeFor(errorCodePrefix)
+  ): ErrorCode = extractErrorResponse(signal)
+    ?.errorCode.takeIf { !it.isNullOrBlank() }
+    ?.let { ErrorCode(it, errorCodePrefix) }
+    ?: defaultErrorCodeFor(errorCodePrefix)
 
   private fun extractErrorResponse(
-    signal: RetrySignal
+    signal: RetrySignal,
   ): ErrorResponse? = signal.failure().takeIf { it is WebClientResponseException }?.let { ex ->
-      ex as WebClientResponseException
-      val bodyString = ex.getResponseBodyAs(String::class.java)
+    ex as WebClientResponseException
+    val bodyString = ex.getResponseBodyAs(String::class.java)
 
-      bodyString.takeIf { responseBodyIsJson(it, ex) }
-        ?.let { objectMapper.readValue(it, ErrorResponse::class.java) }
+    bodyString.takeIf { responseBodyIsJson(it, ex) }
+      ?.let { objectMapper.readValue(it, ErrorResponse::class.java) }
   }
 
   private fun extractFailureResponse(
@@ -130,8 +130,6 @@ class WebClientRetriesSpec(
       putIfAbsent("uri", response.request().uri.toString())
       putIfAbsent("httpStatus", response.statusCode())
     }
-
-    response.body(BodyExtractors.toMono(WebClientResponseException::class.java))
 
     telemetryClient.nonRetryableClientError(subjectAccessRequest, event, params)
 

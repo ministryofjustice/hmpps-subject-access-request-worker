@@ -71,7 +71,7 @@ class TemplateHelpers(
     }
     throw SubjectAccessRequestTemplatingException(
       message = "required type String or null, but actual type was ${input::class.simpleName}",
-      errorCode = TEMPLATE_HELPER_ERROR
+      errorCode = TEMPLATE_HELPER_ERROR,
     )
   }
 

@@ -64,6 +64,7 @@ class NomisMappingApiClient(
     val nomisLocationId: Int,
   )
 
-  class NomisLocationMappingNotFoundException(nomisLocationId: Int) :
-    RuntimeException("/api/locations/nomis/$nomisLocationId not found")
+  class NomisLocationMappingNotFoundException(
+    nomisLocationId: Int,
+  ) : RuntimeException("/api/locations/nomis/$nomisLocationId not found")
 }
