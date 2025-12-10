@@ -6,6 +6,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CONVERT_WORD_DOCUMENT
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.GOTENBERG_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 
 @Component
@@ -29,6 +30,7 @@ class GotenbergApiClient(
         webClientRetriesSpec.is4xxStatus(),
         webClientRetriesSpec.throw4xxStatusFatalError(
           event = CONVERT_WORD_DOCUMENT,
+          errorCodePrefix = GOTENBERG_ERROR_PREFIX,
           params = mapOf("filename" to filename),
         ),
       )
@@ -37,6 +39,7 @@ class GotenbergApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           event = CONVERT_WORD_DOCUMENT,
           params = mapOf("filename" to filename),
+          errorCodePrefix = GOTENBERG_ERROR_PREFIX,
         ),
       )
       .block()!!

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.TEMPLATE_HELPER_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
@@ -70,6 +71,7 @@ class TemplateHelpers(
     }
     throw SubjectAccessRequestTemplatingException(
       message = "required type String or null, but actual type was ${input::class.simpleName}",
+      errorCode = TEMPLATE_HELPER_ERROR
     )
   }
 

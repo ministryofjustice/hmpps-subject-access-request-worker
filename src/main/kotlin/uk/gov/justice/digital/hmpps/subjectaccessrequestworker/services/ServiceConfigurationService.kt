@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.CONFIGURATION_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
@@ -66,6 +67,7 @@ class ServiceConfigurationService(
   ): SubjectAccessRequestException = throw FatalSubjectAccessRequestException(
     message = "service with name '$serviceName' not found",
     event = ProcessingEvent.GET_SERVICE_CONFIGURATION,
+    errorCode = CONFIGURATION_ERROR,
     subjectAccessRequest = subjectAccessRequest,
     params = mapOf("serviceName" to serviceName),
   )

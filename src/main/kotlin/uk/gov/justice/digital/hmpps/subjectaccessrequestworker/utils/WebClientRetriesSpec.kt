@@ -8,11 +8,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.BodyExtractors
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
+import reactor.util.retry.Retry.RetrySignal
 import reactor.util.retry.RetryBackoffSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
@@ -22,6 +24,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.DOCUMENT_STORE_CONFLICT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.NON_RETRYABLE_CLIENT_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.defaultErrorCodeFor
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
@@ -49,6 +54,7 @@ class WebClientRetriesSpec(
   fun retry5xxAndClientRequestErrors(
     event: ProcessingEvent,
     subjectAccessRequest: SubjectAccessRequest? = null,
+    errorCodePrefix: ErrorCodePrefix,
     params: Map<String, Any>? = null,
   ): RetryBackoffSpec = Retry
     .backoff(maxRetries, backOff)
@@ -63,13 +69,31 @@ class WebClientRetriesSpec(
         retryAttempts = signal.totalRetries(),
         cause = signal.failure(),
         event = event,
+        errorCode = getErrorCodeFromResponseOrDefault(signal, errorCodePrefix),
         subjectAccessRequest = subjectAccessRequest,
         params = params,
       )
     }
 
+  private fun getErrorCodeFromResponseOrDefault(
+    signal: RetrySignal,
+    errorCodePrefix: ErrorCodePrefix,
+  ): ErrorCode =
+    extractErrorResponse(signal)?.errorCode.takeIf { !it.isNullOrBlank() }?.let { ErrorCode(it, errorCodePrefix) }
+      ?: defaultErrorCodeFor(errorCodePrefix)
+
+  private fun extractErrorResponse(
+    signal: RetrySignal
+  ): ErrorResponse? = signal.failure().takeIf { it is WebClientResponseException }?.let { ex ->
+      ex as WebClientResponseException
+      val bodyString = ex.getResponseBodyAs(String::class.java)
+
+      bodyString.takeIf { responseBodyIsJson(it, ex) }
+        ?.let { objectMapper.readValue(it, ErrorResponse::class.java) }
+  }
+
   private fun extractFailureResponse(
-    signal: Retry.RetrySignal,
+    signal: RetrySignal,
   ): ErrorSummary = signal.failure().takeIf { it is WebClientResponseException }?.let { ex ->
     ex as WebClientResponseException
     val bodyString = ex.getResponseBodyAs(String::class.java)
@@ -98,6 +122,7 @@ class WebClientRetriesSpec(
   fun throw4xxStatusFatalError(
     event: ProcessingEvent,
     subjectAccessRequest: SubjectAccessRequest? = null,
+    errorCodePrefix: ErrorCodePrefix,
     params: Map<String, Any>? = null,
   ) = { response: ClientResponse ->
     val moddedParams = buildMap<String, Any> {
@@ -106,12 +131,15 @@ class WebClientRetriesSpec(
       putIfAbsent("httpStatus", response.statusCode())
     }
 
+    response.body(BodyExtractors.toMono(WebClientResponseException::class.java))
+
     telemetryClient.nonRetryableClientError(subjectAccessRequest, event, params)
 
     Mono.error<SubjectAccessRequestException>(
       FatalSubjectAccessRequestException(
         message = "client 4xx response status",
         event = event,
+        errorCode = ErrorCode(response.statusCode(), errorCodePrefix),
         subjectAccessRequest = subjectAccessRequest,
         params = moddedParams,
       ),

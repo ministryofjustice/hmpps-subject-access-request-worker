@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEv
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_CLAIMED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.INTERNAL_SERVER_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -135,6 +136,7 @@ class SubjectAccessRequestProcessor(
     message = "subject access request threw unexpected error",
     cause = ex,
     event = null,
+    errorCode = INTERNAL_SERVER_ERROR,
     subjectAccessRequest = subjectAccessRequest,
     mapOf(
       "sarCaseReferenceNumber" to subjectAccessRequest?.sarCaseReferenceNumber,

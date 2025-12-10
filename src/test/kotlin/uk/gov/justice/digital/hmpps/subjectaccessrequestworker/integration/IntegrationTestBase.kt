@@ -39,6 +39,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -151,5 +152,13 @@ abstract class IntegrationTestBase {
   ): ResponseDefinitionBuilder = ResponseDefinitionBuilder.responseDefinition()
     .withStatus(status.value())
     .withHeader("Content-Type", "application/json")
-    .withBody(status.reasonPhrase)
+    .withBody(
+      objectMapper.writeValueAsString(
+        ErrorResponse(
+          status = status.value(),
+          errorCode = "10001",
+          userMessage = status.reasonPhrase,
+        ),
+      ),
+    )
 }

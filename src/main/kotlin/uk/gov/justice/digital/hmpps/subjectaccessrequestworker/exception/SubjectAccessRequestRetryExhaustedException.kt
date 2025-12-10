@@ -9,23 +9,26 @@ private const val ERROR_MESSAGE_PREFIX = "subjectAccessRequest failed and max re
  * A subject access request has failed with an error and has reached the max retry max limit.
  */
 class SubjectAccessRequestRetryExhaustedException(
-  retryAttempts: Long,
-  cause: Throwable?,
-  event: ProcessingEvent,
-  subjectAccessRequest: SubjectAccessRequest? = null,
-  params: Map<String, *>? = null,
+    retryAttempts: Long,
+    cause: Throwable?,
+    event: ProcessingEvent,
+    errorCode: ErrorCode,
+    subjectAccessRequest: SubjectAccessRequest? = null,
+    params: Map<String, *>? = null,
 ) : SubjectAccessRequestException(
   ERROR_MESSAGE_PREFIX.format(retryAttempts),
   cause,
   event,
+  errorCode,
   subjectAccessRequest,
   params,
 ) {
 
   constructor(
-    retryAttempts: Long,
-    event: ProcessingEvent,
-    subjectAccessRequest: SubjectAccessRequest? = null,
-    params: Map<String, *>? = null,
-  ) : this(retryAttempts, null, event, subjectAccessRequest, params)
+      retryAttempts: Long,
+      event: ProcessingEvent,
+      errorCode: ErrorCode,
+      subjectAccessRequest: SubjectAccessRequest? = null,
+      params: Map<String, *>? = null,
+  ) : this(retryAttempts, null, event, errorCode, subjectAccessRequest, params)
 }

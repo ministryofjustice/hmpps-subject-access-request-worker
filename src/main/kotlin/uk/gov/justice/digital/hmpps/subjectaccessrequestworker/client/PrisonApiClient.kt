@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.PRISON_API_AUTH_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.PRISON_API_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
@@ -41,6 +43,7 @@ class PrisonApiClient(
         webClientRetriesSpec.throw4xxStatusFatalError(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
+          PRISON_API_ERROR_PREFIX,
           mapOf("subjectId" to subjectId),
         ),
       )
@@ -49,6 +52,7 @@ class PrisonApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
+          PRISON_API_ERROR_PREFIX,
           mapOf("subjectId" to subjectId),
         ),
       )
@@ -65,6 +69,7 @@ class PrisonApiClient(
       message = "prisonApiClient error authorization exception",
       cause = ex,
       event = ACQUIRE_AUTH_TOKEN,
+      errorCode = PRISON_API_AUTH_ERROR,
       subjectAccessRequest = subjectAccessRequest,
       params = null,
     )
