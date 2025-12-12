@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.clie
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -45,19 +46,20 @@ abstract class BaseClientIntTest : IntegrationTestBase() {
     data class StubErrorResponse(
       val status: HttpStatus,
       val expectedException: Class<out Throwable>,
-      val errorCode: Int = 0,
+      val errorCode: Int? = null,
     ) {
       fun getResponse(): ResponseDefinitionBuilder = ResponseDefinitionBuilder()
         .withStatus(status.value())
+        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
         .withStatusMessage(status.reasonPhrase)
         .withBody(errorResponseJson(status, errorCode))
     }
 
-    private fun errorResponseJson(status: HttpStatus, errorCode: Int): String = ObjectMapper().writeValueAsString(
+    private fun errorResponseJson(status: HttpStatus, errorCode: Int?): String = ObjectMapper().writeValueAsString(
       ErrorResponse(
         status = status,
         developerMessage = "error response: status=$status, errorCode=$errorCode",
-        errorCode = errorCode.toString(),
+        errorCode = errorCode?.toString() ?: status.value().toString(),
       ),
     )
   }

@@ -13,6 +13,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SERVICE_TEMPLATE_VERSION
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.LIST_ATTACHMENTS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_GET_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_HEAD_OBJECT_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_LIST_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -55,6 +58,7 @@ class DocumentStoreService(
     throw SubjectAccessRequestException(
       message = "failed to list attachments from bucket",
       event = LIST_ATTACHMENTS,
+      errorCode = S3_LIST_ERROR,
       subjectAccessRequest = subjectAccessRequest,
       cause = ex,
       params = mapOf(
@@ -79,6 +83,7 @@ class DocumentStoreService(
     throw SubjectAccessRequestException(
       message = "failed to get attachment from bucket",
       event = GET_ATTACHMENT,
+      errorCode = S3_GET_ERROR,
       subjectAccessRequest = subjectAccessRequest,
       cause = ex,
       params = mapOf(
@@ -98,6 +103,7 @@ class DocumentStoreService(
       message = "failed to get template version from html document metadata",
       event = GET_SERVICE_TEMPLATE_VERSION,
       subjectAccessRequest = subjectAccessRequest,
+      errorCode = S3_HEAD_OBJECT_ERROR,
       cause = ex,
       params = mapOf(
         "serviceName" to serviceName,
@@ -117,6 +123,7 @@ class DocumentStoreService(
     message = "failed to get html document from bucket",
     event = GET_RENDERED_HTML_DOCUMENT,
     subjectAccessRequest = subjectAccessRequest,
+    errorCode = S3_GET_ERROR,
     cause = cause,
     params = mapOf(
       "serviceName" to serviceName,

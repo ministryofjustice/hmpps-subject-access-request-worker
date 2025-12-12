@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNdeliusCaseReferenceNumber
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
@@ -82,6 +84,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     assertThat(actual.cause).isNotNull()
     assertThat(actual.cause).isInstanceOf(ClientAuthorizationException::class.java)
     assertThat(actual.event).isEqualTo(ACQUIRE_AUTH_TOKEN)
+    assertThat(actual.errorCode).isEqualTo(ErrorCode.HTML_RENDERER_AUTH_ERROR)
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderNeverCalled()
@@ -159,6 +162,12 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     }
 
     assertExceptedExceptionFor4xxError(actual, subjectAccessRequest, stubErrorResponse)
+    assertThat(actual.errorCode).isEqualTo(
+      ErrorCode(
+        stubErrorResponse.status.value().toString(),
+        ErrorCodePrefix.SAR_HTML_RENDERER,
+      ),
+    )
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 1, expectedBody = expectedRequest)
   }
@@ -184,6 +193,12 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     }
 
     assertExceptedExceptionFor5xxError(actual, subjectAccessRequest, stubErrorResponse)
+    assertThat(actual.errorCode).isEqualTo(
+      ErrorCode(
+        stubErrorResponse.status.value().toString(),
+        ErrorCodePrefix.SAR_HTML_RENDERER,
+      ),
+    )
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 3, expectedBody = expectedRequest)
   }
@@ -278,6 +293,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     actual = actual,
     expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
     expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
+    expectedErrorCode = ErrorCode(stubErrorResponse.status.value().toString(), ErrorCodePrefix.SAR_HTML_RENDERER),
     expectedSubjectAccessRequest = subjectAccessRequest,
     expectedParams = mapOf(
       "serviceName" to serviceName,
@@ -295,6 +311,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     actual = actual,
     expectedPrefix = "subjectAccessRequest failed and max retry attempts (${webClientConfiguration.maxRetries}) exhausted",
     expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
+    expectedErrorCode = ErrorCode(stubErrorResponse.status.value().toString(), ErrorCodePrefix.SAR_HTML_RENDERER),
     expectedSubjectAccessRequest = subjectAccessRequest,
     expectedCause = stubErrorResponse.expectedException,
     expectedParams = mapOf(
