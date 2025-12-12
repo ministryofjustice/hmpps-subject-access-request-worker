@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 private const val FATAL_ERROR_MESSAGE_PREFIX = "subjectAccessRequest failed with non-retryable error: %s"

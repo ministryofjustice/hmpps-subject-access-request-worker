@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
@@ -114,6 +116,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = GET_OFFENDER_NAME,
+      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.PROBATION_API),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
@@ -143,6 +146,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = GET_OFFENDER_NAME,
+      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.PROBATION_API),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
@@ -166,6 +170,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: probationApiClient error authorization exception",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      expectedErrorCode = ErrorCode.PROBATION_API_AUTH_ERROR,
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = null,
     )

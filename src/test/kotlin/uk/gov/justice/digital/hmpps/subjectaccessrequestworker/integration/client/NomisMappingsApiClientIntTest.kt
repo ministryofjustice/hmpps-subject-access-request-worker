@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
@@ -70,6 +72,7 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.GET_LOCATION_MAPPING,
+      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.NOMIS_API),
       expectedParams = mapOf(
         "nomisLocationId" to LOCATION_NOMIS_ID,
         "uri" to "${nomisMappingsApi.baseUrl()}/api/locations/nomis/$LOCATION_NOMIS_ID",
@@ -106,6 +109,7 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.GET_LOCATION_MAPPING,
+      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.NOMIS_API),
       expectedParams = mapOf(
         "nomisLocationId" to LOCATION_NOMIS_ID,
       ),
@@ -128,6 +132,7 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: nomisMappingsApiClient error authorization exception",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      expectedErrorCode = ErrorCode.NOMIS_API_AUTH_ERROR,
       expectedParams = null,
     )
   }

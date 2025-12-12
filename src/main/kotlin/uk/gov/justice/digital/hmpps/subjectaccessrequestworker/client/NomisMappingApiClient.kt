@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_LOCATION_MAPPING
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.NOMIS_API_AUTH_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.NOMIS_API_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 
 @Service
@@ -34,7 +34,7 @@ class NomisMappingApiClient(
         webClientRetriesSpec.throw4xxStatusFatalError(
           event = GET_LOCATION_MAPPING,
           params = mapOf("nomisLocationId" to nomisLocationId),
-          errorCodePrefix = NOMIS_API_ERROR_PREFIX,
+          errorCodePrefix = ErrorCodePrefix.NOMIS_API,
         ),
       )
       .bodyToMono(NomisLocationMapping::class.java)
@@ -42,7 +42,7 @@ class NomisMappingApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           event = GET_LOCATION_MAPPING,
           params = mapOf("nomisLocationId" to nomisLocationId),
-          errorCodePrefix = NOMIS_API_ERROR_PREFIX,
+          errorCodePrefix = ErrorCodePrefix.NOMIS_API,
         ),
       )
       // Return null when not found
@@ -53,7 +53,7 @@ class NomisMappingApiClient(
       message = "nomisMappingsApiClient error authorization exception",
       cause = ex,
       event = ACQUIRE_AUTH_TOKEN,
-      errorCode = NOMIS_API_AUTH_ERROR,
+      errorCode = ErrorCode.NOMIS_API_AUTH_ERROR,
       params = null,
     )
   }

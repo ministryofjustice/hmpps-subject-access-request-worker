@@ -7,8 +7,8 @@ import org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.NomisMappingApiClient
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.TEMPLATE_HELPER_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.TEMPLATE_HELPER_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.UserDetailsRepository

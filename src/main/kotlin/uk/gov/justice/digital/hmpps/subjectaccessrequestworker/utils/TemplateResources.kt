@@ -3,8 +3,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.TEMPLATE_NOT_FOUND
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.TEMPLATE_NOT_FOUND
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service

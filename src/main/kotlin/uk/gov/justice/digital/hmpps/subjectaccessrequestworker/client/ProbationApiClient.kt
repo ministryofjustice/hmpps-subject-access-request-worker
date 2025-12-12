@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.PROBATION_API_AUTH_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.PROBATION_API_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.PROBATION_API_AUTH_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.formatName
@@ -40,7 +40,7 @@ class ProbationApiClient(
         webClientRetriesSpec.throw4xxStatusFatalError(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
-          PROBATION_API_ERROR_PREFIX,
+          ErrorCodePrefix.PROBATION_API,
           mapOf(
             "subjectId" to subjectId,
             "uri" to "/probation-case/$subjectId",
@@ -52,7 +52,7 @@ class ProbationApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
-          PROBATION_API_ERROR_PREFIX,
+          ErrorCodePrefix.PROBATION_API,
           mapOf("subjectId" to subjectId),
         ),
       )

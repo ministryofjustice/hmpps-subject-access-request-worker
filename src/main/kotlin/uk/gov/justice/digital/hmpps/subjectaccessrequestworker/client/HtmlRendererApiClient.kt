@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.HTML_RENDERER_AUTH_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.HTML_RENDERER_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_RENDERER_AUTH_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
@@ -40,7 +40,7 @@ class HtmlRendererApiClient(
         webClientRetriesSpec.throw4xxStatusFatalError(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
-          errorCodePrefix = HTML_RENDERER_ERROR_PREFIX,
+          errorCodePrefix = ErrorCodePrefix.SAR_HTML_RENDERER,
           params = mapOf(
             "serviceName" to serviceConfiguration.serviceName,
             "serviceUrl" to serviceConfiguration.url,
@@ -52,7 +52,7 @@ class HtmlRendererApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           subjectAccessRequest = subjectAccessRequest,
           event = HTML_RENDERER_REQUEST,
-          errorCodePrefix = HTML_RENDERER_ERROR_PREFIX,
+          errorCodePrefix = ErrorCodePrefix.SAR_HTML_RENDERER,
           params = mapOf(
             "serviceName" to serviceConfiguration.serviceName,
             "serviceUrl" to serviceConfiguration.url,

@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.INTERNAL_SERVER_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 open class SubjectAccessRequestException(
@@ -13,7 +13,7 @@ open class SubjectAccessRequestException(
   val params: Map<String, *>? = null,
 ) : RuntimeException(message, cause) {
 
-  constructor(message: String) : this(message, null, null, INTERNAL_SERVER_ERROR, null)
+  constructor(message: String) : this(message, null, null, ErrorCode.INTERNAL_SERVER_ERROR, null)
 
   /**
    * Return the exception message with additional details.

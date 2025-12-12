@@ -23,13 +23,13 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.DOCUMENT_STORE_CONFLICT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.NON_RETRYABLE_CLIENT_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.defaultErrorCodeFor
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.defaultErrorCodeFor
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
@@ -58,9 +58,7 @@ class WebClientRetriesSpec(
   ): RetryBackoffSpec = Retry
     .backoff(maxRetries, backOff)
     .filter { err -> is5xxOrClientRequestError(err) }
-    .doBeforeRetry { signal ->
-      logClientRetryEvent(signal, subjectAccessRequest, event, params)
-    }
+    .doBeforeRetry { signal -> logClientRetryEvent(signal, subjectAccessRequest, event, errorCodePrefix, params) }
     .onRetryExhaustedThrow { _, signal ->
       telemetryClient.clientRetriesExhausted(subjectAccessRequest, signal, event)
 
@@ -77,31 +75,19 @@ class WebClientRetriesSpec(
   private fun getErrorCodeFromResponseOrDefault(
     signal: RetrySignal,
     errorCodePrefix: ErrorCodePrefix,
-  ): ErrorCode = extractErrorResponse(signal)
-    ?.errorCode.takeIf { !it.isNullOrBlank() }
-    ?.let { ErrorCode(it, errorCodePrefix) }
-    ?: defaultErrorCodeFor(errorCodePrefix)
+  ): ErrorCode = signal.getBodyAsErrorResponseOrNull()?.errorCode.takeIf { !it.isNullOrBlank() }?.let {
+    ErrorCode(it, errorCodePrefix)
+  } ?: defaultErrorCodeFor(errorCodePrefix)
 
-  private fun extractErrorResponse(
-    signal: RetrySignal,
-  ): ErrorResponse? = signal.failure().takeIf { it is WebClientResponseException }?.let { ex ->
-    ex as WebClientResponseException
-    val bodyString = ex.getResponseBodyAs(String::class.java)
+  private fun RetrySignal.getBodyAsErrorResponseOrNull(): ErrorResponse? = this.failure()
+    .takeIf { it is WebClientResponseException }
+    ?.let { ex ->
+      ex as WebClientResponseException
+      val bodyString = ex.getResponseBodyAs(String::class.java)
 
-    bodyString.takeIf { responseBodyIsJson(it, ex) }
-      ?.let { objectMapper.readValue(it, ErrorResponse::class.java) }
-  }
-
-  private fun extractFailureResponse(
-    signal: RetrySignal,
-  ): ErrorSummary = signal.failure().takeIf { it is WebClientResponseException }?.let { ex ->
-    ex as WebClientResponseException
-    val bodyString = ex.getResponseBodyAs(String::class.java)
-
-    bodyString.takeIf { responseBodyIsJson(it, ex) }?.let {
-      ErrorSummary(errorResponse = objectMapper.readValue(it, ErrorResponse::class.java))
-    } ?: ErrorSummary(rawMessage = bodyString)
-  } ?: ErrorSummary(rawMessage = signal.failure().message)
+      bodyString.takeIf { responseBodyIsJson(it, ex) }
+        ?.let { objectMapper.readValue(it, ErrorResponse::class.java) }
+    }
 
   private fun responseBodyIsJson(
     body: String?,
@@ -213,31 +199,29 @@ class WebClientRetriesSpec(
   }
 
   fun logClientRetryEvent(
-    signal: Retry.RetrySignal,
+    signal: RetrySignal,
     subjectAccessRequest: SubjectAccessRequest?,
     event: ProcessingEvent,
+    errorCodePrefix: ErrorCodePrefix,
     params: Map<String, Any>? = null,
   ) {
-    val error = extractFailureResponse(signal)
+    val errorResponse = signal.getBodyAsErrorResponseOrNull()
+    val errorCode = errorResponse?.errorCode ?: "N/A"
+    val errorMessage = errorResponse?.developerMessage ?: signal.failure().message ?: "N/A"
 
     telemetryClient.trackSarEvent(
       event = CLIENT_REQUEST_RETRY,
       subjectAccessRequest = subjectAccessRequest,
       "event" to event.name,
-      "errorCode" to error.getErrorCode(),
-      "errorMessage" to error.getMessage(),
+      "errorCode" to errorCode,
+      "errorMessage" to errorMessage,
       "totalRetries" to signal.totalRetries().toString(),
     )
 
     LOG.error(
       "subject access request $event, id=${subjectAccessRequest?.id} failed with " +
-        "error=${error.getMessage()}, errorCode=${error.getErrorCode()}, attempting retry after backoff: $backOff, " +
+        "error=$errorMessage, errorCode=$errorCode, attempting retry after backoff: $backOff, " +
         "${params?.formatted()}",
     )
-  }
-
-  data class ErrorSummary(val rawMessage: String? = null, val errorResponse: ErrorResponse? = null) {
-    fun getErrorCode(): String = errorResponse?.errorCode ?: "N/A"
-    fun getMessage(): String = errorResponse?.developerMessage ?: rawMessage ?: "N/A"
   }
 }

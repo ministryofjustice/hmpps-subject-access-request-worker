@@ -13,11 +13,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEv
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_FAILURE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_SUCCESS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.DOCUMENT_STORE_AUTH_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.DOCUMENT_STORE_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.DOCUMENT_STORE_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.io.ByteArrayOutputStream
@@ -61,14 +60,18 @@ class DocumentStorageClient(
         )
         .onStatus(
           webClientRetriesSpec.is4xxStatus(),
-          webClientRetriesSpec.throw4xxStatusFatalError(STORE_DOCUMENT, subjectAccessRequest, DOCUMENT_STORE_ERROR_PREFIX),
+          webClientRetriesSpec.throw4xxStatusFatalError(
+            STORE_DOCUMENT,
+            subjectAccessRequest,
+            ErrorCodePrefix.DOCUMENT_STORE,
+          ),
         )
         .bodyToMono(PostDocumentResponse::class.java)
         .retryWhen(
           webClientRetriesSpec.retry5xxAndClientRequestErrors(
             STORE_DOCUMENT,
             subjectAccessRequest,
-            errorCodePrefix = DOCUMENT_STORE_ERROR_PREFIX,
+            errorCodePrefix = ErrorCodePrefix.DOCUMENT_STORE,
             params = mapOf(
               "uri" to "$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId",
             ),
@@ -82,7 +85,7 @@ class DocumentStorageClient(
         message = "documentStoreClient error authorization exception",
         cause = ex,
         event = STORE_DOCUMENT,
-        errorCode = DOCUMENT_STORE_AUTH_ERROR,
+        errorCode = ErrorCode.DOCUMENT_STORE_AUTH_ERROR,
         subjectAccessRequest = subjectAccessRequest,
       )
     } catch (ex: Exception) {
@@ -95,7 +98,7 @@ class DocumentStorageClient(
         message = "documentStoreClient unexpected error",
         cause = ex,
         event = STORE_DOCUMENT,
-        errorCode = DOCUMENT_STORE_ERROR,
+        errorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
         subjectAccessRequest = subjectAccessRequest,
       )
     }
@@ -111,7 +114,7 @@ class DocumentStorageClient(
         message = "document store upload error: response body expected but was null",
         cause = null,
         event = STORE_DOCUMENT,
-        errorCode = DOCUMENT_STORE_ERROR,
+        errorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
         subjectAccessRequest = subjectAccessRequest,
       )
     }
@@ -130,7 +133,7 @@ class DocumentStorageClient(
         message = "document store upload error: response file size did not match the expected file upload size",
         cause = null,
         event = STORE_DOCUMENT,
-        errorCode = DOCUMENT_STORE_ERROR,
+        errorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
         subjectAccessRequest = subjectAccessRequest,
         params = mapOf(
           "expectedFileSize" to expectedFileSize,

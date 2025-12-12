@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 import org.assertj.core.api.Assertions.assertThat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -22,6 +23,7 @@ fun <T : Throwable?> assertExpectedSubjectAccessRequestException(
   expectedPrefix: String,
   expectedCause: Class<T>,
   expectedEvent: ProcessingEvent? = null,
+  expectedErrorCode: ErrorCode,
   expectedSubjectAccessRequest: SubjectAccessRequest? = null,
   expectedParams: Map<String, *>? = null,
 ) {
@@ -32,25 +34,41 @@ fun <T : Throwable?> assertExpectedSubjectAccessRequestException(
     .withFailMessage("actual.cause did not match expected type: expected: ${expectedCause.simpleName}, actual: ${actual.cause!!::class.java.simpleName}")
     .isInstanceOf(expectedCause)
 
-  assertException(actual, expectedPrefix, expectedEvent, expectedSubjectAccessRequest, expectedParams)
+  assertException(
+    actual,
+    expectedPrefix,
+    expectedEvent,
+    expectedErrorCode,
+    expectedSubjectAccessRequest,
+    expectedParams,
+  )
 }
 
 fun assertExpectedSubjectAccessRequestExceptionWithCauseNull(
   actual: SubjectAccessRequestException,
   expectedPrefix: String,
   expectedEvent: ProcessingEvent? = null,
+  expectedErrorCode: ErrorCode,
   expectedSubjectAccessRequest: SubjectAccessRequest? = null,
   expectedParams: Map<String, *>? = null,
 ) {
   assertThat(actual.cause).isNull()
 
-  assertException(actual, expectedPrefix, expectedEvent, expectedSubjectAccessRequest, expectedParams)
+  assertException(
+    actual,
+    expectedPrefix,
+    expectedEvent,
+    expectedErrorCode,
+    expectedSubjectAccessRequest,
+    expectedParams,
+  )
 }
 
 private fun assertException(
   actual: SubjectAccessRequestException,
   expectedPrefix: String,
   expectedEvent: ProcessingEvent? = null,
+  expectedErrorCode: ErrorCode,
   expectedSubjectAccessRequest: SubjectAccessRequest? = null,
   expectedParams: Map<String, *>? = null,
 ) {
@@ -68,6 +86,8 @@ private fun assertException(
 
   assertThat(actual.subjectAccessRequest?.contextId)
     .isEqualTo(expectedSubjectAccessRequest?.contextId)
+
+  assertThat(actual.errorCode).isEqualTo(expectedErrorCode)
 
   when (expectedParams) {
     null -> assertThat(actual.params).isNull()

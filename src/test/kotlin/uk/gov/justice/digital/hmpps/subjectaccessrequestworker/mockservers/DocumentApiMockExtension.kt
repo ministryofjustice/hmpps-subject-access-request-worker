@@ -148,6 +148,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
   fun stubUploadFileFailsWithStatus(
     subjectAccessRequestId: String,
     expectedFileContent: ByteArray,
+    errorCode: String,
     status: Int,
   ) {
     stubFor(
@@ -169,7 +170,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
               """
             {
               "status": $status,
-              "errorCode": 10001,
+              "errorCode": $errorCode,
               "userMessage": "something went wrong",
               "developerMessage": "something went wrong",
               "moreInfo": "its broken"
@@ -182,6 +183,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
 
   fun stubUploadFileFailsWithStatus(
     subjectAccessRequestId: String,
+    errorCode: String,
     status: Int,
   ) {
     stubFor(
@@ -200,7 +202,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
               """
             {
               "status": $status,
-              "errorCode": 10001,
+              "errorCode": $errorCode,
               "userMessage": "something went wrong",
               "developerMessage": "something went wrong",
               "moreInfo": "its broken"

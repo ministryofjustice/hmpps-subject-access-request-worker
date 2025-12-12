@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_LOCATION
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.LOCATION_API_AUTH_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCodePrefix.LOCATION_API_ERROR_PREFIX
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.LOCATION_API_AUTH_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 
 @Service
@@ -34,7 +34,7 @@ class LocationsApiClient(
         webClientRetriesSpec.throw4xxStatusFatalError(
           event = GET_LOCATION,
           params = mapOf("dpsLocationId" to dpsLocationId),
-          errorCodePrefix = LOCATION_API_ERROR_PREFIX,
+          errorCodePrefix = ErrorCodePrefix.LOCATION_API,
         ),
       )
       .bodyToMono(LocationDetailsResponse::class.java)
@@ -42,7 +42,7 @@ class LocationsApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           event = GET_LOCATION,
           params = mapOf("dpsLocationId" to dpsLocationId),
-          errorCodePrefix = LOCATION_API_ERROR_PREFIX,
+          errorCodePrefix = ErrorCodePrefix.LOCATION_API,
         ),
       )
       // Return null response when not found

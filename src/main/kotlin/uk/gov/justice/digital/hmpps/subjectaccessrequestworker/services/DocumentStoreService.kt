@@ -12,10 +12,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_RENDERED_HTML_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_SERVICE_TEMPLATE_VERSION
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.LIST_ATTACHMENTS
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.S3_GET_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.S3_HEAD_OBJECT_ERROR
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.ErrorCode.Companion.S3_LIST_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_GET_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_HEAD_OBJECT_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_LIST_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayInputStream
 import java.io.InputStream

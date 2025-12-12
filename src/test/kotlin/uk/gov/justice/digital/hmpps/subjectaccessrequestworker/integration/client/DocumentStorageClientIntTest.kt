@@ -25,6 +25,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.DEFAULT_ERROR_CODE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.fileHash
@@ -120,6 +123,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
       expectedFileContent = FILE_CONTENT.toByteArray(),
+      DEFAULT_ERROR_CODE,
       status = stubErrorResponse.status.value(),
     )
 
@@ -132,6 +136,10 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = STORE_DOCUMENT,
       expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedErrorCode = ErrorCode(
+        stubErrorResponse.status.value().toString(),
+        ErrorCodePrefix.DOCUMENT_STORE,
+      ),
       expectedParams = mapOf(
         "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
         "httpStatus" to stubErrorResponse.status,
@@ -151,6 +159,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
       expectedFileContent = FILE_CONTENT.toByteArray(),
+      errorCode = DEFAULT_ERROR_CODE,
       status = 409,
     )
 
@@ -162,6 +171,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       actual = ex,
       expectedPrefix = "subject access request document store upload unsuccessful: document already exists",
       expectedEvent = STORE_DOCUMENT,
+      expectedErrorCode = ErrorCode.DOCUMENT_STORE_CONFLICT,
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
@@ -183,6 +193,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId.toString(),
       expectedFileContent.toByteArray(),
+      DEFAULT_ERROR_CODE,
       stubErrorResponse.status.value(),
     )
 
@@ -195,6 +206,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubErrorResponse.expectedException,
       expectedEvent = STORE_DOCUMENT,
+      expectedErrorCode = ErrorCode(DEFAULT_ERROR_CODE, ErrorCodePrefix.DOCUMENT_STORE),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
@@ -247,6 +259,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = WebClientRequestException::class.java,
       expectedEvent = STORE_DOCUMENT,
+      expectedErrorCode = ErrorCode.defaultErrorCodeFor(ErrorCodePrefix.DOCUMENT_STORE),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
@@ -277,6 +290,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: documentStoreClient error authorization exception",
       expectedCause = ClientAuthorizationException::class.java,
       expectedEvent = STORE_DOCUMENT,
+      expectedErrorCode = ErrorCode.DOCUMENT_STORE_AUTH_ERROR,
       expectedSubjectAccessRequest = subjectAccessRequest,
     )
 
@@ -305,6 +319,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedPrefix = "document store upload error: response file size did not match the expected file upload size",
       expectedEvent = STORE_DOCUMENT,
       expectedSubjectAccessRequest = subjectAccessRequest,
+      expectedErrorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
       expectedParams = mapOf(
         "expectedFileSize" to expectedFileContent.toByteArray().size,
         "actualFileSize" to incorrectFileSize,
@@ -343,6 +358,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedCause = DecodingException::class.java,
       expectedPrefix = "documentStoreClient unexpected error",
       expectedEvent = STORE_DOCUMENT,
+      expectedErrorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = null,
     )
