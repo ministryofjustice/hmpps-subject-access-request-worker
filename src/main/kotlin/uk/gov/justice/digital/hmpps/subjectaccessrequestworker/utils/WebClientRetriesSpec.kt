@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
 import java.time.Duration
+import java.util.function.BiFunction
 import java.util.function.Predicate
 
 @Component
@@ -50,6 +51,18 @@ class WebClientRetriesSpec(
     private val LOG = LoggerFactory.getLogger(WebClientRetriesSpec::class.java)
   }
 
+  fun is5xxOrClientRequestError(error: Throwable): Boolean = error is WebClientResponseException &&
+    error.statusCode.is5xxServerError ||
+    error is WebClientRequestException
+
+  fun is4xxStatus(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode ->
+    code.is4xxClientError
+  }
+
+  fun is409Conflict(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode ->
+    HttpStatus.CONFLICT.isSameCodeAs(code)
+  }
+
   fun retry5xxAndClientRequestErrors(
     event: ProcessingEvent,
     subjectAccessRequest: SubjectAccessRequest? = null,
@@ -57,27 +70,42 @@ class WebClientRetriesSpec(
     params: Map<String, Any>? = null,
   ): RetryBackoffSpec = Retry
     .backoff(maxRetries, backOff)
-    .filter { err -> is5xxOrClientRequestError(err) }
-    .doBeforeRetry { signal -> logClientRetryEvent(signal, subjectAccessRequest, event, errorCodePrefix, params) }
-    .onRetryExhaustedThrow { _, signal ->
-      telemetryClient.clientRetriesExhausted(subjectAccessRequest, signal, event)
-
-      SubjectAccessRequestRetryExhaustedException(
-        retryAttempts = signal.totalRetries(),
-        cause = signal.failure(),
-        event = event,
-        errorCode = getErrorCodeFromResponseOrDefault(signal, errorCodePrefix),
-        subjectAccessRequest = subjectAccessRequest,
-        params = params,
-      )
+    .filter { err ->
+      is5xxOrClientRequestError(err)
     }
+    .doBeforeRetry { signal ->
+      logClientRetryEvent(signal, subjectAccessRequest, event, errorCodePrefix, params)
+    }
+    .onRetryExhaustedThrow(
+      get5xxExhaustedHandler(subjectAccessRequest, event, errorCodePrefix, params),
+    )
+
+  fun get5xxExhaustedHandler(
+    subjectAccessRequest: SubjectAccessRequest?,
+    event: ProcessingEvent,
+    errorCodePrefix: ErrorCodePrefix,
+    params: Map<String, Any>? = null,
+  ) = BiFunction<RetryBackoffSpec, RetrySignal, Throwable> { _, signal ->
+    telemetryClient.clientRetriesExhausted(subjectAccessRequest, signal, event)
+
+    val errorCode = getErrorCodeFromResponseOrDefault(signal, errorCodePrefix)
+
+    SubjectAccessRequestRetryExhaustedException(
+      retryAttempts = signal.totalRetries(),
+      cause = signal.failure(),
+      event = event,
+      errorCode = errorCode,
+      subjectAccessRequest = subjectAccessRequest,
+      params = params,
+    )
+  }
 
   private fun getErrorCodeFromResponseOrDefault(
     signal: RetrySignal,
     errorCodePrefix: ErrorCodePrefix,
   ): ErrorCode = signal.getBodyAsErrorResponseOrNull()?.errorCode.takeIf { !it.isNullOrBlank() }?.let {
     ErrorCode(it, errorCodePrefix)
-  } ?: defaultErrorCodeFor(errorCodePrefix)
+  } ?: getDefaultErrorCode(signal.failure(), errorCodePrefix)
 
   private fun RetrySignal.getBodyAsErrorResponseOrNull(): ErrorResponse? = this.failure()
     .takeIf { it is WebClientResponseException }
@@ -85,8 +113,9 @@ class WebClientRetriesSpec(
       ex as WebClientResponseException
       val bodyString = ex.getResponseBodyAs(String::class.java)
 
-      bodyString.takeIf { responseBodyIsJson(it, ex) }
-        ?.let { objectMapper.readValue(it, ErrorResponse::class.java) }
+      bodyString.takeIf { responseBodyIsJson(it, ex) }?.let {
+        objectMapper.readValue(it, ErrorResponse::class.java)
+      }
     }
 
   private fun responseBodyIsJson(
@@ -97,12 +126,13 @@ class WebClientRetriesSpec(
     body.startsWith("{") &&
     body.endsWith("}")
 
-  fun is5xxOrClientRequestError(error: Throwable): Boolean = error is WebClientResponseException &&
-    error.statusCode.is5xxServerError ||
-    error is WebClientRequestException
-
-  fun is4xxStatus(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode ->
-    code.is4xxClientError
+  private fun getDefaultErrorCode(
+    failure: Throwable,
+    errorCodePrefix: ErrorCodePrefix,
+  ): ErrorCode = if (failure is WebClientResponseException) {
+    ErrorCode(failure.statusCode.value().toString(), errorCodePrefix)
+  } else {
+    defaultErrorCodeFor(errorCodePrefix)
   }
 
   fun throw4xxStatusFatalError(
@@ -130,10 +160,6 @@ class WebClientRetriesSpec(
     )
   }
 
-  fun is409Conflict(): Predicate<HttpStatusCode> = Predicate<HttpStatusCode> { code: HttpStatusCode ->
-    HttpStatus.CONFLICT.isSameCodeAs(code)
-  }
-
   fun throwDocumentApiConflictException(subjectAccessRequest: SubjectAccessRequest) = { response: ClientResponse ->
     telemetryClient.documentStoreConflictError(subjectAccessRequest, response.request().uri)
 
@@ -148,11 +174,9 @@ class WebClientRetriesSpec(
     )
   }
 
-  private fun Map<String, Any>.formatted(): String = this.entries.joinToString(",") { "${it.key}=${it.value}" }
-
   fun TelemetryClient.clientRetriesExhausted(
     subjectAccessRequest: SubjectAccessRequest?,
-    signal: Retry.RetrySignal,
+    signal: RetrySignal,
     event: ProcessingEvent,
   ) {
     telemetryClient.trackSarEvent(
@@ -224,4 +248,6 @@ class WebClientRetriesSpec(
         "${params?.formatted()}",
     )
   }
+
+  private fun Map<String, Any>.formatted(): String = this.entries.joinToString(",") { "${it.key}=${it.value}" }
 }
