@@ -51,7 +51,7 @@ class GotenbergApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.CONVERT_WORD_DOCUMENT,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.GOTENBERG_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.GOTENBERG_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "filename" to FILE_TO_CONVERT,
         "uri" to "${gotenbergApi.baseUrl()}/forms/libreoffice/convert",
@@ -76,7 +76,7 @@ class GotenbergApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.CONVERT_WORD_DOCUMENT,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.GOTENBERG_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.GOTENBERG_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "filename" to FILE_TO_CONVERT,
       ),

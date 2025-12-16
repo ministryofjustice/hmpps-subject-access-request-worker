@@ -71,7 +71,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.GET_LOCATION,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.LOCATION_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.LOCATION_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "dpsLocationId" to LOCATION_DPS_ID,
         "uri" to "${locationsApi.baseUrl()}/locations/$LOCATION_DPS_ID",
@@ -108,7 +108,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.GET_LOCATION,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.LOCATION_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.LOCATION_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "dpsLocationId" to LOCATION_DPS_ID,
       ),

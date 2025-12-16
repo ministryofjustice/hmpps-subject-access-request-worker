@@ -104,8 +104,8 @@ class WebClientRetriesSpec(
     signal: RetrySignal,
     errorCodePrefix: ErrorCodePrefix,
   ): ErrorCode = signal.getBodyAsErrorResponseOrNull()?.errorCode.takeIf { !it.isNullOrBlank() }?.let {
-    ErrorCode(it, errorCodePrefix)
-  } ?: getDefaultErrorCode(signal.failure(), errorCodePrefix)
+    ErrorCode(errorCodePrefix, it)
+  } ?: getDefaultErrorCode(errorCodePrefix, signal.failure())
 
   private fun RetrySignal.getBodyAsErrorResponseOrNull(): ErrorResponse? = this.failure()
     .takeIf { it is WebClientResponseException }
@@ -127,10 +127,10 @@ class WebClientRetriesSpec(
     body.endsWith("}")
 
   private fun getDefaultErrorCode(
-    failure: Throwable,
     errorCodePrefix: ErrorCodePrefix,
+    failure: Throwable,
   ): ErrorCode = if (failure is WebClientResponseException) {
-    ErrorCode(failure.statusCode.value().toString(), errorCodePrefix)
+    ErrorCode(errorCodePrefix, failure.statusCode.value().toString())
   } else {
     defaultErrorCodeFor(errorCodePrefix)
   }
@@ -153,7 +153,7 @@ class WebClientRetriesSpec(
       FatalSubjectAccessRequestException(
         message = "client 4xx response status",
         event = event,
-        errorCode = ErrorCode(response.statusCode(), errorCodePrefix),
+        errorCode = ErrorCode(errorCodePrefix, response.statusCode().value().toString()),
         subjectAccessRequest = subjectAccessRequest,
         params = moddedParams,
       ),

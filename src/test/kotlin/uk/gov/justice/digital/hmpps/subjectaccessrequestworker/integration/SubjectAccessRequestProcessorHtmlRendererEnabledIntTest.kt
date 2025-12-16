@@ -19,11 +19,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import java.time.LocalDate
@@ -34,8 +32,6 @@ import java.util.concurrent.TimeUnit
     "html-renderer.enabled=true",
   ],
 )
-@Import(S3TestUtils::class, NoSchedulingConfig::class)
-@Testcontainers
 class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorIntTest() {
 
   companion object {
@@ -54,15 +50,6 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
   @MockitoBean
   protected lateinit var dateService: DateService
-
-  @Autowired
-  protected lateinit var s3TestUtil: S3TestUtils
-
-  @Autowired
-  private lateinit var sarProcessor: SubjectAccessRequestProcessor
-
-  @Autowired
-  protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
 
   private var attachmentNumber = 1
 
@@ -208,57 +195,6 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertSubjectAccessRequestHasStatus(sar, Completed)
   }
 
-  private fun htmlRendererSuccessfullyRendersHtml(
-    sar: SubjectAccessRequest,
-    htmlRenderRequest: HtmlRenderRequest,
-    serviceName: String,
-  ) = stubHtmlRendererSuccess(
-    sar = sar,
-    htmlRenderRequest = htmlRenderRequest,
-    serviceName = serviceName,
-    fileToAddToBucket = serviceName,
-  )
-
-  private fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
-    sar: SubjectAccessRequest,
-    htmlRenderRequest: HtmlRenderRequest,
-    serviceName: String,
-  ) = stubHtmlRendererSuccess(
-    sar = sar,
-    htmlRenderRequest = htmlRenderRequest,
-    serviceName = serviceName,
-    fileToAddToBucket = "$serviceName-no-data",
-  )
-
-  private fun stubHtmlRendererSuccess(
-    sar: SubjectAccessRequest,
-    htmlRenderRequest: HtmlRenderRequest,
-    serviceName: String,
-    fileToAddToBucket: String,
-  ) = runBlocking {
-    val documentKey = htmlDocumentKey(sar, serviceName)
-
-    // Stub the wiremock API response.
-    htmlRendererApi.stubRenderResponsesWith(
-      htmlRenderRequest,
-      rendererSuccessResponse(documentKey),
-    )
-
-    // Put the expected Html in the bucket for later.
-    s3TestUtil.putFile(
-      S3TestUtils.S3File(
-        documentKey,
-        getReportHtmlForService(fileToAddToBucket),
-      ),
-    )
-    assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
-  }
-
-  fun getReportHtmlForService(serviceName: String): String = this::class.java
-    .getResourceAsStream("/integration-tests/html-stubs/$serviceName-expected.html")
-    ?.bufferedReader()
-    .use { it?.readText() ?: "EMPTY" }
-
   fun storeAttachment(
     sar: SubjectAccessRequest,
     serviceName: String,
@@ -281,8 +217,6 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }
 
-  fun htmlDocumentKey(sar: SubjectAccessRequest, serviceName: String) = "${sar.id}/$serviceName.html"
-
   fun attachmentDocumentKey(
     sar: SubjectAccessRequest,
     serviceName: String,
@@ -291,10 +225,4 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
   fun getAttachmentBytes(filename: String): ByteArray = this::class.java
     .getResourceAsStream("/integration-tests/attachments/$filename").use { it?.readAllBytes()!! }
-
-  private fun getServiceConfiguration(serviceName: String): ServiceConfiguration {
-    val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
-    assertThat(serviceConfig).isNotNull
-    return serviceConfig!!
-  }
 }

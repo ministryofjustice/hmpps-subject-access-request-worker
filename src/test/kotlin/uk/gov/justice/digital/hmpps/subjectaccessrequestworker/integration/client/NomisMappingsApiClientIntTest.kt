@@ -72,7 +72,7 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.GET_LOCATION_MAPPING,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.NOMIS_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.NOMIS_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "nomisLocationId" to LOCATION_NOMIS_ID,
         "uri" to "${nomisMappingsApi.baseUrl()}/api/locations/nomis/$LOCATION_NOMIS_ID",
@@ -109,7 +109,7 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.GET_LOCATION_MAPPING,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.NOMIS_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.NOMIS_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "nomisLocationId" to LOCATION_NOMIS_ID,
       ),

@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.coroutines.flow.merge
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
@@ -10,6 +11,8 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.PROBATION_API_AUTH_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -33,7 +36,7 @@ class ProbationApiClient(
       .retrieve()
       .onStatus(
         { status -> status.isSameCodeAs(HttpStatus.NOT_FOUND) },
-        { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
+        { _ -> Mono.error(ProbationSubjectNotFoundException(subjectAccessRequest, subjectId)) },
       )
       .onStatus(
         webClientRetriesSpec.is4xxStatus(),
@@ -58,7 +61,7 @@ class ProbationApiClient(
       )
       // Return valid empty response when not found
       .onErrorReturn(
-        SubjectNotFoundException::class.java,
+        ProbationSubjectNotFoundException::class.java,
         emptyResponse,
       )
       .block()
@@ -83,5 +86,12 @@ class ProbationApiClient(
 
   data class NameDetails(val surname: String? = "", val forename: String? = "")
 
-  class SubjectNotFoundException(subjectId: String) : RuntimeException("/probation-case/$subjectId not found")
+  class ProbationSubjectNotFoundException(subjectAccessRequest: SubjectAccessRequest, subjectId: String) :
+    SubjectAccessRequestException(
+      message = "/probation-case/$subjectId not found",
+      subjectAccessRequest = subjectAccessRequest,
+      event = GET_OFFENDER_NAME,
+      errorCode = ErrorCode.PROBATION_SUBJECT_NAME_NOT_FOUND,
+      params = mapOf("subjectId" to subjectId),
+    )
 }

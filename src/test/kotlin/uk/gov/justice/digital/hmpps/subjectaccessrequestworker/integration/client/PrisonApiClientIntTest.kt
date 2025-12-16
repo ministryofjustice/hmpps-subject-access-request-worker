@@ -98,7 +98,7 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.GET_OFFENDER_NAME,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.PRISON_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.PRISON_API, stubResponse.status.value().toString()),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
@@ -136,7 +136,7 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.GET_OFFENDER_NAME,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.PRISON_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.PRISON_API, stubResponse.status.value().toString()),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
