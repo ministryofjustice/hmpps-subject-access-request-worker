@@ -9,9 +9,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRender
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
@@ -72,7 +75,12 @@ class ReportServiceImpl(
     if (isNotEmpty(sar.ndeliusCaseReferenceId)) {
       return probationApiClient.getOffenderName(sar, sar.ndeliusCaseReferenceId!!)
     }
-    throw RuntimeException("unable to get subject ID both prison probation Ids are both null")
+    throw FatalSubjectAccessRequestException(
+      message = "unable to get subject ID both prison probation Ids are both null",
+      subjectAccessRequest = sar,
+      event = ProcessingEvent.RESOLVE_SUBJECT_NAME,
+      errorCode = ErrorCode.NO_SUBJECT_ID_PROVIDED,
+    )
   }
 
   private suspend fun renderPdfForSelectedServices(

@@ -166,7 +166,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     return serviceConfig!!
   }
 
-  protected  fun htmlRendererSuccessfullyRendersHtml(
+  protected fun htmlRendererSuccessfullyRendersHtml(
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,
@@ -177,7 +177,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     fileToAddToBucket = serviceName,
   )
 
-  protected  fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
+  protected fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,
@@ -188,7 +188,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     fileToAddToBucket = "$serviceName-no-data",
   )
 
-  protected  fun stubHtmlRendererSuccess(
+  protected fun stubHtmlRendererSuccess(
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,

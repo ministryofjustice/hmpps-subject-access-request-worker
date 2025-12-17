@@ -26,37 +26,44 @@ open class ErrorCode(
     return result
   }
 
+  /**
+   * Error Code range description:
+   * - 10000 - 10099: Internal errors
+   * - 10100 - 10199: Request details errors
+   * - 10200 - 10299: Document store errors
+   * - 10300 - 10399: Templating errors
+   * - 10400 - 10499: S3 errors.
+   * - 10500 - 10599: External API Auth errors.
+   */
   companion object {
     const val DEFAULT_ERROR_CODE = "10000"
 
-    const val EXTERNAL_API_AUTH_ERROR_CODE = "99999"
-
+    const val EXTERNAL_API_AUTH_ERROR_CODE = "10500"
 
     val INTERNAL_SERVER_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, DEFAULT_ERROR_CODE)
 
     val CONFIGURATION_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10001")
 
-    val PRISON_SUBJECT_NAME_NOT_FOUND = ErrorCode(ErrorCodePrefix.PRISON_API, "10002")
+    val PRISON_SUBJECT_NAME_NOT_FOUND = ErrorCode(ErrorCodePrefix.PRISON_API, "10102")
 
-    val PROBATION_SUBJECT_NAME_NOT_FOUND = ErrorCode(ErrorCodePrefix.PROBATION_API, "10003")
+    val PROBATION_SUBJECT_NAME_NOT_FOUND = ErrorCode(ErrorCodePrefix.PROBATION_API, "10103")
 
-    val DOCUMENT_UPLOAD_VERIFICATION_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10004")
+    val NO_SUBJECT_ID_PROVIDED = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10104")
 
-    val DOCUMENT_STORE_CONFLICT = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10005")
+    val DOCUMENT_UPLOAD_VERIFICATION_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10204")
 
-    val TEMPLATE_NOT_FOUND = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10006")
+    val DOCUMENT_STORE_CONFLICT = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10205")
 
-    val TEMPLATE_HELPER_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10007")
+    val TEMPLATE_NOT_FOUND = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10306")
 
-    val S3_GET_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10008")
+    val TEMPLATE_HELPER_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10307")
 
-    val S3_LIST_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10009")
+    val S3_GET_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10408")
 
-    val S3_HEAD_OBJECT_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10010")
+    val S3_LIST_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10409")
 
-    /**
-     * External API auth errors
-     */
+    val S3_HEAD_OBJECT_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10410")
+
     val NOMIS_API_AUTH_ERROR = ErrorCode(ErrorCodePrefix.NOMIS_API, EXTERNAL_API_AUTH_ERROR_CODE)
 
     val DOCUMENT_STORE_AUTH_ERROR = ErrorCode(ErrorCodePrefix.DOCUMENT_STORE, EXTERNAL_API_AUTH_ERROR_CODE)

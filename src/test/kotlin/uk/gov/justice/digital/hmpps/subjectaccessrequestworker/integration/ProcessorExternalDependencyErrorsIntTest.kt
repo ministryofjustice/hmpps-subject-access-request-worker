@@ -12,6 +12,7 @@ import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.kotlin.argumentCaptor
@@ -24,6 +25,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.NO_SUBJECT_ID_PROVIDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testDateFrom
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testDateTo
@@ -70,7 +72,6 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
   fun `should raise expected alert when HTML Renderer returns error status`(
     testCase: TestCase<SubjectAccessRequestException>,
   ): Unit = runBlocking {
-
     val subjectAccessRequest = createPrisonSubjectAccessRequest()
     val htmlRendererRequest = createHtmlRenderRequest(subjectAccessRequest)
 
@@ -94,7 +95,6 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
   fun `should raise expected alert when Prison API returns error status`(
     testCase: TestCase<SubjectAccessRequestException>,
   ): Unit = runBlocking {
-
     val subjectAccessRequest = createPrisonSubjectAccessRequest()
     val htmlRendererRequest = createHtmlRenderRequest(subjectAccessRequest)
 
@@ -154,6 +154,49 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     verifyProbationApiIsCalled(subjectAccessRequest.ndeliusCaseReferenceId!!)
   }
 
+  @ParameterizedTest
+  @CsvSource(
+    value = [
+      "   | ",
+      "'' | ",
+      "   |'' ",
+      "'' |'' ",
+    ],
+    delimiterString = "|",
+  )
+  fun `should raise expected alert when NomisID and Ndelius IDs are null`(
+    nomisId: String?,
+    ndeliusId: String?,
+  ): Unit = runBlocking {
+    val subjectAccessRequest = subjectAccessRequestRepository.save(
+      SubjectAccessRequest(
+        id = UUID.randomUUID(),
+        dateFrom = testDateFrom,
+        dateTo = testDateTo,
+        sarCaseReferenceNumber = "666",
+        services = serviceConfig!!.serviceName,
+        nomisId = nomisId,
+        ndeliusCaseReferenceId = ndeliusId,
+        requestedBy = "Me",
+        status = Status.Pending,
+      ),
+    )
+    val htmlRendererRequest = createHtmlRenderRequest(subjectAccessRequest)
+
+    hmppsAuth.stubGrantToken()
+    stubHtmlRendererSuccess()
+
+    executeTest()
+
+    assertRaisedExceptionAlert(
+      expectedExceptionType = FatalSubjectAccessRequestException::class.java,
+      expectedErrorCode = NO_SUBJECT_ID_PROVIDED,
+      expectedEvent = ProcessingEvent.RESOLVE_SUBJECT_NAME,
+      expectedSAR = subjectAccessRequest,
+    )
+
+    verifyHtmlRendererIsCalled(htmlRendererRequest)
+  }
 
   private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest = subjectAccessRequestRepository.save(
     SubjectAccessRequest(
@@ -213,7 +256,6 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     assertThat(exception.errorCode).isEqualTo(expectedErrorCode)
     assertThat(exception.subjectAccessRequest!!.id).isEqualTo(expectedSAR.id)
   }
-
 
   private fun stubHtmlRendererError(htmlRenderRequest: HtmlRenderRequest, testCase: TestCase<*>) {
     htmlRendererApi.stubRenderResponsesWith(
