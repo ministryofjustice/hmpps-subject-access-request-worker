@@ -78,8 +78,8 @@ class WebClientRetriesSpecTest {
       expectedCause = failure,
       expectedEvent = ProcessingEvent.GET_LOCATION,
       expectedErrorCode = ErrorCode(
-        "666",
         ErrorCodePrefix.LOCATION_API,
+        "666",
       ),
     )
   }
@@ -107,8 +107,8 @@ class WebClientRetriesSpecTest {
       expectedCause = failure,
       expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
       expectedErrorCode = ErrorCode(
-        HttpStatus.BAD_REQUEST.value().toString(),
         ErrorCodePrefix.SAR_HTML_RENDERER,
+        HttpStatus.BAD_REQUEST.value().toString(),
       ),
     )
   }
@@ -136,8 +136,8 @@ class WebClientRetriesSpecTest {
       expectedCause = failure,
       expectedEvent = ProcessingEvent.STORE_DOCUMENT,
       expectedErrorCode = ErrorCode(
-        HttpStatus.INTERNAL_SERVER_ERROR.value().toString(),
         ErrorCodePrefix.DOCUMENT_STORE,
+        HttpStatus.INTERNAL_SERVER_ERROR.value().toString(),
       ),
     )
   }

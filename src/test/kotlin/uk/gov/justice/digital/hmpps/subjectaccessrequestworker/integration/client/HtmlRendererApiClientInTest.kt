@@ -59,7 +59,13 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   private val sarDateFrom = LocalDate.of(2024, 1, 1)
   private val serviceName = "keyworker-api"
   private val serviceUrl = "http://keyworker-api.com"
-  private val serviceConfiguration = ServiceConfiguration(serviceName = serviceName, url = serviceUrl, enabled = true, order = 1, label = "Keyworker API")
+  private val serviceConfiguration = ServiceConfiguration(
+    serviceName = serviceName,
+    url = serviceUrl,
+    enabled = true,
+    order = 1,
+    label = "Keyworker API",
+  )
 
   @BeforeEach
   fun setup() {
@@ -164,8 +170,8 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     assertExceptedExceptionFor4xxError(actual, subjectAccessRequest, stubErrorResponse)
     assertThat(actual.errorCode).isEqualTo(
       ErrorCode(
-        stubErrorResponse.status.value().toString(),
         ErrorCodePrefix.SAR_HTML_RENDERER,
+        stubErrorResponse.status.value().toString(),
       ),
     )
     hmppsAuth.verifyCalledOnce()
@@ -195,8 +201,8 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     assertExceptedExceptionFor5xxError(actual, subjectAccessRequest, stubErrorResponse)
     assertThat(actual.errorCode).isEqualTo(
       ErrorCode(
-        stubErrorResponse.status.value().toString(),
         ErrorCodePrefix.SAR_HTML_RENDERER,
+        stubErrorResponse.status.value().toString(),
       ),
     )
     hmppsAuth.verifyCalledOnce()
@@ -293,7 +299,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     actual = actual,
     expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
     expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
-    expectedErrorCode = ErrorCode(stubErrorResponse.status.value().toString(), ErrorCodePrefix.SAR_HTML_RENDERER),
+    expectedErrorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, stubErrorResponse.status.value().toString()),
     expectedSubjectAccessRequest = subjectAccessRequest,
     expectedParams = mapOf(
       "serviceName" to serviceName,
@@ -311,7 +317,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     actual = actual,
     expectedPrefix = "subjectAccessRequest failed and max retry attempts (${webClientConfiguration.maxRetries}) exhausted",
     expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
-    expectedErrorCode = ErrorCode(stubErrorResponse.status.value().toString(), ErrorCodePrefix.SAR_HTML_RENDERER),
+    expectedErrorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, stubErrorResponse.status.value().toString()),
     expectedSubjectAccessRequest = subjectAccessRequest,
     expectedCause = stubErrorResponse.expectedException,
     expectedParams = mapOf(

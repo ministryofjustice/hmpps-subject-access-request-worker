@@ -1,16 +1,38 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
+import org.testcontainers.junit.jupiter.Testcontainers
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient.HtmlRenderRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
+import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
+@Import(S3TestUtils::class, NoSchedulingConfig::class)
+@Testcontainers
 class BaseProcessorIntTest : IntegrationTestBase() {
+
+  @Autowired
+  protected lateinit var sarProcessor: SubjectAccessRequestProcessor
+
+  @Autowired
+  protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
+
+  @Autowired
+  protected lateinit var s3TestUtil: S3TestUtils
 
   protected companion object {
     val replaceWhitespaceRegex = Regex("\\s+")
@@ -137,4 +159,79 @@ class BaseProcessorIntTest : IntegrationTestBase() {
       ),
     )
   }
+
+  protected fun getServiceConfiguration(serviceName: String): ServiceConfiguration {
+    val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
+    assertThat(serviceConfig).isNotNull
+    return serviceConfig!!
+  }
+
+  protected fun htmlRendererSuccessfullyRendersHtml(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+  ) = stubHtmlRendererSuccess(
+    sar = sar,
+    htmlRenderRequest = htmlRenderRequest,
+    serviceName = serviceName,
+    fileToAddToBucket = serviceName,
+  )
+
+  protected fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+  ) = stubHtmlRendererSuccess(
+    sar = sar,
+    htmlRenderRequest = htmlRenderRequest,
+    serviceName = serviceName,
+    fileToAddToBucket = "$serviceName-no-data",
+  )
+
+  protected fun stubHtmlRendererSuccess(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+    fileToAddToBucket: String,
+  ) = runBlocking {
+    val documentKey = htmlDocumentKey(sar, serviceName)
+
+    // Stub the wiremock API response.
+    htmlRendererApi.stubRenderResponsesWith(
+      htmlRenderRequest,
+      rendererSuccessResponse(documentKey),
+    )
+
+    // Put the expected Html in the bucket for later.
+    s3TestUtil.putFile(
+      S3TestUtils.S3File(
+        documentKey,
+        getReportHtmlForService(fileToAddToBucket),
+      ),
+    )
+    assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
+  }
+
+  fun getReportHtmlForService(serviceName: String): String = this::class.java
+    .getResourceAsStream("/integration-tests/html-stubs/$serviceName-expected.html")
+    ?.bufferedReader()
+    .use { it?.readText() ?: "EMPTY" }
+
+  fun htmlDocumentKey(sar: SubjectAccessRequest, serviceName: String) = "${sar.id}/$serviceName.html"
+
+  protected fun errorResponseDefinition(
+    status: Int,
+    errorCode: String? = null,
+  ) = ResponseDefinitionBuilder.responseDefinition()
+    .withHeader("Content-Type", "application/json")
+    .withStatus(status)
+    .withBody(
+      objectMapper.writeValueAsString(
+        ErrorResponse(
+          status = status,
+          errorCode = errorCode,
+          developerMessage = "ErrorCode: $errorCode",
+        ),
+      ),
+    )
 }

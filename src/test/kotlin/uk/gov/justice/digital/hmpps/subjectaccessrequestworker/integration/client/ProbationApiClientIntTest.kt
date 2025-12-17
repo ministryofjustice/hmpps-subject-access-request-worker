@@ -116,7 +116,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = GET_OFFENDER_NAME,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.PROBATION_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.PROBATION_API, stubResponse.status.value().toString()),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
@@ -146,7 +146,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = GET_OFFENDER_NAME,
-      expectedErrorCode = ErrorCode(stubResponse.status.value().toString(), ErrorCodePrefix.PROBATION_API),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.PROBATION_API, stubResponse.status.value().toString()),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,

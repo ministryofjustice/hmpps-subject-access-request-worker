@@ -137,8 +137,8 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedEvent = STORE_DOCUMENT,
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedErrorCode = ErrorCode(
-        stubErrorResponse.status.value().toString(),
         ErrorCodePrefix.DOCUMENT_STORE,
+        stubErrorResponse.status.value().toString(),
       ),
       expectedParams = mapOf(
         "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
@@ -206,7 +206,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubErrorResponse.expectedException,
       expectedEvent = STORE_DOCUMENT,
-      expectedErrorCode = ErrorCode(DEFAULT_ERROR_CODE, ErrorCodePrefix.DOCUMENT_STORE),
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.DOCUMENT_STORE, DEFAULT_ERROR_CODE),
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "uri" to "/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
