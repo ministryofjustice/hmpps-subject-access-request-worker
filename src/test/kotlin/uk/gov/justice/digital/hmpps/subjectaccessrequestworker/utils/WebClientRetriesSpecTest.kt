@@ -32,6 +32,7 @@ class WebClientRetriesSpecTest {
   private val headers: HttpHeaders = mock()
   private val signal: RetrySignal = mock()
   private val failure: WebClientResponseException = mock()
+  private val webClientErrorResponseService: WebClientErrorResponseService = WebClientErrorResponseService()
 
   private val errorResponseJson = objectMapper.writeValueAsString(
     ErrorResponse(
@@ -43,6 +44,7 @@ class WebClientRetriesSpecTest {
 
   private val webClientRetriesSpec: WebClientRetriesSpec = WebClientRetriesSpec(
     webClientConfiguration,
+    webClientErrorResponseService,
     telemetryClient,
   )
 

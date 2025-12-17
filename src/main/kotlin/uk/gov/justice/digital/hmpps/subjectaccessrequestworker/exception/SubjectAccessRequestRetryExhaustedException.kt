@@ -9,7 +9,7 @@ private const val ERROR_MESSAGE_PREFIX = "subjectAccessRequest failed and max re
 /**
  * A subject access request has failed with an error and has reached the max retry max limit.
  */
-class SubjectAccessRequestRetryExhaustedException(
+open class SubjectAccessRequestRetryExhaustedException(
   val retryAttempts: Long,
   cause: Throwable?,
   event: ProcessingEvent,

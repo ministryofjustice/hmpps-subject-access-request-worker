@@ -40,6 +40,18 @@ open class ErrorCode(
 
     const val EXTERNAL_API_AUTH_ERROR_CODE = "10500"
 
+    /**
+     * HTML Renderer error codes
+     */
+    val HTML_RENDERER_TEMPLATE_HASH_MISMATCH = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "3001")
+
+    val HTML_RENDERER_TEMPLATE_EMPTY = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "3002")
+
+    val HTML_RENDERER_TEMPLATE_NOT_FOUND = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "3003")
+
+    /**
+     * Internal error codes
+     */
     val INTERNAL_SERVER_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, DEFAULT_ERROR_CODE)
 
     val CONFIGURATION_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10001")

@@ -6,7 +6,6 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClientRequestException
@@ -21,17 +20,21 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_REQUEST_RETRY
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_RETRIES_EXHAUSTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.DOCUMENT_STORE_CONFLICT
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.NON_RETRYABLE_CLIENT_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.HtmlRendererTemplateException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestDocumentStoreConflictException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.defaultErrorCodeFor
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_RENDERER_TEMPLATE_EMPTY
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_RENDERER_TEMPLATE_HASH_MISMATCH
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_RENDERER_TEMPLATE_NOT_FOUND
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.net.URI
 import java.time.Duration
 import java.util.function.BiFunction
@@ -40,12 +43,13 @@ import java.util.function.Predicate
 @Component
 class WebClientRetriesSpec(
   webClientConfiguration: WebClientConfiguration,
+  private val webClientErrorResponseService: WebClientErrorResponseService,
   val telemetryClient: TelemetryClient,
 ) {
 
-  private val maxRetries: Long = webClientConfiguration.maxRetries
-  private val backOff: Duration = webClientConfiguration.getBackoffDuration()
-  private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+  val maxRetries: Long = webClientConfiguration.maxRetries
+  val backOff: Duration = webClientConfiguration.getBackoffDuration()
+  protected val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
 
   companion object {
     private val LOG = LoggerFactory.getLogger(WebClientRetriesSpec::class.java)
@@ -88,7 +92,7 @@ class WebClientRetriesSpec(
   ) = BiFunction<RetryBackoffSpec, RetrySignal, Throwable> { _, signal ->
     telemetryClient.clientRetriesExhausted(subjectAccessRequest, signal, event)
 
-    val errorCode = getErrorCodeFromResponseOrDefault(signal, errorCodePrefix)
+    val errorCode = webClientErrorResponseService.getErrorCodeOrDefault(signal, errorCodePrefix)
 
     SubjectAccessRequestRetryExhaustedException(
       retryAttempts = signal.totalRetries(),
@@ -100,40 +104,58 @@ class WebClientRetriesSpec(
     )
   }
 
-  private fun getErrorCodeFromResponseOrDefault(
-    signal: RetrySignal,
-    errorCodePrefix: ErrorCodePrefix,
-  ): ErrorCode = signal.getBodyAsErrorResponseOrNull()?.errorCode.takeIf { !it.isNullOrBlank() }?.let {
-    ErrorCode(errorCodePrefix, it)
-  } ?: getDefaultErrorCode(errorCodePrefix, signal.failure())
+  fun retryHtmlRenderer5xxAndClientRequestErrors(
+    subjectAccessRequest: SubjectAccessRequest? = null,
+    serviceConfiguration: ServiceConfiguration,
+  ): RetryBackoffSpec = Retry
+    .backoff(maxRetries, backOff)
+    .filter { err -> is5xxOrClientRequestError(err) }
+    .doBeforeRetry { signal ->
+      val params = mapOf("serviceName" to serviceConfiguration.serviceName)
 
-  private fun RetrySignal.getBodyAsErrorResponseOrNull(): ErrorResponse? = this.failure()
-    .takeIf { it is WebClientResponseException }
-    ?.let { ex ->
-      ex as WebClientResponseException
-      val bodyString = ex.getResponseBodyAs(String::class.java)
+      logClientRetryEvent(
+        signal,
+        subjectAccessRequest,
+        HTML_RENDERER_REQUEST,
+        ErrorCodePrefix.SAR_HTML_RENDERER,
+        params,
+      )
+    }.onRetryExhaustedThrow { _, signal ->
+      telemetryClient.clientRetriesExhausted(
+        subjectAccessRequest,
+        signal,
+        HTML_RENDERER_REQUEST,
+      )
 
-      bodyString.takeIf { responseBodyIsJson(it, ex) }?.let {
-        objectMapper.readValue(it, ErrorResponse::class.java)
+      val errorCode = webClientErrorResponseService.getErrorCodeOrDefault(
+        signal,
+        ErrorCodePrefix.SAR_HTML_RENDERER,
+      )
+
+      val params = mapOf(
+        "serviceName" to serviceConfiguration.serviceName,
+        "serviceUrl" to serviceConfiguration.url,
+      )
+
+      when (errorCode) {
+        HTML_RENDERER_TEMPLATE_HASH_MISMATCH, HTML_RENDERER_TEMPLATE_EMPTY, HTML_RENDERER_TEMPLATE_NOT_FOUND ->
+          HtmlRendererTemplateException(
+            signal.totalRetries(),
+            errorCode,
+            subjectAccessRequest,
+            serviceConfiguration,
+          )
+
+        else -> SubjectAccessRequestRetryExhaustedException(
+          retryAttempts = signal.totalRetries(),
+          cause = signal.failure(),
+          event = HTML_RENDERER_REQUEST,
+          errorCode = errorCode,
+          subjectAccessRequest = subjectAccessRequest,
+          params = params,
+        )
       }
     }
-
-  private fun responseBodyIsJson(
-    body: String?,
-    wcex: WebClientResponseException,
-  ): Boolean = wcex.headers.contentType == MediaType.APPLICATION_JSON &&
-    body != null &&
-    body.startsWith("{") &&
-    body.endsWith("}")
-
-  private fun getDefaultErrorCode(
-    errorCodePrefix: ErrorCodePrefix,
-    failure: Throwable,
-  ): ErrorCode = if (failure is WebClientResponseException) {
-    ErrorCode(errorCodePrefix, failure.statusCode.value().toString())
-  } else {
-    defaultErrorCodeFor(errorCodePrefix)
-  }
 
   fun throw4xxStatusFatalError(
     event: ProcessingEvent,
@@ -229,7 +251,7 @@ class WebClientRetriesSpec(
     errorCodePrefix: ErrorCodePrefix,
     params: Map<String, Any>? = null,
   ) {
-    val errorResponse = signal.getBodyAsErrorResponseOrNull()
+    val errorResponse = webClientErrorResponseService.getBodyAsErrorResponseOrNull(signal)
     val errorCode = errorResponse?.errorCode ?: "N/A"
     val errorMessage = errorResponse?.developerMessage ?: signal.failure().message ?: "N/A"
 
