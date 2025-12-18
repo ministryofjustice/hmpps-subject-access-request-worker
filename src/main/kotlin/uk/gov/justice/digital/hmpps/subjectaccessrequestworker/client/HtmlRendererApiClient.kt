@@ -49,14 +49,9 @@ class HtmlRendererApiClient(
       )
       .bodyToMono(HtmlRenderResponse::class.java)
       .retryWhen(
-        webClientRetriesSpec.retry5xxAndClientRequestErrors(
-          subjectAccessRequest = subjectAccessRequest,
-          event = HTML_RENDERER_REQUEST,
-          errorCodePrefix = ErrorCodePrefix.SAR_HTML_RENDERER,
-          params = mapOf(
-            "serviceName" to serviceConfiguration.serviceName,
-            "serviceUrl" to serviceConfiguration.url,
-          ),
+        webClientRetriesSpec.retryHtmlRenderer5xxAndClientRequestErrors(
+          subjectAccessRequest,
+          serviceConfiguration,
         ),
       )
       .block()

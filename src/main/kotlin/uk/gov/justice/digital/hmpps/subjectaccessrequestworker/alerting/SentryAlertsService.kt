@@ -1,7 +1,12 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting
 
+import com.github.benmanes.caffeine.cache.Cache
 import io.sentry.Sentry
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.HtmlRendererTemplateException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 
 /**
@@ -9,9 +14,39 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
  * functionality it just makes it easier to mock the alerting functionality in tests.
  */
 @Service
-class SentryAlertsService : AlertsService {
+class SentryAlertsService(
+  @Qualifier("alertServiceCache") val alertServiceCache: Cache<String, String>,
+  @Value("\${alert-cache.enabled:false}") private val cacheEnabled: Boolean,
+) : AlertsService {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(SentryAlertsService::class.java)
+  }
 
   override fun raiseReportErrorAlert(ex: SubjectAccessRequestException) {
-    Sentry.captureException(ex)
+    if (cacheEnabled) {
+      raiseReportErrorAlertWithCaching(ex)
+    } else {
+      raiseReportErrorAlertWithoutCache(ex)
+    }
   }
+
+  private fun raiseReportErrorAlertWithCaching(ex: SubjectAccessRequestException) {
+    when (ex) {
+      is HtmlRendererTemplateException -> {
+        val key = ex.getAlertServiceCacheKey()
+        alertServiceCache.getIfPresent(key)?.let {
+          log.debug("alert cache entry already exists for key: {}, no Sentry alert will be sent", key)
+        } ?: run {
+          log.debug("alert cache entry does not exists for key: {}, sending Sentry alert", key)
+          alertServiceCache.put(key, key)
+          Sentry.captureException(ex)
+        }
+      }
+
+      else -> Sentry.captureException(ex)
+    }
+  }
+
+  private fun raiseReportErrorAlertWithoutCache(ex: SubjectAccessRequestException) = Sentry.captureException(ex)
 }

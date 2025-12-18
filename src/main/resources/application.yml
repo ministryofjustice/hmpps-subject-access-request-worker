@@ -129,6 +129,11 @@ scheduled:
 sentry:
   traces-sample-rate: "0.05"
 
+alert-cache:
+  enabled: false
+  max-size: 10000
+  ttl: 30m
+
 s3:
   provider: aws
   region: eu-west-2
@@ -141,6 +146,7 @@ backlog-request:
     initial-delay: 30
     enabled: false
     backoff-threshold-mins: 5
+    claim-threshold-mins: 30
   api:
     enabled: false
 
