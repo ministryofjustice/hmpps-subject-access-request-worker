@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.LocationsA
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
@@ -69,6 +71,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.GET_LOCATION,
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.LOCATION_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "dpsLocationId" to LOCATION_DPS_ID,
         "uri" to "${locationsApi.baseUrl()}/locations/$LOCATION_DPS_ID",
@@ -105,6 +108,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.GET_LOCATION,
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.LOCATION_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "dpsLocationId" to LOCATION_DPS_ID,
       ),
@@ -127,6 +131,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: locationsApiClient error authorization exception",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.ACQUIRE_AUTH_TOKEN,
+      expectedErrorCode = ErrorCode.LOCATION_API_AUTH_ERROR,
       expectedParams = null,
     )
   }

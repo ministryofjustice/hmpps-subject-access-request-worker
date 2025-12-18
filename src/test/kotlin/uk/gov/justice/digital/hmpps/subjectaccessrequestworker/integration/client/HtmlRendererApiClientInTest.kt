@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNdeliusCaseReferenceNumber
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
@@ -57,7 +59,13 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
   private val sarDateFrom = LocalDate.of(2024, 1, 1)
   private val serviceName = "keyworker-api"
   private val serviceUrl = "http://keyworker-api.com"
-  private val serviceConfiguration = ServiceConfiguration(serviceName = serviceName, url = serviceUrl, enabled = true, order = 1, label = "Keyworker API")
+  private val serviceConfiguration = ServiceConfiguration(
+    serviceName = serviceName,
+    url = serviceUrl,
+    enabled = true,
+    order = 1,
+    label = "Keyworker API",
+  )
 
   @BeforeEach
   fun setup() {
@@ -82,6 +90,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     assertThat(actual.cause).isNotNull()
     assertThat(actual.cause).isInstanceOf(ClientAuthorizationException::class.java)
     assertThat(actual.event).isEqualTo(ACQUIRE_AUTH_TOKEN)
+    assertThat(actual.errorCode).isEqualTo(ErrorCode.HTML_RENDERER_AUTH_ERROR)
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderNeverCalled()
@@ -159,6 +168,12 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     }
 
     assertExceptedExceptionFor4xxError(actual, subjectAccessRequest, stubErrorResponse)
+    assertThat(actual.errorCode).isEqualTo(
+      ErrorCode(
+        ErrorCodePrefix.SAR_HTML_RENDERER,
+        stubErrorResponse.status.value().toString(),
+      ),
+    )
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 1, expectedBody = expectedRequest)
   }
@@ -184,6 +199,12 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     }
 
     assertExceptedExceptionFor5xxError(actual, subjectAccessRequest, stubErrorResponse)
+    assertThat(actual.errorCode).isEqualTo(
+      ErrorCode(
+        ErrorCodePrefix.SAR_HTML_RENDERER,
+        stubErrorResponse.status.value().toString(),
+      ),
+    )
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 3, expectedBody = expectedRequest)
   }
@@ -278,6 +299,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     actual = actual,
     expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
     expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
+    expectedErrorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, stubErrorResponse.status.value().toString()),
     expectedSubjectAccessRequest = subjectAccessRequest,
     expectedParams = mapOf(
       "serviceName" to serviceName,
@@ -295,6 +317,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     actual = actual,
     expectedPrefix = "subjectAccessRequest failed and max retry attempts (${webClientConfiguration.maxRetries}) exhausted",
     expectedEvent = ProcessingEvent.HTML_RENDERER_REQUEST,
+    expectedErrorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, stubErrorResponse.status.value().toString()),
     expectedSubjectAccessRequest = subjectAccessRequest,
     expectedCause = stubErrorResponse.expectedException,
     expectedParams = mapOf(

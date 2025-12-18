@@ -10,6 +10,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.GotenbergA
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestRetryExhaustedException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.REFERENCE_PDF_BASE_DIR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.assertExpectedSubjectAccessRequestExceptionWithCauseNull
@@ -49,6 +51,7 @@ class GotenbergApiClientIntTest : BaseClientIntTest() {
       actual = exception,
       expectedPrefix = "subjectAccessRequest failed with non-retryable error: client 4xx response status",
       expectedEvent = ProcessingEvent.CONVERT_WORD_DOCUMENT,
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.GOTENBERG_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "filename" to FILE_TO_CONVERT,
         "uri" to "${gotenbergApi.baseUrl()}/forms/libreoffice/convert",
@@ -73,6 +76,7 @@ class GotenbergApiClientIntTest : BaseClientIntTest() {
       expectedPrefix = "subjectAccessRequest failed and max retry attempts (2) exhausted",
       expectedCause = stubResponse.expectedException,
       expectedEvent = ProcessingEvent.CONVERT_WORD_DOCUMENT,
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.GOTENBERG_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
         "filename" to FILE_TO_CONVERT,
       ),

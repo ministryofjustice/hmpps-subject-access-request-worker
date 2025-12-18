@@ -10,6 +10,10 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.PRISON_API_AUTH_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.formatName
@@ -34,13 +38,14 @@ class PrisonApiClient(
       .retrieve()
       .onStatus(
         { code: HttpStatusCode -> code.isSameCodeAs(HttpStatus.NOT_FOUND) },
-        { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
+        { _ -> Mono.error(PrisonSubjectNotFoundException(subjectAccessRequest, subjectId)) },
       )
       .onStatus(
         webClientRetriesSpec.is4xxStatus(),
         webClientRetriesSpec.throw4xxStatusFatalError(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
+          ErrorCodePrefix.PRISON_API,
           mapOf("subjectId" to subjectId),
         ),
       )
@@ -49,12 +54,13 @@ class PrisonApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
+          ErrorCodePrefix.PRISON_API,
           mapOf("subjectId" to subjectId),
         ),
       )
       // Return valid empty response when not found
       .onErrorReturn(
-        SubjectNotFoundException::class.java,
+        PrisonSubjectNotFoundException::class.java,
         emptyResponse,
       )
       .block()
@@ -65,6 +71,7 @@ class PrisonApiClient(
       message = "prisonApiClient error authorization exception",
       cause = ex,
       event = ACQUIRE_AUTH_TOKEN,
+      errorCode = PRISON_API_AUTH_ERROR,
       subjectAccessRequest = subjectAccessRequest,
       params = null,
     )
@@ -73,5 +80,14 @@ class PrisonApiClient(
   @JsonIgnoreProperties(ignoreUnknown = true)
   data class GetOffenderDetailsResponse(val lastName: String? = "", val firstName: String? = "")
 
-  class SubjectNotFoundException(subjectId: String) : RuntimeException("/api/offenders/$subjectId not found")
+  class PrisonSubjectNotFoundException(
+    subjectAccessRequest: SubjectAccessRequest,
+    subjectId: String,
+  ) : SubjectAccessRequestException(
+    message = "/api/offenders/$subjectId not found",
+    subjectAccessRequest = subjectAccessRequest,
+    errorCode = ErrorCode.PRISON_SUBJECT_NAME_NOT_FOUND,
+    event = GET_OFFENDER_NAME,
+    params = mapOf("subjectId" to subjectId),
+  )
 }

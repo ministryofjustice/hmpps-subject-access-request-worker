@@ -10,6 +10,10 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_OFFENDER_NAME
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.PROBATION_API_AUTH_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.formatName
@@ -31,13 +35,14 @@ class ProbationApiClient(
       .retrieve()
       .onStatus(
         { status -> status.isSameCodeAs(HttpStatus.NOT_FOUND) },
-        { _ -> Mono.error(SubjectNotFoundException(subjectId)) },
+        { _ -> Mono.error(ProbationSubjectNotFoundException(subjectAccessRequest, subjectId)) },
       )
       .onStatus(
         webClientRetriesSpec.is4xxStatus(),
         webClientRetriesSpec.throw4xxStatusFatalError(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
+          ErrorCodePrefix.PROBATION_API,
           mapOf(
             "subjectId" to subjectId,
             "uri" to "/probation-case/$subjectId",
@@ -49,12 +54,13 @@ class ProbationApiClient(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           GET_OFFENDER_NAME,
           subjectAccessRequest,
+          ErrorCodePrefix.PROBATION_API,
           mapOf("subjectId" to subjectId),
         ),
       )
       // Return valid empty response when not found
       .onErrorReturn(
-        SubjectNotFoundException::class.java,
+        ProbationSubjectNotFoundException::class.java,
         emptyResponse,
       )
       .block()
@@ -65,6 +71,7 @@ class ProbationApiClient(
       message = "probationApiClient error authorization exception",
       cause = ex,
       event = ACQUIRE_AUTH_TOKEN,
+      errorCode = PROBATION_API_AUTH_ERROR,
       subjectAccessRequest = subjectAccessRequest,
       params = null,
     )
@@ -78,5 +85,12 @@ class ProbationApiClient(
 
   data class NameDetails(val surname: String? = "", val forename: String? = "")
 
-  class SubjectNotFoundException(subjectId: String) : RuntimeException("/probation-case/$subjectId not found")
+  class ProbationSubjectNotFoundException(subjectAccessRequest: SubjectAccessRequest, subjectId: String) :
+    SubjectAccessRequestException(
+      message = "/probation-case/$subjectId not found",
+      subjectAccessRequest = subjectAccessRequest,
+      event = GET_OFFENDER_NAME,
+      errorCode = ErrorCode.PROBATION_SUBJECT_NAME_NOT_FOUND,
+      params = mapOf("subjectId" to subjectId),
+    )
 }

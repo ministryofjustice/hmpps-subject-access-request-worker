@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestTemplatingException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.TEMPLATE_NOT_FOUND
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 @Service
@@ -26,6 +27,7 @@ class TemplateResources(
     if (serviceTemplateIsMandatory(serviceName) && template == null) {
       throw SubjectAccessRequestTemplatingException(
         subjectAccessRequest = subjectAccessRequest,
+        errorCode = TEMPLATE_NOT_FOUND,
         message = "mandatory service template does not exist",
         params = mapOf(
           "service" to serviceName,

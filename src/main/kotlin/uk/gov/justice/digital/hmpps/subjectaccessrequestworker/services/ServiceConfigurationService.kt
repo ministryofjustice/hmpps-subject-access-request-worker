@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
@@ -66,6 +67,7 @@ class ServiceConfigurationService(
   ): SubjectAccessRequestException = throw FatalSubjectAccessRequestException(
     message = "service with name '$serviceName' not found",
     event = ProcessingEvent.GET_SERVICE_CONFIGURATION,
+    errorCode = ErrorCode.CONFIGURATION_ERROR,
     subjectAccessRequest = subjectAccessRequest,
     params = mapOf("serviceName" to serviceName),
   )
