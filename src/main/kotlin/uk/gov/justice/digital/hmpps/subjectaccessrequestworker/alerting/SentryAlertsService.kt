@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import io.sentry.Sentry
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.HtmlRendererTemplateException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
@@ -15,6 +16,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
 @Service
 class SentryAlertsService(
   @Qualifier("alertServiceCache") val alertServiceCache: Cache<String, String>,
+  @Value("\${alert-cache.enabled:false}") private val cacheEnabled: Boolean,
 ) : AlertsService {
 
   companion object {
@@ -22,12 +24,21 @@ class SentryAlertsService(
   }
 
   override fun raiseReportErrorAlert(ex: SubjectAccessRequestException) {
+    if (cacheEnabled) {
+      raiseReportErrorAlertWithCaching(ex)
+    } else {
+      raiseReportErrorAlertWithoutCache(ex)
+    }
+  }
+
+  private fun raiseReportErrorAlertWithCaching(ex: SubjectAccessRequestException) {
     when (ex) {
       is HtmlRendererTemplateException -> {
         val key = ex.getAlertServiceCacheKey()
         alertServiceCache.getIfPresent(key)?.let {
-          log.debug("alert cache entry already exists for key: {}, no alert will be sent", key)
+          log.debug("alert cache entry already exists for key: {}, no Sentry alert will be sent", key)
         } ?: run {
+          log.debug("alert cache entry does not exists for key: {}, sending Sentry alert", key)
           alertServiceCache.put(key, key)
           Sentry.captureException(ex)
         }
@@ -36,4 +47,6 @@ class SentryAlertsService(
       else -> Sentry.captureException(ex)
     }
   }
+
+  private fun raiseReportErrorAlertWithoutCache(ex: SubjectAccessRequestException) = Sentry.captureException(ex)
 }
