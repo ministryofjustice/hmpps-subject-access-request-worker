@@ -12,7 +12,7 @@ import java.util.UUID
 @Service
 class SubjectAccessRequestService(
   private val subjectAccessRequestRepository: SubjectAccessRequestRepository,
-  @Value("\${backlog-request.processor.claim-threshold-mins:30}") private val claimThresholdMins: Long,
+  @Value("\${scheduled.subject-access-request-processor.claim-threshold-mins:30}") private val claimThresholdMins: Long,
 ) {
 
   @Transactional
@@ -25,7 +25,7 @@ class SubjectAccessRequestService(
     id: UUID,
   ) = subjectAccessRequestRepository.updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(
     id,
-    LocalDateTime.now().minusMinutes(30),
+    LocalDateTime.now().minusMinutes(claimThresholdMins),
     LocalDateTime.now(),
   )
 

@@ -125,6 +125,7 @@ scheduled:
   subject-access-request-processor:
     initial-delay-seconds: 30
     interval-seconds: 30
+    claim-threshold-mins: 30
 
 sentry:
   traces-sample-rate: "0.05"
@@ -146,7 +147,7 @@ backlog-request:
     initial-delay: 30
     enabled: false
     backoff-threshold-mins: 5
-    claim-threshold-mins: 30
+
   api:
     enabled: false
 
