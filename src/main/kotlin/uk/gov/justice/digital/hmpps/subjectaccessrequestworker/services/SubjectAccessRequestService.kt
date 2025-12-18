@@ -20,7 +20,7 @@ class SubjectAccessRequestService(
   }
 
   init {
-      log.info("SubjectAccessRequestService initiated claim threshold: {}mins", claimThresholdMins)
+    log.info("SubjectAccessRequestService initiated claim threshold: {}mins", claimThresholdMins)
   }
 
   @Transactional
