@@ -1,8 +1,6 @@
-version: "3"
 services:
   hmpps-subject-access-request-worker:
-    build:
-      context: .
+    image: ghcr.io/ministryofjustice/hmpps-auth:latest
     network_mode: "host"
     container_name: hmpps-subject-access-request-worker
     ports:
