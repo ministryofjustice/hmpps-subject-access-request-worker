@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/subject-access-request/template"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "template_wiremock-test-service-api-v1.mustache",
+    "headers": {
+      "Content-Type": "plain/text"
+    }
+  }
+}
