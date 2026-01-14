@@ -40,6 +40,7 @@ dependencies {
   implementation("org.apache.commons:commons-csv:1.14.1")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+  implementation("com.slack.api:slack-api-client:1.45.3")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")

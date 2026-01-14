@@ -26,6 +26,7 @@ class WebClientConfiguration(
   @Value("\${web-client.configuration.max-retries:0}") val maxRetries: Long,
   @Value("\${web-client.configuration.back-off:PT10S}") val backOff: String,
   @Value("\${gotenberg-api.buffer-limit:10}") val gotenbergApiBufferLimit: Int,
+  @Value("\${slack.bot.url}") val slackBotUrl: String,
 ) {
 
   @Bean
@@ -75,6 +76,14 @@ class WebClientConfiguration(
 
   @Bean
   fun gotenbergWebClient(): WebClient = getPlainWebClient(WebClient.builder(), gotenbergBaseUri)
+
+  @Bean("slackWebClient")
+  fun slackClient(builder: WebClient.Builder): WebClient = builder
+    .baseUrl(slackBotUrl)
+    .exchangeStrategies(
+      ExchangeStrategies.builder()
+        .codecs { config -> config.defaultCodecs().maxInMemorySize(gotenbergApiBufferLimit * 1024 * 1024) }.build(),
+    ).build()
 
   private var backOffDuration: Duration = Duration.parse(backOff)
 

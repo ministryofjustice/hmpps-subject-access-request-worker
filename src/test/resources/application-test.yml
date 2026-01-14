@@ -56,6 +56,13 @@ template-resources:
   directory: /templates
   mandatory: G1,G2,G3
 
+slack:
+  bot:
+    url:
+    auth:
+    template-error-recipients:
+    dev-help-channel-id:
+
 scheduled:
   subject-access-request-processor:
     initial-delay-seconds: 0
