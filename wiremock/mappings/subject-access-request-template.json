@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/subject-access-request/template"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "template.mustache",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  }
+}

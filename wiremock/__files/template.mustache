@@ -1,0 +1,15 @@
+<h1 class="title">Wiremock Test Service</h1>
+<h2>Uploads</h2>
+{{#uploads}}
+    <table class="summary-list">
+        <tr><td>Attachment reference</td><td>{{ optionalValue attachmentRef }}</td></tr>
+        <tr><td>Filename</td><td>{{ optionalValue filename }}</td></tr>
+        <tr><td>File type</td><td>{{ optionalValue fileType }}</td></tr>
+        <tr><td>File size</td><td>{{ optionalValue fileSize }}</td></tr>
+        <tr><td>Description</td><td>{{ optionalValue description }}</td></tr>
+    </table>
+    <br/>
+{{/uploads}}
+{{^uploads}}
+    <p>No Data Held</p>
+{{/uploads}}
