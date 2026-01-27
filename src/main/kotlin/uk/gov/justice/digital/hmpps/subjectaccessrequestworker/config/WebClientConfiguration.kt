@@ -12,20 +12,20 @@ import java.time.Duration
 
 @Configuration
 class WebClientConfiguration(
-  @Value("\${document-storage.url}") val documentStorageApiBaseUri: String,
-  @Value("\${prison-api.url}") val prisonApiBaseUri: String,
-  @Value("\${probation-api.url}") val probationApiBaseUri: String,
-  @Value("\${hmpps-auth.url}") val hmppsAuthBaseUri: String,
-  @Value("\${locations-api.url}") val locationsApiBaseUri: String,
-  @Value("\${nomis-mappings-api.url}") val nomisMappingsApiBaseUri: String,
-  @Value("\${sar-html-renderer-api.url}") val sarHtmlRendererApiBaseUri: String,
-  @Value("\${gotenberg-api.url}") private val gotenbergBaseUri: String,
-  @Value("\${api.health-timeout:2s}") val healthTimeout: Duration,
-  @Value("\${api.timeout:20s}") val timeout: Duration,
-  @Value("\${document-store.timeout:300s}") val documentStoreTimeout: Duration,
-  @Value("\${web-client.configuration.max-retries:0}") val maxRetries: Long,
-  @Value("\${web-client.configuration.back-off:PT10S}") val backOff: String,
-  @Value("\${gotenberg-api.buffer-limit:10}") val gotenbergApiBufferLimit: Int,
+  @param:Value("\${document-storage.url}") val documentStorageApiBaseUri: String,
+  @param:Value("\${prison-api.url}") val prisonApiBaseUri: String,
+  @param:Value("\${probation-api.url}") val probationApiBaseUri: String,
+  @param:Value("\${hmpps-auth.url}") val hmppsAuthBaseUri: String,
+  @param:Value("\${locations-api.url}") val locationsApiBaseUri: String,
+  @param:Value("\${nomis-mappings-api.url}") val nomisMappingsApiBaseUri: String,
+  @param:Value("\${sar-html-renderer-api.url}") val sarHtmlRendererApiBaseUri: String,
+  @param:Value("\${gotenberg-api.url}") private val gotenbergBaseUri: String,
+  @param:Value("\${api.health-timeout:2s}") val healthTimeout: Duration,
+  @param:Value("\${api.timeout:20s}") val timeout: Duration,
+  @param:Value("\${document-store.timeout:300s}") val documentStoreTimeout: Duration,
+  @param:Value("\${web-client.configuration.max-retries:0}") val maxRetries: Long,
+  @param:Value("\${web-client.configuration.back-off:PT10S}") val backOff: String,
+  @param:Value("\${gotenberg-api.buffer-limit:10}") val gotenbergApiBufferLimit: Int,
 ) {
 
   @Bean

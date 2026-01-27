@@ -319,7 +319,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         status = BacklogRequestStatus.COMPLETE,
       )
 
-      backlogRequestService.addServiceSummary(backlogRequest!!, summary1)
+      backlogRequestService.addServiceSummary(backlogRequest, summary1)
 
       webTestClient
         .get()
@@ -329,8 +329,8 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
         .expectStatus().isOk
         .expectBody()
         .jsonPath("$.id").isEqualTo(backlogReqOneId)
-        .jsonPath("$.sarCaseReferenceNumber").isEqualTo(backlogRequest!!.sarCaseReferenceNumber)
-        .jsonPath("$.nomisId").isEqualTo(backlogRequest!!.nomisId)
+        .jsonPath("$.sarCaseReferenceNumber").isEqualTo(backlogRequest.sarCaseReferenceNumber)
+        .jsonPath("$.nomisId").isEqualTo(backlogRequest.nomisId)
         .jsonPath("$.status").isEqualTo(backlogRequest.status.name)
         .jsonPath("$.createdDate").isNotEmpty
         .jsonPath("$.subjectName").isEqualTo(backlogRequest.subjectName)

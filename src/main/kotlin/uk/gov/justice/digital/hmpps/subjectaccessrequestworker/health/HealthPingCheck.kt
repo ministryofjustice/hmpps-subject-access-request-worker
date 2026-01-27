@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.health
 
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.actuate.health.Health
-import org.springframework.boot.actuate.health.HealthIndicator
+import org.springframework.boot.health.contributor.Health
+import org.springframework.boot.health.contributor.HealthIndicator
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -28,12 +28,12 @@ class LocationsApiHealthPing(@Qualifier("locationsApiHealthWebClient") webClient
 class NomisMappingsApiHealthPing(@Qualifier("nomisMappingsApiHealthWebClient") webClient: WebClient) : HealthPingCheck(webClient)
 
 @Component("gotenbergApi")
-class GotenbergHealth(@Qualifier("gotenbergWebClient") private val webClient: WebClient) : HealthIndicator {
+class GotenbergHealth(@param:Qualifier("gotenbergWebClient") private val webClient: WebClient) : HealthIndicator {
   override fun health(): Health? = webClient.get()
     .uri("/health")
     .retrieve()
     .toEntity(String::class.java)
-    .flatMap { Mono.just(Health.up().withDetail("HttpStatus", it?.statusCode).build()) }
+    .flatMap { Mono.just(Health.up().withDetail("HttpStatus", it.statusCode).build()) }
     .onErrorResume(WebClientResponseException::class.java) {
       Mono.just(Health.down(it).withDetail("body", it.responseBodyAsString).withDetail("HttpStatus", it.statusCode).build())
     }

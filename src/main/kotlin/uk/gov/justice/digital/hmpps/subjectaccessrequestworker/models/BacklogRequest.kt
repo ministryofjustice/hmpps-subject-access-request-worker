@@ -114,7 +114,7 @@ data class ServiceSummary(
     var result: Int = 99
     result = 31 * result + dataHeld.hashCode()
     result = 31 * result + id.hashCode()
-    result = 31 * result + (backlogRequest?.id.hashCode() ?: 0)
+    result = 31 * result + (backlogRequest?.id.hashCode())
     result = 31 * result + status.hashCode()
     return result
   }

@@ -166,23 +166,23 @@ class ServiceOneApiExtension :
     val serviceOneMockApi = ServiceOneMockServer()
   }
 
-  override fun beforeAll(p0: ExtensionContext?) {
+  override fun beforeAll(context: ExtensionContext) {
     serviceOneMockApi.start()
   }
 
-  override fun afterAll(p0: ExtensionContext?) {
+  override fun afterAll(context: ExtensionContext) {
     serviceOneMockApi.stop()
   }
 
-  override fun beforeEach(p0: ExtensionContext?) {
+  override fun beforeEach(context: ExtensionContext) {
     serviceOneMockApi.resetRequests()
     serviceOneMockApi.resetScenarios()
   }
 
-  override fun postProcessTestInstance(testInstance: Any?, context: ExtensionContext?) {
+  override fun postProcessTestInstance(testInstance: Any, context: ExtensionContext) {
     try {
-      val field = testInstance?.javaClass?.getField("complexityOfNeedsMockApi")
-      field?.set(testInstance, serviceOneMockApi)
+      val field = testInstance.javaClass.getField("complexityOfNeedsMockApi")
+      field.set(testInstance, serviceOneMockApi)
     } catch (e: NoSuchFieldException) {
     }
   }

@@ -80,9 +80,9 @@ class HtmlRendererApiClient(
   data class SubjectDataHeldRequest(
     val nomisId: String? = null,
     val ndeliusId: String? = null,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateFrom: LocalDate? = null,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateTo: LocalDate? = null,
     val serviceName: String? = null,
     val serviceUrl: String? = null,
@@ -101,9 +101,9 @@ class HtmlRendererApiClient(
     val id: UUID,
     val nomisId: String?,
     val ndeliusId: String?,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateFrom: LocalDate?,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val dateTo: LocalDate?,
     val sarCaseReferenceNumber: String?,
     val serviceConfigurationId: UUID,

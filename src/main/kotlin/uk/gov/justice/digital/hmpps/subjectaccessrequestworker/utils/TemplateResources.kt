@@ -9,8 +9,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 
 @Service
 class TemplateResources(
-  @Value("\${template-resources.directory}") private val templatesDirectory: String = "/templates",
-  @Value("\${template-resources.mandatory}") private val mandatoryServiceTemplates: List<String> = listOf(
+  @param:Value("\${template-resources.directory}") private val templatesDirectory: String = "/templates",
+  @param:Value("\${template-resources.mandatory}") private val mandatoryServiceTemplates: List<String> = listOf(
     "G1",
     "G2",
     "G3",

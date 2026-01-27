@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRe
 
 @Component
 class GotenbergApiClient(
-  @Qualifier("gotenbergWebClient") val gotenbergClient: WebClient,
+  @param:Qualifier("gotenbergWebClient") val gotenbergClient: WebClient,
   private val webClientRetriesSpec: WebClientRetriesSpec,
 ) {
   fun convertWordDocToPdf(content: ByteArray, filename: String): ByteArray {

@@ -26,7 +26,7 @@ class BacklogRequestService(
   private val serviceSummaryRepository: ServiceSummaryRepository,
   private val serviceConfigurationService: ServiceConfigurationService,
   private val htmlRendererApiClient: HtmlRendererApiClient,
-  @Value("\${backlog-request.processor.backoff-threshold-mins:5}") val backOffThreshHold: Long,
+  @param:Value("\${backlog-request.processor.backoff-threshold-mins:5}") val backOffThreshHold: Long,
 ) {
 
   private companion object {

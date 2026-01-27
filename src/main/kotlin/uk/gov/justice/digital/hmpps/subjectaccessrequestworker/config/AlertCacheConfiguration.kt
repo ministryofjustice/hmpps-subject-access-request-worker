@@ -10,8 +10,8 @@ import java.time.Duration
 
 @Configuration
 class AlertCacheConfiguration(
-  @Value("\${alert-cache.max-size:10000}") private val maxSize: Long,
-  @Value("\${alert-cache.ttl:30m}") private val ttl: Duration,
+  @param:Value("\${alert-cache.max-size:10000}") private val maxSize: Long,
+  @param:Value("\${alert-cache.ttl:30m}") private val ttl: Duration,
 ) {
 
   companion object {

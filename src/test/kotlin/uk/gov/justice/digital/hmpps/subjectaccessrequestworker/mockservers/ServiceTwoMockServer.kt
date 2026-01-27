@@ -53,20 +53,20 @@ class ServiceTwoApiExtension :
     val serviceTwoMockApi = ServiceTwoMockServer()
   }
 
-  override fun beforeAll(context: ExtensionContext?) {
+  override fun beforeAll(context: ExtensionContext) {
     serviceTwoMockApi.start()
   }
-  override fun afterAll(context: ExtensionContext?) {
+  override fun afterAll(context: ExtensionContext) {
     serviceTwoMockApi.stop()
   }
-  override fun beforeEach(context: ExtensionContext?) {
+  override fun beforeEach(context: ExtensionContext) {
     serviceTwoMockApi.resetAll()
   }
 
-  override fun postProcessTestInstance(testInstance: Any?, context: ExtensionContext?) {
+  override fun postProcessTestInstance(testInstance: Any, context: ExtensionContext) {
     try {
-      val field = testInstance?.javaClass?.getField("complexityOfNeedsMockApi")
-      field?.set(testInstance, serviceTwoMockApi)
+      val field = testInstance.javaClass.getField("complexityOfNeedsMockApi")
+      field.set(testInstance, serviceTwoMockApi)
     } catch (e: NoSuchFieldException) {
     }
   }

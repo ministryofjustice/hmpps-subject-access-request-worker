@@ -8,13 +8,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 
 @Configuration
 class SchedulerConfig(
-  @Value("\${backlog-request.processor.pool-size:10}") val backlogProcessorPoolSize: Int,
+  @param:Value("\${backlog-request.processor.pool-size:10}") val backlogProcessorPoolSize: Int,
 ) {
 
   @Bean
   fun backlogScheduler(): TaskScheduler = ThreadPoolTaskScheduler().apply {
     poolSize = backlogProcessorPoolSize
-    threadNamePrefix = "sar-task-pool-"
+    setThreadNamePrefix("sar-task-pool-")
     setThreadGroupName("backlog-processor")
     initialize()
   }
