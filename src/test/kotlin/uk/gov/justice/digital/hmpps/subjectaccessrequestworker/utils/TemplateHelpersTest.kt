@@ -249,7 +249,7 @@ class TemplateHelpersTest {
       ],
       delimiterString = "|",
     )
-    fun `convertBoolean returns yes or no value when 1 or 0`(inputValue: Integer?, expectedValue: String) {
+    fun `convertBoolean returns yes or no value when 1 or 0`(inputValue: Int?, expectedValue: String) {
       val response = templateHelpers.convertBoolean(inputValue)
       assertThat(response).isEqualTo(expectedValue)
     }
@@ -354,9 +354,9 @@ class TemplateHelpersTest {
       nullValues = ["null"],
     )
     fun `buildDateNumber returns No Data Held when any blank input`(
-      yearInput: Integer?,
-      monthInput: Integer?,
-      dayInput: Integer?,
+      yearInput: Int?,
+      monthInput: Int?,
+      dayInput: Int?,
     ) {
       val response = templateHelpers.buildDateNumber(yearInput, monthInput, dayInput)
       assertThat(response).isEqualTo("No Data Held")
@@ -372,9 +372,9 @@ class TemplateHelpersTest {
       delimiterString = "|",
     )
     fun `buildDateNumber returns original values when not able to convert to date`(
-      yearInput: Integer?,
-      monthInput: Integer?,
-      dayInput: Integer?,
+      yearInput: Int?,
+      monthInput: Int?,
+      dayInput: Int?,
       expectedValue: String,
     ) {
       val response = templateHelpers.buildDateNumber(yearInput, monthInput, dayInput)

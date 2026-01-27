@@ -12,9 +12,9 @@ data class CreateBacklogRequest(
   val sarCaseReferenceNumber: String? = null,
   val nomisId: String? = null,
   val ndeliusCaseReferenceId: String? = null,
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateFrom: LocalDate,
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateTo: LocalDate,
 )
 
@@ -32,9 +32,9 @@ data class BacklogRequestOverview(
   val ndeliusCaseReferenceId: String? = null,
   val status: String,
   val createdDate: LocalDateTime?,
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateFrom: LocalDate?,
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateTo: LocalDate?,
   val serviceQueried: Int = 0,
 ) {
@@ -65,9 +65,9 @@ data class BacklogRequestDetailsEntity(
   val ndeliusCaseReferenceId: String? = null,
   val status: String,
   val createdDate: LocalDateTime?,
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateFrom: LocalDate?,
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  @param:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   val dateTo: LocalDate?,
   val dataHeld: Boolean? = null,
   val serviceSummary: List<ServiceSummary>,

@@ -15,8 +15,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
  */
 @Service
 class SentryAlertsService(
-  @Qualifier("alertServiceCache") val alertServiceCache: Cache<String, String>,
-  @Value("\${alert-cache.enabled:false}") private val cacheEnabled: Boolean,
+  @param:Qualifier("alertServiceCache") val alertServiceCache: Cache<String, String>,
+  @param:Value("\${alert-cache.enabled:false}") private val cacheEnabled: Boolean,
 ) : AlertsService {
 
   companion object {

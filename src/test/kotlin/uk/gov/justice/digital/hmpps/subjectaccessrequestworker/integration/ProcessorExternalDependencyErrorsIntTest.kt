@@ -119,7 +119,7 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     )
 
     verifyHtmlRendererIsCalled(htmlRendererRequest)
-    verifyPrisonApiIsCalled(subjectAccessRequest.nomisId!!)
+    verifyPrisonApiIsCalled(subjectAccessRequest.nomisId)
   }
 
   @ParameterizedTest
@@ -151,7 +151,7 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     )
 
     verifyHtmlRendererIsCalled(htmlRendererRequest)
-    verifyProbationApiIsCalled(subjectAccessRequest.ndeliusCaseReferenceId!!)
+    verifyProbationApiIsCalled(subjectAccessRequest.ndeliusCaseReferenceId)
   }
 
   @ParameterizedTest

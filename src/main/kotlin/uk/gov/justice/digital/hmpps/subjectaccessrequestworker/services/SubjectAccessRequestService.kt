@@ -13,7 +13,7 @@ import java.util.UUID
 @Service
 class SubjectAccessRequestService(
   private val subjectAccessRequestRepository: SubjectAccessRequestRepository,
-  @Value("\${scheduled.subject-access-request-processor.claim-threshold-mins:30}") private val claimThresholdMins: Long,
+  @param:Value("\${scheduled.subject-access-request-processor.claim-threshold-mins:30}") private val claimThresholdMins: Long,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

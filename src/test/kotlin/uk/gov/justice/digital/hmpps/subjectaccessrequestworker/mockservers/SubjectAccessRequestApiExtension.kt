@@ -30,23 +30,23 @@ class SubjectAccessRequestApiExtension :
     val subjectAccessRequestApiMock = SubjectAccessRequestApiMockServer()
   }
 
-  override fun beforeAll(p0: ExtensionContext?) {
+  override fun beforeAll(context: ExtensionContext) {
     subjectAccessRequestApiMock.start()
   }
 
-  override fun afterAll(p0: ExtensionContext?) {
+  override fun afterAll(context: ExtensionContext) {
     subjectAccessRequestApiMock.stop()
   }
 
-  override fun beforeEach(p0: ExtensionContext?) {
+  override fun beforeEach(context: ExtensionContext) {
     subjectAccessRequestApiMock.resetRequests()
     subjectAccessRequestApiMock.resetScenarios()
   }
 
-  override fun postProcessTestInstance(testInstance: Any?, context: ExtensionContext?) {
+  override fun postProcessTestInstance(testInstance: Any, context: ExtensionContext) {
     try {
-      val field = testInstance?.javaClass?.getField("sarApiMockServer")
-      field?.set(testInstance, subjectAccessRequestApiMock)
+      val field = testInstance.javaClass.getField("sarApiMockServer")
+      field.set(testInstance, subjectAccessRequestApiMock)
     } catch (e: NoSuchFieldException) { }
   }
 }

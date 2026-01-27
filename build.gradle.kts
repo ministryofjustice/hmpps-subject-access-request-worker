@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.3.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.2"
   kotlin("plugin.spring") version "2.3.0"
 }
 
@@ -16,23 +16,26 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.10.2"
 
 dependencies {
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0")
+  implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.json:json:20251224")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
   implementation("com.itextpdf:itext7-core:9.5.0")
   implementation("com.itextpdf:html2pdf:6.3.1")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
+  implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
   implementation("com.github.jknack:handlebars:4.5.0")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1")
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.29.0")
   implementation("io.sentry:sentry-logback:8.29.0")
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.2")
   implementation("commons-io:commons-io:2.21.0")
-  implementation("aws.sdk.kotlin:s3:1.5.116")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
+  implementation("aws.sdk.kotlin:s3:1.6.2")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
   runtimeOnly("org.postgresql:postgresql:42.7.8")
@@ -41,7 +44,10 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:1.8.2")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
+  testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-webclient-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.opencsv:opencsv:5.12.0")

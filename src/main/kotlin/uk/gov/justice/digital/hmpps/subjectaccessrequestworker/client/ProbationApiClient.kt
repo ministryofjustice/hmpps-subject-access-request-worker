@@ -79,7 +79,7 @@ class ProbationApiClient(
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   data class GetOffenderDetailsResponse(
-    @JsonProperty("name")
+    @param:JsonProperty("name")
     val nameDetails: NameDetails?,
   )
 
