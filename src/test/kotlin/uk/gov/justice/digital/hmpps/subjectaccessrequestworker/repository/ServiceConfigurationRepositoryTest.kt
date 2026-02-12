@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 
 class ServiceConfigurationRepositoryTest : IntegrationTestBase() {
@@ -43,8 +44,8 @@ class ServiceConfigurationRepositoryTest : IntegrationTestBase() {
       serviceName = "AAA",
       label = "AAA",
       url = "http://localhost:1234",
-      order = 1,
       enabled = true,
+      category = ServiceCategory.PRISON,
     )
   }
 }

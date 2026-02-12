@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.asser
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client.BaseClientIntTest.Companion.StubErrorResponse
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -63,8 +64,8 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     serviceName = serviceName,
     url = serviceUrl,
     enabled = true,
-    order = 1,
     label = "Keyworker API",
+    category = ServiceCategory.PRISON,
   )
 
   @BeforeEach

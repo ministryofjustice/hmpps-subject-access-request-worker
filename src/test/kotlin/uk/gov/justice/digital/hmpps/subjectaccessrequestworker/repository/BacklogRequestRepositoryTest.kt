@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogReq
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.PENDING
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import java.time.LocalDate
@@ -35,22 +36,22 @@ class BacklogRequestRepositoryTest @Autowired constructor(
     serviceName = "keyworker-api",
     label = "Keyworker",
     url = "",
-    order = 1,
     enabled = true,
+    category = ServiceCategory.PRISON,
   )
   private val offenderCaseNotesServiceConfig = ServiceConfiguration(
     serviceName = "offender-case-notes",
     label = "offender-case-notes",
     url = "",
-    order = 2,
     enabled = true,
+    category = ServiceCategory.PRISON,
   )
   private val courtCaseServiceServiceConfig = ServiceConfiguration(
     serviceName = "court-case-service",
     label = "court-case-service",
     url = "",
-    order = 3,
     enabled = true,
+    category = ServiceCategory.PROBATION,
   )
 
   private val serviceConfigurations = listOf(

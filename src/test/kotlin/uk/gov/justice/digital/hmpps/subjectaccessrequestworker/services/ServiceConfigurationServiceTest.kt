@@ -17,6 +17,7 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.DpsService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
@@ -60,8 +61,8 @@ class ServiceConfigurationServiceTest {
       serviceName = serviceName ?: "service$order",
       label = label ?: "Service $order",
       url = url ?: "service-$order.com",
-      order = order,
       enabled = true,
+      category = ServiceCategory.PRISON,
     )
 
     private fun dpsService(

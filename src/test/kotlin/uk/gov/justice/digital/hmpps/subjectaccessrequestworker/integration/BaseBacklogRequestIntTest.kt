@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus.COMPLETE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
@@ -39,22 +40,22 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
       serviceName = "service-1",
       label = "Service 1",
       url = "http://localhost:${htmlRendererApi.port()}",
-      order = 1,
       enabled = true,
+      category = ServiceCategory.PRISON,
     ),
     ServiceConfiguration(
       serviceName = "service-2",
       label = "Service 2",
       url = "http://localhost:${htmlRendererApi.port()}",
-      order = 2,
       enabled = true,
+      category = ServiceCategory.PRISON,
     ),
     ServiceConfiguration(
       serviceName = "service-3",
       label = "Service 3",
       url = "http://localhost:${htmlRendererApi.port()}",
-      order = 3,
       enabled = true,
+      category = ServiceCategory.PROBATION,
     ),
   )
 

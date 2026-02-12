@@ -29,7 +29,7 @@ interface ServiceSummaryRepository : JpaRepository<ServiceSummary, UUID> {
       "AND summary.status = 'COMPLETE'" +
       ") " +
       "AND cfg.enabled is TRUE " +
-      "ORDER BY cfg.order",
+      "ORDER BY cfg.label",
   )
   fun getPendingServiceSummariesForRequestId(@Param("backlogRequestId") id: UUID): List<ServiceConfiguration>
 

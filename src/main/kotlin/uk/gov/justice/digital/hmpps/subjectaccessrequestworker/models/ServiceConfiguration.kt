@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.util.UUID
@@ -21,12 +23,17 @@ data class ServiceConfiguration(
   @Column(name = "url", nullable = false)
   val url: String,
 
-  @Column(name = "list_order", nullable = false)
-  val order: Int,
-
   @Column(name = "enabled", nullable = false)
   var enabled: Boolean,
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "category", nullable = false)
+  val category: ServiceCategory,
 ) {
-  constructor() : this(serviceName = "", label = "", url = "", order = 0, enabled = false) {
-  }
+  constructor() : this(serviceName = "", label = "", url = "", enabled = false, category = ServiceCategory.PRISON)
+}
+
+enum class ServiceCategory {
+  PRISON,
+  PROBATION,
 }
