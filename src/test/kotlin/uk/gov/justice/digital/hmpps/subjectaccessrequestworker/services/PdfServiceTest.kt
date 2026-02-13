@@ -12,6 +12,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
@@ -94,9 +95,9 @@ class PdfServiceTest {
   private fun serviceConfiguration(serviceName: String, serviceLabel: String) = ServiceConfiguration(
     url = "http://localhost:8080/",
     serviceName = serviceName,
-    order = 1,
     label = serviceLabel,
     enabled = true,
+    category = ServiceCategory.PRISON,
   )
 
   companion object {

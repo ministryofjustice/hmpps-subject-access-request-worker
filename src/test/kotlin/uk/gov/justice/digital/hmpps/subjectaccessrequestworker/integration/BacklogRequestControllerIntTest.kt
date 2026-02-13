@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.CreateBacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
@@ -73,10 +74,10 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
 
   val service1Config = ServiceConfiguration(
     serviceName = "service-1",
-    order = 1,
     label = "service-1",
     url = "http://localhost:8080",
     enabled = true,
+    category = ServiceCategory.PRISON,
   )
 
   lateinit var backlogReqOneId: UUID

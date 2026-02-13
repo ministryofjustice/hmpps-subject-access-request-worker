@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ServiceConfigurationComparator
 import java.util.UUID
 
 @Service
@@ -47,7 +48,7 @@ class ServiceConfigurationService(
     .map { serviceName ->
       serviceConfigurationRepository.findByServiceName(serviceName.trim())
         ?: throw serviceNameNotFoundException(subjectAccessRequest, serviceName)
-    }.sortedBy { it.order }
+    }.sortedWith(ServiceConfigurationComparator())
 
   fun getAllEnabled(): List<ServiceConfiguration>? = serviceConfigurationRepository.findEnabled()
 

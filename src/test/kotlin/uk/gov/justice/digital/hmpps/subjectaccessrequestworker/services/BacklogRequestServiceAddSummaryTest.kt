@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRender
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.controller.entity.BacklogRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.BacklogRequestStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
@@ -50,16 +51,16 @@ class BacklogRequestServiceAddSummaryTest {
     serviceName = "service1",
     label = "Service One",
     url = "http://localhost:1234",
-    order = 1,
     enabled = true,
+    category = ServiceCategory.PRISON,
   )
 
   private val disabledServiceConfig = ServiceConfiguration(
     serviceName = "service2",
     label = "Service Two",
     url = "http://localhost:1234",
-    order = 1,
     enabled = false,
+    category = ServiceCategory.PROBATION,
   )
 
   private val existingServiceSummary = ServiceSummary(

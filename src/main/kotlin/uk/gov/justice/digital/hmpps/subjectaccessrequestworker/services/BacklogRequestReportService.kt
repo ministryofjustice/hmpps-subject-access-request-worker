@@ -14,7 +14,6 @@ import javax.sql.DataSource
 @Service
 class BacklogRequestReportService(
   val backlogRequestService: BacklogRequestService,
-  val serviceConfigurationService: ServiceConfigurationService,
   val dataSource: DataSource,
 ) {
 
@@ -33,22 +32,22 @@ class BacklogRequestReportService(
   )
 
   private val selectHeaderRowQuery =
-    "SELECT DISTINCT (cfg.label), cfg.list_order FROM service_configuration cfg " +
+    "SELECT DISTINCT (cfg.label) FROM service_configuration cfg " +
       "WHERE EXISTS ( " +
       "SELECT s.service_configuration_id FROM backlog_request b " +
       "INNER JOIN service_summary s ON s.backlog_request_id = b.id " +
       "WHERE version = ? " +
       "AND s.service_configuration_id = cfg.id " +
       "AND cfg.enabled is TRUE " +
-      ") ORDER BY cfg.list_order ASC;"
+      ") ORDER BY cfg.label ASC;"
 
   private val getServiceSummariesQuery =
     "SELECT " +
-      "s.data_held, s.backlog_request_id, cfg.list_order, cfg.label " +
+      "s.data_held, s.backlog_request_id, cfg.label " +
       "FROM service_summary s " +
       "INNER JOIN service_configuration cfg ON cfg.id = s.service_configuration_id " +
       "WHERE backlog_request_id = ? " +
-      "ORDER BY cfg.list_order ASC;"
+      "ORDER BY cfg.label ASC;"
 
   private val getBacklogRequestsByVersionQuery =
     "SELECT " +
@@ -172,7 +171,6 @@ class BacklogRequestReportService(
     while (rs.next()) {
       val serviceDataHeld = rs.getBoolean("data_held")
       val serviceName = rs.getString("label")
-      val listOrder = rs.getInt("list_order")
       val backlogRequestId = rs.getString("backlog_request_id")
 
       /**
