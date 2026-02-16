@@ -65,3 +65,9 @@ backlog-request:
 logging:
   level:
     com.zaxxer.hikari: ${HIKARI_LOGGING_LEVEL:INFO}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

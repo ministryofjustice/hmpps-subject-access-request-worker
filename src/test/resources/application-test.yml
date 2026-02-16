@@ -74,3 +74,9 @@ backlog-request:
     enabled: true
   api:
     enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
