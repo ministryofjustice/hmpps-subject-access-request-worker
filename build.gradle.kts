@@ -1,6 +1,6 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.2"
-  kotlin("plugin.spring") version "2.3.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.4"
+  kotlin("plugin.spring") version "2.3.10"
 }
 
 configurations {
@@ -30,18 +30,18 @@ dependencies {
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
   implementation("com.github.jknack:handlebars:4.5.0")
   implementation("org.apache.commons:commons-lang3:3.20.0")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1")
-  implementation("io.sentry:sentry-spring-boot-4:8.31.0")
-  implementation("io.sentry:sentry-logback:8.31.0")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.1")
+  implementation("io.sentry:sentry-spring-boot-4:8.33.0")
+  implementation("io.sentry:sentry-logback:8.33.0")
   implementation("commons-io:commons-io:2.21.0")
-  implementation("aws.sdk.kotlin:s3:1.6.2")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
+  implementation("aws.sdk.kotlin:s3:1.6.22")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
-  runtimeOnly("org.postgresql:postgresql:42.7.8")
+  runtimeOnly("org.postgresql:postgresql:42.7.10")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.1")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
