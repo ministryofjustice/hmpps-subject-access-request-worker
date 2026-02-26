@@ -62,6 +62,8 @@ open class ErrorCode(
 
     val NO_SUBJECT_ID_PROVIDED = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10104")
 
+    val SERVICE_CONFIGURATION_SUSPENDED = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10105")
+
     val DOCUMENT_UPLOAD_VERIFICATION_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10204")
 
     val DOCUMENT_STORE_CONFLICT = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10205")
