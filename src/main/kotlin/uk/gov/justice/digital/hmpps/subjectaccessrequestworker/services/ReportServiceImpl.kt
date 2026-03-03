@@ -14,7 +14,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICE_CONFIGURATION_SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
@@ -59,6 +61,10 @@ class ReportServiceImpl(
     log.info("processing subject access request ${subjectAccessRequest.id}")
 
     selectedServices.forEach { service ->
+      if (service.suspended) {
+        throw serviceConfigurationSuspendedException(service, subjectAccessRequest)
+      }
+
       log.info("submitted html render request for ${service.serviceName}")
       trackRenderServiceHtml(service, subjectAccessRequest)
 
@@ -90,6 +96,20 @@ class ReportServiceImpl(
     PdfService.PdfRenderRequest(
       subjectAccessRequest,
       subjectName,
+    ),
+  )
+
+  private fun serviceConfigurationSuspendedException(
+    serviceConfiguration: ServiceConfiguration,
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = SubjectAccessRequestException(
+    message = "unable to process request ${serviceConfiguration.serviceName} is suspended",
+    event = GENERATE_REPORT_SERVICES_SELECTED,
+    errorCode = SERVICE_CONFIGURATION_SUSPENDED,
+    subjectAccessRequest = subjectAccessRequest,
+    params = mapOf(
+      "serviceName" to serviceConfiguration.serviceName,
+      "suspendedAt" to serviceConfiguration.suspendedAt,
     ),
   )
 
