@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 import java.util.UUID
@@ -22,7 +21,7 @@ data class RequestServiceDetail(
   @JoinColumn(name = "subject_access_request_id", referencedColumnName = "id", nullable = false)
   var subjectAccessRequest: SubjectAccessRequest,
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "service_configuration_id", referencedColumnName = "id", nullable = false)
   val serviceConfiguration: ServiceConfiguration,
 
@@ -30,8 +29,8 @@ data class RequestServiceDetail(
   @Column(name = "render_status", nullable = false)
   var renderStatus: RenderStatus,
 
-  @OneToOne
-  @JoinColumn(name = "template_version_id", referencedColumnName = "id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "template_version_id", referencedColumnName = "id")
   var templateVersion: TemplateVersion? = null,
 
   @Column(name = "rendered_at")
