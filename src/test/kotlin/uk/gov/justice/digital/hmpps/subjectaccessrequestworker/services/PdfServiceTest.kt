@@ -12,6 +12,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -66,7 +68,14 @@ class PdfServiceTest {
       sarCaseReferenceNumber = "666",
       dateFrom = reportDateFrom,
       dateTo = reportDateTo,
-      services = testCase.serviceName,
+      services = mutableListOf(),
+    )
+    subjectAccessRequest.services.add(
+      RequestServiceDetail(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceConfiguration = serviceConfiguration(testCase.serviceName, testCase.serviceLabel),
+        renderStatus = RenderStatus.PENDING,
+      ),
     )
 
     val pdfRenderRequest = PdfService.PdfRenderRequest(
@@ -79,10 +88,6 @@ class PdfServiceTest {
 
     whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, testCase.serviceName))
       .thenReturn("v1")
-
-    whenever(serviceConfiguration.getSelectedServices(any())).thenReturn(
-      listOf(serviceConfiguration(testCase.serviceName, testCase.serviceLabel)),
-    )
 
     val actual = pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
 
@@ -97,6 +102,7 @@ class PdfServiceTest {
     serviceName = serviceName,
     label = serviceLabel,
     enabled = true,
+    templateMigrated = true,
     category = ServiceCategory.PRISON,
   )
 

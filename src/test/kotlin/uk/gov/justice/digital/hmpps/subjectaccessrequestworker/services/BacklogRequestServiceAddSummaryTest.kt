@@ -52,6 +52,7 @@ class BacklogRequestServiceAddSummaryTest {
     label = "Service One",
     url = "http://localhost:1234",
     enabled = true,
+    templateMigrated = true,
     category = ServiceCategory.PRISON,
   )
 
@@ -60,6 +61,7 @@ class BacklogRequestServiceAddSummaryTest {
     label = "Service Two",
     url = "http://localhost:1234",
     enabled = false,
+    templateMigrated = true,
     category = ServiceCategory.PROBATION,
   )
 

@@ -66,7 +66,7 @@ class SubjectAccessRequestProcessorTest {
     dateFrom = dateFromFormatted,
     dateTo = dateToFormatted,
     sarCaseReferenceNumber = "1234abc",
-    services = "service-a,service-b",
+    services = mutableListOf(),
     nomisId = null,
     ndeliusCaseReferenceId = "1",
     requestedBy = "aName",

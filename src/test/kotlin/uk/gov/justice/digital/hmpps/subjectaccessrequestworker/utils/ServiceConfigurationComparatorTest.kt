@@ -49,6 +49,7 @@ class ServiceConfigurationComparatorTest {
       url = "",
       category = category,
       enabled = true,
+      templateMigrated = true,
     )
 
     data class TestCase(

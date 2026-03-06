@@ -1,6 +1,9 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.GetSubjectAccessRequestParams
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDate
@@ -23,17 +26,21 @@ class IntegrationTestFixture {
       dateTo = testDateTo,
     )
 
-    fun createSubjectAccessRequestForService(service: String, status: Status = Status.Pending) = SubjectAccessRequest(
-      id = testSubjectAccessRequestId,
-      dateFrom = testDateFrom,
-      dateTo = testDateTo,
-      sarCaseReferenceNumber = "666",
-      services = service,
-      nomisId = testNomisId,
-      ndeliusCaseReferenceId = testNdeliusCaseReferenceNumber,
-      requestedBy = "Me",
-      status = status,
-    )
+    fun createSubjectAccessRequestForService(serviceConfig: ServiceConfiguration, status: Status = Status.Pending): SubjectAccessRequest {
+      val sar = SubjectAccessRequest(
+        id = testSubjectAccessRequestId,
+        dateFrom = testDateFrom,
+        dateTo = testDateTo,
+        sarCaseReferenceNumber = "666",
+        services = mutableListOf(),
+        nomisId = testNomisId,
+        ndeliusCaseReferenceId = testNdeliusCaseReferenceNumber,
+        requestedBy = "Me",
+        status = status,
+      )
+      sar.services.add(RequestServiceDetail(subjectAccessRequest = sar, serviceConfiguration = serviceConfig, renderStatus = RenderStatus.PENDING))
+      return sar
+    }
 
     fun SubjectAccessRequest.toGetParams() = GetSubjectAccessRequestParams(
       prn = this.nomisId,

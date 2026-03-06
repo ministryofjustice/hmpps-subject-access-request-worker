@@ -42,7 +42,7 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
     ],
   )
   fun `should render word documents in attachments section`(filename: String, expectedFilename: String, numPages: Int) = runBlocking {
-    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(SERVICE_NAME, Status.Pending)
+    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(getServiceConfiguration(), Status.Pending)
     storeEmptyHtml(sar)
     storeAttachment(sar, filename, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 

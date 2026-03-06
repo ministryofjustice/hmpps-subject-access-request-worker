@@ -39,6 +39,5 @@ class ServiceConfigurationComparator : Comparator<ServiceConfiguration> {
   private fun rankByServiceCategory(s: ServiceConfiguration): Int = when (s.category) {
     ServiceCategory.PRISON -> 1
     ServiceCategory.PROBATION -> 2
-    else -> Int.MAX_VALUE
   }
 }

@@ -33,6 +33,7 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
     id = UUID.randomUUID(),
     sarCaseReferenceNumber = UUID.randomUUID().toString(),
     contextId = UUID.randomUUID(),
+    services = mutableListOf(),
   )
 
   companion object {

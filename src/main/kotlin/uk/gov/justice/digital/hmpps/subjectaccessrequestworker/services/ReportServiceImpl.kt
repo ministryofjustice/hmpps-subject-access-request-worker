@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICE_CONFIGURATION_SUSPENDED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.ByteArrayOutputStream
@@ -30,8 +31,8 @@ class ReportServiceImpl(
   private val prisonApiClient: PrisonApiClient,
   private val probationApiClient: ProbationApiClient,
   private val documentStorageClient: DocumentStorageClient,
-  private val serviceConfigurationService: ServiceConfigurationService,
   private val pdfService: PdfService,
+  private val subjectAccessRequestService: SubjectAccessRequestService,
   private val telemetryClient: TelemetryClient,
 ) : ReportService {
 
@@ -55,12 +56,12 @@ class ReportServiceImpl(
   }
 
   private fun generateReportHtmlForServices(subjectAccessRequest: SubjectAccessRequest) {
-    val selectedServices = serviceConfigurationService.getSelectedServices(subjectAccessRequest)
+    val uncompletedServices = subjectAccessRequest.getSelectedServices { it.renderStatus != RenderStatus.COMPLETE }
 
-    trackSelectedService(selectedServices, subjectAccessRequest)
+    trackSelectedService(uncompletedServices, subjectAccessRequest)
     log.info("processing subject access request ${subjectAccessRequest.id}")
 
-    selectedServices.forEach { service ->
+    uncompletedServices.forEach { service ->
       if (service.suspended) {
         throw serviceConfigurationSuspendedException(service, subjectAccessRequest)
       }
@@ -68,7 +69,18 @@ class ReportServiceImpl(
       log.info("submitted html render request for ${service.serviceName}")
       trackRenderServiceHtml(service, subjectAccessRequest)
 
-      htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+      try {
+        val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+        subjectAccessRequestService.updateServiceStatusSuccess(
+          subjectAccessRequest.id,
+          service.serviceName,
+          response.templateVersion,
+        )
+      } catch (error: Exception) {
+        subjectAccessRequestService.updateServiceStatusFailed(subjectAccessRequest.id, service.serviceName)
+        throw error
+      }
+
       log.info("${subjectAccessRequest.id} html render request completed successfully")
       trackRenderServiceHtmlComplete(service, subjectAccessRequest)
     }

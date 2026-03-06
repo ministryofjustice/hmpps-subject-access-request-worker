@@ -1,10 +1,14 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ServiceConfigurationComparator
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,7 +28,8 @@ data class SubjectAccessRequest(
   val dateFrom: LocalDate? = null,
   var dateTo: LocalDate? = null,
   val sarCaseReferenceNumber: String = "",
-  val services: String = "",
+  @OneToMany(mappedBy = "subjectAccessRequest", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+  val services: MutableList<RequestServiceDetail> = mutableListOf(),
   val nomisId: String? = null,
   val ndeliusCaseReferenceId: String? = null,
   val requestedBy: String = "",
@@ -39,4 +44,7 @@ data class SubjectAccessRequest(
    **/
   @Transient
   val contextId: UUID? = UUID.randomUUID(),
-)
+) {
+  fun getSelectedServices(filter: (RequestServiceDetail) -> Boolean = { true }): List<ServiceConfiguration> = this.services
+    .filter(filter).map { it.serviceConfiguration }.sortedWith(ServiceConfigurationComparator())
+}

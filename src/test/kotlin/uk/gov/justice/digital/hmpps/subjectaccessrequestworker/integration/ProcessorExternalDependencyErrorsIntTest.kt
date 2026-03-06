@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.jsonResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
@@ -35,6 +35,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Hmpps
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -168,19 +170,25 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     nomisId: String?,
     ndeliusId: String?,
   ): Unit = runBlocking {
-    val subjectAccessRequest = subjectAccessRequestRepository.save(
-      SubjectAccessRequest(
-        id = UUID.randomUUID(),
-        dateFrom = testDateFrom,
-        dateTo = testDateTo,
-        sarCaseReferenceNumber = "666",
-        services = serviceConfig!!.serviceName,
-        nomisId = nomisId,
-        ndeliusCaseReferenceId = ndeliusId,
-        requestedBy = "Me",
-        status = Status.Pending,
+    val subjectAccessRequest = SubjectAccessRequest(
+      id = UUID.randomUUID(),
+      dateFrom = testDateFrom,
+      dateTo = testDateTo,
+      sarCaseReferenceNumber = "666",
+      services = mutableListOf(),
+      nomisId = nomisId,
+      ndeliusCaseReferenceId = ndeliusId,
+      requestedBy = "Me",
+      status = Status.Pending,
+    )
+    subjectAccessRequest.services.add(
+      RequestServiceDetail(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceConfiguration = serviceConfig!!,
+        renderStatus = RenderStatus.PENDING,
       ),
     )
+    subjectAccessRequestRepository.save(subjectAccessRequest)
     val htmlRendererRequest = createHtmlRenderRequest(subjectAccessRequest)
 
     hmppsAuth.stubGrantToken()
@@ -198,33 +206,51 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     verifyHtmlRendererIsCalled(htmlRendererRequest)
   }
 
-  private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest = subjectAccessRequestRepository.save(
-    SubjectAccessRequest(
+  private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest {
+    val subjectAccessRequest = SubjectAccessRequest(
       id = UUID.randomUUID(),
       dateFrom = testDateFrom,
       dateTo = testDateTo,
       sarCaseReferenceNumber = "666",
-      services = serviceConfig!!.serviceName,
+      services = mutableListOf(),
       nomisId = testNomisId,
       ndeliusCaseReferenceId = null,
       requestedBy = "Me",
       status = Status.Pending,
-    ),
-  )
+    )
+    subjectAccessRequest.services.add(
+      RequestServiceDetail(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceConfiguration = serviceConfig!!,
+        renderStatus = RenderStatus.PENDING,
+      ),
+    )
+    subjectAccessRequestRepository.save(subjectAccessRequest)
+    return subjectAccessRequest
+  }
 
-  private fun createProbationSubjectAccessRequest(): SubjectAccessRequest = subjectAccessRequestRepository.save(
-    SubjectAccessRequest(
+  private fun createProbationSubjectAccessRequest(): SubjectAccessRequest {
+    val subjectAccessRequest = SubjectAccessRequest(
       id = UUID.randomUUID(),
       dateFrom = testDateFrom,
       dateTo = testDateTo,
       sarCaseReferenceNumber = "666",
-      services = serviceConfig!!.serviceName,
+      services = mutableListOf(),
       nomisId = null,
       ndeliusCaseReferenceId = testNdeliusCaseReferenceNumber,
       requestedBy = "Me",
       status = Status.Pending,
-    ),
-  )
+    )
+    subjectAccessRequest.services.add(
+      RequestServiceDetail(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceConfiguration = serviceConfig!!,
+        renderStatus = RenderStatus.PENDING,
+      ),
+    )
+    subjectAccessRequestRepository.save(subjectAccessRequest)
+    return subjectAccessRequest
+  }
 
   private fun createHtmlRenderRequest(sar: SubjectAccessRequest) = HtmlRenderRequest(
     subjectAccessRequest = sar,
@@ -266,8 +292,9 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
 
   private fun stubHtmlRendererSuccess() {
     htmlRendererApi.stubFor(
-      post(urlPathEqualTo("/subject-access-request/render"))
-        .willReturn(ResponseDefinitionBuilder.responseDefinition().withStatus(204)),
+      post(urlPathEqualTo("/subject-access-request/render")).willReturn(
+        jsonResponse("""{"templateVersion":"1"}""", 201),
+      ),
     )
   }
 

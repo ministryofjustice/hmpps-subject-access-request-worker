@@ -35,6 +35,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Proba
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
@@ -127,13 +129,24 @@ abstract class IntegrationTestBase {
     ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
   )
 
-  protected fun createSubjectAccessRequestWithStatus(status: Status, serviceName: String): SubjectAccessRequest {
-    val sar = createSubjectAccessRequestForService(serviceName, status)
+  protected fun createSubjectAccessRequestWithStatus(status: Status, serviceConfig: ServiceConfiguration): SubjectAccessRequest {
+    val sar = createSubjectAccessRequestForService(serviceConfig, status)
     return subjectAccessRequestRepository.saveAndFlush(sar)
   }
 
   protected fun assertSubjectAccessRequestHasStatus(subjectAccessRequest: SubjectAccessRequest, status: Status) {
     assertThat(getSubjectAccessRequest(subjectAccessRequest.id).status).isEqualTo(status)
+  }
+
+  protected fun assertSubjectAccessRequestServiceHasStatus(subjectAccessRequest: SubjectAccessRequest, serviceName: String, status: RenderStatus) {
+    assertThat(getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!.renderStatus).isEqualTo(status)
+  }
+
+  protected fun assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(subjectAccessRequest: SubjectAccessRequest, serviceName: String, status: RenderStatus, version: Int) {
+    val service =
+      getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!
+    assertThat(service.renderStatus).isEqualTo(status)
+    assertThat(service.templateVersion).isNotNull().returns(version) { it?.version }
   }
 
   protected fun getSubjectAccessRequest(id: UUID): SubjectAccessRequest {
@@ -144,10 +157,11 @@ abstract class IntegrationTestBase {
 
   protected fun rendererSuccessResponse(
     documentKey: String,
+    templateVersion: String,
   ): ResponseDefinitionBuilder = ResponseDefinitionBuilder.responseDefinition()
     .withStatus(201)
     .withHeader("Content-Type", "application/json")
-    .withBody("""{ "documentKey": "$documentKey" }""".trimIndent())
+    .withBody("""{ "documentKey": "$documentKey", "templateVersion": "$templateVersion" }""".trimIndent())
 
   protected fun rendererErrorResponse(
     status: HttpStatus,

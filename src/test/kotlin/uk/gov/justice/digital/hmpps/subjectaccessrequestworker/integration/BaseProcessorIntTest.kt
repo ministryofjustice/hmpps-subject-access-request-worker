@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCon
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.TemplateVersionRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
@@ -30,6 +31,9 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
   @Autowired
   protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
+
+  @Autowired
+  protected lateinit var templateVersionRepository: TemplateVersionRepository
 
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
@@ -114,8 +118,8 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     .append("Official Sensitive")
     .toString()
 
-  protected fun insertSubjectAccessRequest(serviceName: String, status: Status): SubjectAccessRequest {
-    val sar = createSubjectAccessRequestWithStatus(status, serviceName)
+  protected fun insertSubjectAccessRequest(serviceConfig: ServiceConfiguration, status: Status): SubjectAccessRequest {
+    val sar = createSubjectAccessRequestWithStatus(status, serviceConfig)
     assertSubjectAccessRequestHasStatus(sar, status)
     return sar
   }
@@ -193,13 +197,14 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,
     fileToAddToBucket: String,
+    templateVersion: String = "1",
   ) = runBlocking {
     val documentKey = htmlDocumentKey(sar, serviceName)
 
     // Stub the wiremock API response.
     htmlRendererApi.stubRenderResponsesWith(
       htmlRenderRequest,
-      rendererSuccessResponse(documentKey),
+      rendererSuccessResponse(documentKey, templateVersion),
     )
 
     // Put the expected Html in the bucket for later.
