@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.5"
   kotlin("plugin.spring") version "2.3.10"
 }
 
@@ -16,7 +16,7 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.10.2"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.2")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -31,11 +31,11 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.5.0")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.1")
-  implementation("io.sentry:sentry-spring-boot-4:8.33.0")
-  implementation("io.sentry:sentry-logback:8.33.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.34.1")
+  implementation("io.sentry:sentry-logback:8.34.1")
   implementation("commons-io:commons-io:2.21.0")
-  implementation("aws.sdk.kotlin:s3:1.6.22")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
+  implementation("aws.sdk.kotlin:s3:1.6.33")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
   runtimeOnly("org.postgresql:postgresql:42.7.10")
