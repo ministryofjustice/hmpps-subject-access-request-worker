@@ -2,11 +2,13 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.ArgumentCaptor
@@ -17,10 +19,15 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.UPDATE_SAR_SERVICE_RENDER_STATUS
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.INTERNAL_SERVER_ERROR
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICES_NOT_RENDERED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus.COMPLETE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus.ERRORED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus.SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
@@ -58,23 +65,27 @@ class SubjectAccessRequestServiceTest {
     templateMigrated = false,
     category = ServiceCategory.PRISON,
   )
-  private val sar = SubjectAccessRequest(id = UUID.randomUUID()).also {
-    it.services.addAll(
+  private val sar = SubjectAccessRequest(id = UUID.randomUUID())
+  private val templateVersion = TemplateVersion(version = 1)
+
+  @BeforeEach
+  fun setup() {
+    sar.services.clear()
+    sar.services.addAll(
       listOf(
         RequestServiceDetail(
-          subjectAccessRequest = it,
+          subjectAccessRequest = sar,
           serviceConfiguration = serviceConfig,
           renderStatus = RenderStatus.PENDING,
         ),
         RequestServiceDetail(
-          subjectAccessRequest = it,
+          subjectAccessRequest = sar,
           serviceConfiguration = serviceConfigNotMigrated,
           renderStatus = RenderStatus.PENDING,
         ),
       ),
     )
   }
-  private val templateVersion = TemplateVersion(version = 1)
 
   @AfterEach
   fun afterEach() {
@@ -141,7 +152,7 @@ class SubjectAccessRequestServiceTest {
       verify(templateVersionRepository).findByServiceConfigurationIdAndVersion(serviceConfig.id, 1)
       verify(subjectAccessRequestRepository).save(sarCaptor.capture())
       assertThat(sarCaptor.firstValue.services[0])
-        .returns(RenderStatus.COMPLETE, RequestServiceDetail::renderStatus)
+        .returns(COMPLETE, RequestServiceDetail::renderStatus)
         .returns(templateVersion, RequestServiceDetail::templateVersion)
     }
 
@@ -154,7 +165,7 @@ class SubjectAccessRequestServiceTest {
       verify(subjectAccessRequestRepository).findById(sar.id)
       verify(subjectAccessRequestRepository).save(sarCaptor.capture())
       assertThat(sarCaptor.firstValue.services[1])
-        .returns(RenderStatus.COMPLETE, RequestServiceDetail::renderStatus)
+        .returns(COMPLETE, RequestServiceDetail::renderStatus)
         .returns(null, RequestServiceDetail::templateVersion)
     }
 
@@ -169,7 +180,7 @@ class SubjectAccessRequestServiceTest {
       verify(subjectAccessRequestRepository).findById(sar.id)
       verify(subjectAccessRequestRepository).save(sarCaptor.capture())
       assertThat(sarCaptor.firstValue.services[0])
-        .returns(RenderStatus.COMPLETE, RequestServiceDetail::renderStatus)
+        .returns(COMPLETE, RequestServiceDetail::renderStatus)
         .returns(null, RequestServiceDetail::templateVersion)
     }
   }
@@ -217,8 +228,124 @@ class SubjectAccessRequestServiceTest {
       verify(subjectAccessRequestRepository).findById(sar.id)
       verify(subjectAccessRequestRepository).save(sarCaptor.capture())
       assertThat(sarCaptor.firstValue.services[0])
-        .returns(RenderStatus.ERRORED, RequestServiceDetail::renderStatus)
+        .returns(ERRORED, RequestServiceDetail::renderStatus)
         .returns(null, RequestServiceDetail::templateVersion)
     }
+  }
+
+  @Nested
+  inner class UpdateServiceStatusSuspended {
+
+    @Test
+    fun `should throw exception when update as suspended and request does not exist`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.empty())
+
+      val exception = assertThrows<SubjectAccessRequestException> { service.updateServiceStatusSuspended(sar.id, serviceConfig.serviceName) }
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+      assertThat(exception)
+        .hasMessageStartingWith("Subject access request with id ${sar.id} not found")
+        .returns(UPDATE_SAR_SERVICE_RENDER_STATUS, SubjectAccessRequestException::event)
+        .returns(INTERNAL_SERVER_ERROR, SubjectAccessRequestException::errorCode)
+    }
+
+    @Test
+    fun `should throw exception when update as suspended and service does not exist`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.of(sar))
+
+      val exception = assertThrows<SubjectAccessRequestException> { service.updateServiceStatusSuspended(sar.id, "other-name") }
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+      assertThat(exception)
+        .hasMessageStartingWith("Subject access request service not found")
+        .returns(UPDATE_SAR_SERVICE_RENDER_STATUS, SubjectAccessRequestException::event)
+        .returns(INTERNAL_SERVER_ERROR, SubjectAccessRequestException::errorCode)
+        .returns(sar, SubjectAccessRequestException::subjectAccessRequest)
+        .returns(mapOf("service" to "other-name"), SubjectAccessRequestException::params)
+    }
+
+    @Test
+    fun `should update service status only when suspended`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.of(sar))
+      whenever(templateVersionRepository.findByServiceConfigurationIdAndVersion(serviceConfig.id, 1)).thenReturn(
+        templateVersion,
+      )
+
+      service.updateServiceStatusSuspended(sar.id, serviceConfig.serviceName)
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+      verify(subjectAccessRequestRepository).save(sarCaptor.capture())
+      assertThat(sarCaptor.firstValue.services[0])
+        .returns(SUSPENDED, RequestServiceDetail::renderStatus)
+        .returns(null, RequestServiceDetail::templateVersion)
+    }
+  }
+
+  @Nested
+  inner class ValidateAllServicesRendered {
+
+    @Test
+    fun `should throw exception when validate and request does not exist`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.empty())
+
+      val exception = assertThrows<SubjectAccessRequestException> { service.validateAllServicesRendered(sar.id) }
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+      assertThat(exception)
+        .hasMessageStartingWith("Subject access request with id ${sar.id} not found")
+        .returns(GENERATE_REPORT_RENDER_ALL_COMPLETED, SubjectAccessRequestException::event)
+        .returns(SERVICES_NOT_RENDERED, SubjectAccessRequestException::errorCode)
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = ["ERRORED", "PENDING", "SUSPENDED"])
+    fun `should throw exception when validate and unrendered service`(renderStatus: RenderStatus) {
+      sar.services.clear()
+      sar.services.addAll(listOf(service("one", COMPLETE), service("two", renderStatus)))
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.of(sar))
+
+      val exception = assertThrows<SubjectAccessRequestException> { service.validateAllServicesRendered(sar.id) }
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+      assertThat(exception)
+        .hasMessageStartingWith("Unable to process request as not all services were successfully rendered")
+        .returns(GENERATE_REPORT_RENDER_ALL_COMPLETED, SubjectAccessRequestException::event)
+        .returns(SERVICES_NOT_RENDERED, SubjectAccessRequestException::errorCode)
+        .returns(mapOf("services" to mapOf("two" to renderStatus)), SubjectAccessRequestException::params)
+    }
+
+    @Test
+    fun `should validate successfully when no services`() {
+      sar.services.clear()
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.of(sar))
+
+      service.validateAllServicesRendered(sar.id)
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+    }
+
+    @Test
+    fun `should validate successfully when all services completed`() {
+      sar.services.clear()
+      sar.services.addAll(listOf(service("one", COMPLETE), service("two", COMPLETE), service("three", COMPLETE)))
+      whenever(subjectAccessRequestRepository.findById(sar.id)).thenReturn(Optional.of(sar))
+
+      service.validateAllServicesRendered(sar.id)
+
+      verify(subjectAccessRequestRepository).findById(sar.id)
+    }
+
+    private fun service(serviceName: String, renderStatus: RenderStatus) = RequestServiceDetail(
+      subjectAccessRequest = sar,
+      serviceConfiguration = ServiceConfiguration(
+        serviceName = serviceName,
+        label = serviceName,
+        url = "http://localhost",
+        enabled = true,
+        templateMigrated = true,
+        category = ServiceCategory.PRISON,
+      ),
+      renderStatus = renderStatus,
+    )
   }
 }

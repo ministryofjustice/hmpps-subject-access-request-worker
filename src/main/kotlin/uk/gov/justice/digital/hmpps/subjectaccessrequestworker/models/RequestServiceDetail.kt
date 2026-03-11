@@ -72,4 +72,5 @@ enum class RenderStatus {
   PENDING,
   COMPLETE,
   ERRORED,
+  SUSPENDED,
 }

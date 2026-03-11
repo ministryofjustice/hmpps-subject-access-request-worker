@@ -45,6 +45,8 @@ data class SubjectAccessRequest(
   @Transient
   val contextId: UUID? = UUID.randomUUID(),
 ) {
+  fun servicesStillToRender() = this.services.filter { it.renderStatus != RenderStatus.COMPLETE }
+
   fun getSelectedServices(filter: (RequestServiceDetail) -> Boolean = { true }): List<ServiceConfiguration> = this.services
     .filter(filter).map { it.serviceConfiguration }.sortedWith(ServiceConfigurationComparator())
 }

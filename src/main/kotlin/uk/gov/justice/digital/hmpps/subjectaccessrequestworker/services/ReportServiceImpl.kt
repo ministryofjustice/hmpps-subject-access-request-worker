@@ -11,12 +11,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationA
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_FAILED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICE_SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICE_CONFIGURATION_SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -63,26 +63,34 @@ class ReportServiceImpl(
 
     uncompletedServices.forEach { service ->
       if (service.suspended) {
-        throw serviceConfigurationSuspendedException(service, subjectAccessRequest)
+        log.warn("unable to render {} as it is suspended", service.serviceName)
+        trackRenderServiceHtmlSuspended(service, subjectAccessRequest)
+        subjectAccessRequestService.updateServiceStatusSuspended(subjectAccessRequest.id, service.serviceName)
+      } else {
+        log.info("submitted html render request for ${service.serviceName}")
+        trackRenderServiceHtml(service, subjectAccessRequest)
+        renderServiceHtml(subjectAccessRequest, service)
       }
+    }
 
-      log.info("submitted html render request for ${service.serviceName}")
-      trackRenderServiceHtml(service, subjectAccessRequest)
+    subjectAccessRequestService.validateAllServicesRendered(subjectAccessRequest.id)
+  }
 
-      try {
-        val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
-        subjectAccessRequestService.updateServiceStatusSuccess(
-          subjectAccessRequest.id,
-          service.serviceName,
-          response.templateVersion,
-        )
-      } catch (error: Exception) {
-        subjectAccessRequestService.updateServiceStatusFailed(subjectAccessRequest.id, service.serviceName)
-        throw error
-      }
+  private fun renderServiceHtml(subjectAccessRequest: SubjectAccessRequest, service: ServiceConfiguration) {
+    try {
+      val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, service)
+      subjectAccessRequestService.updateServiceStatusSuccess(
+        subjectAccessRequest.id,
+        service.serviceName,
+        response.templateVersion,
+      )
 
       log.info("${subjectAccessRequest.id} html render request completed successfully")
       trackRenderServiceHtmlComplete(service, subjectAccessRequest)
+    } catch (error: Exception) {
+      log.warn("Unable to render or update {}", service.serviceName, error)
+      subjectAccessRequestService.updateServiceStatusFailed(subjectAccessRequest.id, service.serviceName)
+      trackRenderServiceHtmlFailed(service, subjectAccessRequest)
     }
   }
 
@@ -111,20 +119,6 @@ class ReportServiceImpl(
     ),
   )
 
-  private fun serviceConfigurationSuspendedException(
-    serviceConfiguration: ServiceConfiguration,
-    subjectAccessRequest: SubjectAccessRequest,
-  ) = SubjectAccessRequestException(
-    message = "unable to process request ${serviceConfiguration.serviceName} is suspended",
-    event = GENERATE_REPORT_SERVICES_SELECTED,
-    errorCode = SERVICE_CONFIGURATION_SUSPENDED,
-    subjectAccessRequest = subjectAccessRequest,
-    params = mapOf(
-      "serviceName" to serviceConfiguration.serviceName,
-      "suspendedAt" to serviceConfiguration.suspendedAt,
-    ),
-  )
-
   private fun trackSelectedService(
     selectedServices: List<ServiceConfiguration>,
     subjectAccessRequest: SubjectAccessRequest,
@@ -149,6 +143,25 @@ class ReportServiceImpl(
     subjectAccessRequest: SubjectAccessRequest,
   ) = telemetryClient.trackSarEvent(
     event = GENERATE_REPORT_RENDER_REQUEST_COMPLETED,
+    subjectAccessRequest = subjectAccessRequest,
+    "serviceName" to service.serviceName,
+    "serviceUrl" to service.url,
+  )
+
+  private fun trackRenderServiceHtmlSuspended(
+    service: ServiceConfiguration,
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = telemetryClient.trackSarEvent(
+    event = GENERATE_REPORT_SERVICE_SUSPENDED,
+    subjectAccessRequest = subjectAccessRequest,
+    "serviceName" to service.serviceName,
+  )
+
+  private fun trackRenderServiceHtmlFailed(
+    service: ServiceConfiguration,
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = telemetryClient.trackSarEvent(
+    event = GENERATE_REPORT_RENDER_REQUEST_FAILED,
     subjectAccessRequest = subjectAccessRequest,
     "serviceName" to service.serviceName,
     "serviceUrl" to service.url,
