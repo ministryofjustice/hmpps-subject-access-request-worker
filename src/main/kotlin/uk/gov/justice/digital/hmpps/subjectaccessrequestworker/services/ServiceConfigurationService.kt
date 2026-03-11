@@ -3,14 +3,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.ServiceConfigurationComparator
 import java.util.UUID
 
 @Service
@@ -40,18 +34,6 @@ class ServiceConfigurationService(
     serviceName: String,
   ): ServiceConfiguration? = serviceConfigurationRepository.findByServiceName(serviceName)
 
-  fun getSelectedServices(
-    subjectAccessRequest: SubjectAccessRequest,
-  ): List<ServiceConfiguration> = subjectAccessRequest.services
-    .split(",")
-    .filter { it.isNotBlank() }
-    .map { serviceName ->
-      serviceConfigurationRepository.findByServiceName(serviceName.trim())
-        ?: throw serviceNameNotFoundException(subjectAccessRequest, serviceName)
-    }.sortedWith(ServiceConfigurationComparator())
-
-  fun getAllEnabled(): List<ServiceConfiguration>? = serviceConfigurationRepository.findEnabled()
-
   fun resolveUrlPlaceHolder(serviceConfiguration: ServiceConfiguration): String {
     val apiUrl = when (serviceConfiguration.serviceName) {
       "G1" -> g1ApiUrl
@@ -61,15 +43,4 @@ class ServiceConfigurationService(
     }
     return apiUrl
   }
-
-  private fun serviceNameNotFoundException(
-    subjectAccessRequest: SubjectAccessRequest,
-    serviceName: String,
-  ): SubjectAccessRequestException = throw FatalSubjectAccessRequestException(
-    message = "service with name '$serviceName' not found",
-    event = ProcessingEvent.GET_SERVICE_CONFIGURATION,
-    errorCode = ErrorCode.CONFIGURATION_ERROR,
-    subjectAccessRequest = subjectAccessRequest,
-    params = mapOf("serviceName" to serviceName),
-  )
 }

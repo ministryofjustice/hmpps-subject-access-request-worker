@@ -25,7 +25,7 @@ class HtmlRendererApiClient(
   fun submitRenderRequest(
     subjectAccessRequest: SubjectAccessRequest,
     serviceConfiguration: ServiceConfiguration,
-  ): HtmlRenderResponse? = try {
+  ): HtmlRenderResponse = try {
     sarHtmlRendererApiWebClient.post()
       .uri("/subject-access-request/render")
       .bodyValue(
@@ -54,7 +54,7 @@ class HtmlRendererApiClient(
           serviceConfiguration,
         ),
       )
-      .block()
+      .block()!!
   } catch (ex: ClientAuthorizationException) {
     throw FatalSubjectAccessRequestException(
       message = "sarHtmlRendererApiClient error authorization exception",
@@ -119,5 +119,5 @@ class HtmlRendererApiClient(
     )
   }
 
-  data class HtmlRenderResponse(val documentKey: String?)
+  data class HtmlRenderResponse(val documentKey: String?, val templateVersion: String?)
 }

@@ -27,6 +27,9 @@ data class ServiceConfiguration(
   @Column(name = "enabled", nullable = false)
   var enabled: Boolean,
 
+  @Column(name = "template_migrated", nullable = false)
+  var templateMigrated: Boolean,
+
   @Enumerated(EnumType.STRING)
   @Column(name = "category", nullable = false)
   val category: ServiceCategory,
@@ -37,7 +40,7 @@ data class ServiceConfiguration(
   @Column(name = "suspended_at", nullable = true)
   var suspendedAt: Instant? = null,
 ) {
-  constructor() : this(serviceName = "", label = "", url = "", enabled = false, category = ServiceCategory.PRISON)
+  constructor() : this(serviceName = "", label = "", url = "", enabled = false, templateMigrated = false, category = ServiceCategory.PRISON)
 }
 
 enum class ServiceCategory {

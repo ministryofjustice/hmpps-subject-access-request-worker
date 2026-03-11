@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.Integ
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.NoSchedulingConfig
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.S3TestUtils
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.PdfService
 
 @TestPropertySource(
@@ -29,6 +30,9 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
 
   @Autowired
   protected lateinit var pdfService: PdfService
+
+  @Autowired
+  private lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
 
   @AfterEach
   fun cleanup() {
@@ -60,4 +64,6 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
 
   protected fun getAttachmentBytes(filename: String): ByteArray = this::class.java
     .getResourceAsStream("/integration-tests/attachments/$filename").use { it?.readAllBytes()!! }
+
+  protected fun getServiceConfiguration() = serviceConfigurationRepository.findByServiceName(SERVICE_NAME)!!
 }

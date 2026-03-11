@@ -28,6 +28,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     label = "Keyworker",
     url = "",
     enabled = true,
+    templateMigrated = true,
     category = ServiceCategory.PRISON,
   )
   private val offenderCaseNotesServiceConfig = ServiceConfiguration(
@@ -35,6 +36,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     label = "offender-case-notes",
     url = "",
     enabled = true,
+    templateMigrated = true,
     category = ServiceCategory.PRISON,
   )
   private val courtCaseServiceServiceConfig = ServiceConfiguration(
@@ -42,6 +44,7 @@ class ServiceSummaryRepositoryTest @Autowired constructor(
     label = "court-case-service",
     url = "",
     enabled = true,
+    templateMigrated = true,
     category = ServiceCategory.PROBATION,
   )
   private val serviceConfigurations =

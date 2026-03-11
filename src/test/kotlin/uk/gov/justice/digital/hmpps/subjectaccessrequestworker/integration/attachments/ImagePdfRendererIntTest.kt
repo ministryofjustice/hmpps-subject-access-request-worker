@@ -28,7 +28,7 @@ class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
     ],
   )
   fun `should render images in attachments section`(imageFilename: String, contentType: String, expectedOutputPdf: String) = runBlocking {
-    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(SERVICE_NAME, Status.Pending)
+    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(getServiceConfiguration(), Status.Pending)
     storeEmptyHtml(sar)
     storeAttachment(sar, imageFilename, contentType)
 

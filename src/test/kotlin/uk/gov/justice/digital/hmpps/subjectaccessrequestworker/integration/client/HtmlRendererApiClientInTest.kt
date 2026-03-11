@@ -64,6 +64,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     serviceName = serviceName,
     url = serviceUrl,
     enabled = true,
+    templateMigrated = true,
     label = "Keyworker API",
     category = ServiceCategory.PRISON,
   )
@@ -110,13 +111,13 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     hmppsAuth.stubGrantToken()
     htmlRendererApi.stubRenderResponsesWith(
       renderRequest = expectedRequest,
-      responseDefinition = rendererSuccessResponse(expectedDocumentKey),
+      responseDefinition = rendererSuccessResponse(expectedDocumentKey, "1"),
     )
 
     val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
 
     assertThat(response).isNotNull
-    assertThat(response!!.documentKey).isEqualTo(expectedDocumentKey)
+    assertThat(response.documentKey).isEqualTo(expectedDocumentKey)
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 1, expectedBody = expectedRequest)
@@ -136,13 +137,13 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     htmlRendererApi.stubRenderHtmlResponses(
       renderRequest = expectedRequest,
       responseOne = rendererErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR),
-      responseTwo = rendererSuccessResponse(expectedDocumentKey),
+      responseTwo = rendererSuccessResponse(expectedDocumentKey, "1"),
     )
 
     val response = htmlRendererApiClient.submitRenderRequest(subjectAccessRequest, serviceConfiguration)
 
     assertThat(response).isNotNull
-    assertThat(response!!.documentKey).isEqualTo(expectedDocumentKey)
+    assertThat(response.documentKey).isEqualTo(expectedDocumentKey)
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 2, expectedBody = expectedRequest)
@@ -285,7 +286,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     dateFrom = sarDateFrom,
     dateTo = sarDateTo,
     sarCaseReferenceNumber = "666",
-    services = "some-service",
+    services = mutableListOf(),
     nomisId = testNomisId,
     ndeliusCaseReferenceId = testNdeliusCaseReferenceNumber,
     requestedBy = "Me",

@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.jsonResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
@@ -35,6 +36,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Hmpps
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -45,6 +48,8 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
 
   private val alertCaptor = argumentCaptor<SubjectAccessRequestException>()
   private var serviceConfig: ServiceConfiguration? = null
+  private var serviceConfigTwo: ServiceConfiguration? = null
+  private var serviceConfigThree: ServiceConfiguration? = null
 
   @MockitoBean
   protected lateinit var alertService: AlertsService
@@ -60,6 +65,8 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
   @BeforeEach
   fun setup() {
     serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
+    serviceConfigTwo = getServiceConfiguration("hmpps-education-and-work-plan-api")
+    serviceConfigThree = getServiceConfiguration("hmpps-non-associations-api")
   }
 
   @AfterEach
@@ -88,6 +95,33 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     )
 
     verifyHtmlRendererIsCalled(htmlRendererRequest)
+  }
+
+  @Test
+  fun `should raise expected alert when multiple services and HTML Renderer returns error status for one`(): Unit = runBlocking {
+    val subjectAccessRequest = createPrisonSubjectAccessRequest(listOf(serviceConfig!!, serviceConfigTwo!!, serviceConfigThree!!))
+    val htmlRendererRequestOne = createHtmlRenderRequest(subjectAccessRequest, serviceConfig!!)
+    val htmlRendererRequestTwo = createHtmlRenderRequest(subjectAccessRequest, serviceConfigTwo!!)
+    val htmlRendererRequestThree = createHtmlRenderRequest(subjectAccessRequest, serviceConfigThree!!)
+
+    hmppsAuth.stubGrantToken()
+    stubHtmlRendererSuccess(htmlRendererRequestOne)
+    stubHtmlRendererError(htmlRendererRequestTwo, "3001", 500)
+    stubHtmlRendererSuccess(htmlRendererRequestThree)
+
+    executeTest()
+
+    assertRaisedExceptionAlert(
+      expectedExceptionType = SubjectAccessRequestException::class.java,
+      expectedErrorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+      expectedEvent = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+      expectedSAR = subjectAccessRequest,
+      params = mapOf("services" to mapOf("hmpps-education-and-work-plan-api" to RenderStatus.ERRORED)),
+    )
+
+    verifyHtmlRendererIsCalled(htmlRendererRequestOne)
+    verifyHtmlRendererIsCalled(htmlRendererRequestTwo)
+    verifyHtmlRendererIsCalled(htmlRendererRequestThree)
   }
 
   @ParameterizedTest
@@ -168,19 +202,25 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     nomisId: String?,
     ndeliusId: String?,
   ): Unit = runBlocking {
-    val subjectAccessRequest = subjectAccessRequestRepository.save(
-      SubjectAccessRequest(
-        id = UUID.randomUUID(),
-        dateFrom = testDateFrom,
-        dateTo = testDateTo,
-        sarCaseReferenceNumber = "666",
-        services = serviceConfig!!.serviceName,
-        nomisId = nomisId,
-        ndeliusCaseReferenceId = ndeliusId,
-        requestedBy = "Me",
-        status = Status.Pending,
+    val subjectAccessRequest = SubjectAccessRequest(
+      id = UUID.randomUUID(),
+      dateFrom = testDateFrom,
+      dateTo = testDateTo,
+      sarCaseReferenceNumber = "666",
+      services = mutableListOf(),
+      nomisId = nomisId,
+      ndeliusCaseReferenceId = ndeliusId,
+      requestedBy = "Me",
+      status = Status.Pending,
+    )
+    subjectAccessRequest.services.add(
+      RequestServiceDetail(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceConfiguration = serviceConfig!!,
+        renderStatus = RenderStatus.PENDING,
       ),
     )
+    subjectAccessRequestRepository.save(subjectAccessRequest)
     val htmlRendererRequest = createHtmlRenderRequest(subjectAccessRequest)
 
     hmppsAuth.stubGrantToken()
@@ -198,37 +238,61 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     verifyHtmlRendererIsCalled(htmlRendererRequest)
   }
 
-  private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest = subjectAccessRequestRepository.save(
-    SubjectAccessRequest(
+  private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest = createPrisonSubjectAccessRequest(listOf(serviceConfig!!))
+
+  private fun createPrisonSubjectAccessRequest(services: List<ServiceConfiguration>): SubjectAccessRequest {
+    val subjectAccessRequest = SubjectAccessRequest(
       id = UUID.randomUUID(),
       dateFrom = testDateFrom,
       dateTo = testDateTo,
       sarCaseReferenceNumber = "666",
-      services = serviceConfig!!.serviceName,
+      services = mutableListOf(),
       nomisId = testNomisId,
       ndeliusCaseReferenceId = null,
       requestedBy = "Me",
       status = Status.Pending,
-    ),
-  )
+    )
+    subjectAccessRequest.services.addAll(
+      services.map {
+        RequestServiceDetail(
+          subjectAccessRequest = subjectAccessRequest,
+          serviceConfiguration = it,
+          renderStatus = RenderStatus.PENDING,
+        )
+      },
+    )
+    subjectAccessRequestRepository.save(subjectAccessRequest)
+    return subjectAccessRequest
+  }
 
-  private fun createProbationSubjectAccessRequest(): SubjectAccessRequest = subjectAccessRequestRepository.save(
-    SubjectAccessRequest(
+  private fun createProbationSubjectAccessRequest(): SubjectAccessRequest {
+    val subjectAccessRequest = SubjectAccessRequest(
       id = UUID.randomUUID(),
       dateFrom = testDateFrom,
       dateTo = testDateTo,
       sarCaseReferenceNumber = "666",
-      services = serviceConfig!!.serviceName,
+      services = mutableListOf(),
       nomisId = null,
       ndeliusCaseReferenceId = testNdeliusCaseReferenceNumber,
       requestedBy = "Me",
       status = Status.Pending,
-    ),
-  )
+    )
+    subjectAccessRequest.services.add(
+      RequestServiceDetail(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceConfiguration = serviceConfig!!,
+        renderStatus = RenderStatus.PENDING,
+      ),
+    )
+    subjectAccessRequestRepository.save(subjectAccessRequest)
+    return subjectAccessRequest
+  }
 
-  private fun createHtmlRenderRequest(sar: SubjectAccessRequest) = HtmlRenderRequest(
+  private fun createHtmlRenderRequest(sar: SubjectAccessRequest) = createHtmlRenderRequest(sar, serviceConfig!!)
+
+  private fun createHtmlRenderRequest(sar: SubjectAccessRequest, serviceConfiguration: ServiceConfiguration) = HtmlRenderRequest(
     subjectAccessRequest = sar,
-    serviceConfigurationId = serviceConfig!!.id,
+    serviceConfigurationId = serviceConfiguration.id,
   )
 
   private fun executeTest() = runBlocking {
@@ -247,7 +311,18 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     expectedEvent: ProcessingEvent,
     expectedExceptionType: Class<T>,
     expectedSAR: SubjectAccessRequest,
+    params: Map<String, *>,
   ) {
+    val exception = assertRaisedExceptionAlert(expectedErrorCode, expectedEvent, expectedExceptionType, expectedSAR)
+    assertThat(exception.params).isEqualTo(params)
+  }
+
+  private fun <T : SubjectAccessRequestException> assertRaisedExceptionAlert(
+    expectedErrorCode: ErrorCode,
+    expectedEvent: ProcessingEvent,
+    expectedExceptionType: Class<T>,
+    expectedSAR: SubjectAccessRequest,
+  ): SubjectAccessRequestException {
     assertThat(alertCaptor.allValues).hasSize(1)
     val exception = alertCaptor.firstValue
 
@@ -255,20 +330,27 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     assertThat(exception.event).isEqualTo(expectedEvent)
     assertThat(exception.errorCode).isEqualTo(expectedErrorCode)
     assertThat(exception.subjectAccessRequest!!.id).isEqualTo(expectedSAR.id)
+    return exception
   }
 
   private fun stubHtmlRendererError(htmlRenderRequest: HtmlRenderRequest, testCase: TestCase<*>) {
-    htmlRendererApi.stubRenderResponsesWith(
-      htmlRenderRequest,
-      errorResponseDefinition(testCase.status, testCase.errorCodeStr),
-    )
+    stubHtmlRendererError(htmlRenderRequest, testCase.errorCodeStr, testCase.status)
+  }
+
+  private fun stubHtmlRendererError(htmlRenderRequest: HtmlRenderRequest, errorCodeStr: String?, status: Int) {
+    htmlRendererApi.stubRenderResponsesWith(htmlRenderRequest, errorResponseDefinition(status, errorCodeStr))
   }
 
   private fun stubHtmlRendererSuccess() {
     htmlRendererApi.stubFor(
-      post(urlPathEqualTo("/subject-access-request/render"))
-        .willReturn(ResponseDefinitionBuilder.responseDefinition().withStatus(204)),
+      post(urlPathEqualTo("/subject-access-request/render")).willReturn(
+        jsonResponse("""{"templateVersion":"1"}""", 201),
+      ),
     )
+  }
+
+  private fun stubHtmlRendererSuccess(htmlRenderRequest: HtmlRenderRequest) {
+    htmlRendererApi.stubRenderResponsesWith(htmlRenderRequest, jsonResponse("""{"templateVersion":"1"}""", 201))
   }
 
   private fun verifyHtmlRendererIsCalled(expectedHtmlRenderRequest: HtmlRenderRequest) {
@@ -302,44 +384,44 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
       TestCase(
         errorCodeStr = "3001",
         status = 500,
-        errorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "3001"),
-        event = ProcessingEvent.HTML_RENDERER_REQUEST,
-        exceptionType = SubjectAccessRequestRetryExhaustedException::class.java,
+        errorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+        event = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+        exceptionType = SubjectAccessRequestException::class.java,
       ),
       TestCase(
         errorCodeStr = "3002",
         status = 500,
-        errorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "3002"),
-        event = ProcessingEvent.HTML_RENDERER_REQUEST,
-        exceptionType = SubjectAccessRequestRetryExhaustedException::class.java,
+        errorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+        event = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+        exceptionType = SubjectAccessRequestException::class.java,
       ),
       TestCase(
         errorCodeStr = "3003",
         status = 500,
-        errorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "3003"),
-        event = ProcessingEvent.HTML_RENDERER_REQUEST,
-        exceptionType = SubjectAccessRequestRetryExhaustedException::class.java,
+        errorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+        event = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+        exceptionType = SubjectAccessRequestException::class.java,
       ),
       TestCase(
         errorCodeStr = "401",
         status = 401,
-        errorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "401"),
-        event = ProcessingEvent.HTML_RENDERER_REQUEST,
-        exceptionType = FatalSubjectAccessRequestException::class.java,
+        errorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+        event = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+        exceptionType = SubjectAccessRequestException::class.java,
       ),
       TestCase(
         errorCodeStr = "403",
         status = 403,
-        errorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "403"),
-        event = ProcessingEvent.HTML_RENDERER_REQUEST,
-        exceptionType = FatalSubjectAccessRequestException::class.java,
+        errorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+        event = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+        exceptionType = SubjectAccessRequestException::class.java,
       ),
       TestCase(
         errorCodeStr = "409",
         status = 409,
-        errorCode = ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "409"),
-        event = ProcessingEvent.HTML_RENDERER_REQUEST,
-        exceptionType = FatalSubjectAccessRequestException::class.java,
+        errorCode = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10106"),
+        event = ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED,
+        exceptionType = SubjectAccessRequestException::class.java,
       ),
     )
 

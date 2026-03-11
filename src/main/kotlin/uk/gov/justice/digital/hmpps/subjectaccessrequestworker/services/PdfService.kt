@@ -121,7 +121,7 @@ class PdfService(
     val document = createSubjectAccessRequestDocument(pdfDocument)
     pdfDocument.addSubjectAccessRequestCustomHandler(document, pdfRenderRequest)
 
-    val services = serviceConfigurationService.getSelectedServices(pdfRenderRequest.subjectAccessRequest)
+    val services = pdfRenderRequest.subjectAccessRequest.getSelectedServices()
     document.addInternalContentsPage(pdfRenderRequest.subjectAccessRequest, services)
     document.addExternalCoverPage(pdfRenderRequest)
     document.addServiceData(pdfRenderRequest.subjectAccessRequest, services)

@@ -16,9 +16,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus.PUBLISHED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
@@ -54,6 +57,15 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     clearOauthClientCache("sar-client", "anonymousUser")
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
+    templateVersionRepository.deleteAll()
+    templateVersionRepository.save(
+      TemplateVersion(
+        serviceConfiguration = getServiceConfiguration("template-migrated-service"),
+        status = PUBLISHED,
+        version = 1,
+        fileHash = "12345",
+      ),
+    )
 
     /** Ensure the test generated reports have the same 'report generation date' as pre-generated reference reports */
     whenever(dateService.reportGenerationDate())
@@ -78,7 +90,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
   fun `should process pending request successfully when data is held and html-renderer is enabled`() = runBlocking {
     val serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
 
-    val sar = insertSubjectAccessRequest(serviceConfig.serviceName, Status.Pending)
+    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
     val htmlRenderRequest = HtmlRenderRequest(
       subjectAccessRequest = sar,
       serviceConfigurationId = serviceConfig.id,
@@ -100,13 +112,43 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
     assertUploadedDocumentMatchesExpectedPdf(serviceConfig.serviceName)
     assertSubjectAccessRequestHasStatus(sar, Completed)
+    assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
+  }
+
+  @Test
+  fun `should process pending request successfully when data is held and html-renderer is enabled and template is migrated`() = runBlocking {
+    val serviceConfig = getServiceConfiguration("template-migrated-service")
+
+    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
+    val htmlRenderRequest = HtmlRenderRequest(
+      subjectAccessRequest = sar,
+      serviceConfigurationId = serviceConfig.id,
+    )
+
+    hmppsAuth.stubGrantToken()
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+    documentApi.stubUploadFileSuccess(sar)
+
+    sarProcessor.execute()
+    await()
+      .atMost(10, TimeUnit.SECONDS)
+      .until { requestHasStatus(sar, Completed) }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
+    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+
+    assertUploadedDocumentMatchesExpectedPdf(serviceConfig.serviceName)
+    assertSubjectAccessRequestHasStatus(sar, Completed)
+    assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(sar, serviceConfig.serviceName, RenderStatus.COMPLETE, 1)
   }
 
   @Test
   fun `should process pending request successfully when no data is held and html-renderer is enabled`() = runBlocking {
     val serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
 
-    val sar = insertSubjectAccessRequest(serviceConfig.serviceName, Status.Pending)
+    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
 
     val htmlRenderRequest = HtmlRenderRequest(
       subjectAccessRequest = sar,
@@ -129,13 +171,14 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
 
     assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceConfig.serviceName, serviceConfig.label)
     assertSubjectAccessRequestHasStatus(sar, Completed)
+    assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
   }
 
   @Test
   fun `should process pending request successfully when attachments exist and html-renderer is enabled`() = runBlocking {
     val serviceConfig = getServiceConfiguration("create-and-vary-a-licence-api")
 
-    val sar = insertSubjectAccessRequest(serviceConfig.serviceName, Status.Pending)
+    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
 
     val htmlRenderRequest = HtmlRenderRequest(
       subjectAccessRequest = sar,
@@ -189,6 +232,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     assertAttachmentPageMatchesExpected(actual, expected, 36, 6)
     assertAttachmentPageMatchesExpected(actual, expected, 37, 7)
     assertSubjectAccessRequestHasStatus(sar, Completed)
+    assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
   }
 
   fun storeAttachment(

@@ -77,6 +77,7 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
     label = "service-1",
     url = "http://localhost:8080",
     enabled = true,
+    templateMigrated = true,
     category = ServiceCategory.PRISON,
   )
 

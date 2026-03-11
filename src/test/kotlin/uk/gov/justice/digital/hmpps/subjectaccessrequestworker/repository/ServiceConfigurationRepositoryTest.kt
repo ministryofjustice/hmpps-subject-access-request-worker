@@ -45,6 +45,7 @@ class ServiceConfigurationRepositoryTest : IntegrationTestBase() {
       label = "AAA",
       url = "http://localhost:1234",
       enabled = true,
+      templateMigrated = true,
       category = ServiceCategory.PRISON,
     )
   }

@@ -31,7 +31,6 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
 
   protected val sarCaseRef = "sar-001"
   protected val testNomisId = "nomis-001"
-  protected val testNdeliusId = "nomis-001"
   protected val dateTo = LocalDate.now()
   protected val dateFrom = dateTo.minusYears(5)
 
@@ -41,6 +40,7 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
       label = "Service 1",
       url = "http://localhost:${htmlRendererApi.port()}",
       enabled = true,
+      templateMigrated = true,
       category = ServiceCategory.PRISON,
     ),
     ServiceConfiguration(
@@ -48,6 +48,7 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
       label = "Service 2",
       url = "http://localhost:${htmlRendererApi.port()}",
       enabled = true,
+      templateMigrated = true,
       category = ServiceCategory.PRISON,
     ),
     ServiceConfiguration(
@@ -55,6 +56,7 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
       label = "Service 3",
       url = "http://localhost:${htmlRendererApi.port()}",
       enabled = true,
+      templateMigrated = true,
       category = ServiceCategory.PROBATION,
     ),
   )
