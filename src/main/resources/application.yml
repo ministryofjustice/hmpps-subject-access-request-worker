@@ -163,5 +163,6 @@ springdoc:
   swagger-ui:
     enabled: false
     disable-swagger-default-url: true
+    version: 5.32.1
   api-docs:
     enabled: false
