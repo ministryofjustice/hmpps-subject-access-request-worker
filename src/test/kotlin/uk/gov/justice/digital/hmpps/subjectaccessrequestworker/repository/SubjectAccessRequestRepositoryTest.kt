@@ -78,7 +78,7 @@ class SubjectAccessRequestRepositoryTest {
         )
 
       assertThat(numberOfDbRecordsUpdated).isEqualTo(1)
-      assertThat(subjectAccessRequestRepository.getReferenceById(sarWithPendingStatusClaimedEarlier.id))
+      assertThat(subjectAccessRequestRepository.findById(sarWithPendingStatusClaimedEarlier.id).orElseThrow())
         .usingRecursiveComparison().ignoringFields("contextId").isEqualTo(expectedUpdatedRecord)
     }
 
@@ -111,7 +111,7 @@ class SubjectAccessRequestRepositoryTest {
 
       assertThat(numberOfDbRecordsUpdated).isEqualTo(0)
       assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(6)
-      assertThat(subjectAccessRequestRepository.getReferenceById(claimedSarWithPendingStatus.id))
+      assertThat(subjectAccessRequestRepository.findById(claimedSarWithPendingStatus.id).orElseThrow())
         .usingRecursiveComparison().ignoringFields("contextId").isEqualTo(expectedUpdatedRecord)
     }
 
@@ -127,7 +127,7 @@ class SubjectAccessRequestRepositoryTest {
       assertThat(numberOfDbRecordsUpdated).isEqualTo(0)
       assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(6)
 
-      val result = subjectAccessRequestRepository.getReferenceById(completedSar.id)
+      val result = subjectAccessRequestRepository.findById(completedSar.id).orElseThrow()
       assertThat(result.claimDateTime).isEqualTo(LocalDateTime.parse("01/01/2024 00:05", dateTimeFormatter))
       assertThat(result.claimAttempts).isEqualTo(1)
     }
