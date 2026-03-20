@@ -157,7 +157,7 @@ class ReportServiceImplTest {
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigFour, "3")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigSix, "4")
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
-      verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId)
+      verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!)
       verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
       verify(documentStorageClient).storeDocument(subjectAccessRequest, pdfByteArrayOutputStream)
       thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
