@@ -9,7 +9,7 @@ Interacts with the [Subject Access Request api](https://github.com/ministryofjus
 
 The project Confluence pages can be found [here](https://dsdmoj.atlassian.net/wiki/spaces/SARS/pages/4771479564/Overview).
 
-## Building
+## Building   
 
 To build the project (without tests):
 ```
