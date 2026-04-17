@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.1.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.1"
   kotlin("plugin.spring") version "2.3.20"
   kotlin("plugin.jpa") version "2.3.20"
 }
@@ -32,10 +32,10 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.5.0")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2")
-  implementation("io.sentry:sentry-spring-boot-4:8.38.0")
-  implementation("io.sentry:sentry-logback:8.38.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.39.1")
+  implementation("io.sentry:sentry-logback:8.39.1")
   implementation("commons-io:commons-io:2.21.0")
-  implementation("aws.sdk.kotlin:s3:1.6.56")
+  implementation("aws.sdk.kotlin:s3:1.6.58")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
