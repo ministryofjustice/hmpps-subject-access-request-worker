@@ -37,6 +37,9 @@ dependencies {
   implementation("commons-io:commons-io:2.21.0")
   implementation("aws.sdk.kotlin:s3:1.6.58")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+  constraints {
+    implementation("org.webjars:swagger-ui:5.32.2")
+  }
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
   runtimeOnly("org.postgresql:postgresql:42.7.10")
