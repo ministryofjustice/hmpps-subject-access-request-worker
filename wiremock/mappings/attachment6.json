@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/download/map.gif"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "map.gif",
+    "headers": {
+      "Content-Type": "image/gif",
+      "Content-Disposition": "attachment; filename=\"map.gif\""
+    }
+  }
+}
