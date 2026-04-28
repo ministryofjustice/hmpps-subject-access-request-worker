@@ -113,6 +113,10 @@ class PdfServiceTest {
         serviceName = "hmpps-book-secure-move-api",
         serviceLabel = "Book a Secure Move",
       ),
+      TestCase(
+        serviceName = "hmpps-managing-prisoner-apps-api",
+        serviceLabel = "Managing prisoner applications",
+      ),
     )
 
     data class TestCase(val serviceName: String, val serviceLabel: String)

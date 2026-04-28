@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import com.itextpdf.html2pdf.HtmlConverter
+import com.itextpdf.html2pdf.attach.impl.layout.HtmlPageBreak
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
@@ -12,6 +13,7 @@ import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
@@ -29,6 +31,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -209,7 +212,16 @@ class PdfService(
         serviceName = service.serviceName,
       ).use { HtmlConverter.convertToElements(it) }
 
-      elements.forEach { this.add(it as IBlockElement) }
+      elements.forEach { element ->
+        when (element) {
+          is IBlockElement -> this.add(element)
+          is Image -> this.add(element)
+          is HtmlPageBreak -> this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+          else -> {
+            throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+          }
+        }
+      }
       telemetryClient.trackSarEvent(
         event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
         subjectAccessRequest = subjectAccessRequest,
