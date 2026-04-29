@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.1"
-  kotlin("plugin.spring") version "2.3.20"
-  kotlin("plugin.jpa") version "2.3.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.3"
+  kotlin("plugin.spring") version "2.3.21"
+  kotlin("plugin.jpa") version "2.3.21"
 }
 
 configurations {
@@ -17,7 +17,7 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.10.2"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.1")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -32,10 +32,10 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.5.0")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2")
-  implementation("io.sentry:sentry-spring-boot-4:8.39.1")
-  implementation("io.sentry:sentry-logback:8.39.1")
-  implementation("commons-io:commons-io:2.21.0")
-  implementation("aws.sdk.kotlin:s3:1.6.58")
+  implementation("io.sentry:sentry-spring-boot-4:8.40.0")
+  implementation("io.sentry:sentry-logback:8.40.0")
+  implementation("commons-io:commons-io:2.22.0")
+  implementation("aws.sdk.kotlin:s3:1.6.65")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
