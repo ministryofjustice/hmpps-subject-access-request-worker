@@ -36,7 +36,7 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.40.0")
   implementation("commons-io:commons-io:2.22.0")
   implementation("aws.sdk.kotlin:s3:1.6.65")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
   }
