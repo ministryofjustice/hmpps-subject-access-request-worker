@@ -17,7 +17,7 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.10.2"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.2.0")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -29,24 +29,24 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
-  implementation("com.github.jknack:handlebars:4.5.0")
+  implementation("com.github.jknack:handlebars:4.5.1")
   implementation("org.apache.commons:commons-lang3:3.20.0")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2")
-  implementation("io.sentry:sentry-spring-boot-4:8.40.0")
-  implementation("io.sentry:sentry-logback:8.40.0")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.3")
+  implementation("io.sentry:sentry-spring-boot-4:8.41.0")
+  implementation("io.sentry:sentry-logback:8.41.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.6.65")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+  implementation("aws.sdk.kotlin:s3:1.6.72")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
   }
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
-  runtimeOnly("org.postgresql:postgresql:42.7.10")
+  runtimeOnly("org.postgresql:postgresql:42.7.11")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.2")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.21.3")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
