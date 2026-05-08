@@ -22,7 +22,7 @@ VALUES
     ('hmpps-jobs-board-api', 'Match jobs and manage applications', 'https://jobs-board-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
     ('hmpps-non-associations-api', 'Non-associations', 'https://non-associations-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
     ('hmpps-resettlement-passport-api', 'Prepare someone for release', 'https://resettlement-passport-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
-    ('hmpps-restricted-patients-api', 'Restricted patients', 'https://restricted-patients-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
+    ('hmpps-restricted-patients-api', 'Restricted patients', 'https://restricted-patients-api-dev.prison.service.justice.gov.uk', 'PRISON'),
     ('offender-case-notes', 'Sensitive case notes', 'https://dev.offender-case-notes.service.justice.gov.uk', 'PRISON'),
     ('hmpps-support-additional-needs-api', 'Support for additional needs', 'https://support-for-additional-needs-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
     ('hmpps-uof-data-api', 'Use of force', 'https://hmpps-uof-data-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
