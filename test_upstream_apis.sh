@@ -35,7 +35,7 @@ declare -a endpoints=(
 # https://activities-api-dev.prison.service.justice.gov.uk
 # https://hdc-api-dev.hmpps.service.justice.gov.uk
 # https://keyworker-api-dev.prison.service.justice.gov.uk
-# https://restricted-patients-api-dev.hmpps.service.justice.gov.uk
+# https://restricted-patients-api-dev.prison.service.justice.gov.uk
 # https://manage-adjudications-api-dev.hmpps.service.justice.gov.uk
 # https://education-employment-api-dev.hmpps.service.justice.gov.uk
 # https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
