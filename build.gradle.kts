@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.4"
   kotlin("plugin.spring") version "2.3.21"
   kotlin("plugin.jpa") version "2.3.21"
 }
@@ -23,7 +23,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.json:json:20251224")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("com.itextpdf:itext7-core:9.6.0")
   implementation("com.itextpdf:html2pdf:6.3.2")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
@@ -36,7 +36,7 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.41.0")
   implementation("commons-io:commons-io:2.22.0")
   implementation("aws.sdk.kotlin:s3:1.6.72")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
   }
