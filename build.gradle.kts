@@ -23,7 +23,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.json:json:20251224")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.11.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("com.itextpdf:itext7-core:9.6.0")
   implementation("com.itextpdf:html2pdf:6.3.2")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
