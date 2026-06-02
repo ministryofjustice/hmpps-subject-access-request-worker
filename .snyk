@@ -1,83 +1,70 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
-ignore: {
-  "snyk:lic:maven:com.itextpdf:barcodes:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:bouncy-castle-connector:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:commons:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:forms:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:html2pdf:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:io:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:kernel:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:layout:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:pdfa:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:pdfua:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:sign:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:styled-xml-parser:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ],
-  "snyk:lic:maven:com.itextpdf:svg:AGPL-3.0": [
-    {
-      "reason": "Licence approved internally / compliant with AGPL usage",
-      "expires": "2099-12-31T23:59:59.000Z"
-    }
-  ]
-}
+ignore:
+  'snyk:lic:maven:com.itextpdf:svg:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:06:15.849Z
+  'snyk:lic:maven:com.itextpdf:styled-xml-parser:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:07:27.438Z
+  'snyk:lic:maven:com.itextpdf:sign:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:07:53.307Z
+  'snyk:lic:maven:com.itextpdf:pdfua:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:08:12.188Z
+  'snyk:lic:maven:com.itextpdf:pdfa:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:08:44.827Z
+  'snyk:lic:maven:com.itextpdf:layout:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:09:03.266Z
+  'snyk:lic:maven:com.itextpdf:kernel:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:09:36.448Z
+  'snyk:lic:maven:com.itextpdf:io:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:10:11.541Z
+  'snyk:lic:maven:com.itextpdf:html2pdf:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:10:35.960Z
+  'snyk:lic:maven:com.itextpdf:forms:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:10:54.163Z
+  'snyk:lic:maven:com.itextpdf:commons:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:11:11.315Z
+  'snyk:lic:maven:com.itextpdf:bouncy-castle-connector:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:11:29.687Z
+  'snyk:lic:maven:com.itextpdf:barcodes:AGPL-3.0':
+    - '*':
+        reason: Licence approved internally / compliant with AGPL usage
+        expires: 2099-12-31T00:00:00.000Z
+        created: 2026-06-02T08:11:50.954Z
 patch: {}
