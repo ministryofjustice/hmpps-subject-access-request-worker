@@ -4,7 +4,7 @@ VALUES
     ('G1', 'G1', 'G1', 'PRISON'),
     ('G2', 'G2', 'G2', 'PRISON'),
     ('G3', 'G3', 'G3', 'PRISON'),
-    ('hmpps-manage-adjudications-api', 'Adjudications', 'https://manage-adjudications-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
+    ('hmpps-manage-adjudications-api', 'Manage Adjudications', 'https://manage-adjudications-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
     ('keyworker-api', 'Allocate Keyworkers and Personal Officers', 'https://keyworker-api-dev.prison.service.justice.gov.uk', 'PRISON'),
     ('hmpps-book-secure-move-api', 'Book a secure move', 'https://hmpps-book-secure-move-api-staging.apps.cloud-platform.service.justice.gov.uk', 'PRISON'),
     ('hmpps-offender-categorisation-api', 'Categorisation tool', 'https://hmpps-offender-categorisation-api-dev.hmpps.service.justice.gov.uk', 'PRISON'),
