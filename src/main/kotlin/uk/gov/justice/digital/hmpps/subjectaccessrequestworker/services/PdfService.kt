@@ -20,6 +20,7 @@ import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
@@ -49,6 +50,10 @@ class PdfService(
   private val attachmentsPdfService: AttachmentsPdfService,
   private val telemetryClient: TelemetryClient,
 ) {
+
+  private companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   data class PdfRenderRequest(
     val subjectAccessRequest: SubjectAccessRequest,
@@ -205,22 +210,58 @@ class PdfService(
         subjectAccessRequest = subjectAccessRequest,
         "service" to service.serviceName,
       )
-      this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+      try {
+        this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
 
-      val elements = documentStoreService.getDocument(
-        subjectAccessRequest = subjectAccessRequest,
-        serviceName = service.serviceName,
-      ).use { HtmlConverter.convertToElements(it) }
+        log.debug(
+          "Getting rendered html for request [{} - {}] and service [{}]",
+          subjectAccessRequest.id,
+          subjectAccessRequest.sarCaseReferenceNumber,
+          service.serviceName,
+        )
+        val elements = documentStoreService.getDocument(
+          subjectAccessRequest = subjectAccessRequest,
+          serviceName = service.serviceName,
+        ).use { HtmlConverter.convertToElements(it) }
+        log.debug(
+          "Got rendered html for request [{} - {}] and service [{}]",
+          subjectAccessRequest.id,
+          subjectAccessRequest.sarCaseReferenceNumber,
+          service.serviceName,
+        )
 
-      elements.forEach { element ->
-        when (element) {
-          is IBlockElement -> this.add(element)
-          is Image -> this.add(element)
-          is HtmlPageBreak -> this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-          else -> {
-            throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+        log.debug(
+          "Adding {} elements for request [{} - {}] and service [{}]",
+          elements.size,
+          subjectAccessRequest.id,
+          subjectAccessRequest.sarCaseReferenceNumber,
+          service.serviceName,
+        )
+        elements.forEach { element ->
+          when (element) {
+            is IBlockElement -> this.add(element)
+            is Image -> this.add(element)
+            is HtmlPageBreak -> this.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+            else -> {
+              throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+            }
           }
         }
+        log.debug(
+          "Added {} elements for request [{} - {}] and service [{}]",
+          elements.size,
+          subjectAccessRequest.id,
+          subjectAccessRequest.sarCaseReferenceNumber,
+          service.serviceName,
+        )
+      } catch (e: Exception) {
+        log.debug(
+          "Exception occurred while adding pdf service data for request [{} - {}] and service [{}]",
+          subjectAccessRequest.id,
+          subjectAccessRequest.sarCaseReferenceNumber,
+          service.serviceName,
+        )
+        throw e
       }
       telemetryClient.trackSarEvent(
         event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
