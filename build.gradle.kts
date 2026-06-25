@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.3"
   kotlin("plugin.spring") version "2.4.0"
   kotlin("plugin.jpa") version "2.4.0"
 }
@@ -15,6 +15,8 @@ dependencyCheck {
 // okhttp only used by the AWS SDK kotlin library so okay to pin
 ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
+
+val springDocVersion = "3.0.2"
 
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.5.0")
@@ -32,11 +34,11 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.5.2")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.0")
-  implementation("io.sentry:sentry-spring-boot-4:8.44.1")
-  implementation("io.sentry:sentry-logback:8.44.1")
+  implementation("io.sentry:sentry-spring-boot-4:8.45.0")
+  implementation("io.sentry:sentry-logback:8.45.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.6.100")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("aws.sdk.kotlin:s3:1.6.102")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
   }
