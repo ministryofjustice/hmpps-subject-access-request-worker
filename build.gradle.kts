@@ -38,7 +38,7 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.45.0")
   implementation("commons-io:commons-io:2.22.0")
   implementation("aws.sdk.kotlin:s3:1.6.102")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
   }
