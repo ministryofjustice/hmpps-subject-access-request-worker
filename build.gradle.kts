@@ -51,6 +51,7 @@ dependencies {
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
   implementation("org.jsoup:jsoup:1.17.2")
+  implementation("nu.validator:htmlparser:1.4.16")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.0")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
