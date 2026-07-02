@@ -11,14 +11,12 @@ import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.properties.AreaBreakType
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import java.io.Closeable
-import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Path
 
-class HtmlChunkPdfConsumer : HtmlChunkConsumer, Closeable {
-  private val output =
-    File("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/src/test/resources/pdfTest/output/chunked.pdf")
+class HtmlChunkPdfConsumer(val outputPdf: Path) : HtmlChunkConsumer, Closeable {
 
-  private val pdfDocument = PdfDocument(PdfWriter(FileOutputStream(output)))
+  private val pdfDocument = PdfDocument(PdfWriter(FileOutputStream(outputPdf.toFile())))
   private val document = Document(pdfDocument)
 
   init {
@@ -40,7 +38,7 @@ class HtmlChunkPdfConsumer : HtmlChunkConsumer, Closeable {
   }
 
   override fun close() {
-    println("closing PDF document")
+    println("closing PDF document: ${outputPdf.toUri()}")
     this.pdfDocument.close()
   }
 }
