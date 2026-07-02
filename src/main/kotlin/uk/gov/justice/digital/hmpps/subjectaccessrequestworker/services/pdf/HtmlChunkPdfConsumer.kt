@@ -1,23 +1,46 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
 
-import java.io.BufferedWriter
+import com.itextpdf.html2pdf.HtmlConverter
+import com.itextpdf.html2pdf.attach.impl.layout.HtmlPageBreak
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.AreaBreak
+import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.Image
+import com.itextpdf.layout.properties.AreaBreakType
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import java.io.Closeable
 import java.io.File
-import java.io.FileWriter
+import java.io.FileOutputStream
 
 class HtmlChunkPdfConsumer : HtmlChunkConsumer, Closeable {
   private val output =
-    File("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/src/test/resources/pdfTest/output/chunk.html")
+    File("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/src/test/resources/pdfTest/output/chunked.pdf")
 
-  private val writer = BufferedWriter(FileWriter(output))
+  private val pdfDocument = PdfDocument(PdfWriter(FileOutputStream(output)))
+  private val document = Document(pdfDocument)
+
+  init {
+    document.setMargins(50F, 35F, 70F, 35F)
+  }
 
   override fun consume(chunk: String) {
-    writer.write(chunk)
-    writer.newLine()
-    writer.flush()
+    HtmlConverter.convertToElements(chunk).forEach { element ->
+      when (element) {
+        is IBlockElement -> document.add(element)
+        is Image -> document.add(element)
+        is HtmlPageBreak -> document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+        else -> {
+          throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+        }
+      }
+    }
+    document.flush()
   }
 
   override fun close() {
-    this.writer.close()
+    println("closing PDF document")
+    this.pdfDocument.close()
   }
 }
