@@ -14,7 +14,7 @@ import java.io.Closeable
 import java.io.FileOutputStream
 import java.nio.file.Path
 
-class HtmlChunkPdfConsumer(val outputPdf: Path) : HtmlChunkConsumer, Closeable {
+class HtmlChunkPdfConsumer(val outputPdf: Path) : HtmlChunkConsumer {
 
   private val pdfDocument = PdfDocument(PdfWriter(FileOutputStream(outputPdf.toFile())))
   private val document = Document(pdfDocument)

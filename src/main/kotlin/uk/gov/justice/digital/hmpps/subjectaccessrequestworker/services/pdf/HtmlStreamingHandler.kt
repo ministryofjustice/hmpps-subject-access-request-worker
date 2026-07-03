@@ -1,24 +1,30 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
 
+import aws.smithy.kotlin.runtime.io.Closeable
+import org.jsoup.Jsoup
+import org.jsoup.parser.Parser
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.util.Stack
 
-interface HtmlChunkConsumer {
+interface HtmlChunkConsumer : Closeable {
 
   fun consume(chunk: String)
 }
 
-class HtmlStreamingHandler(val chunkConsumer: HtmlChunkConsumer, val styleSheet: String) : DefaultHandler() {
+class HtmlStreamingHandler(
+  val chunkConsumer: HtmlChunkConsumer,
+  val styleSheet: String,
+  val chunkTargetSize: Int = 1000,
+) : DefaultHandler() {
 
   private val openTags: Stack<String> = Stack()
   private val currentChunk: StringBuilder = StringBuilder()
   private val skipTags = listOf("html", "body", "head")
   private var tableDepth = 0
-  private val chunkTargetSize = 100000
 
   override fun startDocument() {
-    currentChunk.append("<html>").append("\n").append("<body>").append("\n")
+    // currentChunk.append("<html>").append("\n").append("<body>").append("\n")
   }
 
   override fun startElement(
@@ -32,7 +38,7 @@ class HtmlStreamingHandler(val chunkConsumer: HtmlChunkConsumer, val styleSheet:
     }
 
     openTags.push(qName)
-    currentChunk.append("\n").append("<$qName").append(getTagAttributes(attributes)).append(">")
+    currentChunk.append("<$qName").append(getTagAttributes(attributes)).append(">")
 
     if (qName == "table") {
       tableDepth++
@@ -48,7 +54,7 @@ class HtmlStreamingHandler(val chunkConsumer: HtmlChunkConsumer, val styleSheet:
       return
     }
 
-    currentChunk.append("</$qName>")
+    currentChunk.append("</$qName>").append("\n")
     openTags.pop()
 
     if (qName == "table") {
@@ -56,27 +62,46 @@ class HtmlStreamingHandler(val chunkConsumer: HtmlChunkConsumer, val styleSheet:
 
       if (tableDepth == 0 && currentChunk.length >= chunkTargetSize) {
         println("emitting chunk: ${currentChunk.length}")
-
-        val bodyContent = closeOpenTags()
-        val fullHtmlChunk = wrapHtml(bodyContent)
-        chunkConsumer.consume(fullHtmlChunk)
-        currentChunk.clear()
+        emitChunkToConsumer()
       }
     }
   }
 
   override fun endDocument() {
     if (currentChunk.isNotEmpty()) {
-      println("sending remaining chunk, size: ${currentChunk.length}")
-
-      val bodyContent = closeOpenTags()
-      val fullHtmlChunk = wrapHtml(bodyContent)
-      chunkConsumer.consume(fullHtmlChunk)
-      currentChunk.clear()
+      emitChunkToConsumer()
     }
 
     chunkConsumer.consume("\n</body>\n</html>\n")
     println("end: Document ${openTags.size}, tableDepth=$tableDepth")
+  }
+
+  private fun emitChunkToConsumer() {
+    println("sending remaining chunk, size: ${currentChunk.length}")
+    val fullHtmlChunk = wrapHtml(closeOpenTags())
+    validateHtml(fullHtmlChunk)
+    chunkConsumer.consume(fullHtmlChunk)
+    currentChunk.clear()
+  }
+
+  private fun validateHtml(html: String) {
+    // Fix common errors
+    val cleanHtml = Jsoup.parse(html).body().toString()
+
+    val parser = Parser.htmlParser()
+    parser.setTrackErrors(100)
+
+    parser.parseInput(cleanHtml, "")
+
+    if (parser.errors.isNotEmpty()) {
+      throw RuntimeException(
+        "|-------------+-------------|\n$cleanHtml\n|-------------+-------------|\n${
+          parser.errors.joinToString(
+            "\n",
+          )
+        }",
+      )
+    }
   }
 
   private fun closeOpenTags(): String {
