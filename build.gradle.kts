@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.4"
   kotlin("plugin.spring") version "2.4.0"
   kotlin("plugin.jpa") version "2.4.0"
 }
@@ -31,20 +31,20 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
-  implementation("com.github.jknack:handlebars:4.5.2")
+  implementation("com.github.jknack:handlebars:4.5.3")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.0")
-  implementation("io.sentry:sentry-spring-boot-4:8.45.0")
-  implementation("io.sentry:sentry-logback:8.45.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.47.0")
+  implementation("io.sentry:sentry-logback:8.47.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.6.102")
+  implementation("aws.sdk.kotlin:s3:1.6.106")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
   }
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
-  runtimeOnly("org.postgresql:postgresql:42.7.11")
+  runtimeOnly("org.postgresql:postgresql:42.7.12")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.0")
