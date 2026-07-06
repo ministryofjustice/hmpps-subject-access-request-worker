@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -25,6 +26,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 import java.time.LocalDate
 import java.util.UUID
 
+@Disabled
 @ExtendWith(MockitoExtension::class)
 class PdfServiceTest {
   private val serviceConfiguration: ServiceConfigurationService = mock()

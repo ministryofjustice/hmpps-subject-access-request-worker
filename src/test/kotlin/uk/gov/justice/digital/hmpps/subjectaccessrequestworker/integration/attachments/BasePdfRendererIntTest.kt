@@ -3,6 +3,12 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.atta
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestPropertySource
@@ -12,6 +18,11 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.S3Tes
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.PdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfServiceV2
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
+import java.io.FileInputStream
+import java.io.InputStream
+import java.nio.file.Path
 
 @TestPropertySource(
   properties = [
@@ -25,6 +36,9 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
     protected const val SERVICE_NAME = "create-and-vary-a-licence-api"
   }
 
+  @TempDir
+  lateinit var sarBaseDir: Path
+
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
 
@@ -32,12 +46,29 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
   protected lateinit var pdfService: PdfService
 
   @Autowired
+  protected lateinit var pdfServiceV2: PdfServiceV2
+
+  @Autowired
   private lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
+
+  protected val tempDirectoryService: TempDirectoryService = mock()
+
+  @BeforeEach
+  fun baseSetup() {
+    doAnswer {
+      val prefix = it.arguments[0] as String
+      sarBaseDir.resolve(prefix)
+    }.whenever(tempDirectoryService).create(any())
+
+    customSetUp()
+  }
 
   @AfterEach
   fun cleanup() {
     s3TestUtil.clearBucket()
   }
+
+  protected fun customSetUp() {}
 
   protected fun storeEmptyHtml(sar: SubjectAccessRequest) = runBlocking {
     val documentKey = "${sar.id}/$SERVICE_NAME.html"
@@ -66,4 +97,6 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
     .getResourceAsStream("/integration-tests/attachments/$filename").use { it?.readAllBytes()!! }
 
   protected fun getServiceConfiguration() = serviceConfigurationRepository.findByServiceName(SERVICE_NAME)!!
+
+  protected fun getFileInputStream(path: Path): InputStream = FileInputStream(path.toFile())
 }

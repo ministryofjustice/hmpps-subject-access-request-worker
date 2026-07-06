@@ -39,9 +39,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfRenderRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfServiceV2
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
-import java.io.ByteArrayOutputStream
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -60,19 +58,12 @@ class ReportServiceImplTest {
   private val serviceConfigurationService: ServiceConfigurationService = mock()
   private val pdfService: PdfServiceV2 = mock()
   private val subjectAccessRequestService: SubjectAccessRequestService = mock()
-  private val telemetryClient: TelemetryClient = mock()
   private val tempDirectoryService: TempDirectoryService = mock()
+  private val telemetryClient: TelemetryClient = mock()
 
-  private val service = ReportServiceImpl(
-    htmlRendererApiClient,
-    prisonApiClient,
-    probationApiClient,
-    documentStorageClient,
-    pdfService,
-    subjectAccessRequestService,
-    tempDirectoryService,
-    telemetryClient,
-  )
+  private lateinit var service: ReportServiceImpl
+  private lateinit var reportDirPath: Path
+  private lateinit var reportPdfPath: Path
 
   private val suspendedServiceConfig = ServiceConfiguration(
     id = UUID.randomUUID(),
@@ -103,24 +94,33 @@ class ReportServiceImplTest {
     services = mutableListOf(),
   )
 
-  private val reportDirPath =  Paths.get("/test/${subjectAccessRequest.id}_123")
-  private val reportPdfPath = reportDirPath.resolve("${subjectAccessRequest.id}.pdf")
-
-  private val pdfRenderRequest = PdfRenderRequest(
-    subjectAccessRequest = subjectAccessRequest,
-    subjectName = "Clive",
-    reportDir = reportDirPath,
-  )
-
-  private val pdfByteArray = "Pdf Byte Array".toByteArray()
-
-  private val pdfByteArrayOutputStream = ByteArrayOutputStream().apply { write(pdfByteArray) }
+  private lateinit var pdfRenderRequest: PdfRenderRequest
 
   @BeforeEach
   fun setup() {
-    subjectAccessRequest.services.clear()
+    reportDirPath = tempDir.resolve("${subjectAccessRequest.id}_123")
+    reportPdfPath = reportDirPath.resolve("${subjectAccessRequest.id}.pdf")
 
-    whenever(tempDirectoryService.create(any())).thenReturn(reportDirPath)
+    whenever(tempDirectoryService.create("${subjectAccessRequest.id}_"))
+      .thenReturn(reportDirPath)
+
+    pdfRenderRequest = PdfRenderRequest(
+      subjectAccessRequest = subjectAccessRequest,
+      subjectName = "Clive",
+      reportDir = reportDirPath,
+    )
+
+    service = ReportServiceImpl(
+      htmlRendererApiClient,
+      prisonApiClient,
+      probationApiClient,
+      documentStorageClient,
+      pdfService,
+      subjectAccessRequestService,
+      tempDirectoryService,
+      telemetryClient,
+    )
+    subjectAccessRequest.services.clear()
   }
 
   @AfterEach
@@ -170,14 +170,17 @@ class ReportServiceImplTest {
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigTwo)
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigFour)
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigSix)
+
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfig, "1")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigTwo, "2")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigFour, "3")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigSix, "4")
+
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
       verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!)
       verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
       verify(documentStorageClient).storeDocument(subjectAccessRequest, reportPdfPath)
+
       thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfig)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfig)
@@ -213,7 +216,10 @@ class ReportServiceImplTest {
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigThree)
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigTwo, "1")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigThree, "2")
-      verify(subjectAccessRequestService).updateServiceStatusSuspended(subjectAccessRequest.id, suspendedServiceConfig.serviceName)
+      verify(subjectAccessRequestService).updateServiceStatusSuspended(
+        subjectAccessRequest.id,
+        suspendedServiceConfig.serviceName,
+      )
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
       thenEventTrackedForServicesSelected("service-1,service-3,service-2")
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigTwo)
@@ -291,7 +297,10 @@ class ReportServiceImplTest {
     )
   }
 
-  private fun thenServiceStatusUpdatedAsSuccessFor(serviceConfiguration: ServiceConfiguration, templateVersion: String) {
+  private fun thenServiceStatusUpdatedAsSuccessFor(
+    serviceConfiguration: ServiceConfiguration,
+    templateVersion: String,
+  ) {
     verify(subjectAccessRequestService).updateServiceStatusSuccess(
       subjectAccessRequest.id,
       serviceConfiguration.serviceName,
