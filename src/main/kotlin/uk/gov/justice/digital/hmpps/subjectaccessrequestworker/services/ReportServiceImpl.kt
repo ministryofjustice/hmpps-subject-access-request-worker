@@ -20,7 +20,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import java.io.ByteArrayOutputStream
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfServiceV2
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 
 /**
  * New world configuration worker delegates rendering service html to html-renderer service.
@@ -31,8 +33,9 @@ class ReportServiceImpl(
   private val prisonApiClient: PrisonApiClient,
   private val probationApiClient: ProbationApiClient,
   private val documentStorageClient: DocumentStorageClient,
-  private val pdfService: PdfService,
+  private val pdfServiceV2: PdfServiceV2,
   private val subjectAccessRequestService: SubjectAccessRequestService,
+  private val tempDirectoryService: TempDirectoryService,
   private val telemetryClient: TelemetryClient,
 ) : ReportService {
 
@@ -48,10 +51,14 @@ class ReportServiceImpl(
     generateReportHtmlForServices(subjectAccessRequest)
     val subjectName = getSubjectName(subjectAccessRequest).also { log.info("subject name: $it") }
 
-    renderPdfForSelectedServices(subjectAccessRequest, subjectName).use { pdfStream ->
-      documentStorageClient.storeDocument(subjectAccessRequest, pdfStream).also {
-        log.info("subject access request ${subjectAccessRequest.id} completed successfully")
-      }
+    PdfRenderRequest(
+      subjectAccessRequest = subjectAccessRequest,
+      subjectName = subjectName,
+      reportDir = tempDirectoryService.create("${subjectAccessRequest.id}_"),
+    ).use {
+      val pdfPath = pdfServiceV2.renderSubjectAccessRequestPdf(it)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
+      log.info("subject access request ${subjectAccessRequest.id} completed successfully")
     }
   }
 
@@ -108,16 +115,6 @@ class ReportServiceImpl(
       errorCode = ErrorCode.NO_SUBJECT_ID_PROVIDED,
     )
   }
-
-  private suspend fun renderPdfForSelectedServices(
-    subjectAccessRequest: SubjectAccessRequest,
-    subjectName: String,
-  ): ByteArrayOutputStream = pdfService.renderSubjectAccessRequestPdf(
-    PdfService.PdfRenderRequest(
-      subjectAccessRequest,
-      subjectName,
-    ),
-  )
 
   private fun trackSelectedService(
     selectedServices: List<ServiceConfiguration>,

@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
@@ -34,7 +36,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestSer
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfServiceV2
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import java.io.ByteArrayOutputStream
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -43,14 +50,18 @@ import java.util.UUID
 @ExtendWith(MockitoExtension::class)
 class ReportServiceImplTest {
 
+  @TempDir
+  lateinit var tempDir: Path
+
   private val htmlRendererApiClient: HtmlRendererApiClient = mock()
   private val prisonApiClient: PrisonApiClient = mock()
   private val probationApiClient: ProbationApiClient = mock()
   private val documentStorageClient: DocumentStorageClient = mock()
   private val serviceConfigurationService: ServiceConfigurationService = mock()
-  private val pdfService: PdfService = mock()
+  private val pdfService: PdfServiceV2 = mock()
   private val subjectAccessRequestService: SubjectAccessRequestService = mock()
   private val telemetryClient: TelemetryClient = mock()
+  private val tempDirectoryService: TempDirectoryService = mock()
 
   private val service = ReportServiceImpl(
     htmlRendererApiClient,
@@ -59,6 +70,7 @@ class ReportServiceImplTest {
     documentStorageClient,
     pdfService,
     subjectAccessRequestService,
+    tempDirectoryService,
     telemetryClient,
   )
 
@@ -91,9 +103,13 @@ class ReportServiceImplTest {
     services = mutableListOf(),
   )
 
-  private val pdfRenderRequest = PdfService.PdfRenderRequest(
+  private val reportDirPath =  Paths.get("/test/${subjectAccessRequest.id}_123")
+  private val reportPdfPath = reportDirPath.resolve("${subjectAccessRequest.id}.pdf")
+
+  private val pdfRenderRequest = PdfRenderRequest(
     subjectAccessRequest = subjectAccessRequest,
     subjectName = "Clive",
+    reportDir = reportDirPath,
   )
 
   private val pdfByteArray = "Pdf Byte Array".toByteArray()
@@ -103,6 +119,8 @@ class ReportServiceImplTest {
   @BeforeEach
   fun setup() {
     subjectAccessRequest.services.clear()
+
+    whenever(tempDirectoryService.create(any())).thenReturn(reportDirPath)
   }
 
   @AfterEach
@@ -144,7 +162,7 @@ class ReportServiceImplTest {
       givenRenderRequestReturnsVersion(unsuspendedServiceConfigSix, "4")
       whenever(prisonApiClient.getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!))
         .thenReturn("Clive")
-      whenever(pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)).thenReturn(pdfByteArrayOutputStream)
+      whenever(pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)).thenReturn(reportPdfPath)
 
       service.generateReport(subjectAccessRequest)
 
@@ -159,7 +177,7 @@ class ReportServiceImplTest {
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
       verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!)
       verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
-      verify(documentStorageClient).storeDocument(subjectAccessRequest, pdfByteArrayOutputStream)
+      verify(documentStorageClient).storeDocument(subjectAccessRequest, reportPdfPath)
       thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfig)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfig)

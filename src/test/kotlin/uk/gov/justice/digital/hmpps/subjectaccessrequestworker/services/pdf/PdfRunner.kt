@@ -74,7 +74,7 @@ class PdfRunner {
     "test.txt",
   )
 
-  private val pdfService = PdfServiceV2(documentStoreService, DateService(), attachmentsPdfService)
+  private val pdfService = PdfServiceV2(documentStoreService, DateService(), attachmentsPdfService, telemetryClient)
 
   suspend fun setUp() {
     subjectAccessRequest.services.addAll(mutableListOf(service1Details, service2Details))

@@ -26,11 +26,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateServ
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
-@TestPropertySource(
-  properties = [
-    "html-renderer.enabled=true",
-  ],
-)
 class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorIntTest() {
 
   companion object {

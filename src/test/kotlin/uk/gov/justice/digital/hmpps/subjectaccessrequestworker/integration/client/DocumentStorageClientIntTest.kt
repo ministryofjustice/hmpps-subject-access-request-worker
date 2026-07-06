@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito.verify
@@ -35,13 +36,16 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
-import wiremock.org.apache.commons.io.IOUtils
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import java.io.FileWriter
+import java.nio.file.Path
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.io.path.fileSize
 
 class DocumentStorageClientIntTest : BaseClientIntTest() {
+
+  @TempDir
+  lateinit var tempDirPath: Path
 
   @Autowired
   private lateinit var documentStorageClient: DocumentStorageClient
@@ -91,17 +95,16 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `file upload success`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
-    val fileSize = expectedFileContent.toByteArray().size
+    val inputFilepath = createTestFile(FILE_CONTENT)
 
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
-      fileSize,
+      inputFilepath.fileSize().toInt(),
       FILE_CONTENT.toByteArray(),
       1,
     )
 
-    val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, inputFilepath)
 
     val expectedResponse = expectedSuccessResponse(content = FILE_CONTENT.toByteArray())
     assertThat(resp).isEqualTo(expectedResponse)
@@ -118,7 +121,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   fun `store document does not retry when fails with a 4xx status`(
     stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse,
   ) {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
 
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
@@ -128,7 +131,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     )
 
     val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestExceptionWithCauseNull(
@@ -154,7 +157,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `store document does not retry when fails with a 409 status`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
 
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
@@ -164,7 +167,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     )
 
     val ex = assertThrows<SubjectAccessRequestDocumentStoreConflictException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestExceptionWithCauseNull(
@@ -188,17 +191,17 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   @ParameterizedTest
   @MethodSource("status5xxResponseStubs")
   fun `store document retries on 5xx status`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
 
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId.toString(),
-      expectedFileContent.toByteArray(),
+      FILE_CONTENT.toByteArray(),
       DEFAULT_ERROR_CODE,
       stubErrorResponse.status.value(),
     )
 
     val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -221,16 +224,16 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `store document is successful when initial request fails with 5xx status and first retry succeeds`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
     hmppsAuth.stubGrantToken()
 
     documentApi.stubUploadFileFailsWithStatusThenSucceedsOnRetry(
       subjectAccessRequestId.toString(),
-      expectedFileContent.toByteArray(),
+      FILE_CONTENT.toByteArray(),
       500,
     )
 
-    val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, filePath)
 
     val expectedResponse = expectedSuccessResponse(content = FILE_CONTENT.toByteArray())
     assertThat(resp).isEqualTo(expectedResponse)
@@ -243,7 +246,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `store document retries on client request exception`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
     val webClientWithIncorrectUrl = WebClient.builder()
       .baseUrl("http://localhost:${documentApi.port() + 10}")
       .build()
@@ -251,7 +254,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     documentStorageClient = DocumentStorageClient(webClientWithIncorrectUrl, webClientRetriesSpec, telemetryClient)
 
     val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -279,10 +282,10 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   ) {
     hmppsAuth.stubGrantToken(stubErrorResponse.getResponse())
 
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
 
     val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -300,18 +303,18 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `uploaded document file size does not match expected content size throw exception`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
-    val incorrectFileSize = expectedFileContent.toByteArray().size * 2
+    val filePath = createTestFile(FILE_CONTENT)
+    val incorrectFileSize = filePath.fileSize() * 2
 
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
-      incorrectFileSize,
+      incorrectFileSize.toInt(),
       FILE_CONTENT.toByteArray(),
       1,
     )
 
     val ex = assertThrows<SubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestExceptionWithCauseNull(
@@ -321,10 +324,10 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedErrorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
       expectedParams = mapOf(
-        "expectedFileSize" to expectedFileContent.toByteArray().size,
-        "actualFileSize" to incorrectFileSize,
+        "expectedFileSize" to filePath.fileSize().toInt(),
+        "actualFileSize" to incorrectFileSize.toInt(),
         "documentUuid" to subjectAccessRequestId.toString(),
-        "documentFileHash" to fileHash(expectedFileContent.toByteArray()),
+        "documentFileHash" to fileHash(FILE_CONTENT.toByteArray()),
       ),
     )
 
@@ -342,7 +345,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `document store upload success invalid response body throws expected exception`() {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
+    val filePath = createTestFile(FILE_CONTENT)
 
     documentApi.stubUploadFileReturnsInvalidResponseEntity(
       subjectAccessRequestId.toString(),
@@ -350,7 +353,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     )
 
     val ex = assertThrows<SubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -372,17 +375,16 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   @ParameterizedTest()
   @MethodSource("metadataFormats")
   fun `store document will successfully handle response metadata of different value types`(metadata: Any?) {
-    val expectedFileContent = getFileBytes(FILE_CONTENT)
-    val fileSize = expectedFileContent.toByteArray().size
+    val filePath = createTestFile(FILE_CONTENT)
 
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
-      fileSize = fileSize,
+      fileSize = filePath.fileSize().toInt(),
       expectedFileContent = FILE_CONTENT.toByteArray(),
       metadata = metadata,
     )
 
-    val resp = documentStorageClient.storeDocument(subjectAccessRequest, expectedFileContent)
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, filePath)
 
     val expectedResponse = expectedSuccessResponseWithMetadata(
       content = FILE_CONTENT.toByteArray(),
@@ -397,10 +399,14 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, FILE_CONTENT.toByteArray())
   }
 
-  fun getFileBytes(input: String): ByteArrayOutputStream {
-    val baos = ByteArrayOutputStream()
-    IOUtils.copy(ByteArrayInputStream(input.toByteArray()), baos)
-    return baos
+  fun createTestFile(input: String, extension: String = ".txt"): Path {
+    val filepath = tempDirPath.resolve("${UUID.randomUUID()}.$extension")
+
+    FileWriter(filepath.toFile()).use {
+      it.write(input)
+      it.flush()
+    }
+    return filepath
   }
 
   fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse = objectMapper.readValue(
@@ -444,7 +450,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   fun verifyFileSizeVerifyErrorTelemetryEvent(
     subjectAccessRequest: SubjectAccessRequest,
     content: ByteArray,
-    actualSize: Int,
+    actualSize: Long,
   ) {
     val props = mapOf(
       "sarId" to subjectAccessRequest.sarCaseReferenceNumber,

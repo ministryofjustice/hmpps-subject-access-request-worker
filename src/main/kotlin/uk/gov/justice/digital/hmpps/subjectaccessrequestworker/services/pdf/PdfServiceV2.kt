@@ -2,8 +2,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
 
 import com.itextpdf.html2pdf.ConverterProperties
 import com.itextpdf.html2pdf.HtmlConverter
+import com.itextpdf.html2pdf.attach.impl.layout.HtmlPageBreak
 import com.itextpdf.io.font.constants.StandardFonts
-import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
@@ -12,95 +12,150 @@ import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
+import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
+import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
-import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.Path
 import java.time.LocalDate
+import kotlin.io.path.createTempDirectory
 
 @Service
 class PdfServiceV2(
   private val documentStoreService: DocumentStoreService,
   private val dateService: DateService,
   private val attachmentsPdfService: AttachmentsPdfService,
+  private val telemetryClient: TelemetryClient,
 ) {
 
   companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
     private const val INTERNAL_COVER_PAGE = "internalCoverPage"
     private const val REPORT_BODY = "reportBody"
     private const val INTERNAL_CONTENTS_PAGE = "internalContentsPage"
     private const val EXTERNAL_COVER_PAGE = "externalCoverPage"
     private const val REAR_PAGE = "rearPage"
-    //private val fontHelvetica: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     private val converterProperties: ConverterProperties = ConverterProperties()
   }
 
-  suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest) {
-    try {
-      val reportBodyPageCount = generateReportBody(pdfRenderRequest)
-      generateInternalCoverPage(pdfRenderRequest, reportBodyPageCount)
-      generateRearPage(pdfRenderRequest, reportBodyPageCount)
-      mergePartialsIntoFullReportPdf(pdfRenderRequest)
-      println("Generated: ${pdfRenderRequest.getFullPdfPath().toFile().name}")
-    } finally {
-      println("clean up partial files...")
-      pdfRenderRequest.pdfPartialsDir.toFile().deleteRecursively()
-      pdfRenderRequest.htmlPartialsDir.toFile().deleteRecursively()
-    }
+  suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): Path {
+    telemetryClient.trackSarEvent(GENERATE_PDF_STARTED, pdfRenderRequest.subjectAccessRequest)
+    log.info("generating pdf for {}", pdfRenderRequest.subjectAccessRequest.id)
+
+    val reportBodyPageCount = generateReportBody(pdfRenderRequest)
+    generateInternalCoverPage(pdfRenderRequest, reportBodyPageCount)
+    generateRearPage(pdfRenderRequest, reportBodyPageCount)
+    mergePartialsIntoFullReportPdf(pdfRenderRequest)
+
+    return pdfRenderRequest.getFullPdfPath()
   }
 
   private suspend fun generateReportBody(pdfRenderRequest: PdfRenderRequest): Int {
-    generateInternalContentsPage(pdfRenderRequest)
+    telemetryClient.trackSarEvent(GENERATE_PDF_BODY_STARTED, pdfRenderRequest.subjectAccessRequest)
+
     generateExternalCoverPage(pdfRenderRequest)
+    generateInternalContentsPage(pdfRenderRequest)
     generateServicePartials(pdfRenderRequest)
-    return mergeReportBodyPartials(pdfRenderRequest)
+    val pageCount = mergeReportBodyPartials(pdfRenderRequest)
+
+    telemetryClient.trackSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest.subjectAccessRequest)
+    return pageCount
   }
 
-  private suspend fun generateServicePartials(
-    pdfRenderRequest: PdfRenderRequest,
-  ) = pdfRenderRequest.subjectAccessRequest.getSelectedServices().forEach { serviceConfiguration ->
-    val servicePdfPath = pdfRenderRequest.resolvePartialPdfPath(serviceConfiguration.serviceName)
+  private suspend fun generateServicePartials(pdfRenderRequest: PdfRenderRequest) {
+    val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
+    val services = subjectAccessRequest.getSelectedServices()
 
-    createPdfDocument(output = servicePdfPath).use { pdf ->
-      getServiceHtml(pdfRenderRequest, serviceConfiguration).use { htmlInputStream ->
-        HtmlConverter.convertToPdf(htmlInputStream, pdf, converterProperties)
-      }
-    }
-
-    val attachments = documentStoreService.listAttachments(
-      subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-      serviceName = serviceConfiguration.serviceName,
+    telemetryClient.trackSarEvent(
+      event = GENERATE_PDF_ADD_SERVICE_DATA_STATED,
+      subjectAccessRequest = subjectAccessRequest,
+      "services" to services.serviceNames(),
     )
-    if (!attachments.isEmpty()) {
-      val attachmentsPdfPath = pdfRenderRequest.resolvePartialPdfPath("${serviceConfiguration.serviceName}-attachments")
-      createPdfDocument(attachmentsPdfPath).use { attachmentsPdf ->
-        Document(attachmentsPdf).use { doc ->
-          attachmentsPdfService.processAttachments(
-            subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-            serviceName = serviceConfiguration.serviceName,
-            document = doc,
-          )
+
+    services.forEach { serviceConfiguration ->
+      telemetryClient.trackSarEvent(
+        event = GENERATE_PDF_SERVICE_DATA_ADDED,
+        subjectAccessRequest = subjectAccessRequest,
+        "service" to serviceConfiguration.serviceName,
+      )
+
+      val servicePdfPath = pdfRenderRequest.resolvePartialPdfPath(serviceConfiguration.serviceName)
+
+      createWritablePdfDocument(output = servicePdfPath).use { pdf ->
+        newDocument(pdf).use {
+
+          getServiceHtml(pdfRenderRequest, serviceConfiguration).use { htmlInputStream ->
+            log.info("converting service {} html to pdf", subjectAccessRequest.id)
+
+            HtmlConverter.convertToElements(htmlInputStream, converterProperties).forEach { element ->
+              when (element) {
+                is IBlockElement -> it.add(element)
+                is Image -> it.add(element)
+                is HtmlPageBreak -> it.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+                else -> {
+                  throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+                }
+              }
+            }
+          }
         }
       }
+
+      val attachments = documentStoreService.listAttachments(
+        subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+        serviceName = serviceConfiguration.serviceName,
+      )
+      if (!attachments.isEmpty()) {
+        val attachmentsPdfPath = pdfRenderRequest.resolvePartialPdfPath("${serviceConfiguration.serviceName}-attachments")
+        createWritablePdfDocument(attachmentsPdfPath).use { attachmentsPdf ->
+          newDocument(attachmentsPdf).use { doc ->
+            log.info("appending service attachments to {} pdf", subjectAccessRequest.id)
+            attachmentsPdfService.processAttachments(
+              subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+              serviceName = serviceConfiguration.serviceName,
+              document = doc,
+            )
+          }
+        }
+      }
+      telemetryClient.trackSarEvent(
+        event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
+        subjectAccessRequest =  pdfRenderRequest.subjectAccessRequest,
+        "service" to serviceConfiguration.serviceName,
+      )
     }
   }
 
   private suspend fun generateInternalContentsPage(pdfRenderRequest: PdfRenderRequest) {
-    createPdfDocument(pdfRenderRequest.resolvePartialPdfPath(INTERNAL_CONTENTS_PAGE)).use { contentsPagePdf ->
-      Document(contentsPagePdf).use { doc ->
+    telemetryClient.trackSarEvent(GENERATE_PDF_COVER_STARTED, pdfRenderRequest.subjectAccessRequest)
+
+    createWritablePdfDocument(pdfRenderRequest.resolvePartialPdfPath(INTERNAL_CONTENTS_PAGE)).use { contentsPagePdf ->
+      newDocument(contentsPagePdf).use { doc ->
         val contentsPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -127,11 +182,13 @@ class PdfServiceV2(
         )
       }
     }
+
+    telemetryClient.trackSarEvent(GENERATE_PDF_COVER_COMPLETED, pdfRenderRequest.subjectAccessRequest)
   }
 
   private fun generateExternalCoverPage(pdfRenderRequest: PdfRenderRequest) {
-    createPdfDocument(pdfRenderRequest.resolvePartialPdfPath(EXTERNAL_COVER_PAGE)).use { pdfDoc ->
-      Document(pdfDoc).use { doc ->
+    createWritablePdfDocument(pdfRenderRequest.resolvePartialPdfPath(EXTERNAL_COVER_PAGE)).use { pdfDoc ->
+      newDocument(pdfDoc).use { doc ->
         val coverPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -156,28 +213,28 @@ class PdfServiceV2(
   }
 
   private fun mergeReportBodyPartials(pdfRenderRequest: PdfRenderRequest): Int {
-    return createPdfDocument(output = pdfRenderRequest.resolvePartialPdfPath(REPORT_BODY)).use { reportBodyPdf ->
+    return createWritablePdfDocument(output = pdfRenderRequest.resolvePartialPdfPath(REPORT_BODY)).use { reportBodyPdf ->
       val merger = PdfMerger(reportBodyPdf)
 
-      val externalCoverPagePath = pdfRenderRequest.resolvePartialPdfPath(EXTERNAL_COVER_PAGE)
-      getPdfDocument(getInputStream(externalCoverPagePath)).use { externalCoverPage ->
-        merger.merge(externalCoverPage, 1, externalCoverPage.numberOfPages)
+      val contentsPagePath = pdfRenderRequest.resolvePartialPdfPath(INTERNAL_CONTENTS_PAGE)
+      getReadablePdfDocument(getInputStream(contentsPagePath)).use { contentsPage ->
+        merger.merge(contentsPage, 1, contentsPage.numberOfPages)
       }
 
-      val contentsPagePath = pdfRenderRequest.resolvePartialPdfPath(INTERNAL_CONTENTS_PAGE)
-      getPdfDocument(getInputStream(contentsPagePath)).use { contentsPage ->
-        merger.merge(contentsPage, 1, contentsPage.numberOfPages)
+      val externalCoverPagePath = pdfRenderRequest.resolvePartialPdfPath(EXTERNAL_COVER_PAGE)
+      getReadablePdfDocument(getInputStream(externalCoverPagePath)).use { externalCoverPage ->
+        merger.merge(externalCoverPage, 1, externalCoverPage.numberOfPages)
       }
 
       pdfRenderRequest.subjectAccessRequest.getSelectedServices().forEach { service ->
         val pdfPartialPath = pdfRenderRequest.resolvePartialPdfPath(service.serviceName)
-        getPdfDocument(getInputStream(pdfPartialPath)).use { servicePartialPdf ->
+        getReadablePdfDocument(getInputStream(pdfPartialPath)).use { servicePartialPdf ->
           merger.merge(servicePartialPdf, 1, servicePartialPdf.numberOfPages)
         }
 
         val serviceAttachmentsPath = pdfRenderRequest.resolvePartialPdfPath("${service.serviceName}-attachments")
         if (serviceAttachmentsPath.toFile().exists()) {
-          getPdfDocument(getInputStream(serviceAttachmentsPath)).use { serviceAttachmentsPdf ->
+          getReadablePdfDocument(getInputStream(serviceAttachmentsPath)).use { serviceAttachmentsPdf ->
             merger.merge(serviceAttachmentsPdf, 1, serviceAttachmentsPdf.numberOfPages)
           }
         }
@@ -191,10 +248,8 @@ class PdfServiceV2(
     val subjectName = pdfRenderRequest.subjectName
     val coverPagePath = pdfRenderRequest.resolvePartialPdfPath(INTERNAL_COVER_PAGE)
 
-    createPdfDocument(output = coverPagePath).use { pdfDoc ->
-      Document(pdfDoc).use { doc ->
-        doc.setMargins(50F, 35F, 70F, 35F)
-
+    createWritablePdfDocument(output = coverPagePath).use { pdfDoc ->
+      newDocument(pdfDoc).use { doc ->
         val coverPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -230,10 +285,8 @@ class PdfServiceV2(
 
   private fun generateRearPage(pdfRenderRequest: PdfRenderRequest, reportBodyPageCount: Int) {
     val pdfPath = pdfRenderRequest.resolvePartialPdfPath(REAR_PAGE)
-    createPdfDocument(output = pdfPath).use { pdfDoc ->
-      Document(pdfDoc).use { doc ->
-        doc.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-
+    createWritablePdfDocument(output = pdfPath).use { pdfDoc ->
+      newDocument(pdfDoc).use { doc ->
         val endPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -250,29 +303,29 @@ class PdfServiceV2(
   }
 
   private fun mergePartialsIntoFullReportPdf(pdfRenderRequest: PdfRenderRequest) {
-    createPdfDocument(output = pdfRenderRequest.getFullPdfPath()).use { pdf ->
-      val document = Document(pdf)
+    createWritablePdfDocument(output = pdfRenderRequest.getFullPdfPath()).use { pdf ->
+      newDocument(pdf).use { doc ->
+        pdf.addEventHandler(
+          PdfDocumentEvent.END_PAGE,
+          getCustomerHeaderEventHandler(pdf, doc, pdfRenderRequest),
+        )
 
-      pdf.addEventHandler(
-        PdfDocumentEvent.END_PAGE,
-        getCustomerHeaderEventHandler(pdf, document, pdfRenderRequest),
-      )
+        val merger = PdfMerger(pdf)
 
-      val merger = PdfMerger(pdf)
+        val internalCoverPagePath = pdfRenderRequest.resolvePartialPdfPath(INTERNAL_COVER_PAGE)
+        getReadablePdfDocument(getInputStream(internalCoverPagePath)).use { internalCoverPdf ->
+          merger.merge(internalCoverPdf, 1, internalCoverPdf.numberOfPages)
+        }
 
-      val internalCoverPagePath = pdfRenderRequest.resolvePartialPdfPath(INTERNAL_COVER_PAGE)
-      getPdfDocument(getInputStream(internalCoverPagePath)).use { internalCoverPdf ->
-        merger.merge(internalCoverPdf, 1, internalCoverPdf.numberOfPages)
-      }
+        val reportBodyPath = pdfRenderRequest.resolvePartialPdfPath(REPORT_BODY)
+        getReadablePdfDocument(getInputStream(reportBodyPath)).use { reportBodyPdf ->
+          merger.merge(reportBodyPdf, 1, reportBodyPdf.numberOfPages)
+        }
 
-      val reportBodyPath = pdfRenderRequest.resolvePartialPdfPath(REPORT_BODY)
-      getPdfDocument(getInputStream(reportBodyPath)).use { reportBodyPdf ->
-        merger.merge(reportBodyPdf, 1, reportBodyPdf.numberOfPages)
-      }
-
-      val rearPagePath = pdfRenderRequest.resolvePartialPdfPath(REAR_PAGE)
-      getPdfDocument(getInputStream(rearPagePath)).use { rearPagePdf ->
-        merger.merge(rearPagePdf, 1, rearPagePdf.numberOfPages)
+        val rearPagePath = pdfRenderRequest.resolvePartialPdfPath(REAR_PAGE)
+        getReadablePdfDocument(getInputStream(rearPagePath)).use { rearPagePdf ->
+          merger.merge(rearPagePdf, 1, rearPagePdf.numberOfPages)
+        }
       }
     }
   }
@@ -323,16 +376,21 @@ class PdfServiceV2(
     return "Report date range: $formattedDateFrom - $formattedDateTo"
   }
 
-  private fun getNumberOfPages(target: Path): Int = getPdfDocument(getInputStream(target)).use { it.numberOfPages }
-
-  private fun createPdfDocument(output: Path): PdfDocument {
+  private fun createWritablePdfDocument(output: Path): PdfDocument {
     val pdfDoc = PdfDocument(PdfWriter(FileOutputStream(output.toFile())))
     pdfDoc.isFlushUnusedObjects = true
     return pdfDoc
   }
 
-  private fun getPdfDocument(src: InputStream) = PdfDocument(PdfReader(src))
+  private fun getReadablePdfDocument(src: InputStream) = PdfDocument(PdfReader(src))
 
   private fun getInputStream(path: Path): InputStream = FileInputStream(path.toFile())
 
+  private fun List<ServiceConfiguration>.serviceNames() = this.joinToString(",") { it.serviceName }
+
+  private fun newDocument(
+    pdf: PdfDocument,
+  ): Document = Document(pdf, pdf.defaultPageSize, true).apply {
+    setMargins(50F, 35F, 70F, 35F)
+  }
 }

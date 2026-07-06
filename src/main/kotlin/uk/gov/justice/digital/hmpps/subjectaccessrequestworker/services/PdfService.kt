@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.time.LocalDate
 
+@Deprecated("TODO")
 @Service
 class PdfService(
   private val serviceConfigurationService: ServiceConfigurationService,

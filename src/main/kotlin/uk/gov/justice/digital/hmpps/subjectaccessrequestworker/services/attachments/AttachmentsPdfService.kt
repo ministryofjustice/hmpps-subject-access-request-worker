@@ -8,6 +8,7 @@ import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_ATTACHMENTS_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_ATTACHMENTS_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_ATTACHMENT_COMPLETED
@@ -23,7 +24,10 @@ class AttachmentsPdfService(
   renderers: List<AttachmentPdfRenderer>,
 ) {
   private val rendererMap: Map<String, AttachmentPdfRenderer> =
-    renderers.flatMap { renderer -> renderer.supportedContentTypes().map { it to renderer } }.toMap()
+    renderers.flatMap { renderer ->
+      println("renderer 1 ${renderer.supportedContentTypes()}")
+      renderer.supportedContentTypes().map { it to renderer }
+    }.toMap()
 
   suspend fun processAttachments(subjectAccessRequest: SubjectAccessRequest, serviceName: String, document: Document) {
     telemetryClient.trackSarEvent(
@@ -31,35 +35,47 @@ class AttachmentsPdfService(
       subjectAccessRequest = subjectAccessRequest,
       "service" to serviceName,
     )
-    documentStoreService.listAttachments(subjectAccessRequest, serviceName).forEach { attachmentInfo ->
-      telemetryClient.trackSarEvent(
-        event = GENERATE_PDF_ADD_ATTACHMENT_STARTED,
-        subjectAccessRequest = subjectAccessRequest,
-        "service" to serviceName,
-        "attachmentNumber" to "${attachmentInfo.attachmentNumber}",
-        "filename" to attachmentInfo.filename,
-      )
+    val attachmentInfos = documentStoreService.listAttachments(subjectAccessRequest, serviceName)
 
-      val attachment = documentStoreService.getAttachment(subjectAccessRequest, serviceName, attachmentInfo)
-      document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-      document.add(
-        Paragraph("Attachment: ${attachment.info.attachmentNumber}").setFontSize(16f)
-          .setTextAlignment(TextAlignment.CENTER),
-      )
-      document.add(Paragraph("${attachment.info.filename} - ${attachment.info.name}").setTextAlignment(TextAlignment.LEFT))
-      val pdfRenderer = rendererMap[attachment.info.contentType] ?: defaultPdfRenderer
-      pdfRenderer.add(document, attachment)
+    attachmentInfos.takeIf { it.isNotEmpty() }
+      ?.let {
+        it.forEachIndexed { index, attachmentInfo ->
+          telemetryClient.trackSarEvent(
+            event = GENERATE_PDF_ADD_ATTACHMENT_STARTED,
+            subjectAccessRequest = subjectAccessRequest,
+            "service" to serviceName,
+            "attachmentNumber" to "${attachmentInfo.attachmentNumber}",
+            "filename" to attachmentInfo.filename,
+          )
 
-      telemetryClient.trackSarEvent(
-        event = GENERATE_PDF_ADD_ATTACHMENT_COMPLETED,
-        subjectAccessRequest = subjectAccessRequest,
-        "service" to serviceName,
-        "attachmentNumber" to "${attachmentInfo.attachmentNumber}",
-        "filename" to attachmentInfo.filename,
-      )
-    }
-    telemetryClient.trackSarEvent(
-      event = GENERATE_PDF_ADD_ATTACHMENTS_COMPLETED,
+          // Attachments are added to a new Document so the first attachment will automatically start on a new page.
+          // Add a page break after the first attachment to ensure subsequent attachment starts on a new page.
+          if (index > 0) document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+
+          val attachment = documentStoreService.getAttachment(subjectAccessRequest, serviceName, attachmentInfo)
+          document.add(
+            Paragraph("Attachment: ${attachment.info.attachmentNumber}").setFontSize(16f)
+              .setTextAlignment(TextAlignment.CENTER),
+          )
+          document.add(Paragraph("${attachment.info.filename} - ${attachment.info.name}").setTextAlignment(TextAlignment.LEFT))
+          val pdfRenderer = rendererMap[attachment.info.contentType] ?: defaultPdfRenderer
+          pdfRenderer.add(document, attachment)
+
+          telemetryClient.trackSarEvent(
+            event = GENERATE_PDF_ADD_ATTACHMENT_COMPLETED,
+            subjectAccessRequest = subjectAccessRequest,
+            "service" to serviceName,
+            "attachmentNumber" to "${attachmentInfo.attachmentNumber}",
+            "filename" to attachmentInfo.filename,
+          )
+        }
+        telemetryClient.trackSarEvent(
+          event = GENERATE_PDF_ADD_ATTACHMENTS_COMPLETED,
+          subjectAccessRequest = subjectAccessRequest,
+          "service" to serviceName,
+        )
+      } ?: telemetryClient.trackSarEvent(
+      event = ProcessingEvent.GENERATE_PDF_ADD_ATTACHMENTS_EMPTY,
       subjectAccessRequest = subjectAccessRequest,
       "service" to serviceName,
     )
