@@ -1,6 +1,10 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
 import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -36,7 +40,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
-import java.io.FileWriter
+import wiremock.com.google.common.io.Files
+import java.io.FileOutputStream
 import java.nio.file.Path
 import java.time.LocalDateTime
 import java.util.UUID
@@ -56,13 +61,13 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   private val subjectAccessRequestId = UUID.randomUUID()
   private val contextId = UUID.randomUUID()
   private val subjectAccessRequest = SubjectAccessRequest(id = subjectAccessRequestId, contextId = contextId)
+  private lateinit var pdfPath: Path
+  private lateinit var pdfContent: ByteArray
 
   @MockitoBean
   protected lateinit var telemetryClient: TelemetryClient
 
   companion object {
-    private const val FILE_CONTENT =
-      "Buddy you're a boy make a big noise, Playin' in the street gonna be a big man some day"
 
     private val objectMapper = ObjectMapper()
 
@@ -90,30 +95,31 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     // Remove the cache client token to force each test to obtain an Auth token before calling the documentStore API.
     oAuth2AuthorizedClientService.removeAuthorizedClient("sar-client", "anonymousUser")
 
+    pdfPath = createTestPdf("Hello world!")
+    pdfContent = getPdfFileBytes(pdfPath)
+
     hmppsAuth.stubGrantToken()
   }
 
   @Test
   fun `file upload success`() {
-    val inputFilepath = createTestFile(FILE_CONTENT)
-
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
-      inputFilepath.fileSize().toInt(),
-      FILE_CONTENT.toByteArray(),
+      pdfPath.fileSize().toInt(),
+      pdfContent,
       1,
     )
 
-    val resp = documentStorageClient.storeDocument(subjectAccessRequest, inputFilepath)
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
 
-    val expectedResponse = expectedSuccessResponse(content = FILE_CONTENT.toByteArray())
+    val expectedResponse = expectedSuccessResponse(content = pdfContent)
     assertThat(resp).isEqualTo(expectedResponse)
 
     documentApi.verifyStoreDocumentIsCalled(
       times = 1,
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
-    verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, FILE_CONTENT.toByteArray())
+    verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, pdfContent)
   }
 
   @ParameterizedTest
@@ -121,17 +127,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   fun `store document does not retry when fails with a 4xx status`(
     stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse,
   ) {
-    val filePath = createTestFile(FILE_CONTENT)
-
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
-      expectedFileContent = FILE_CONTENT.toByteArray(),
+      expectedFileContent = pdfContent,
       DEFAULT_ERROR_CODE,
       status = stubErrorResponse.status.value(),
     )
 
     val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestExceptionWithCauseNull(
@@ -157,17 +161,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `store document does not retry when fails with a 409 status`() {
-    val filePath = createTestFile(FILE_CONTENT)
-
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
-      expectedFileContent = FILE_CONTENT.toByteArray(),
+      expectedFileContent = pdfContent,
       errorCode = DEFAULT_ERROR_CODE,
       status = 409,
     )
 
     val ex = assertThrows<SubjectAccessRequestDocumentStoreConflictException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestExceptionWithCauseNull(
@@ -191,17 +193,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   @ParameterizedTest
   @MethodSource("status5xxResponseStubs")
   fun `store document retries on 5xx status`(stubErrorResponse: BaseClientIntTest.Companion.StubErrorResponse) {
-    val filePath = createTestFile(FILE_CONTENT)
-
     documentApi.stubUploadFileFailsWithStatus(
       subjectAccessRequestId.toString(),
-      FILE_CONTENT.toByteArray(),
+      pdfContent,
       DEFAULT_ERROR_CODE,
       stubErrorResponse.status.value(),
     )
 
     val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -224,18 +224,17 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `store document is successful when initial request fails with 5xx status and first retry succeeds`() {
-    val filePath = createTestFile(FILE_CONTENT)
     hmppsAuth.stubGrantToken()
 
     documentApi.stubUploadFileFailsWithStatusThenSucceedsOnRetry(
       subjectAccessRequestId.toString(),
-      FILE_CONTENT.toByteArray(),
+      pdfContent,
       500,
     )
 
-    val resp = documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
 
-    val expectedResponse = expectedSuccessResponse(content = FILE_CONTENT.toByteArray())
+    val expectedResponse = expectedSuccessResponse(content = pdfContent)
     assertThat(resp).isEqualTo(expectedResponse)
 
     documentApi.verifyStoreDocumentIsCalled(
@@ -246,7 +245,6 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `store document retries on client request exception`() {
-    val filePath = createTestFile(FILE_CONTENT)
     val webClientWithIncorrectUrl = WebClient.builder()
       .baseUrl("http://localhost:${documentApi.port() + 10}")
       .build()
@@ -254,7 +252,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     documentStorageClient = DocumentStorageClient(webClientWithIncorrectUrl, webClientRetriesSpec, telemetryClient)
 
     val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -282,10 +280,8 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   ) {
     hmppsAuth.stubGrantToken(stubErrorResponse.getResponse())
 
-    val filePath = createTestFile(FILE_CONTENT)
-
     val ex = assertThrows<FatalSubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -303,18 +299,17 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   @Test
   fun `uploaded document file size does not match expected content size throw exception`() {
-    val filePath = createTestFile(FILE_CONTENT)
-    val incorrectFileSize = filePath.fileSize() * 2
+    val incorrectFileSize = pdfPath.fileSize() * 2
 
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
       incorrectFileSize.toInt(),
-      FILE_CONTENT.toByteArray(),
+      pdfContent,
       1,
     )
 
     val ex = assertThrows<SubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestExceptionWithCauseNull(
@@ -324,10 +319,10 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedErrorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
       expectedParams = mapOf(
-        "expectedFileSize" to filePath.fileSize().toInt(),
+        "expectedFileSize" to pdfPath.fileSize().toInt(),
         "actualFileSize" to incorrectFileSize.toInt(),
         "documentUuid" to subjectAccessRequestId.toString(),
-        "documentFileHash" to fileHash(FILE_CONTENT.toByteArray()),
+        "documentFileHash" to fileHash(pdfContent),
       ),
     )
 
@@ -338,22 +333,20 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
     verifyFileSizeVerifyErrorTelemetryEvent(
       subjectAccessRequest,
-      FILE_CONTENT.toByteArray(),
+      pdfContent,
       incorrectFileSize,
     )
   }
 
   @Test
   fun `document store upload success invalid response body throws expected exception`() {
-    val filePath = createTestFile(FILE_CONTENT)
-
     documentApi.stubUploadFileReturnsInvalidResponseEntity(
       subjectAccessRequestId.toString(),
-      FILE_CONTENT.toByteArray(),
+      pdfContent,
     )
 
     val ex = assertThrows<SubjectAccessRequestException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -375,19 +368,17 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   @ParameterizedTest()
   @MethodSource("metadataFormats")
   fun `store document will successfully handle response metadata of different value types`(metadata: Any?) {
-    val filePath = createTestFile(FILE_CONTENT)
-
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
-      fileSize = filePath.fileSize().toInt(),
-      expectedFileContent = FILE_CONTENT.toByteArray(),
+      fileSize = pdfPath.fileSize().toInt(),
+      expectedFileContent = pdfContent,
       metadata = metadata,
     )
 
-    val resp = documentStorageClient.storeDocument(subjectAccessRequest, filePath)
+    val resp = documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
 
     val expectedResponse = expectedSuccessResponseWithMetadata(
-      content = FILE_CONTENT.toByteArray(),
+      content = pdfContent,
       metadata = metadata,
     )
     assertThat(resp).isEqualTo(expectedResponse)
@@ -396,27 +387,32 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       times = 1,
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
-    verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, FILE_CONTENT.toByteArray())
+    verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, pdfContent)
   }
 
-  fun createTestFile(input: String, extension: String = ".txt"): Path {
-    val filepath = tempDirPath.resolve("${UUID.randomUUID()}.$extension")
-
-    FileWriter(filepath.toFile()).use {
-      it.write(input)
-      it.flush()
+  fun createTestPdf(input: String): Path {
+    val filepath = tempDirPath.resolve("report.pdf").toFile()
+    FileOutputStream(filepath).use {
+      PdfDocument(PdfWriter(it)).use { pdf ->
+        Document(pdf).use { document ->
+          document.add(Paragraph().add(input))
+        }
+      }
     }
-    return filepath
+    return filepath.toPath()
   }
 
-  fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse = objectMapper.readValue(
-    documentApi.documentUploadSuccessResponseJson(
-      subjectAccessRequestId.toString(),
-      fileSize ?: content.size,
-      content,
-    ),
-    DocumentStorageClient.PostDocumentResponse::class.java,
-  )
+  fun getPdfFileBytes(path: Path) = Files.toByteArray(path.toFile())
+
+  fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse =
+    objectMapper.readValue(
+      documentApi.documentUploadSuccessResponseJson(
+        subjectAccessRequestId.toString(),
+        fileSize ?: content.size,
+        content,
+      ),
+      DocumentStorageClient.PostDocumentResponse::class.java,
+    )
 
   fun expectedSuccessResponseWithMetadata(
     fileSize: Int? = null,
