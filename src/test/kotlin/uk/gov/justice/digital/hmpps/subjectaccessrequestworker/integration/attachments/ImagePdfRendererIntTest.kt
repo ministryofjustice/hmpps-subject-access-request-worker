@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
 import java.nio.file.Path
 
 class ImagePdfRendererIntTest : BasePdfRendererIntTest() {

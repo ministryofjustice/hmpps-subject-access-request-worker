@@ -9,7 +9,7 @@ import java.nio.file.Path
 
 @Service
 class TempDirectoryService(
-  val subjectAccessRequestDirectory: Path = createTempDirectory("sar_")
+  val subjectAccessRequestDirectory: Path = createTempDirectory("sar_"),
 ) {
 
   private companion object {

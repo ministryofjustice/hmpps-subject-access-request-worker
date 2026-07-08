@@ -17,9 +17,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.NoSch
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.S3TestUtils
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.PdfService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfServiceV2
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
 import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Path
@@ -46,7 +45,7 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
   protected lateinit var pdfService: PdfService
 
   @Autowired
-  protected lateinit var pdfServiceV2: PdfServiceV2
+  protected lateinit var pdfServiceV2: uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
 
   @Autowired
   private lateinit var serviceConfigurationRepository: ServiceConfigurationRepository

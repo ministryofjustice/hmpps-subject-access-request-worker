@@ -11,7 +11,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
 
 @Testcontainers
 class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
@@ -40,27 +40,30 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
       "doc-image.docx, word-doc-image.pdf, 2",
     ],
   )
-  fun `should render word documents in attachments section`(filename: String, expectedFilename: String, numPages: Int) =
-    runBlocking {
-      val sar = IntegrationTestFixture.createSubjectAccessRequestForService(getServiceConfiguration(), Status.Pending)
-      storeEmptyHtml(sar)
-      storeAttachment(sar, filename, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+  fun `should render word documents in attachments section`(
+    filename: String,
+    expectedFilename: String,
+    numPages: Int,
+  ) = runBlocking {
+    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(getServiceConfiguration(), Status.Pending)
+    storeEmptyHtml(sar)
+    storeAttachment(sar, filename, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
-      val pdfPath = pdfServiceV2.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", sarBaseDir))
+    val pdfPath = pdfServiceV2.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", sarBaseDir))
 
-      pdfDocumentFromInputStream(getFileInputStream(pdfPath)).use { actualPdfDoc ->
-        val attachmentInfoPage =
-          PdfTextExtractor.getTextFromPage(actualPdfDoc.getPage(5), SimpleTextExtractionStrategy())
-        assertThat(attachmentInfoPage).`as`("attachment info page text")
-          .contains("Attachment: 1")
-          .contains("$filename - Test attachment file $filename")
-          .contains("Attachment Word content follows on subsequent $numPages page(s)")
+    pdfDocumentFromInputStream(getFileInputStream(pdfPath)).use { actualPdfDoc ->
+      val attachmentInfoPage =
+        PdfTextExtractor.getTextFromPage(actualPdfDoc.getPage(5), SimpleTextExtractionStrategy())
+      assertThat(attachmentInfoPage).`as`("attachment info page text")
+        .contains("Attachment: 1")
+        .contains("$filename - Test attachment file $filename")
+        .contains("Attachment Word content follows on subsequent $numPages page(s)")
 
-        val expectedPdfDoc = getPreGeneratedPdfDocument("attachments/$expectedFilename")
-        for (pageNum in 1..numPages) {
-          assertThat(actualPdfDoc.getPage(pageNum + 5).contentBytes).`as`("attachment page $pageNum pdf bytes")
-            .isEqualTo(expectedPdfDoc.getPage(pageNum).contentBytes)
-        }
+      val expectedPdfDoc = getPreGeneratedPdfDocument("attachments/$expectedFilename")
+      for (pageNum in 1..numPages) {
+        assertThat(actualPdfDoc.getPage(pageNum + 5).contentBytes).`as`("attachment page $pageNum pdf bytes")
+          .isEqualTo(expectedPdfDoc.getPage(pageNum).contentBytes)
       }
     }
+  }
 }

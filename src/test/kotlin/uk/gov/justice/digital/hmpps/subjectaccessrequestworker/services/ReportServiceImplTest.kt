@@ -11,7 +11,6 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
@@ -36,9 +35,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestSer
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfRenderRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.PdfServiceV2
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
 import java.nio.file.Path
 import java.time.Instant
 import java.time.LocalDate
@@ -56,7 +55,7 @@ class ReportServiceImplTest {
   private val probationApiClient: ProbationApiClient = mock()
   private val documentStorageClient: DocumentStorageClient = mock()
   private val serviceConfigurationService: ServiceConfigurationService = mock()
-  private val pdfService: PdfServiceV2 = mock()
+  private val pdfService: PdfService = mock()
   private val subjectAccessRequestService: SubjectAccessRequestService = mock()
   private val tempDirectoryService: TempDirectoryService = mock()
   private val telemetryClient: TelemetryClient = mock()

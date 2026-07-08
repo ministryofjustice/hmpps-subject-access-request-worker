@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v1.PdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.assertPdfContentMatchesExpected
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.createPdfDocumentFromBytes
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.getPdfDocument

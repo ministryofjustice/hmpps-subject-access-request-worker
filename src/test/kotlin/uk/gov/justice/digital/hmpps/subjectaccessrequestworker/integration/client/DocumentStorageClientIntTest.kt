@@ -404,15 +404,17 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
   fun getPdfFileBytes(path: Path) = Files.toByteArray(path.toFile())
 
-  fun expectedSuccessResponse(fileSize: Int? = null, content: ByteArray): DocumentStorageClient.PostDocumentResponse =
-    objectMapper.readValue(
-      documentApi.documentUploadSuccessResponseJson(
-        subjectAccessRequestId.toString(),
-        fileSize ?: content.size,
-        content,
-      ),
-      DocumentStorageClient.PostDocumentResponse::class.java,
-    )
+  fun expectedSuccessResponse(
+    fileSize: Int? = null,
+    content: ByteArray,
+  ): DocumentStorageClient.PostDocumentResponse = objectMapper.readValue(
+    documentApi.documentUploadSuccessResponseJson(
+      subjectAccessRequestId.toString(),
+      fileSize ?: content.size,
+      content,
+    ),
+    DocumentStorageClient.PostDocumentResponse::class.java,
+  )
 
   fun expectedSuccessResponseWithMetadata(
     fileSize: Int? = null,
