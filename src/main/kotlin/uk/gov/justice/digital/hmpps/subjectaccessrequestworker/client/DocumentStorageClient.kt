@@ -32,12 +32,11 @@ class DocumentStorageClient(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     private const val UPLOAD_DOCUMENT_PATH = "/documents/SUBJECT_ACCESS_REQUEST_REPORT"
-    private const val SAR_FILENAME = "report.pdf"
   }
 
   fun storeDocument(subjectAccessRequest: SubjectAccessRequest, bodyFilePath: Path): PostDocumentResponse {
     log.info("Storing document with UUID ${subjectAccessRequest.id}")
-    val expectedSize = bodyFilePath.fileSize().toInt()
+    val expectedSize = bodyFilePath.fileSize()
     val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, bodyFilePath)
     return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
   }
@@ -107,7 +106,7 @@ class DocumentStorageClient(
   private fun verifyUploadedFileSize(
     postDocumentResponse: PostDocumentResponse?,
     subjectAccessRequest: SubjectAccessRequest,
-    expectedFileSize: Int,
+    expectedFileSize: Long,
   ): PostDocumentResponse {
     if (postDocumentResponse == null) {
       throw SubjectAccessRequestException(
@@ -175,7 +174,7 @@ class DocumentStorageClient(
     val documentFilename: String? = null,
     val filename: String? = null,
     val fileExtension: String? = null,
-    val fileSize: Int? = null,
+    val fileSize: Long? = null,
     val fileHash: String? = null,
     val mimeType: String? = null,
     val metadata: Any? = null,

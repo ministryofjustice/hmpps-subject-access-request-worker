@@ -24,10 +24,7 @@ class AttachmentsPdfService(
   renderers: List<AttachmentPdfRenderer>,
 ) {
   private val rendererMap: Map<String, AttachmentPdfRenderer> =
-    renderers.flatMap { renderer ->
-      println("renderer 1 ${renderer.supportedContentTypes()}")
-      renderer.supportedContentTypes().map { it to renderer }
-    }.toMap()
+    renderers.flatMap { renderer -> renderer.supportedContentTypes().map { it to renderer } }.toMap()
 
   suspend fun processAttachments(subjectAccessRequest: SubjectAccessRequest, serviceName: String, document: Document) {
     telemetryClient.trackSarEvent(

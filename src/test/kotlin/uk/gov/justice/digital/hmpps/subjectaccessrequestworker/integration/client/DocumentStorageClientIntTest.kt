@@ -105,7 +105,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   fun `file upload success`() {
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
-      pdfPath.fileSize().toInt(),
+      pdfPath.fileSize(),
       pdfContent,
       1,
     )
@@ -303,7 +303,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId.toString(),
-      incorrectFileSize.toInt(),
+      incorrectFileSize,
       pdfContent,
       1,
     )
@@ -319,8 +319,8 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedErrorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
       expectedParams = mapOf(
-        "expectedFileSize" to pdfPath.fileSize().toInt(),
-        "actualFileSize" to incorrectFileSize.toInt(),
+        "expectedFileSize" to pdfPath.fileSize(),
+        "actualFileSize" to incorrectFileSize,
         "documentUuid" to subjectAccessRequestId.toString(),
         "documentFileHash" to fileHash(pdfContent),
       ),
@@ -370,7 +370,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   fun `store document will successfully handle response metadata of different value types`(metadata: Any?) {
     documentApi.stubUploadFileSuccessWithMetadata(
       subjectAccessRequestId = subjectAccessRequestId.toString(),
-      fileSize = pdfPath.fileSize().toInt(),
+      fileSize = pdfPath.fileSize(),
       expectedFileContent = pdfContent,
       metadata = metadata,
     )
@@ -417,13 +417,13 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
   )
 
   fun expectedSuccessResponseWithMetadata(
-    fileSize: Int? = null,
+    fileSize: Long? = null,
     content: ByteArray,
     metadata: Any?,
   ): DocumentStorageClient.PostDocumentResponse = objectMapper.readValue(
     documentApi.documentUploadSuccessResponseJsonWithMetadata(
       subjectAccessRequestId.toString(),
-      fileSize ?: content.size,
+      fileSize ?: content.size.toLong(),
       content,
       metadata,
     ),

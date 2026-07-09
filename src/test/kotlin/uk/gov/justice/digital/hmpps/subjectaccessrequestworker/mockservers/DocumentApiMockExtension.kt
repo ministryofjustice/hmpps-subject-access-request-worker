@@ -43,7 +43,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
 
   fun stubUploadFileSuccessWithMetadata(
     subjectAccessRequestId: String,
-    fileSize: Int,
+    fileSize: Long,
     expectedFileContent: ByteArray,
     metadata: Any?,
   ) {
@@ -302,7 +302,7 @@ class DocumentApiMockServer : WireMockServer(8084) {
 
   fun documentUploadSuccessResponseJsonWithMetadata(
     subjectAccessRequestId: String,
-    fileSize: Int,
+    fileSize: Long,
     fileContent: ByteArray,
     metadata: Any?,
   ): String = objectMapper.writeValueAsString(

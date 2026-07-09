@@ -5,7 +5,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "template_v2.mustache",
+    "bodyFileName": "template.mustache",
     "headers": {
       "Content-Type": "text/plain"
     }

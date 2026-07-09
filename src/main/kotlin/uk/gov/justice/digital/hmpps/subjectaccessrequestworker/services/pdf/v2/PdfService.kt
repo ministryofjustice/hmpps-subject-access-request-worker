@@ -53,7 +53,7 @@ class PdfService(
 ) {
 
   companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(PdfService::class.java)
     private val converterProperties: ConverterProperties = ConverterProperties()
   }
 
