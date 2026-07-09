@@ -49,7 +49,7 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
     storeEmptyHtml(sar)
     storeAttachment(sar, filename, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
-    val pdfPath = pdfServiceV2.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", sarBaseDir))
+    val pdfPath = pdfService.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", sarBaseDir))
 
     pdfDocumentFromInputStream(getFileInputStream(pdfPath)).use { actualPdfDoc ->
       val attachmentInfoPage =

@@ -11,7 +11,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.test.context.TestPropertySource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.NoSchedulingConfig
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.S3TestUtils
@@ -23,11 +22,6 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Path
 
-@TestPropertySource(
-  properties = [
-    "html-renderer.enabled=true",
-  ],
-)
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
 abstract class BasePdfRendererIntTest : IntegrationTestBase() {
 
@@ -43,9 +37,6 @@ abstract class BasePdfRendererIntTest : IntegrationTestBase() {
 
   @Autowired
   protected lateinit var pdfService: PdfService
-
-  @Autowired
-  protected lateinit var pdfServiceV2: uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
 
   @Autowired
   private lateinit var serviceConfigurationRepository: ServiceConfigurationRepository

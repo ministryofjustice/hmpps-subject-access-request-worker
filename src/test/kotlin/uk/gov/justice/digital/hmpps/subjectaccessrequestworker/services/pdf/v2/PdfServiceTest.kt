@@ -133,6 +133,8 @@ class PdfServiceTest {
 
     val actualPdfPath = pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
 
+    assertThat(actualPdfPath).exists()
+    assertThat(actualPdfPath.toFile().length()).isGreaterThan(0L)
     assertThat(actualPdfPath).isEqualTo(sarBaseDir.resolve("report.pdf"))
 
     verify(telemetryClient, times(8))

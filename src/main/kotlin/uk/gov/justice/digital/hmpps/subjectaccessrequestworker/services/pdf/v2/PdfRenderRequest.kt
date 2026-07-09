@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
+import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.io.Closeable
@@ -18,6 +19,7 @@ class PdfRenderRequest(
 ) : Closeable {
 
   private companion object {
+    private val log = LoggerFactory.getLogger(PdfRenderRequest::class.java)
     private const val INTERNAL_COVER_PAGE = "internalCoverPage.pdf"
     private const val REPORT_BODY = "reportBody.pdf"
     private const val INTERNAL_CONTENTS_PAGE = "internalContentsPage.pdf"
@@ -78,7 +80,9 @@ class PdfRenderRequest(
   ): Path = pdfPartialsDir.resolve("${service.serviceName}-attachments.pdf")
 
   override fun close() {
-    reportDir.toFile().deleteRecursively()
+    if (!reportDir.toFile().deleteRecursively()) {
+      log.warn("failed to recursively delete PdfRenderRequest temporary working directory {}", reportDir)
+    }
   }
 
   override fun equals(other: Any?): Boolean {

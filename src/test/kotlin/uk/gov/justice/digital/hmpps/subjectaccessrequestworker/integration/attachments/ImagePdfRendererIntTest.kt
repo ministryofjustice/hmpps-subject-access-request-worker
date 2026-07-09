@@ -33,7 +33,7 @@ class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
 
     val reportDir = tempDirectoryService.create("${sar.id}_")
 
-    val pdfPath = pdfServiceV2.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", reportDir))
+    val pdfPath = pdfService.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", reportDir))
     assertThat(pdfPath).exists()
 
     assertAttachmentPdfMatchesExpected(pdfPath, imageFilename, expectedOutputPdf)

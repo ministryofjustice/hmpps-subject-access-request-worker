@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 import java.time.LocalDate
 import java.util.UUID
 
+@Deprecated("PDF service v1 is deprecated, use v2.")
 @Disabled
 @ExtendWith(MockitoExtension::class)
 class PdfServiceTest {

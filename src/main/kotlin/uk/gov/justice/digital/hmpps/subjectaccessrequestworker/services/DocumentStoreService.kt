@@ -22,6 +22,7 @@ import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.file.Files
 import java.nio.file.Path
 
 @Service
@@ -40,14 +41,24 @@ class DocumentStoreService(
     throw getDocumentException(subjectAccessRequest, ex, serviceName)
   }
 
-  suspend fun getDocument(subjectAccessRequest: SubjectAccessRequest, serviceName: String, outputPath: Path): InputStream = try {
+  suspend fun getDocument(
+    subjectAccessRequest: SubjectAccessRequest,
+    serviceName: String,
+    outputPath: Path,
+  ): InputStream = try {
     s3.getObject(
       GetObjectRequest {
         bucket = s3Properties.bucketName
         key = "${subjectAccessRequest.id}/$serviceName.html"
       },
     ) { response ->
-      response.body?.writeToFile(outputPath)
+      val body = response.body ?: throw getDocumentException(
+        subjectAccessRequest = subjectAccessRequest,
+        cause = IllegalStateException("S3 getObject response body was null"),
+        serviceName = serviceName,
+      )
+      Files.createDirectories(outputPath.parent)
+      body.writeToFile(outputPath)
       BufferedInputStream(FileInputStream(outputPath.toFile()))
     }
   } catch (ex: Exception) {

@@ -28,7 +28,7 @@ class PdfDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
     storeEmptyHtml(sar)
     storeAttachment(sar, filename, "application/pdf")
 
-    val pdfPath = pdfServiceV2.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", sarBaseDir))
+    val pdfPath = pdfService.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", sarBaseDir))
 
     pdfDocumentFromInputStream(getFileInputStream(pdfPath)).use { actualPdfDoc ->
       val attachmentInfoPage = PdfTextExtractor.getTextFromPage(actualPdfDoc.getPage(5), SimpleTextExtractionStrategy())
