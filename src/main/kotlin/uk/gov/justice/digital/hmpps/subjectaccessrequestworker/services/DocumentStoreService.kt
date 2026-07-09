@@ -6,6 +6,7 @@ import aws.sdk.kotlin.services.s3.listObjectsV2
 import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.GetObjectResponse
 import aws.smithy.kotlin.runtime.content.toByteArray
+import aws.smithy.kotlin.runtime.content.writeToFile
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.S3Properties
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_ATTACHMENT
@@ -17,8 +18,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_HEAD_OBJECT_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.S3_LIST_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
+import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Path
 
 @Service
 class DocumentStoreService(
@@ -32,6 +37,30 @@ class DocumentStoreService(
         key = "${subjectAccessRequest.id}/$serviceName.html"
       },
     ) { ByteArrayInputStream(getResponseAsInputStream(it)) }
+  } catch (ex: Exception) {
+    throw getDocumentException(subjectAccessRequest, ex, serviceName)
+  }
+
+  suspend fun getDocument(
+    subjectAccessRequest: SubjectAccessRequest,
+    serviceName: String,
+    outputPath: Path,
+  ): InputStream = try {
+    s3.getObject(
+      GetObjectRequest {
+        bucket = s3Properties.bucketName
+        key = "${subjectAccessRequest.id}/$serviceName.html"
+      },
+    ) { response ->
+      val body = response.body ?: throw getDocumentException(
+        subjectAccessRequest = subjectAccessRequest,
+        cause = IllegalStateException("S3 getObject response body was null"),
+        serviceName = serviceName,
+      )
+      Files.createDirectories(outputPath.parent)
+      body.writeToFile(outputPath)
+      BufferedInputStream(FileInputStream(outputPath.toFile()))
+    }
   } catch (ex: Exception) {
     throw getDocumentException(subjectAccessRequest, ex, serviceName)
   }

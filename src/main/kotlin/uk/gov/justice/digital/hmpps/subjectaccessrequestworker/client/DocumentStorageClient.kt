@@ -2,12 +2,13 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client
 
 import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.ByteArrayResource
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
 import org.springframework.util.MultiValueMap
+import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_FAILURE
@@ -19,7 +20,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
-import java.io.ByteArrayOutputStream
+import java.nio.file.Path
+import kotlin.io.path.fileSize
 
 @Service
 class DocumentStorageClient(
@@ -30,29 +32,26 @@ class DocumentStorageClient(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
     private const val UPLOAD_DOCUMENT_PATH = "/documents/SUBJECT_ACCESS_REQUEST_REPORT"
-    private const val SAR_FILENAME = "report.pdf"
   }
 
-  fun storeDocument(subjectAccessRequest: SubjectAccessRequest, docBody: ByteArrayOutputStream): PostDocumentResponse {
+  fun storeDocument(subjectAccessRequest: SubjectAccessRequest, bodyFilePath: Path): PostDocumentResponse {
     log.info("Storing document with UUID ${subjectAccessRequest.id}")
-    val expectedSize = docBody.toByteArray().size
-    val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, contentAsResource(docBody))
+    val expectedSize = bodyFilePath.fileSize()
+    val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, bodyFilePath)
     return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
-  }
-
-  private fun contentAsResource(docBody: ByteArrayOutputStream) = object : ByteArrayResource(docBody.toByteArray()) {
-    override fun getFilename(): String = SAR_FILENAME
   }
 
   private fun executeStoreDocumentRequest(
     subjectAccessRequest: SubjectAccessRequest,
-    contentsAsResource: ByteArrayResource,
+    bodyFilePath: Path,
   ): PostDocumentResponse? {
     val subjectAccessRequestId = subjectAccessRequest.id
     try {
       return documentStorageWebClient.post().uri("$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId")
         .header("Service-Name", "DPS-Subject-Access-Requests")
-        .bodyValue(multipartBody(subjectAccessRequest, contentsAsResource))
+        .body(
+          BodyInserters.fromMultipartData(multipartBodyFromFile(subjectAccessRequest, bodyFilePath)),
+        )
         .retrieve()
         .onStatus(
           webClientRetriesSpec.is409Conflict(),
@@ -107,7 +106,7 @@ class DocumentStorageClient(
   private fun verifyUploadedFileSize(
     postDocumentResponse: PostDocumentResponse?,
     subjectAccessRequest: SubjectAccessRequest,
-    expectedFileSize: Int,
+    expectedFileSize: Long,
   ): PostDocumentResponse {
     if (postDocumentResponse == null) {
       throw SubjectAccessRequestException(
@@ -155,11 +154,11 @@ class DocumentStorageClient(
     return postDocumentResponse
   }
 
-  fun multipartBody(
+  fun multipartBodyFromFile(
     subjectAccessRequest: SubjectAccessRequest,
-    contentsAsResource: ByteArrayResource,
+    path: Path,
   ): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
-    part("file", contentsAsResource)
+    part("file", FileSystemResource(path))
     part(
       "metadata",
       listOf<Pair<String, Any?>>(
@@ -175,7 +174,7 @@ class DocumentStorageClient(
     val documentFilename: String? = null,
     val filename: String? = null,
     val fileExtension: String? = null,
-    val fileSize: Int? = null,
+    val fileSize: Long? = null,
     val fileHash: String? = null,
     val mimeType: String? = null,
     val metadata: Any? = null,

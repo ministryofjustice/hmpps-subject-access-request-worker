@@ -21,7 +21,14 @@ class CustomHeaderEventHandler(private val pdfDoc: PdfDocument, val document: Do
     val docEvent = currentEvent as PdfDocumentEvent
     val leftHeaderText: String
     val rightHeaderText: Paragraph
-    if (pdfDoc.getPageNumber(docEvent.page) <= 2) {
+    val pageNumber = pdfDoc.getPageNumber(docEvent.page)
+
+    if (pageNumber == 1) {
+      // No action required on cover page.
+      return
+    }
+
+    if (pageNumber <= 3) {
       leftHeaderText = ""
       rightHeaderText = Paragraph()
     } else {

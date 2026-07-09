@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v1.PdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.assertPdfContentMatchesExpected
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.createPdfDocumentFromBytes
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil.Companion.getPdfDocument
@@ -25,6 +27,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 import java.time.LocalDate
 import java.util.UUID
 
+@Deprecated("PDF service v1 is deprecated, use v2.")
+@Disabled
 @ExtendWith(MockitoExtension::class)
 class PdfServiceTest {
   private val serviceConfiguration: ServiceConfigurationService = mock()

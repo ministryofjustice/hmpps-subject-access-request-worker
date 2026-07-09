@@ -8,9 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.PdfService
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
+import java.nio.file.Path
 
 class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
 
@@ -32,17 +31,23 @@ class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
     storeEmptyHtml(sar)
     storeAttachment(sar, imageFilename, contentType)
 
-    val renderedPdfBytes = pdfService.renderSubjectAccessRequestPdf(PdfService.PdfRenderRequest(sar, "John Smith"))
+    val reportDir = tempDirectoryService.create("${sar.id}_")
 
-    assertAttachmentPdfMatchesExpected(renderedPdfBytes, imageFilename, expectedOutputPdf)
+    val pdfPath = pdfService.renderSubjectAccessRequestPdf(PdfRenderRequest(sar, "John Smith", reportDir))
+    assertThat(pdfPath).exists()
+
+    assertAttachmentPdfMatchesExpected(pdfPath, imageFilename, expectedOutputPdf)
   }
 
-  private fun assertAttachmentPdfMatchesExpected(actualPdfBytes: ByteArrayOutputStream, imageFilename: String, expectedFilename: String) {
+  private fun assertAttachmentPdfMatchesExpected(pdfPath: Path, imageFilename: String, expectedFilename: String) {
     val expected = getPreGeneratedPdfDocument("attachments/$expectedFilename").getPage(1)
-    val actual = pdfDocumentFromInputStream(ByteArrayInputStream(actualPdfBytes.toByteArray())).getPage(5)
-    val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
 
-    assertThat(actualPageText).`as`("attachment pdf text").contains("Attachment: 1").contains("$imageFilename - Test attachment file $imageFilename")
-    assertThat(actual.contentBytes).`as`("attachment pdf bytes").isEqualTo(expected.contentBytes)
+    getFileInputStream(pdfPath).use { inputStream ->
+      val actual = pdfDocumentFromInputStream(inputStream).getPage(5)
+      val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
+
+      assertThat(actualPageText).`as`("attachment pdf text").contains("Attachment: 1").contains("$imageFilename - Test attachment file $imageFilename")
+      assertThat(actual.contentBytes).`as`("attachment pdf bytes").isEqualTo(expected.contentBytes)
+    }
   }
 }

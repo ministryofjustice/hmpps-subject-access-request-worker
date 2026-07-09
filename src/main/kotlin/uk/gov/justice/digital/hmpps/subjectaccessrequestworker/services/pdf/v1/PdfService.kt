@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v1
 
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.html2pdf.attach.impl.layout.HtmlPageBreak
@@ -21,28 +21,22 @@ import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_COMPLETED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_STARTED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COMPLETED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_COMPLETED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceConfigurationService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.time.LocalDate
 
-@Service
+@Deprecated("Deprecated use uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService instead")
 class PdfService(
   private val serviceConfigurationService: ServiceConfigurationService,
   private val documentStoreService: DocumentStoreService,
@@ -61,32 +55,38 @@ class PdfService(
   )
 
   suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): ByteArrayOutputStream {
-    telemetryClient.trackSarEvent(GENERATE_PDF_STARTED, pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackSarEvent(ProcessingEvent.GENERATE_PDF_STARTED, pdfRenderRequest.subjectAccessRequest)
     val bodyOutputStream = ByteArrayOutputStream()
     val bodyWrapper = createPdfDocument(bodyOutputStream).use { pdfDocument ->
-      telemetryClient.trackSarEvent(GENERATE_PDF_BODY_STARTED, pdfRenderRequest.subjectAccessRequest)
+      telemetryClient.trackSarEvent(ProcessingEvent.GENERATE_PDF_BODY_STARTED, pdfRenderRequest.subjectAccessRequest)
 
       createDocumentBodyPdf(pdfRenderRequest, pdfDocument)
       PdfOutputStreamWrapper(bodyOutputStream, pdfDocument.numberOfPages).also {
-        telemetryClient.trackSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest.subjectAccessRequest)
+        telemetryClient.trackSarEvent(
+          ProcessingEvent.GENERATE_PDF_BODY_COMPLETED,
+          pdfRenderRequest.subjectAccessRequest,
+        )
       }
     }
 
     val coverOutputStream = ByteArrayOutputStream()
     val coverWrapper = createPdfDocument(coverOutputStream).use { pdfDocument ->
-      telemetryClient.trackSarEvent(GENERATE_PDF_COVER_STARTED, pdfRenderRequest.subjectAccessRequest)
+      telemetryClient.trackSarEvent(ProcessingEvent.GENERATE_PDF_COVER_STARTED, pdfRenderRequest.subjectAccessRequest)
       createSubjectAccessRequestDocument(pdfDocument).addInternalCoverPage(
         pdfRenderRequest.subjectName,
         pdfRenderRequest.subjectAccessRequest,
         bodyWrapper.numberOfPages - 1,
       )
       PdfOutputStreamWrapper(coverOutputStream, pdfDocument.numberOfPages).also {
-        telemetryClient.trackSarEvent(GENERATE_PDF_COVER_COMPLETED, pdfRenderRequest.subjectAccessRequest)
+        telemetryClient.trackSarEvent(
+          ProcessingEvent.GENERATE_PDF_COVER_COMPLETED,
+          pdfRenderRequest.subjectAccessRequest,
+        )
       }
     }
 
     return mergeBodyAndCoverDocuments(bodyWrapper, coverWrapper).also {
-      telemetryClient.trackSarEvent(GENERATE_PDF_COMPLETED, pdfRenderRequest.subjectAccessRequest)
+      telemetryClient.trackSarEvent(ProcessingEvent.GENERATE_PDF_COMPLETED, pdfRenderRequest.subjectAccessRequest)
     }
   }
 
@@ -200,13 +200,13 @@ class PdfService(
     services: List<ServiceConfiguration>,
   ) {
     telemetryClient.trackSarEvent(
-      event = GENERATE_PDF_ADD_SERVICE_DATA_STATED,
+      event = ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED,
       subjectAccessRequest = subjectAccessRequest,
       "services" to services.serviceNames(),
     )
     services.forEach { service ->
       telemetryClient.trackSarEvent(
-        event = GENERATE_PDF_SERVICE_DATA_ADDED,
+        event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
         subjectAccessRequest = subjectAccessRequest,
         "service" to service.serviceName,
       )
@@ -264,7 +264,7 @@ class PdfService(
         throw e
       }
       telemetryClient.trackSarEvent(
-        event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
+        event = ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
         subjectAccessRequest = subjectAccessRequest,
         "service" to service.serviceName,
       )

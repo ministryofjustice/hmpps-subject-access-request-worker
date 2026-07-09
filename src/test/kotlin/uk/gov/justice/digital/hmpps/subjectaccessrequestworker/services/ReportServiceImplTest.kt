@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -34,7 +35,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestSer
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import java.io.ByteArrayOutputStream
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
+import java.nio.file.Path
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -43,6 +47,9 @@ import java.util.UUID
 @ExtendWith(MockitoExtension::class)
 class ReportServiceImplTest {
 
+  @TempDir
+  lateinit var tempDir: Path
+
   private val htmlRendererApiClient: HtmlRendererApiClient = mock()
   private val prisonApiClient: PrisonApiClient = mock()
   private val probationApiClient: ProbationApiClient = mock()
@@ -50,17 +57,12 @@ class ReportServiceImplTest {
   private val serviceConfigurationService: ServiceConfigurationService = mock()
   private val pdfService: PdfService = mock()
   private val subjectAccessRequestService: SubjectAccessRequestService = mock()
+  private val tempDirectoryService: TempDirectoryService = mock()
   private val telemetryClient: TelemetryClient = mock()
 
-  private val service = ReportServiceImpl(
-    htmlRendererApiClient,
-    prisonApiClient,
-    probationApiClient,
-    documentStorageClient,
-    pdfService,
-    subjectAccessRequestService,
-    telemetryClient,
-  )
+  private lateinit var service: ReportServiceImpl
+  private lateinit var reportDirPath: Path
+  private lateinit var reportPdfPath: Path
 
   private val suspendedServiceConfig = ServiceConfiguration(
     id = UUID.randomUUID(),
@@ -91,17 +93,32 @@ class ReportServiceImplTest {
     services = mutableListOf(),
   )
 
-  private val pdfRenderRequest = PdfService.PdfRenderRequest(
-    subjectAccessRequest = subjectAccessRequest,
-    subjectName = "Clive",
-  )
-
-  private val pdfByteArray = "Pdf Byte Array".toByteArray()
-
-  private val pdfByteArrayOutputStream = ByteArrayOutputStream().apply { write(pdfByteArray) }
+  private lateinit var pdfRenderRequest: PdfRenderRequest
 
   @BeforeEach
   fun setup() {
+    reportDirPath = tempDir.resolve("${subjectAccessRequest.id}_123")
+    reportPdfPath = reportDirPath.resolve("${subjectAccessRequest.id}.pdf")
+
+    whenever(tempDirectoryService.create("${subjectAccessRequest.id}_"))
+      .thenReturn(reportDirPath)
+
+    pdfRenderRequest = PdfRenderRequest(
+      subjectAccessRequest = subjectAccessRequest,
+      subjectName = "Clive",
+      reportDir = reportDirPath,
+    )
+
+    service = ReportServiceImpl(
+      htmlRendererApiClient,
+      prisonApiClient,
+      probationApiClient,
+      documentStorageClient,
+      pdfService,
+      subjectAccessRequestService,
+      tempDirectoryService,
+      telemetryClient,
+    )
     subjectAccessRequest.services.clear()
   }
 
@@ -144,7 +161,7 @@ class ReportServiceImplTest {
       givenRenderRequestReturnsVersion(unsuspendedServiceConfigSix, "4")
       whenever(prisonApiClient.getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!))
         .thenReturn("Clive")
-      whenever(pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)).thenReturn(pdfByteArrayOutputStream)
+      whenever(pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)).thenReturn(reportPdfPath)
 
       service.generateReport(subjectAccessRequest)
 
@@ -152,14 +169,17 @@ class ReportServiceImplTest {
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigTwo)
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigFour)
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigSix)
+
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfig, "1")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigTwo, "2")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigFour, "3")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigSix, "4")
+
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
       verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!)
       verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
-      verify(documentStorageClient).storeDocument(subjectAccessRequest, pdfByteArrayOutputStream)
+      verify(documentStorageClient).storeDocument(subjectAccessRequest, reportPdfPath)
+
       thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfig)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfig)
@@ -195,7 +215,10 @@ class ReportServiceImplTest {
       verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigThree)
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigTwo, "1")
       thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigThree, "2")
-      verify(subjectAccessRequestService).updateServiceStatusSuspended(subjectAccessRequest.id, suspendedServiceConfig.serviceName)
+      verify(subjectAccessRequestService).updateServiceStatusSuspended(
+        subjectAccessRequest.id,
+        suspendedServiceConfig.serviceName,
+      )
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
       thenEventTrackedForServicesSelected("service-1,service-3,service-2")
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigTwo)
@@ -273,7 +296,10 @@ class ReportServiceImplTest {
     )
   }
 
-  private fun thenServiceStatusUpdatedAsSuccessFor(serviceConfiguration: ServiceConfiguration, templateVersion: String) {
+  private fun thenServiceStatusUpdatedAsSuccessFor(
+    serviceConfiguration: ServiceConfiguration,
+    templateVersion: String,
+  ) {
     verify(subjectAccessRequestService).updateServiceStatusSuccess(
       subjectAccessRequest.id,
       serviceConfiguration.serviceName,
