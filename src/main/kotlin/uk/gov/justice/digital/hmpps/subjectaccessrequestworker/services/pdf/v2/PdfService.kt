@@ -91,7 +91,7 @@ class PdfService(
 
       val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
       val serviceHtml = getServiceHtml(pdfRenderRequest, serviceConfiguration)
-      log.info("converting service {} html to pdf", subjectAccessRequest.id)
+      log.info("converting service {} html to pdf using {}", subjectAccessRequest.id, servicePdfRenderer::class.simpleName)
       servicePdfRenderer.generateServicePdf(servicePdfPath, serviceHtml)
 
       val attachments = documentStoreService.listAttachments(
