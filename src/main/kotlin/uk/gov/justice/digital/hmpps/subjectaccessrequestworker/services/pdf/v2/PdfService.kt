@@ -1,20 +1,13 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
-import com.itextpdf.html2pdf.ConverterProperties
-import com.itextpdf.html2pdf.HtmlConverter
-import com.itextpdf.html2pdf.attach.impl.layout.HtmlPageBreak
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.AreaBreak
-import com.itextpdf.layout.element.IBlockElement
-import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
-import com.itextpdf.layout.properties.AreaBreakType
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
@@ -29,7 +22,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -50,11 +42,11 @@ class PdfService(
   private val dateService: DateService,
   private val attachmentsPdfService: AttachmentsPdfService,
   private val telemetryClient: TelemetryClient,
+  private val servicePdfRenderer: ServicePdfRenderer,
 ) {
 
   companion object {
     private val log = LoggerFactory.getLogger(PdfService::class.java)
-    private val converterProperties: ConverterProperties = ConverterProperties()
   }
 
   suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): Path {
@@ -98,25 +90,9 @@ class PdfService(
       )
 
       val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
-
-      createWritablePdfDocument(output = servicePdfPath).use { pdf ->
-        newDocument(pdf).use {
-          getServiceHtml(pdfRenderRequest, serviceConfiguration).use { htmlInputStream ->
-            log.info("converting service {} html to pdf", subjectAccessRequest.id)
-
-            HtmlConverter.convertToElements(htmlInputStream, converterProperties).forEach { element ->
-              when (element) {
-                is IBlockElement -> it.add(element)
-                is Image -> it.add(element)
-                is HtmlPageBreak -> it.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-                else -> {
-                  throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
-                }
-              }
-            }
-          }
-        }
-      }
+      val serviceHtml = getServiceHtml(pdfRenderRequest, serviceConfiguration)
+      log.info("converting service {} html to pdf", subjectAccessRequest.id)
+      servicePdfRenderer.generateServicePdf(servicePdfPath, serviceHtml)
 
       val attachments = documentStoreService.listAttachments(
         subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,

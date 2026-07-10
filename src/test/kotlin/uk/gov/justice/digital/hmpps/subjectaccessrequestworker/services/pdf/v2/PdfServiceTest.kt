@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
+import com.itextpdf.layout.element.Paragraph
 import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -16,6 +17,8 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -35,6 +38,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Path
@@ -90,6 +95,7 @@ class PdfServiceTest {
       dateService = dateService,
       attachmentsPdfService = attachmentsPdfService,
       telemetryClient = telemetryClient,
+      servicePdfRenderer = ITextServicePdfRenderer(),
     )
   }
 
@@ -161,6 +167,69 @@ class PdfServiceTest {
 
     verify(attachmentsPdfService, never())
       .processAttachments(any(), any(), any())
+  }
+
+  @Test
+  fun `should delegate service pdf generation to the configured ServicePdfRenderer`() = runTest {
+    val servicePdfRenderer: ServicePdfRenderer = Mockito.mock()
+
+    whenever(requestServiceDetail1.serviceConfiguration)
+      .thenReturn(service1Config)
+
+    whenever(service1Config.serviceName)
+      .thenReturn(serviceName)
+
+    whenever(service1Config.label)
+      .thenReturn(serviceLabel)
+
+    whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, serviceName))
+      .thenReturn("v1")
+
+    val serviceHtml = getHtmlInputStream(
+      path = getResourcePath("/integration-tests/html-stubs/$serviceName-expected.html"),
+    )
+
+    whenever(
+      documentStoreService.getDocument(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceName = serviceName,
+        outputPath = sarBaseDir.resolve("html/$serviceName.html"),
+      ),
+    ).thenReturn(serviceHtml)
+
+    whenever(documentStoreService.listAttachments(subjectAccessRequest, serviceName))
+      .thenReturn(emptyList())
+
+    whenever(dateService.reportGenerationDate())
+      .thenReturn("1 January 2025")
+
+    whenever(dateService.reportDateFormat(dateFrom, "Start of record"))
+      .thenReturn("1 January 2024")
+
+    whenever(dateService.reportDateFormat(dateTo))
+      .thenReturn("1 January 2025")
+
+    doAnswer { invocation ->
+      val servicePdfPath = invocation.getArgument<Path>(0)
+      createWritablePdfDocument(servicePdfPath).use { pdf ->
+        newDocument(pdf).use { doc -> doc.add(Paragraph("stub content")) }
+      }
+    }.whenever(servicePdfRenderer).generateServicePdf(any(), any())
+
+    val pdfServiceWithConfiguredRenderer = PdfService(
+      documentStoreService = documentStoreService,
+      dateService = dateService,
+      attachmentsPdfService = attachmentsPdfService,
+      telemetryClient = telemetryClient,
+      servicePdfRenderer = servicePdfRenderer,
+    )
+
+    val actualPdfPath = pdfServiceWithConfiguredRenderer.renderSubjectAccessRequestPdf(pdfRenderRequest)
+
+    assertThat(actualPdfPath).exists()
+
+    verify(servicePdfRenderer, times(1))
+      .generateServicePdf(eq(pdfRenderRequest.serviceDataPdfPath(service1Config)), eq(serviceHtml))
   }
 
   private fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {
