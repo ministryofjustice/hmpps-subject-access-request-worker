@@ -8,9 +8,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 import com.microsoft.applicationinsights.TelemetryClient
+import nu.validator.htmlparser.sax.HtmlParser
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.xml.sax.InputSource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
@@ -25,6 +27,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer.HtmlChunkPdfConsumer
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.HtmlStreamingHandler
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.HtmlStyleSheetExtractor
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestOfficialSensitiveFooterEventHandler
@@ -64,11 +69,30 @@ class PdfService(
 
     generateExternalCoverPage(pdfRenderRequest)
     generateInternalContentsPage(pdfRenderRequest)
-    generateServicePartials(pdfRenderRequest)
+    //generateServicePartials(pdfRenderRequest)
+    generateServicePartials2(pdfRenderRequest)
     val pageCount = mergeReportBodyPartials(pdfRenderRequest)
 
     telemetryClient.trackSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest.subjectAccessRequest)
     return pageCount
+  }
+
+  private suspend fun generateServicePartials2(pdfRenderRequest: PdfRenderRequest) {
+    val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
+    val services = subjectAccessRequest.getSelectedServices()
+
+    services.forEach { serviceConfiguration ->
+      val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
+
+      val styleSheet = HtmlStyleSheetExtractor(
+        htmlInput = getServiceHtml(pdfRenderRequest, serviceConfiguration),
+      ).getStyleSheet()
+
+      HtmlChunkPdfConsumer(servicePdfPath).use { consumer ->
+        val parser = HtmlParser().apply { contentHandler = HtmlStreamingHandler(consumer, styleSheet) }
+        parser.parse(InputSource(getServiceHtml(pdfRenderRequest, serviceConfiguration)))
+      }
+    }
   }
 
   private suspend fun generateServicePartials(pdfRenderRequest: PdfRenderRequest) {

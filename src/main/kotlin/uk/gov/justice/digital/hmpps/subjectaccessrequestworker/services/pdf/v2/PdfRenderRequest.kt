@@ -80,6 +80,8 @@ class PdfRenderRequest(
   ): Path = pdfPartialsDir.resolve("${service.serviceName}-attachments.pdf")
 
   override fun close() {
+    log.info("cleaning up PdfRenderRequest temporary working directory {}", reportDir)
+
     if (!reportDir.toFile().deleteRecursively()) {
       log.warn("failed to recursively delete PdfRenderRequest temporary working directory {}", reportDir)
     }

@@ -1,13 +1,16 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking
 
 import nu.validator.htmlparser.sax.HtmlParser
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
 import org.xml.sax.helpers.DefaultHandler
 import java.io.FileInputStream
+import java.io.InputStream
 import java.nio.file.Path
 
-class HtmlStyleSheetExtractor(val htmlInput: Path) {
+class HtmlStyleSheetExtractor(val htmlInput: InputStream) {
+
+  constructor(htmlInput: Path) : this(FileInputStream(htmlInput.toFile()))
 
   fun getStyleSheet(): String {
     val styleSheetParser = HtmlParser().apply { contentHandler = HtmlStyleSheetHandler() }
@@ -15,7 +18,7 @@ class HtmlStyleSheetExtractor(val htmlInput: Path) {
     // Extract the stylesheet from the document first.
     var styleSheetValue: String? = null
     try {
-      styleSheetParser.parse(InputSource(FileInputStream(htmlInput.toFile())))
+      styleSheetParser.parse(InputSource(htmlInput))
     } catch (e: HtmlStyleSheetHandler.ParsingCompleteException) {
       styleSheetValue = (styleSheetParser.contentHandler as HtmlStyleSheetHandler).getStyleSheet()
     }
@@ -48,9 +51,7 @@ class HtmlStyleSheetExtractor(val htmlInput: Path) {
     }
 
     override fun characters(ch: CharArray?, start: Int, length: Int) {
-      if (isStyleSheet) {
-        styleSheet.append(ch?.concatToString()?.trim() ?: "")
-      }
+      ch?.takeIf {isStyleSheet }?.let {  styleSheet.append(ch!!, start, length)}
     }
 
     fun getStyleSheet(): String = styleSheet.toString()

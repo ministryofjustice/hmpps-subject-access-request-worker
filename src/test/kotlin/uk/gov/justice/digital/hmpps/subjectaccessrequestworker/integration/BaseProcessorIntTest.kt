@@ -21,6 +21,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.Servic
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.TemplateVersionRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
+import java.nio.file.Path
+import kotlin.io.path.toPath
 
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
 @Testcontainers
@@ -174,11 +176,13 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,
+    templateVersion: String = "v1",
   ) = stubHtmlRendererSuccess(
     sar = sar,
     htmlRenderRequest = htmlRenderRequest,
     serviceName = serviceName,
     fileToAddToBucket = serviceName,
+    templateVersion = templateVersion,
   )
 
   protected fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
@@ -213,6 +217,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
         documentKey,
         getReportHtmlForService(fileToAddToBucket),
       ),
+      mapOf("template_version" to templateVersion)
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }
@@ -239,4 +244,9 @@ class BaseProcessorIntTest : IntegrationTestBase() {
         ),
       ),
     )
+
+  protected fun resolveResourcePath(
+    filepath: String
+  ): Path = this::class.java.getResource(filepath)?.toURI()?.toPath()
+    ?: throw RuntimeException("test resource not found: $filepath")
 }

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf
+package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer
 
 import java.nio.file.Files
 import java.nio.file.Path
