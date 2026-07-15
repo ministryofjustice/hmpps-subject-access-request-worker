@@ -10,7 +10,11 @@ import java.nio.file.Path
 
 class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
 
-  override suspend fun generateServicePdf(servicePdfPath: Path, serviceHtml: InputStream) {
+  override suspend fun generateServicePdf(
+    pdfRenderRequest: PdfRenderRequest,
+    servicePdfPath: Path,
+    serviceHtml: InputStream,
+  ) {
     withContext(Dispatchers.IO) {
       val rawHtml = serviceHtml.bufferedReader(Charsets.UTF_8).use { it.readText() }
       val xhtml = buildXhtmlDocument(serviceHtml = rawHtml)

@@ -2,10 +2,8 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
 import com.itextpdf.io.font.constants.StandardFonts
 import com.itextpdf.kernel.font.PdfFontFactory
-import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.kernel.utils.PdfMerger
-import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
@@ -22,13 +20,14 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestOfficialSensitiveFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
@@ -92,27 +91,10 @@ class PdfService(
       val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
       val serviceHtml = getServiceHtml(pdfRenderRequest, serviceConfiguration)
       log.info("converting service {} html to pdf using {}", subjectAccessRequest.id, servicePdfRenderer::class.simpleName)
-      servicePdfRenderer.generateServicePdf(servicePdfPath, serviceHtml)
+      servicePdfRenderer.generateServicePdf(pdfRenderRequest, servicePdfPath, serviceHtml)
 
-      val attachments = documentStoreService.listAttachments(
-        subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-        serviceName = serviceConfiguration.serviceName,
-      )
-      if (!attachments.isEmpty()) {
-        val attachmentsPdfPath = pdfRenderRequest.serviceAttachmentsPdfPath(serviceConfiguration)
-        createWritablePdfDocument(attachmentsPdfPath).use { attachmentsPdf ->
+      generateServiceAttachments(pdfRenderRequest, serviceConfiguration)
 
-          newDocument(attachmentsPdf).use { attachmentsDocument ->
-            log.info("appending service attachments to {} pdf", subjectAccessRequest.id)
-
-            attachmentsPdfService.processAttachments(
-              subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-              serviceName = serviceConfiguration.serviceName,
-              document = attachmentsDocument,
-            )
-          }
-        }
-      }
       telemetryClient.trackSarEvent(
         event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
         subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
@@ -121,11 +103,52 @@ class PdfService(
     }
   }
 
+  private suspend fun generateServiceAttachments(
+    pdfRenderRequest: PdfRenderRequest,
+    serviceConfiguration: ServiceConfiguration,
+  ) {
+    val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
+
+    documentStoreService.listAttachments(
+      subjectAccessRequest = subjectAccessRequest,
+      serviceName = serviceConfiguration.serviceName,
+    ).takeIf { it.isNotEmpty() }?.let {
+
+      val attachmentsPdfPath = pdfRenderRequest.serviceAttachmentsPdfPath(serviceConfiguration)
+      createWritablePdfDocument(attachmentsPdfPath).use { pdf ->
+        newDocument(pdf).use { attachmentsDocument ->
+          log.info("appending service attachments to {} pdf", subjectAccessRequest.id)
+
+          pdf.addEventHandler(
+            PdfDocumentEvent.END_PAGE,
+            SubjectAccessRequestHeaderAndFooterEventHandler(
+              document = attachmentsDocument,
+              subjectName = pdfRenderRequest.subjectName,
+              nomisId = subjectAccessRequest.nomisId,
+              ndeliusCaseReferenceId = subjectAccessRequest.ndeliusCaseReferenceId,
+            ),
+          )
+
+          attachmentsPdfService.processAttachments(
+            subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+            serviceName = serviceConfiguration.serviceName,
+            document = attachmentsDocument,
+          )
+        }
+      }
+    }
+  }
+
   private suspend fun generateInternalContentsPage(pdfRenderRequest: PdfRenderRequest) {
     telemetryClient.trackSarEvent(GENERATE_PDF_COVER_STARTED, pdfRenderRequest.subjectAccessRequest)
 
-    createWritablePdfDocument(pdfRenderRequest.internalContentsPagePdfPath).use { contentsPagePdf ->
-      newDocument(contentsPagePdf).use { doc ->
+    createWritablePdfDocument(pdfRenderRequest.internalContentsPagePdfPath).use { pdf ->
+      newDocument(pdf).use { document ->
+        pdf.addEventHandler(
+          PdfDocumentEvent.END_PAGE,
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+        )
+
         val contentsPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -133,7 +156,7 @@ class PdfService(
 
         contentsPageText.add(Text("\n\n\n"))
         contentsPageText.add(Text("CONTENTS\n"))
-        doc.add(contentsPageText)
+        document.add(contentsPageText)
 
         val services = pdfRenderRequest.subjectAccessRequest.getSelectedServices()
         val serviceListParagraph = Paragraph()
@@ -144,8 +167,8 @@ class PdfService(
               .setFontSize(14f)
           }
 
-        doc.add(serviceListParagraph)
-        doc.add(
+        document.add(serviceListParagraph)
+        document.add(
           Paragraph("\n\nINTERNAL ONLY")
             .setTextAlignment(TextAlignment.CENTER)
             .setFontSize(16f),
@@ -157,8 +180,13 @@ class PdfService(
   }
 
   private fun generateExternalCoverPage(pdfRenderRequest: PdfRenderRequest) {
-    createWritablePdfDocument(pdfRenderRequest.externalCoverPagePdfPath).use { pdfDoc ->
-      newDocument(pdfDoc).use { doc ->
+    createWritablePdfDocument(pdfRenderRequest.externalCoverPagePdfPath).use { pdf ->
+      newDocument(pdf).use { document ->
+        pdf.addEventHandler(
+          PdfDocumentEvent.END_PAGE,
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+        )
+
         val coverPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -166,15 +194,15 @@ class PdfService(
 
         coverPageText.add(Text("\u00a0\n").setFontSize(180f))
         coverPageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-        doc.add(coverPageText)
-        doc.add(Paragraph("Name: ${pdfRenderRequest.subjectName}").setTextAlignment(TextAlignment.CENTER))
+        document.add(coverPageText)
+        document.add(Paragraph("Name: ${pdfRenderRequest.subjectName}").setTextAlignment(TextAlignment.CENTER))
 
         val subjectLine = getSubjectIdLine(
           pdfRenderRequest.subjectAccessRequest.nomisId,
           pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
         )
-        doc.add(Paragraph(subjectLine).setTextAlignment(TextAlignment.CENTER))
-        doc.add(
+        document.add(Paragraph(subjectLine).setTextAlignment(TextAlignment.CENTER))
+        document.add(
           Paragraph("SAR Case Reference Number: ${pdfRenderRequest.subjectAccessRequest.sarCaseReferenceNumber}")
             .setTextAlignment(TextAlignment.CENTER),
         )
@@ -217,8 +245,13 @@ class PdfService(
     val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
     val subjectName = pdfRenderRequest.subjectName
 
-    createWritablePdfDocument(pdfRenderRequest.internalCoverPagePdfPath).use { pdfDoc ->
-      newDocument(pdfDoc).use { doc ->
+    createWritablePdfDocument(pdfRenderRequest.internalCoverPagePdfPath).use { pdf ->
+      newDocument(pdf).use { document ->
+        pdf.addEventHandler(
+          PdfDocumentEvent.END_PAGE,
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+        )
+
         val coverPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
@@ -226,77 +259,75 @@ class PdfService(
 
         coverPageText.add(Text("\u00a0\n").setFontSize(180f))
         coverPageText.add(Text("SUBJECT ACCESS REQUEST REPORT\n\n"))
-        doc.add(coverPageText).setTextAlignment(TextAlignment.CENTER)
+        document.add(coverPageText).setTextAlignment(TextAlignment.CENTER)
 
-        doc.add(Paragraph("Name: $subjectName")).setTextAlignment(TextAlignment.CENTER)
+        document.add(Paragraph("Name: $subjectName")).setTextAlignment(TextAlignment.CENTER)
 
         val subjectLine = getSubjectIdLine(subjectAccessRequest.nomisId, subjectAccessRequest.ndeliusCaseReferenceId)
-        doc.add(Paragraph(subjectLine).setTextAlignment(TextAlignment.CENTER))
-        doc.add(
+        document.add(Paragraph(subjectLine).setTextAlignment(TextAlignment.CENTER))
+        document.add(
           Paragraph("SAR Case Reference Number: ${subjectAccessRequest.sarCaseReferenceNumber}").setTextAlignment(
             TextAlignment.CENTER,
           ),
         )
 
         val reportDateRange = getReportDateRangeLine(subjectAccessRequest.dateFrom, subjectAccessRequest.dateTo)
-        doc.add(Paragraph(reportDateRange).setTextAlignment(TextAlignment.CENTER))
-        doc.add(
+        document.add(Paragraph(reportDateRange).setTextAlignment(TextAlignment.CENTER))
+        document.add(
           Paragraph("Report generation date: ${dateService.reportGenerationDate()}").setTextAlignment(
             TextAlignment.CENTER,
           ),
         )
-        doc.add(
+        document.add(
           Paragraph("\nTotal Pages: ${reportBodyPageCount + 2}").setTextAlignment(TextAlignment.CENTER)
             .setFontSize(16f),
         )
-        doc.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
-        doc.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
+        document.add(Paragraph("\nINTERNAL ONLY").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
+        document.add(Paragraph("\nOFFICIAL-SENSITIVE").setTextAlignment(TextAlignment.CENTER).setFontSize(16f))
       }
     }
   }
 
   private fun generateRearPage(pdfRenderRequest: PdfRenderRequest, reportBodyPageCount: Int) {
-    createWritablePdfDocument(output = pdfRenderRequest.rearPagePdfPath).use { pdfDoc ->
-      newDocument(pdfDoc).use { doc ->
+    createWritablePdfDocument(output = pdfRenderRequest.rearPagePdfPath).use { pdf ->
+      newDocument(pdf).use { document ->
+        pdf.addEventHandler(
+          PdfDocumentEvent.END_PAGE,
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+        )
+
         val endPageText = Paragraph()
           .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
           .setFontSize(16f)
           .setTextAlignment(TextAlignment.CENTER)
 
-        doc.add(Paragraph("\u00a0").setFontSize(300f))
+        document.add(Paragraph("\u00a0").setFontSize(300f))
 
         endPageText.add(Text("End of Subject Access Request Report\n\n"))
         endPageText.add(Text("Total pages: ${reportBodyPageCount + 2}\n\n")) // total = body + cover + rear page
         endPageText.add(Text("INTERNAL ONLY"))
-        doc.add(endPageText)
+        document.add(endPageText)
       }
     }
   }
 
   private fun mergePartialsIntoFullReportPdf(pdfRenderRequest: PdfRenderRequest) {
     createWritablePdfDocument(output = pdfRenderRequest.fullReportPdfPath).use { pdf ->
-      newDocument(pdf).use { doc ->
-        pdf.addEventHandler(
-          PdfDocumentEvent.END_PAGE,
-          getCustomerHeaderEventHandler(pdf, doc, pdfRenderRequest),
-        )
+      val merger = PdfMerger(pdf)
 
-        val merger = PdfMerger(pdf)
+      val internalCoverPagePath = pdfRenderRequest.internalCoverPagePdfPath
+      getReadablePdfDocument(getInputStream(internalCoverPagePath)).use { internalCoverPdf ->
+        merger.merge(internalCoverPdf, 1, internalCoverPdf.numberOfPages)
+      }
 
-        val internalCoverPagePath = pdfRenderRequest.internalCoverPagePdfPath
-        getReadablePdfDocument(getInputStream(internalCoverPagePath)).use { internalCoverPdf ->
-          merger.merge(internalCoverPdf, 1, internalCoverPdf.numberOfPages)
-        }
+      val reportBodyPath = pdfRenderRequest.reportBodyPdfPath
+      getReadablePdfDocument(getInputStream(reportBodyPath)).use { reportBodyPdf ->
+        merger.merge(reportBodyPdf, 1, reportBodyPdf.numberOfPages)
+      }
 
-        val reportBodyPath = pdfRenderRequest.reportBodyPdfPath
-        getReadablePdfDocument(getInputStream(reportBodyPath)).use { reportBodyPdf ->
-          merger.merge(reportBodyPdf, 1, reportBodyPdf.numberOfPages)
-        }
-
-        val rearPagePath = pdfRenderRequest.rearPagePdfPath
-        getReadablePdfDocument(getInputStream(rearPagePath)).use { rearPagePdf ->
-          merger.merge(rearPagePdf, 1, rearPagePdf.numberOfPages)
-        }
+      val rearPagePath = pdfRenderRequest.rearPagePdfPath
+      getReadablePdfDocument(getInputStream(rearPagePath)).use { rearPagePdf ->
+        merger.merge(rearPagePdf, 1, rearPagePdf.numberOfPages)
       }
     }
   }
@@ -308,18 +339,6 @@ class PdfService(
     subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
     serviceName = serviceConfiguration.serviceName,
     outputPath = pdfRenderRequest.serviceHtmlPath(serviceConfiguration),
-  )
-
-  private fun getCustomerHeaderEventHandler(
-    pdfDocument: PdfDocument,
-    document: Document,
-    pdfRenderRequest: PdfRenderRequest,
-  ) = CustomHeaderEventHandler(
-    pdfDoc = pdfDocument,
-    document = document,
-    subjectName = pdfRenderRequest.subjectName,
-    nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
-    ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
   )
 
   private suspend fun getServiceLabelWithTemplateVersion(

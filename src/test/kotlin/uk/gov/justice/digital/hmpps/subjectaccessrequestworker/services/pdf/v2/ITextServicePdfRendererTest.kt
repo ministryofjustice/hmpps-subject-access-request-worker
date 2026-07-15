@@ -6,8 +6,11 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.mock
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
 import java.nio.file.Path
@@ -17,13 +20,26 @@ class ITextServicePdfRendererTest {
   @TempDir
   lateinit var tempDir: Path
 
+  lateinit var pdfRenderRequest: PdfRenderRequest
+
+  private val subjectAccessRequest: SubjectAccessRequest = mock()
+
+  @BeforeEach
+  fun setup() {
+    pdfRenderRequest = PdfRenderRequest(
+      subjectName = "Barny Gumble",
+      subjectAccessRequest = subjectAccessRequest,
+      reportDir = tempDir,
+    )
+  }
+
   private val renderer = ITextServicePdfRenderer()
 
   @Test
   fun `should render html content to a valid pdf`() = runTest {
     val outputPath = tempDir.resolve("service.pdf")
 
-    renderer.generateServicePdf(outputPath, "<h1>Test Service Report</h1>".byteInputStream())
+    renderer.generateServicePdf(pdfRenderRequest, outputPath, "<h1>Test Service Report</h1>".byteInputStream())
 
     assertThat(outputPath).exists()
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
@@ -41,7 +57,7 @@ class ITextServicePdfRendererTest {
     """.trimIndent()
     val outputPath = tempDir.resolve("service.pdf")
 
-    renderer.generateServicePdf(outputPath, html.byteInputStream())
+    renderer.generateServicePdf(pdfRenderRequest, outputPath, html.byteInputStream())
 
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
       assertThat(pdf.numberOfPages).isEqualTo(2)
@@ -56,7 +72,7 @@ class ITextServicePdfRendererTest {
     val html = """<img src="data:image/png;base64,$base64Png" style="display:block;" />"""
     val outputPath = tempDir.resolve("service.pdf")
 
-    renderer.generateServicePdf(outputPath, html.byteInputStream())
+    renderer.generateServicePdf(pdfRenderRequest, outputPath, html.byteInputStream())
 
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
       assertThat(pdf.numberOfPages).isEqualTo(1)
@@ -65,5 +81,8 @@ class ITextServicePdfRendererTest {
     }
   }
 
-  private fun pageText(pdf: PdfDocument, pageNumber: Int) = PdfTextExtractor.getTextFromPage(pdf.getPage(pageNumber), SimpleTextExtractionStrategy())
+  private fun pageText(
+    pdf: PdfDocument,
+    pageNumber: Int
+  ) = PdfTextExtractor.getTextFromPage(pdf.getPage(pageNumber), SimpleTextExtractionStrategy())
 }
