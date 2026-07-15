@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.Subject
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.memoryUsage
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
 import java.nio.file.Path
 import kotlin.io.path.fileSize

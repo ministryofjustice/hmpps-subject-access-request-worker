@@ -51,3 +51,11 @@ fun newDocument(
 ): Document = Document(pdf, pdf.defaultPageSize, true).apply {
   setMargins(50F, 35F, 70F, 35F)
 }
+
+fun memoryUsage(): String {
+  val runtime = Runtime.getRuntime()
+  val memoryUsed = ((runtime.totalMemory() - runtime.freeMemory()) / 1024) / 1024
+  val totalMemory = (runtime.totalMemory() / 1024) / 1024
+  val maxMemory = (runtime.maxMemory() / 1024) / 1024
+  return "Memory used: ${memoryUsed}MB, Total memory: ${totalMemory}MB, Max memory: ${maxMemory}MB"
+}

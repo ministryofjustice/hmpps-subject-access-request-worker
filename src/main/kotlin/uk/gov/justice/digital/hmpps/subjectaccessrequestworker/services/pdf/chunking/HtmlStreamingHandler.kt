@@ -6,23 +6,47 @@ import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer.HtmlChunkConsumer
 
+const val MAX_BUFFER_SIZE = 1_000_000
+
 class HtmlStreamingHandler(
   val chunkConsumer: HtmlChunkConsumer,
-  val styleSheet: String,
-  val minBufferSize: Int = 50000,
+  val minBufferSize: Int = 75000,
 ) : DefaultHandler() {
 
   private val openTags: ArrayDeque<String> = ArrayDeque()
-  private val currentChunk: StringBuilder = StringBuilder()
-  private val skipTags = listOf("html", "body", "head", "style")
+  private val buffer: StringBuilder = StringBuilder()
   private var tableDepth = 0
-  private var currentTag: String? = null
+  private val style = StringBuilder()
+  private var insideStyleTag = false
+
+  private val skipTags = setOf(
+    "html",
+    "body",
+    "head",
+  )
+
+  private val voidTags = setOf(
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "source",
+    "track",
+    "wbr",
+  )
 
   private companion object {
     private val log = LoggerFactory.getLogger(HtmlStreamingHandler::class.java)
   }
 
   override fun startDocument() {
+    log.info("Starting document")
   }
 
   override fun startElement(
@@ -31,7 +55,6 @@ class HtmlStreamingHandler(
     qName: String?,
     attributes: Attributes?,
   ) {
-    currentTag = qName
     if (qName.isNullOrBlank()) {
       throw RuntimeException("Invalid HTML - tag name was null or empty")
     }
@@ -40,8 +63,19 @@ class HtmlStreamingHandler(
       return
     }
 
+    if (qName == "style") {
+      insideStyleTag = true
+      return
+    }
+
+    if (voidTags.contains(qName)) {
+      buffer.appendVoidTag(qName, attributes)
+      return
+    }
+
+    checkChunkSize()
     openTags.addLast(qName)
-    currentChunk.appendOpenTag(qName, attributes)
+    buffer.appendOpenTag(qName, attributes)
 
     if (qName == "table") {
       incrementTableDepth()
@@ -49,16 +83,34 @@ class HtmlStreamingHandler(
   }
 
   override fun characters(ch: CharArray?, start: Int, length: Int) {
-    if (skipTags.contains(currentTag)) {
+    if (skipTags.contains(openTags.lastOrNull())) {
       return
     }
-    ch?.let { currentChunk.append(it, start, length) }
+
+    checkChunkSize()
+
+    if (insideStyleTag) {
+      ch?.let {
+        style.append(it, start, length)
+      }
+      return
+    }
+
+    ch?.let {
+      buffer.append(it, start, length)
+    }
   }
 
   override fun endElement(uri: String?, localName: String?, qName: String?) {
-    currentTag = null
-
     if (skipTags.contains(qName)) {
+      return
+    }
+    if (qName == "style") {
+      insideStyleTag = false
+      return
+    }
+
+    if (voidTags.contains(qName)) {
       return
     }
 
@@ -71,29 +123,30 @@ class HtmlStreamingHandler(
       throw RuntimeException("Unexpected end tag: expected=$poppedValue, actual=$qName")
     }
 
-    currentChunk.appendCloseTag(qName)
+    buffer.appendCloseTag(qName)
 
     if (qName == "table") {
       decrementTableDepth()
     }
 
     if (canEmit()) {
-      log.info("emitting chunk: {}", currentChunk.length)
+      log.info("emitting chunk: {}", buffer.length)
       emitChunkToConsumer()
     }
   }
 
   override fun endDocument() {
-    if (currentChunk.isNotEmpty()) {
+    if (buffer.isNotEmpty()) {
+      log.info("emitting final chunk: {}", buffer.length)
       emitChunkToConsumer()
     }
     log.info("end document {}, tableDepth: {}", openTags.size, tableDepth)
   }
 
   private fun emitChunkToConsumer() {
-    val fullHtmlChunk = wrapHtml(currentChunk.toString())
+    val fullHtmlChunk = wrapHtml(buffer.toString())
     chunkConsumer.consume(fullHtmlChunk)
-    currentChunk.clear()
+    buffer.clear()
   }
 
   private fun incrementTableDepth() {
@@ -105,7 +158,13 @@ class HtmlStreamingHandler(
     if (tableDepth < 0) throw RuntimeException("Invalid HTML: Table depth is negative")
   }
 
-  private fun canEmit(): Boolean = tableDepth == 0 && openTags.isEmpty() && currentChunk.length >= minBufferSize
+  private fun checkChunkSize() {
+    if (buffer.length >= MAX_BUFFER_SIZE) {
+      throw RuntimeException("buffer size exceeded max limit - HTML likely contains top level wrapper tag")
+    }
+  }
+
+  private fun canEmit(): Boolean = tableDepth == 0 && openTags.isEmpty() && buffer.length >= minBufferSize
 
   private fun wrapHtml(bodyContent: String): String {
     return """
@@ -113,7 +172,7 @@ class HtmlStreamingHandler(
 <html>
   <head>
     <style>
-      $styleSheet
+      $style
     </style>
   </head>
   <body>$bodyContent</body>
@@ -139,6 +198,12 @@ class HtmlStreamingHandler(
       }
     }
     return this
+  }
+
+  internal fun StringBuilder.appendVoidTag(qName: String, attributes: Attributes?) {
+    this.append("<$qName")
+      .appendAttributes(attributes)
+      .append("/>")
   }
 }
 

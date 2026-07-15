@@ -1,11 +1,15 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
+import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mockito.doAnswer
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
@@ -17,8 +21,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Docum
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.PrisonApiExtension.Companion.prisonApi
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ProbationApiExtension.Companion.probationApi
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -34,7 +40,7 @@ import kotlin.time.Duration.Companion.minutes
 
 class PdfChunkingIntTest : BaseProcessorIntTest() {
 
-  val expectedPdfPath = "/integration-tests/reference-pdfs/hmpps-support-additional-needs-api-expected.pdf"
+  val expectedPdfBaseDir = "/integration-tests/reference-pdfs"
 
   @MockitoBean
   private lateinit var dateService: DateService
@@ -78,75 +84,86 @@ class PdfChunkingIntTest : BaseProcessorIntTest() {
     s3TestUtil.clearBucket()
   }
 
-  @Test
-  fun `HTML Chunking experiment`() = runTest {
-    val serviceConfig = getServiceConfiguration("hmpps-support-additional-needs-api")
+  @ParameterizedTest
+  @CsvSource(
+    value = [
+      "hmpps-support-additional-needs-api | Unicabhai | BEVASTIEN | G4874UQ   | ",
+      "hmpps-book-secure-move-api         | Dougal    | WOW       | A1234AA   | ",
+      "hmpps-uof-data-api                 | Ibaravid  | AIDIO     | G0257UO   | ",
+      "make-recall-decision-api           | Bethany   | SCHINNER  |           | X963906",
+      "hmpps-managing-prisoner-apps-api   | Joe       | REACHER   | nomis-666 | ",
+    ],
+    delimiter = '|',
+  )
+  fun `generates the expected PDF content`(
+    serviceName: String,
+    subjectFirstName: String,
+    subjectLastName: String,
+    nomisId: String? = null,
+    ndeliusId: String? = null,
+  ) = runTest {
+    val serviceConfig = getServiceConfiguration(serviceName)
     assertThat(serviceConfig).isNotNull
 
-    val sar = SubjectAccessRequest(
-      id = testSubjectAccessRequestId,
-      dateFrom = null,
-      dateTo = LocalDate.of(2026, 7, 9),
-      sarCaseReferenceNumber = "Nathan Testing",
-      services = mutableListOf(),
-      nomisId = "G4874UQ",
-      ndeliusCaseReferenceId = null,
-      requestedBy = "Me",
-      status = Status.Pending,
-    )
-    sar.services.add(
-      RequestServiceDetail(
-        subjectAccessRequest = sar,
-        serviceConfiguration = serviceConfig,
-        renderStatus = RenderStatus.PENDING,
-      ),
-    )
-    subjectAccessRequestRepository.saveAndFlush(sar)
-
-    val htmlRenderRequest = HtmlRenderRequest(
-      subjectAccessRequest = sar,
-      serviceConfigurationId = serviceConfig.id,
-    )
-
-    hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, "v2")
-
-    prisonApi.stubGetOffenderDetails2(sar.nomisId!!, "Unicabhai", "BEVASTIEN")
-    documentApi.stubUploadFileSuccess(sar)
+    val params = setupTestData(serviceConfig, subjectFirstName, subjectLastName, nomisId, ndeliusId)
 
     sarProcessor.execute()
     await()
       .atMost(10, TimeUnit.SECONDS)
-      .until { requestHasStatus(sar, Completed) }
+      .until { requestHasStatus(params.sar(), Completed) }
 
     hmppsAuth.verifyCalledOnce()
-    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
-    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+    htmlRendererApi.verifyRenderCalled(1, params.htmlRenderRequest())
+    documentApi.verifyStoreDocumentIsCalled(1, params.sar().id.toString())
 
-    getReadablePdfDocument(getInputStream(resolveResourcePath(expectedPdfPath))).use { expected ->
+    val expectedPdfPath = resolveResourcePath(expectedPdfBaseDir).resolve("${serviceName}-reference.pdf")
+    getReadablePdfDocument(getInputStream(expectedPdfPath)).use { expected ->
       getUploadedPdfDocument().use { actual ->
         assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
-        for (i in 1 until expected.numberOfPages) {
-          assertPageMatchesExpected(actual, expected, i)
+
+        // Ignore the first 3 pages as the report generation date and template version can vary depending on when it was generated
+        for (i in 4 until expected.numberOfPages) {
+          val actualText = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
+          val expectedText = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
+          assertThat(actualText).`as`("page $i text values").isEqualTo(expectedText)
         }
       }
     }
   }
 
   @Test
-  fun `chunk a big file`() = runTest(timeout = 3.minutes) {
+  fun `should handle uber html`() = runTest(timeout = 4.minutes) {
     val serviceConfig = getServiceConfiguration("hmpps-accredited-programmes-api")
     assertThat(serviceConfig).isNotNull
 
+    val params = setupTestData(serviceConfig, "BOB", "BOB", "1234567", null)
+
+    sarProcessor.execute()
+    await()
+      .atMost(10, TimeUnit.SECONDS)
+      .until { requestHasStatus(params.sar(), Completed) }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderCalled(1, params.htmlRenderRequest())
+    documentApi.verifyStoreDocumentIsCalled(1, params.sar().id.toString())
+  }
+
+  internal fun setupTestData(
+    serviceConfig: ServiceConfiguration,
+    subjectFirstName: String,
+    subjectLastName: String,
+    nomisId: String? = null,
+    ndeliusId: String? = null,
+  ): Pair<SubjectAccessRequest, HtmlRenderRequest> {
     val sar = SubjectAccessRequest(
       id = testSubjectAccessRequestId,
       dateFrom = null,
       dateTo = LocalDate.of(2026, 7, 9),
-      sarCaseReferenceNumber = "Bob Dole",
+      sarCaseReferenceNumber = "Bob Jones",
       services = mutableListOf(),
-      nomisId = "A8610DY",
-      ndeliusCaseReferenceId = null,
-      requestedBy = "Me",
+      nomisId = nomisId,
+      ndeliusCaseReferenceId = ndeliusId,
+      requestedBy = "Jennifer Yellow Hat",
       status = Status.Pending,
     )
     sar.services.add(
@@ -164,18 +181,20 @@ class PdfChunkingIntTest : BaseProcessorIntTest() {
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, "v2")
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, "1")
 
-    prisonApi.stubGetOffenderDetails2(sar.nomisId!!,"Unicabhai", "BEVASTIEN")
+    sar.nomisId?.let {
+      prisonApi.stubGetOffenderDetails2(it, subjectFirstName, subjectLastName)
+    } ?: run {
+      probationApi.stubGetOffenderDetails(sar.ndeliusCaseReferenceId!!, subjectFirstName, subjectLastName)
+    }
+
     documentApi.stubUploadFileSuccess(sar)
 
-    sarProcessor.execute()
-    await()
-      .atMost(300, TimeUnit.SECONDS)
-      .until { requestHasStatus(sar, Completed) }
-
-    hmppsAuth.verifyCalledOnce()
-    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
-    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+    return Pair(sar, htmlRenderRequest)
   }
+
+  internal fun Pair<SubjectAccessRequest, HtmlRenderRequest>.sar() = this.first
+
+  internal fun Pair<SubjectAccessRequest, HtmlRenderRequest>.htmlRenderRequest() = this.second
 }

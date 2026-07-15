@@ -89,6 +89,11 @@ tasks {
   }
 }
 
+tasks.withType<Test> {
+  minHeapSize = "1g"
+  maxHeapSize = "2g"
+}
+
 abstract class BacklogRequestImport : JavaExec() {
   private lateinit var token: String
   private lateinit var csv: String

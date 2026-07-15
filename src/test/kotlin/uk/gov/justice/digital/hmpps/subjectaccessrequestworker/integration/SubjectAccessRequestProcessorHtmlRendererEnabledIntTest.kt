@@ -120,7 +120,7 @@ class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorInt
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, templateVersion = "1")
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 

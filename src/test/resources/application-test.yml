@@ -80,3 +80,6 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
+application:
+  service-renderer: html_chunker
