@@ -13,6 +13,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
+@Deprecated("deprecated and replaced by SubjectAccessRequestHeaderAndFooterEventHandler")
 class CustomHeaderEventHandler(
   private val pdfDoc: PdfDocument,
   val document: Document,

@@ -30,7 +30,7 @@ class OpenHtmlServicePdfRendererTest {
     pdfRenderRequest = PdfRenderRequest(
       subjectName = "Barny Gumble",
       subjectAccessRequest = subjectAccessRequest,
-      reportDir = tempDir
+      reportDir = tempDir,
     )
   }
 

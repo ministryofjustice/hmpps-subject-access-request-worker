@@ -113,8 +113,8 @@ class PdfService(
       subjectAccessRequest = subjectAccessRequest,
       serviceName = serviceConfiguration.serviceName,
     ).takeIf { it.isNotEmpty() }?.let {
-
       val attachmentsPdfPath = pdfRenderRequest.serviceAttachmentsPdfPath(serviceConfiguration)
+
       createWritablePdfDocument(attachmentsPdfPath).use { pdf ->
         newDocument(pdf).use { attachmentsDocument ->
           log.info("appending service attachments to {} pdf", subjectAccessRequest.id)

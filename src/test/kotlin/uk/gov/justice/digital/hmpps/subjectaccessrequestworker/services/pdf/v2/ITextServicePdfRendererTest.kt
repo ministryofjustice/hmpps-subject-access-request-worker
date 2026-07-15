@@ -83,6 +83,6 @@ class ITextServicePdfRendererTest {
 
   private fun pageText(
     pdf: PdfDocument,
-    pageNumber: Int
+    pageNumber: Int,
   ) = PdfTextExtractor.getTextFromPage(pdf.getPage(pageNumber), SimpleTextExtractionStrategy())
 }

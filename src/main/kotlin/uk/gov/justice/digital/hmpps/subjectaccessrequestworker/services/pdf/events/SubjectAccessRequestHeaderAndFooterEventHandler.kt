@@ -60,7 +60,13 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
   }
 }
 
-class SubjectAccessRequestOfficialSensitiveFooterEventHandler(document: Document) :
-  SubjectAccessRequestHeaderAndFooterEventHandler(document, "", null, null) {
+class SubjectAccessRequestOfficialSensitiveFooterEventHandler(
+  document: Document,
+) : SubjectAccessRequestHeaderAndFooterEventHandler(
+  document = document,
+  subjectName = "",
+  nomisId = null,
+  ndeliusCaseReferenceId = null,
+) {
   override fun getRightHeaderParagraph(): Paragraph = Paragraph()
 }
