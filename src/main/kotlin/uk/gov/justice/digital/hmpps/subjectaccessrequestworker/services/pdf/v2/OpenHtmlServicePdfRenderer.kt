@@ -74,6 +74,34 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
             }
 
             $serviceCss
+            
+            table {
+              width: 100%;
+              max-width: 100%;
+              border-collapse: collapse;
+              table-layout: fixed;
+            }
+          
+            td, th {
+              word-wrap: break-word;
+              word-break: break-all;
+              white-space: normal;
+              vertical-align: top;
+            }
+          
+            table.summary-list,
+            table.data-table {
+              width: 100%;
+              max-width: 100%;
+              table-layout: fixed;
+            }
+          
+            table.summary-list td,
+            table.data-table td {
+              word-wrap: break-word;
+              word-break: break-all;
+              white-space: normal;
+            }
           </style>
         </head>
         <body>
