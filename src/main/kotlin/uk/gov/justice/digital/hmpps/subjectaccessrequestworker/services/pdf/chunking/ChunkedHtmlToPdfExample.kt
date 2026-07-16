@@ -15,11 +15,10 @@ val HTML_OUTPUT = BASE_DIR.resolve("output/chunked.html")
 
 fun main(args: Array<String>) {
 
-  HtmlChunkFileWriterConsumer(HTML_OUTPUT).use { consumer ->
-    // Use the HTML parser to send chunks of HTML to the PDF consumer to iteratively build the PDF document
+//  HtmlChunkFileWriterConsumer(HTML_OUTPUT).use { consumer ->
+//    // Use the HTML parser to send chunks of HTML to the PDF consumer to iteratively build the PDF document
     PdfHtmlChunkConsumer(PDF_OUTPUT).use { consumer ->
       val parser = HtmlParser().apply { contentHandler = HtmlStreamingHandler(consumer) }
       parser.parse(InputSource(FileInputStream(HTML_INTPUT.toFile())))
     }
-  }
 }

@@ -7,23 +7,21 @@ import org.xml.sax.helpers.DefaultHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer.HtmlChunkConsumer
 
 const val MAX_BUFFER_SIZE = 1_000_000
+const val STYLE_TAG = "style"
+const val TABLE_TAG = "table"
+
+data class HtmlTag(val qName: String, val attributes: Map<String, String>)
 
 class HtmlStreamingHandler(
   val chunkConsumer: HtmlChunkConsumer,
-  val minBufferSize: Int = 75000,
+  val minBufferSize: Int = 100_000,
 ) : DefaultHandler() {
 
-  private val openTags: ArrayDeque<String> = ArrayDeque()
+  private val openTags: ArrayDeque<HtmlTag> = ArrayDeque()
   private val buffer: StringBuilder = StringBuilder()
   private var tableDepth = 0
   private val style = StringBuilder()
   private var insideStyleTag = false
-
-  private val skipTags = setOf(
-    "html",
-    "body",
-    "head",
-  )
 
   private val voidTags = setOf(
     "area",
@@ -46,9 +44,12 @@ class HtmlStreamingHandler(
   }
 
   override fun startDocument() {
-    log.info("Starting document")
+    log.info("starting html to PDF chunking")
   }
 
+  /**
+   * Handle an open tag event.
+   */
   override fun startElement(
     uri: String?,
     localName: String?,
@@ -59,34 +60,30 @@ class HtmlStreamingHandler(
       throw RuntimeException("Invalid HTML - tag name was null or empty")
     }
 
-    if (skipTags.contains(qName)) {
-      return
-    }
-
-    if (qName == "style") {
+    if (qName == STYLE_TAG) {
       insideStyleTag = true
       return
     }
 
+    val attributeMap = attributes.toMap()
     if (voidTags.contains(qName)) {
-      buffer.appendVoidTag(qName, attributes)
+      buffer.appendVoidTag(qName, attributeMap)
       return
     }
 
+    openTags.addLast(HtmlTag(qName, attributeMap))
+    buffer.appendOpenTag(qName, attributeMap)
     checkChunkSize()
-    openTags.addLast(qName)
-    buffer.appendOpenTag(qName, attributes)
 
-    if (qName == "table") {
+    if (qName == TABLE_TAG) {
       incrementTableDepth()
     }
   }
 
+  /**
+   * Handle a characters event (text been open/close tags).
+   */
   override fun characters(ch: CharArray?, start: Int, length: Int) {
-    if (skipTags.contains(openTags.lastOrNull())) {
-      return
-    }
-
     checkChunkSize()
 
     if (insideStyleTag) {
@@ -98,14 +95,15 @@ class HtmlStreamingHandler(
 
     ch?.let {
       buffer.append(it, start, length)
+      checkChunkSize()
     }
   }
 
+  /**
+   * Handle a close tag event.
+   */
   override fun endElement(uri: String?, localName: String?, qName: String?) {
-    if (skipTags.contains(qName)) {
-      return
-    }
-    if (qName == "style") {
+    if (qName == STYLE_TAG) {
       insideStyleTag = false
       return
     }
@@ -119,13 +117,14 @@ class HtmlStreamingHandler(
     }
 
     val poppedValue = openTags.removeLast()
-    if (poppedValue != qName) {
+    if (poppedValue.qName != qName) {
       throw RuntimeException("Unexpected end tag: expected=$poppedValue, actual=$qName")
     }
 
     buffer.appendCloseTag(qName)
+    checkChunkSize()
 
-    if (qName == "table") {
+    if (qName == TABLE_TAG) {
       decrementTableDepth()
     }
 
@@ -138,14 +137,45 @@ class HtmlStreamingHandler(
   override fun endDocument() {
     if (buffer.isNotEmpty()) {
       log.info("emitting final chunk: {}", buffer.length)
-      emitChunkToConsumer()
+      emitFinalChunkToConsumer()
     }
     log.info("end document {}, tableDepth: {}", openTags.size, tableDepth)
   }
 
+  /**
+   * Send the content of the buffer to the consumer.
+   */
   private fun emitChunkToConsumer() {
-    val fullHtmlChunk = wrapHtml(buffer.toString())
-    chunkConsumer.consume(fullHtmlChunk)
+    // Close any remaining open tags to ensure the HTML is properly formatted
+    for (i in openTags.size - 1 downTo 0) {
+      val tag = openTags[i]
+      buffer.appendCloseTag(tag.qName)
+    }
+
+    // emit to consumer and clear buffer.
+    chunkConsumer.consume(convertBufferToHtmlString())
+    buffer.clear()
+
+    // Populate cleared buffer with any open tags to ensure full document content is retained.
+    for (i in 0 until openTags.size) {
+      val tag = openTags[i]
+      buffer.appendOpenTag(tag.qName, tag.attributes)
+    }
+  }
+
+  private fun emitFinalChunkToConsumer() {
+    if (tableDepth != 0) {
+      throw RuntimeException("invalid html: Document processing ended with tableDepth > 0: actual=$tableDepth")
+    }
+
+    // Close any remaining open tags to ensure the HTML is properly formatted
+    while (openTags.isNotEmpty()) {
+      val tag = openTags.removeLast()
+      buffer.appendCloseTag(tag.qName)
+    }
+
+    // emit to consumer and clear buffer.
+    chunkConsumer.consume(convertBufferToHtmlString())
     buffer.clear()
   }
 
@@ -164,46 +194,53 @@ class HtmlStreamingHandler(
     }
   }
 
-  private fun canEmit(): Boolean = tableDepth == 0 && openTags.isEmpty() && buffer.length >= minBufferSize
+  private fun canEmit(): Boolean = tableDepth == 0 && buffer.length >= minBufferSize
 
-  private fun wrapHtml(bodyContent: String): String {
-    return """
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      $style
-    </style>
-  </head>
-  <body>$bodyContent</body>
-</html>""".trimIndent()
-  }
+  /**
+   * Appends an opening HTML tag with attributes to the buffer.
+   */
+  internal fun StringBuilder.appendOpenTag(
+    qName: String?,
+    attributes: Map<String, String>,
+  ): StringBuilder = this.append("<$qName")
+    .appendAttributes(attributes)
+    .append(">")
 
-  internal fun StringBuilder.appendOpenTag(qName: String?, attributes: Attributes?) {
-    this.append("<$qName")
-      .appendAttributes(attributes)
-      .append(">")
-  }
+  /**
+   * Appends a closing HTML tag to the buffer.
+   */
+  internal fun StringBuilder.appendCloseTag(qName: String): StringBuilder = this.append("</$qName>")
 
-  internal fun StringBuilder.appendCloseTag(qName: String) {
-    this.append("</$qName>")
-  }
-
-  internal fun StringBuilder.appendAttributes(attributes: Attributes?): StringBuilder {
-    attributes?.let {
-      for (i in 0 until it.length) {
-        append(" ${it.getQName(i)}=\"")
-          .append(Entities.escape(it.getValue(i)))
-          .append("\"")
+  /**
+   * Convert attribute values to valid HTML format and append to the buffer.
+   */
+  internal fun StringBuilder.appendAttributes(attributes: Map<String, String>): StringBuilder {
+    attributes.forEach { (qName, value) ->
+        append(" $qName=\"").append(Entities.escape(value)).append("\"")
       }
-    }
     return this
   }
 
-  internal fun StringBuilder.appendVoidTag(qName: String, attributes: Attributes?) {
-    this.append("<$qName")
-      .appendAttributes(attributes)
-      .append("/>")
-  }
-}
+  /**
+   * Append a void tag (self-closing tag) to the buffer.
+   */
+  internal fun StringBuilder.appendVoidTag(
+    qName: String,
+    attributes: Map<String, String>,
+  ): StringBuilder = this.append("<$qName").appendAttributes(attributes).append("/>")
 
+  internal fun convertBufferToHtmlString(): String = buildString {
+    appendOpenTag(STYLE_TAG, emptyMap())
+      .append(style)
+      .appendCloseTag(STYLE_TAG)
+      .append(buffer)
+  }
+
+  fun Attributes?.toMap(): Map<String, String> = this?.let { attributes ->
+    buildMap(attributes.length) {
+      for (i in 0 until attributes.length) {
+        put(attributes.getQName(i), attributes.getValue(i))
+      }
+    }
+  } ?: emptyMap()
+}

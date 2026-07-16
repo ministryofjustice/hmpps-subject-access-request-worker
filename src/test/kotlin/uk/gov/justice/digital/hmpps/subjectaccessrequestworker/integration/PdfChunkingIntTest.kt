@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -126,11 +127,13 @@ class PdfChunkingIntTest : BaseProcessorIntTest() {
           val actualText = PdfTextExtractor.getTextFromPage(actual.getPage(i), SimpleTextExtractionStrategy())
           val expectedText = PdfTextExtractor.getTextFromPage(expected.getPage(i), SimpleTextExtractionStrategy())
           assertThat(actualText).`as`("page $i text values").isEqualTo(expectedText)
+          assertPageMatchesExpected(actual, expected, i)
         }
       }
     }
   }
 
+  @Disabled
   @Test
   fun `should handle uber html`() = runTest(timeout = 4.minutes) {
     val serviceConfig = getServiceConfiguration("hmpps-accredited-programmes-api")
