@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.even
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestOfficialSensitiveFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.memoryUsage
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.InputStream
 import java.nio.file.Path
@@ -53,9 +54,17 @@ class PdfService(
     log.info("generating pdf for {}", pdfRenderRequest.subjectAccessRequest.id)
 
     val reportBodyPageCount = generateReportBody(pdfRenderRequest)
+
+    log.info("generateInternalCoverPage: {}", memoryUsage())
     generateInternalCoverPage(pdfRenderRequest, reportBodyPageCount)
+
+    log.info("generateRearPage: {}", memoryUsage())
     generateRearPage(pdfRenderRequest, reportBodyPageCount)
+
+    log.info("mergePartialsIntoFullReportPdf: {}", memoryUsage())
     mergePartialsIntoFullReportPdf(pdfRenderRequest)
+
+    log.info("complete: {}", memoryUsage())
     return pdfRenderRequest.fullReportPdfPath
   }
 
@@ -65,11 +74,15 @@ class PdfService(
     generateExternalCoverPage(pdfRenderRequest)
     generateInternalContentsPage(pdfRenderRequest)
     generateServicePartials(pdfRenderRequest)
+
+    log.info("generateServicePartials completed: {}", memoryUsage())
     val pageCount = mergeReportBodyPartials(pdfRenderRequest)
+    log.info("mergeReportBodyPartials completed: {}", memoryUsage())
 
     telemetryClient.trackSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest.subjectAccessRequest)
     return pageCount
   }
+
 
   private suspend fun generateServicePartials(pdfRenderRequest: PdfRenderRequest) {
     val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest

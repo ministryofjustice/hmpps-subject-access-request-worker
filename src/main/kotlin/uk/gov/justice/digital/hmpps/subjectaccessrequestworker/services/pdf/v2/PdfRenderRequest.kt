@@ -3,7 +3,9 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.memoryUsage
 import java.io.Closeable
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -80,8 +82,11 @@ class PdfRenderRequest(
   ): Path = pdfPartialsDir.resolve("${service.serviceName}-attachments.pdf")
 
   override fun close() {
+    log.info("cleaning up PdfRenderRequest temporary working directory {}, {}", reportDir, memoryUsage())
+
     if (!reportDir.toFile().deleteRecursively()) {
       log.warn("failed to recursively delete PdfRenderRequest temporary working directory {}", reportDir)
+      return
     }
   }
 

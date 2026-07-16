@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.memoryUsage
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
 
@@ -57,6 +58,7 @@ class ReportServiceImpl(
       reportDir = tempDirectoryService.create("${subjectAccessRequest.id}_"),
     ).use {
       val pdfPath = pdfService.renderSubjectAccessRequestPdf(it)
+      log.info("pdf generated calling document store {}", memoryUsage())
       documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
       log.info("subject access request ${subjectAccessRequest.id} completed successfully")
     }

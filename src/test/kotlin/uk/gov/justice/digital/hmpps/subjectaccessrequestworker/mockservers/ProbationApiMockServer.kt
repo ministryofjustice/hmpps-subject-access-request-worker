@@ -49,6 +49,28 @@ class ProbationApiMockServer : WireMockServer(4002) {
     )
   }
 
+  fun stubGetOffenderDetails(subjectId: String, firstname: String?, lastname: String?) {
+    stubFor(
+      get("/probation-case/$subjectId")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody(
+              """
+              {
+                "name" : {
+                  "forename": "$firstname",
+                  "surname": "$lastname"
+                  }
+              }
+              """.trimIndent(),
+            ),
+        ),
+    )
+  }
+
+
   fun stubGetOffenderDetails(subjectId: String, apiResponse: ProbationApiClient.GetOffenderDetailsResponse) {
     stubFor(
       get("/probation-case/$subjectId")
