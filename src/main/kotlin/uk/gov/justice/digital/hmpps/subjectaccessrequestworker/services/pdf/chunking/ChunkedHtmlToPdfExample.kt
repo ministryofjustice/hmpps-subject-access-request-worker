@@ -1,10 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking
 
-import nu.validator.htmlparser.sax.HtmlParser
-import org.xml.sax.InputSource
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer.HtmlChunkFileWriterConsumer
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer.PdfHtmlChunkConsumer
-import java.io.FileInputStream
 import java.nio.file.Paths
 
 // Replace paths/files as desired
@@ -17,8 +12,8 @@ fun main(args: Array<String>) {
 
 //  HtmlChunkFileWriterConsumer(HTML_OUTPUT).use { consumer ->
 //    // Use the HTML parser to send chunks of HTML to the PDF consumer to iteratively build the PDF document
-    PdfHtmlChunkConsumer(PDF_OUTPUT).use { consumer ->
-      val parser = HtmlParser().apply { contentHandler = HtmlStreamingHandler(consumer) }
-      parser.parse(InputSource(FileInputStream(HTML_INTPUT.toFile())))
-    }
+//    PdfHtmlChunkConsumer(PDF_OUTPUT).use { consumer ->
+//      val parser = HtmlParser().apply { contentHandler = HtmlStreamingHandler(consumer) }
+//      parser.parse(InputSource(FileInputStream(HTML_INTPUT.toFile())))
+//    }
 }

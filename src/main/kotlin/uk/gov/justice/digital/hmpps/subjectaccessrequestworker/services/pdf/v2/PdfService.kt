@@ -54,12 +54,16 @@ class PdfService(
     log.info("generating pdf for {}", pdfRenderRequest.subjectAccessRequest.id)
 
     val reportBodyPageCount = generateReportBody(pdfRenderRequest)
+
     log.info("generateInternalCoverPage: {}", memoryUsage())
     generateInternalCoverPage(pdfRenderRequest, reportBodyPageCount)
+
     log.info("generateRearPage: {}", memoryUsage())
     generateRearPage(pdfRenderRequest, reportBodyPageCount)
+
     log.info("mergePartialsIntoFullReportPdf: {}", memoryUsage())
     mergePartialsIntoFullReportPdf(pdfRenderRequest)
+
     log.info("complete: {}", memoryUsage())
     return pdfRenderRequest.fullReportPdfPath
   }
@@ -70,6 +74,7 @@ class PdfService(
     generateExternalCoverPage(pdfRenderRequest)
     generateInternalContentsPage(pdfRenderRequest)
     generateServicePartials(pdfRenderRequest)
+
     log.info("generateServicePartials completed: {}", memoryUsage())
     val pageCount = mergeReportBodyPartials(pdfRenderRequest)
     log.info("mergeReportBodyPartials completed: {}", memoryUsage())
