@@ -4,5 +4,9 @@ import java.io.InputStream
 import java.nio.file.Path
 
 interface ServicePdfRenderer {
-  suspend fun generateServicePdf(servicePdfPath: Path, serviceHtml: InputStream)
+  suspend fun generateServicePdf(
+    pdfRenderRequest: PdfRenderRequest,
+    servicePdfPath: Path,
+    serviceHtml: InputStream,
+  )
 }
