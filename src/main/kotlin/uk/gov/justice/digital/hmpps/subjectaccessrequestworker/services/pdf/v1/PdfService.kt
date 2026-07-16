@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.CustomHeaderEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceConfigurationService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.CustomHeaderEventHandler
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream

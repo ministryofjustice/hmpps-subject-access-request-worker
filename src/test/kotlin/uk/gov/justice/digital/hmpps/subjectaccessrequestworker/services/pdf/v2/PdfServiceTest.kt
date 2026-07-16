@@ -20,6 +20,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -171,7 +172,7 @@ class PdfServiceTest {
 
   @Test
   fun `should delegate service pdf generation to the configured ServicePdfRenderer`() = runTest {
-    val servicePdfRenderer: ServicePdfRenderer = Mockito.mock()
+    val servicePdfRenderer: ServicePdfRenderer = mock()
 
     whenever(requestServiceDetail1.serviceConfiguration)
       .thenReturn(service1Config)
@@ -210,11 +211,12 @@ class PdfServiceTest {
       .thenReturn("1 January 2025")
 
     doAnswer { invocation ->
-      val servicePdfPath = invocation.getArgument<Path>(0)
+      val servicePdfPath = invocation.getArgument<Path>(1)
       createWritablePdfDocument(servicePdfPath).use { pdf ->
         newDocument(pdf).use { doc -> doc.add(Paragraph("stub content")) }
       }
-    }.whenever(servicePdfRenderer).generateServicePdf(any(), any())
+    }.whenever(servicePdfRenderer)
+      .generateServicePdf(any(), any(), any())
 
     val pdfServiceWithConfiguredRenderer = PdfService(
       documentStoreService = documentStoreService,
@@ -227,9 +229,14 @@ class PdfServiceTest {
     val actualPdfPath = pdfServiceWithConfiguredRenderer.renderSubjectAccessRequestPdf(pdfRenderRequest)
 
     assertThat(actualPdfPath).exists()
+    val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(service1Config)
 
     verify(servicePdfRenderer, times(1))
-      .generateServicePdf(eq(pdfRenderRequest.serviceDataPdfPath(service1Config)), eq(serviceHtml))
+      .generateServicePdf(
+        any(),
+        eq(servicePdfPath),
+        eq(serviceHtml),
+      )
   }
 
   private fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {
