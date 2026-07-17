@@ -1,19 +1,30 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking
 
+import aws.smithy.kotlin.runtime.io.Closeable
 import org.jsoup.nodes.Entities
 import org.slf4j.LoggerFactory
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.chunking.consumer.HtmlChunkConsumer
 
 const val MAX_BUFFER_SIZE = 1_000_000
 const val STYLE_TAG = "style"
 const val TABLE_TAG = "table"
 
-data class HtmlTag(val qName: String, val attributes: Map<String, String>)
-
-class HtmlStreamingHandler(
-  val chunkConsumer: HtmlChunkConsumer,
+/**
+ * Handler streams a HTML input appending the content to a buffer and periodically emits valid chunks of HTML to the
+ * supplier consumer.
+ *
+ * Internally the handler maintains a list of open tags and how man tables are currently open. The buffer will only emit to the consumer when:
+ * - The buffer size >= the minimum
+ * - The current table depth is 0 to prevent HTML being emitted mid-table.
+ *
+ * Before emitting the handler appends any open tags to ensure the HTML fragment is properly closed. After emitting the
+ * buffer is cleared and any open tags are appended to the buffer so the next chunk maintains the document context.
+ *
+ * The handler checks the buffer size after each event, if it's greater than the MAX_BUFFER_SIZE an error is thrown.
+ */
+class SubjectAccessRequestHtmlHandler(
+  val consumer: HtmlConsumer,
   val minBufferSize: Int = 100_000,
 ) : DefaultHandler() {
 
@@ -40,7 +51,7 @@ class HtmlStreamingHandler(
   )
 
   private companion object {
-    private val log = LoggerFactory.getLogger(HtmlStreamingHandler::class.java)
+    private val log = LoggerFactory.getLogger(SubjectAccessRequestHtmlHandler::class.java)
   }
 
   override fun startDocument() {
@@ -48,7 +59,7 @@ class HtmlStreamingHandler(
   }
 
   /**
-   * Handle an open tag event.
+   * Handle an open tag event
    */
   override fun startElement(
     uri: String?,
@@ -87,6 +98,7 @@ class HtmlStreamingHandler(
     checkChunkSize()
 
     if (insideStyleTag) {
+      // Capture the style content in a separate buffer.
       ch?.let {
         style.append(it, start, length)
       }
@@ -94,6 +106,7 @@ class HtmlStreamingHandler(
     }
 
     ch?.let {
+      // Append the text to the buffer
       buffer.append(it, start, length)
       checkChunkSize()
     }
@@ -104,6 +117,7 @@ class HtmlStreamingHandler(
    */
   override fun endElement(uri: String?, localName: String?, qName: String?) {
     if (qName == STYLE_TAG) {
+      // Mark the end of the style tag.
       insideStyleTag = false
       return
     }
@@ -146,17 +160,18 @@ class HtmlStreamingHandler(
    * Send the content of the buffer to the consumer.
    */
   private fun emitChunkToConsumer() {
-    // Close any remaining open tags to ensure the HTML is properly formatted
+    // Close any remaining open tags to ensure the HTML is properly formatted but keep the tags on the queue so the next
+    // chunk is prefixed with the current document context
     for (i in openTags.size - 1 downTo 0) {
       val tag = openTags[i]
       buffer.appendCloseTag(tag.qName)
     }
 
-    // emit to consumer and clear buffer.
-    chunkConsumer.consume(convertBufferToHtmlString())
+    // Emit the buffer content to consumer and clear buffer.
+    consumer.consume(convertBufferToHtmlString())
     buffer.clear()
 
-    // Populate cleared buffer with any open tags to ensure full document content is retained.
+    // Populate cleared buffer with any open tags to ensure the document content is retained in the next chunk.
     for (i in 0 until openTags.size) {
       val tag = openTags[i]
       buffer.appendOpenTag(tag.qName, tag.attributes)
@@ -175,7 +190,7 @@ class HtmlStreamingHandler(
     }
 
     // emit to consumer and clear buffer.
-    chunkConsumer.consume(convertBufferToHtmlString())
+    consumer.consume(convertBufferToHtmlString())
     buffer.clear()
   }
 
@@ -190,10 +205,14 @@ class HtmlStreamingHandler(
 
   private fun checkChunkSize() {
     if (buffer.length >= MAX_BUFFER_SIZE) {
-      throw RuntimeException("buffer size exceeded max limit - HTML likely contains top level wrapper tag")
+      throw RuntimeException("buffer size exceeded max limit exiting to prevent potential memory error")
     }
   }
 
+  /**
+   * Check if we can emit a chunk to the consumer. Emit only when the tableDepth tracker is at 0 and the buffer size is
+   * the greater than the minimum size.
+   */
   private fun canEmit(): Boolean = tableDepth == 0 && buffer.length >= minBufferSize
 
   /**
@@ -216,8 +235,8 @@ class HtmlStreamingHandler(
    */
   internal fun StringBuilder.appendAttributes(attributes: Map<String, String>): StringBuilder {
     attributes.forEach { (qName, value) ->
-        append(" $qName=\"").append(Entities.escape(value)).append("\"")
-      }
+      append(" $qName=\"").append(Entities.escape(value)).append("\"")
+    }
     return this
   }
 
@@ -243,4 +262,11 @@ class HtmlStreamingHandler(
       }
     }
   } ?: emptyMap()
+}
+
+data class HtmlTag(val qName: String, val attributes: Map<String, String>)
+
+interface HtmlConsumer : Closeable {
+
+  fun consume(chunk: String)
 }

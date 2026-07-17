@@ -211,8 +211,10 @@ class PdfServiceTest {
       .thenReturn("1 January 2025")
 
     doAnswer { invocation ->
-      val servicePdfPath = invocation.getArgument<Path>(1)
-      createWritablePdfDocument(servicePdfPath).use { pdf ->
+      val pdfRenderReq = invocation.getArgument<PdfRenderRequest>(0)
+      val serviceConfig = invocation.getArgument<ServiceConfiguration>(1)
+      val outputPath = pdfRenderReq.serviceDataPdfPath(serviceConfig)
+      createWritablePdfDocument(outputPath).use { pdf ->
         newDocument(pdf).use { doc -> doc.add(Paragraph("stub content")) }
       }
     }.whenever(servicePdfRenderer)
@@ -229,12 +231,10 @@ class PdfServiceTest {
     val actualPdfPath = pdfServiceWithConfiguredRenderer.renderSubjectAccessRequestPdf(pdfRenderRequest)
 
     assertThat(actualPdfPath).exists()
-    val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(service1Config)
-
     verify(servicePdfRenderer, times(1))
       .generateServicePdf(
         any(),
-        eq(servicePdfPath),
+        eq(service1Config),
         eq(serviceHtml),
       )
   }

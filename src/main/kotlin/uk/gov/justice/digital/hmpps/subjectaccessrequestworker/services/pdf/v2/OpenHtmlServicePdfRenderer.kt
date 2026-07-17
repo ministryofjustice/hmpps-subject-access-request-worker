@@ -4,6 +4,7 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.Path
@@ -12,17 +13,18 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
 
   override suspend fun generateServicePdf(
     pdfRenderRequest: PdfRenderRequest,
-    servicePdfPath: Path,
+    serviceConfiguration: ServiceConfiguration,
     serviceHtml: InputStream,
   ) {
     withContext(Dispatchers.IO) {
       val rawHtml = serviceHtml.bufferedReader(Charsets.UTF_8).use { it.readText() }
       val xhtml = buildXhtmlDocument(serviceHtml = rawHtml)
+      val outputPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
 
-      FileOutputStream(servicePdfPath.toFile()).use { outputStream ->
+      FileOutputStream(outputPath.toFile()).use { outputStream ->
         PdfRendererBuilder()
           .useFastMode()
-          .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
+          .withHtmlContent(xhtml, outputPath.parent.toUri().toString())
           .toStream(outputStream)
           .run()
       }

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
@@ -19,11 +21,12 @@ class OpenHtmlServicePdfRendererTest {
   @TempDir
   lateinit var tempDir: Path
 
+  lateinit var pdfRenderRequest: PdfRenderRequest
+
   private val renderer = OpenHtmlServicePdfRenderer()
 
   private val subjectAccessRequest: SubjectAccessRequest = mock()
-
-  lateinit var pdfRenderRequest: PdfRenderRequest
+  private val serviceConfiguration: ServiceConfiguration = mock()
 
   @BeforeEach
   fun setup() {
@@ -32,13 +35,15 @@ class OpenHtmlServicePdfRendererTest {
       subjectAccessRequest = subjectAccessRequest,
       reportDir = tempDir,
     )
+
+    whenever(serviceConfiguration.serviceName).thenReturn("service1")
   }
 
   @Test
   fun `should render html content to a valid pdf`() = runTest {
-    val outputPath = tempDir.resolve("service.pdf")
+    val outputPath = tempDir.resolve("partials/service1.pdf")
 
-    renderer.generateServicePdf(pdfRenderRequest, outputPath, "<h1>Test Service Report</h1>".byteInputStream())
+    renderer.generateServicePdf(pdfRenderRequest, serviceConfiguration, "<h1>Test Service Report</h1>".byteInputStream())
 
     assertThat(outputPath).exists()
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
@@ -54,9 +59,9 @@ class OpenHtmlServicePdfRendererTest {
       <div class="page-break"></div>
       <h1>Page two</h1>
     """.trimIndent()
-    val outputPath = tempDir.resolve("service.pdf")
+    val outputPath = tempDir.resolve("partials/service1.pdf")
 
-    renderer.generateServicePdf(pdfRenderRequest, outputPath, html.byteInputStream())
+    renderer.generateServicePdf(pdfRenderRequest, serviceConfiguration, html.byteInputStream())
 
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
       assertThat(pdf.numberOfPages).isEqualTo(2)
@@ -71,9 +76,9 @@ class OpenHtmlServicePdfRendererTest {
       <style>p { color: #ff0000; }</style>
       <h1>Test Service Report</h1>
     """.trimIndent()
-    val outputPath = tempDir.resolve("service.pdf")
+    val outputPath = tempDir.resolve("partials/service1.pdf")
 
-    renderer.generateServicePdf(pdfRenderRequest, outputPath, html.byteInputStream())
+    renderer.generateServicePdf(pdfRenderRequest, serviceConfiguration, html.byteInputStream())
 
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
       assertThat(pdf.numberOfPages).isEqualTo(1)

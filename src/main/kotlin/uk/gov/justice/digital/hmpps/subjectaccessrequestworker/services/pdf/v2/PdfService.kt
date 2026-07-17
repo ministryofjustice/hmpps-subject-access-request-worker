@@ -83,7 +83,6 @@ class PdfService(
     return pageCount
   }
 
-
   private suspend fun generateServicePartials(pdfRenderRequest: PdfRenderRequest) {
     val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
     val services = subjectAccessRequest.getSelectedServices()
@@ -101,10 +100,9 @@ class PdfService(
         "service" to serviceConfiguration.serviceName,
       )
 
-      val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
       val serviceHtml = getServiceHtml(pdfRenderRequest, serviceConfiguration)
       log.info("converting service {} html to pdf using {}", subjectAccessRequest.id, servicePdfRenderer::class.simpleName)
-      servicePdfRenderer.generateServicePdf(pdfRenderRequest, servicePdfPath, serviceHtml)
+      servicePdfRenderer.generateServicePdf(pdfRenderRequest, serviceConfiguration, serviceHtml)
 
       generateServiceAttachments(pdfRenderRequest, serviceConfiguration)
 
