@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.0-beta2"
-  kotlin("plugin.spring") version "2.4.0"
-  kotlin("plugin.jpa") version "2.4.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.1"
+  kotlin("plugin.spring") version "2.4.10"
+  kotlin("plugin.jpa") version "2.4.10"
 }
 
 configurations {
@@ -19,12 +19,12 @@ ext["kotlin-coroutines.version"] = "1.11.0"
 val springDocVersion = "3.0.2"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.0-beta2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.0")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
-  implementation("org.json:json:20260522")
+  implementation("org.json:json:20260719")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("com.itextpdf:itext7-core:9.7.0")
   implementation("com.itextpdf:html2pdf:6.3.3")
@@ -37,7 +37,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-4:8.49.0")
   implementation("io.sentry:sentry-logback:8.49.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.8.7")
+  implementation("aws.sdk.kotlin:s3:1.8.10")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
   constraints {
     implementation("org.webjars:swagger-ui:5.32.2")
