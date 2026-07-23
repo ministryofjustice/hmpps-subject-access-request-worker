@@ -25,7 +25,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateServ
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
-class SubjectAccessRequestProcessorHtmlRendererEnabledIntTest : BaseProcessorIntTest() {
+abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest() {
 
   companion object {
     const val REPORT_GENERATION_DATE = "1 January 2025"

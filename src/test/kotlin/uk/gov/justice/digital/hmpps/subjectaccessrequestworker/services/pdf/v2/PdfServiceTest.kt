@@ -233,7 +233,7 @@ class PdfServiceTest {
 
     verify(servicePdfRenderer, times(1))
       .generateServicePdf(
-        any(),
+        eq(pdfRenderRequest),
         eq(servicePdfPath),
         eq(serviceHtml),
       )
