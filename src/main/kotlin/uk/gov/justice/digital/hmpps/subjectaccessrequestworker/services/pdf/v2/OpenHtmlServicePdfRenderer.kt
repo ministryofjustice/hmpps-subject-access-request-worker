@@ -1,12 +1,19 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
+import com.itextpdf.kernel.utils.PdfMerger
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
-import org.springframework.web.util.HtmlUtils.htmlEscape
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.nio.file.Files
 import java.nio.file.Path
 
 class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
@@ -18,29 +25,41 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
   ) {
     withContext(Dispatchers.IO) {
       val rawHtml = serviceHtml.bufferedReader(Charsets.UTF_8).use { it.readText() }
-      val xhtml = buildXhtmlDocument(
-        serviceHtml = rawHtml,
-        subjectName = pdfRenderRequest.subjectName,
-        prn = pdfRenderRequest.subjectAccessRequest.nomisId,
-        crn = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
-      )
+      val xhtml = buildXhtmlDocument(serviceHtml = rawHtml)
 
-      FileOutputStream(servicePdfPath.toFile()).use { outputStream ->
-        PdfRendererBuilder()
-          .useFastMode()
-          .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
-          .toStream(outputStream)
-          .run()
+      val tempPath = Files.createTempFile("openhtml-service-", ".pdf")
+      try {
+        FileOutputStream(tempPath.toFile()).use { outputStream ->
+          PdfRendererBuilder()
+            .useFastMode()
+            .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
+            .toStream(outputStream)
+            .run()
+        }
+
+        createWritablePdfDocument(output = servicePdfPath).use { outputPdf ->
+          newDocument(outputPdf).use { document ->
+            outputPdf.addEventHandler(
+              PdfDocumentEvent.END_PAGE,
+              SubjectAccessRequestHeaderAndFooterEventHandler(
+                document = document,
+                subjectName = pdfRenderRequest.subjectName,
+                nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
+                ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
+              ),
+            )
+            PdfDocument(PdfReader(tempPath.toFile())).use { inputPdf ->
+              PdfMerger(outputPdf).merge(inputPdf, 1, inputPdf.numberOfPages)
+            }
+          }
+        }
+      } finally {
+        Files.deleteIfExists(tempPath)
       }
     }
   }
 
-  private fun buildXhtmlDocument(
-    serviceHtml: String,
-    subjectName: String,
-    prn: String?,
-    crn: String?,
-  ): String {
+  private fun buildXhtmlDocument(serviceHtml: String): String {
     val serviceFragment = Jsoup.parseBodyFragment(serviceHtml)
 
     serviceFragment.outputSettings()
@@ -57,34 +76,6 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
 
     val serviceBodyHtml = serviceFragment.body().html()
 
-    val subjectIdLabel = when {
-      prn != null -> "NOMIS ID:"
-      crn != null -> "nDelius ID:"
-      else -> ""
-    }
-
-    val subjectIdValue = prn ?: crn ?: ""
-
-    val headerRightHtml =
-      if (subjectIdLabel.isNotBlank()) {
-        """
-        <div id="header-right">
-          <span class="header-label">Name:</span>
-          <span>${htmlEscape(subjectName)}</span>
-          <br />
-          <span class="header-label">${htmlEscape(subjectIdLabel)}</span>
-          <span>${htmlEscape(subjectIdValue)}</span>
-        </div>
-      """.trimIndent()
-      } else {
-        """
-        <div id="header-right">
-          <span class="header-label">Name:</span>
-          <span>${htmlEscape(subjectName)}</span>
-        </div>
-      """.trimIndent()
-      }
-
     return """
       <!DOCTYPE html>
       <html>
@@ -93,17 +84,7 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
           <style type="text/css">
           @page {
             size: A4;
-            margin: 50pt 35pt 85pt 35pt;
-        
-            @top-right {
-              content: element(header-right);
-            }
-        
-            @bottom-center {
-              content: "Official Sensitive";
-              font-family: Helvetica, Arial, sans-serif;
-              font-size: 10pt;
-            }
+            margin: 50pt 35pt 70pt 35pt;
           }
         
           body {
@@ -123,19 +104,6 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
           }
         
           $serviceCss
-        
-          #header-right {
-            position: running(header-right);
-            text-align: right;
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 10pt;
-            line-height: 1.3;
-            color: #0b0c0c;
-          }
-        
-          .header-label {
-            font-weight: bold;
-          }
         
           h1,
           h2,
@@ -205,8 +173,6 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
         </style>
         </head>
         <body>
-          $headerRightHtml
-  
           <main>
             $serviceBodyHtml
           </main>

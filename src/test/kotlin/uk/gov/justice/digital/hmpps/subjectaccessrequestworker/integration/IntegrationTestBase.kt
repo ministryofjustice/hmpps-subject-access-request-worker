@@ -51,7 +51,6 @@ import java.text.SimpleDateFormat
 import java.util.UUID
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
-const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
 
 @ExtendWith(
   HmppsAuthApiExtension::class,
@@ -113,11 +112,6 @@ abstract class IntegrationTestBase {
 
   protected fun clearOauthClientCache(clientId: String, principalName: String) = oAuth2AuthorizedClientService
     .removeAuthorizedClient(clientId, principalName)
-
-  protected fun getSarResponseStub(filename: String): String = this::class.java
-    .getResourceAsStream("$SAR_STUB_RESPONSES_DIR/$filename").use { input ->
-      InputStreamReader(input).readText()
-    }
 
   protected fun getPreGeneratedPdfDocument(expectedPdfFilename: String): PdfDocument {
     val inputStream = this::class.java.getResourceAsStream("$referencePdfBaseDir/$expectedPdfFilename")

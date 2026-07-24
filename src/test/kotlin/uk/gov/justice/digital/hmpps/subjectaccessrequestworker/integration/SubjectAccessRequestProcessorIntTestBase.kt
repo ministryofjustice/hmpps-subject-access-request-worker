@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.whenever
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.testcontainers.containers.GenericContainer
@@ -80,9 +82,19 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     s3TestUtil.clearBucket()
   }
 
-  @Test
-  fun `should process pending request successfully when data is held and html-renderer is enabled`() = runBlocking {
-    val serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
+  @ParameterizedTest
+  @ValueSource(
+    strings = [
+      "court-case-service",
+      "create-and-vary-a-licence-api",
+      "hmpps-book-secure-move-api",
+      "hmpps-health-and-medication-api",
+      "hmpps-incentives-api",
+      "hmpps-managing-prisoner-apps-api",
+    ],
+  )
+  fun `should process pending request successfully when data is held and html-renderer is enabled`(serviceName: String) = runBlocking {
+    val serviceConfig = getServiceConfiguration(serviceName)
 
     val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
     val htmlRenderRequest = HtmlRenderRequest(
