@@ -71,6 +71,8 @@ const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
 @AutoConfigureWebTestClient
 abstract class IntegrationTestBase {
 
+  open val referencePdfBaseDir: String = REFERENCE_PDF_BASE_DIR
+
   @Autowired
   protected lateinit var subjectAccessRequestRepository: SubjectAccessRequestRepository
 
@@ -118,7 +120,7 @@ abstract class IntegrationTestBase {
     }
 
   protected fun getPreGeneratedPdfDocument(expectedPdfFilename: String): PdfDocument {
-    val inputStream = this::class.java.getResourceAsStream("$REFERENCE_PDF_BASE_DIR/$expectedPdfFilename")
+    val inputStream = this::class.java.getResourceAsStream("$referencePdfBaseDir/$expectedPdfFilename")
     assertThat(inputStream).isNotNull
     return pdfDocumentFromInputStream(inputStream!!)
   }
