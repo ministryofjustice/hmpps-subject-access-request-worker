@@ -105,54 +105,6 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
         
           $serviceCss
         
-          h1,
-          h2,
-          h3,
-          h4,
-          h5 {
-            display: block;
-            font-weight: 700;
-            color: #0b0c0c;
-            padding: 0;
-          }
-        
-          h1 {
-            font-size: 18pt;
-            line-height: 1.15;
-            margin: 14pt 0 8pt 0;
-          }
-        
-          h1.title {
-            font-size: 20pt;
-            line-height: 1.2;
-            text-align: center;
-            margin: 0 0 14pt 0;
-          }
-        
-          h2 {
-            font-size: 17pt;
-            line-height: 1.15;
-            margin: 12pt 0 6pt 0;
-          }
-        
-          h3 {
-            font-size: 16pt;
-            line-height: 1.15;
-            margin: 10pt 0 6pt 0;
-          }
-        
-          h4 {
-            font-size: 15pt;
-            line-height: 1.15;
-            margin: 10pt 0 5pt 0;
-          }
-        
-          h5 {
-            font-size: 14pt;
-            line-height: 1.15;
-            margin: 10pt 0 5pt 0;
-          }
-        
           table {
             max-width: 100%;
             border-collapse: collapse;
