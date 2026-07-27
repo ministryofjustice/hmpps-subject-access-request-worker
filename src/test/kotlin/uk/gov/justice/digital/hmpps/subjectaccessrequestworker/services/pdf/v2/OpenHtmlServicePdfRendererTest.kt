@@ -9,26 +9,35 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
 import java.nio.file.Path
+import java.util.UUID
 
 class OpenHtmlServicePdfRendererTest {
 
   @TempDir
   lateinit var tempDir: Path
 
-  private val renderer = OpenHtmlServicePdfRenderer()
+  private lateinit var renderer: OpenHtmlServicePdfRenderer
 
   private val subjectAccessRequest: SubjectAccessRequest = mock()
+  private lateinit var tempDirectoryService: TempDirectoryService
 
   lateinit var pdfRenderRequest: PdfRenderRequest
 
   @BeforeEach
   fun setup() {
+    tempDirectoryService = TempDirectoryService(tempDir)
+    renderer = OpenHtmlServicePdfRenderer(tempDirectoryService)
+    whenever(subjectAccessRequest.id).thenReturn(UUID.randomUUID())
+    whenever(subjectAccessRequest.nomisId).thenReturn("A1234BC")
+
     pdfRenderRequest = PdfRenderRequest(
-      subjectName = "Barny Gumble",
+      subjectName = "Test User",
       subjectAccessRequest = subjectAccessRequest,
       reportDir = tempDir,
     )
@@ -43,7 +52,9 @@ class OpenHtmlServicePdfRendererTest {
     assertThat(outputPath).exists()
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
       assertThat(pdf.numberOfPages).isEqualTo(1)
-      assertThat(pageText(pdf, 1)).contains("Test Service Report")
+      val page1 = pageText(pdf, 1)
+      assertThat(page1).contains("Test Service Report")
+      assertContainsHeaderAndFooter(page1)
     }
   }
 
@@ -60,8 +71,12 @@ class OpenHtmlServicePdfRendererTest {
 
     getReadablePdfDocument(getInputStream(outputPath)).use { pdf ->
       assertThat(pdf.numberOfPages).isEqualTo(2)
-      assertThat(pageText(pdf, 1)).contains("Page one")
-      assertThat(pageText(pdf, 2)).contains("Page two")
+      val page1 = pageText(pdf, 1)
+      val page2 = pageText(pdf, 2)
+      assertThat(page1).contains("Page one")
+      assertThat(page2).contains("Page two")
+      assertContainsHeaderAndFooter(page1)
+      assertContainsHeaderAndFooter(page2)
     }
   }
 
@@ -80,7 +95,14 @@ class OpenHtmlServicePdfRendererTest {
       val text = pageText(pdf, 1)
       assertThat(text).contains("Test Service Report")
       assertThat(text).doesNotContain("color")
+      assertContainsHeaderAndFooter(text)
     }
+  }
+
+  private fun assertContainsHeaderAndFooter(pageText: String) {
+    assertThat(pageText).contains("Name: Test User")
+    assertThat(pageText).contains("NOMIS ID: A1234BC")
+    assertThat(pageText).contains("Official Sensitive")
   }
 
   private fun pageText(pdf: PdfDocument, pageNumber: Int) = PdfTextExtractor.getTextFromPage(pdf.getPage(pageNumber), SimpleTextExtractionStrategy())

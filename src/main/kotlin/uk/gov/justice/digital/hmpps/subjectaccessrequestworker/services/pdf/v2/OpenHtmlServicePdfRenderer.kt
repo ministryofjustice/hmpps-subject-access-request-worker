@@ -1,14 +1,24 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
+import com.itextpdf.kernel.utils.PdfMerger
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.Path
 
-class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
+class OpenHtmlServicePdfRenderer(
+  private val tempDirectoryService: TempDirectoryService,
+) : ServicePdfRenderer {
 
   override suspend fun generateServicePdf(
     pdfRenderRequest: PdfRenderRequest,
@@ -19,12 +29,36 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
       val rawHtml = serviceHtml.bufferedReader(Charsets.UTF_8).use { it.readText() }
       val xhtml = buildXhtmlDocument(serviceHtml = rawHtml)
 
-      FileOutputStream(servicePdfPath.toFile()).use { outputStream ->
-        PdfRendererBuilder()
-          .useFastMode()
-          .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
-          .toStream(outputStream)
-          .run()
+      val tempPath = tempDirectoryService
+        .create("${pdfRenderRequest.subjectAccessRequest.id}_openhtml_")
+        .resolve("openhtml-service.pdf")
+      try {
+        FileOutputStream(tempPath.toFile()).use { outputStream ->
+          PdfRendererBuilder()
+            .useFastMode()
+            .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
+            .toStream(outputStream)
+            .run()
+        }
+
+        createWritablePdfDocument(output = servicePdfPath).use { outputPdf ->
+          newDocument(outputPdf).use { document ->
+            outputPdf.addEventHandler(
+              PdfDocumentEvent.END_PAGE,
+              SubjectAccessRequestHeaderAndFooterEventHandler(
+                document = document,
+                subjectName = pdfRenderRequest.subjectName,
+                nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
+                ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
+              ),
+            )
+            PdfDocument(PdfReader(tempPath.toFile())).use { inputPdf ->
+              PdfMerger(outputPdf).merge(inputPdf, 1, inputPdf.numberOfPages)
+            }
+          }
+        }
+      } finally {
+        tempPath.parent.toFile().deleteRecursively()
       }
     }
   }
@@ -52,61 +86,47 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
         <head>
           <meta charset="UTF-8" />
           <style type="text/css">
-            @page {
-              size: A4;
-              margin: 70px 35px 70px 35px;
-            }
-
-            body {
-              margin: 0;
-              font-family: Arial, Helvetica, sans-serif;
-              font-size: 12pt;
-              color: #0b0c0c;
-            }
-
-            img {
-              max-width: 100%;
-            }
-
-            table {
-              border-collapse: collapse;
-            }
-
-            .page-break {
-              page-break-before: always;
-              break-before: page;
-            }
-
-            $serviceCss
-            
-            table {
-              width: 100%;
-              max-width: 100%;
-              border-collapse: collapse;
-              table-layout: fixed;
-            }
-          
-            td, th {
-              word-wrap: break-word;
-              word-break: break-all;
-              white-space: normal;
-              vertical-align: top;
-            }
-          
-            table.summary-list,
-            table.data-table {
-              width: 100%;
-              max-width: 100%;
-              table-layout: fixed;
-            }
-          
-            table.summary-list td,
-            table.data-table td {
-              word-wrap: break-word;
-              word-break: break-all;
-              white-space: normal;
-            }
-          </style>
+          @page {
+            size: A4;
+            margin: 50pt 35pt 70pt 35pt;
+          }
+        
+          body {
+            margin: 0;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12pt;
+            color: #0b0c0c;
+          }
+        
+          img {
+            max-width: 100%;
+          }
+        
+          .page-break {
+            page-break-before: always;
+            break-before: page;
+          }
+        
+          $serviceCss
+        
+          table {
+            max-width: 100%;
+            border-collapse: collapse;
+          }
+        
+          table.summary-list,
+          table.data-table {
+            max-width: 100%;
+            table-layout: fixed;
+          }
+        
+          td,
+          th {
+            word-wrap: break-word;
+            white-space: normal;
+            vertical-align: top;
+          }
+        </style>
         </head>
         <body>
           <main>

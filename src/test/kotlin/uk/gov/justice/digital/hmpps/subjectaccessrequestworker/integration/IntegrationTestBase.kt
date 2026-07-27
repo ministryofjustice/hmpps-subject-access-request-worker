@@ -46,12 +46,10 @@ import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.UUID
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
-const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
 
 @ExtendWith(
   HmppsAuthApiExtension::class,
@@ -70,6 +68,8 @@ const val SAR_STUB_RESPONSES_DIR = "/integration-tests/api-response-stubs"
 @DirtiesContext
 @AutoConfigureWebTestClient
 abstract class IntegrationTestBase {
+
+  open val referencePdfBaseDir: String = REFERENCE_PDF_BASE_DIR
 
   @Autowired
   protected lateinit var subjectAccessRequestRepository: SubjectAccessRequestRepository
@@ -112,13 +112,8 @@ abstract class IntegrationTestBase {
   protected fun clearOauthClientCache(clientId: String, principalName: String) = oAuth2AuthorizedClientService
     .removeAuthorizedClient(clientId, principalName)
 
-  protected fun getSarResponseStub(filename: String): String = this::class.java
-    .getResourceAsStream("$SAR_STUB_RESPONSES_DIR/$filename").use { input ->
-      InputStreamReader(input).readText()
-    }
-
   protected fun getPreGeneratedPdfDocument(expectedPdfFilename: String): PdfDocument {
-    val inputStream = this::class.java.getResourceAsStream("$REFERENCE_PDF_BASE_DIR/$expectedPdfFilename")
+    val inputStream = this::class.java.getResourceAsStream("$referencePdfBaseDir/$expectedPdfFilename")
     assertThat(inputStream).isNotNull
     return pdfDocumentFromInputStream(inputStream!!)
   }

@@ -23,6 +23,8 @@ VALUES ('keyworker-api', 'Keyworker', 'http://localhost:4100','PRISON'),
        ('hmpps-approved-premises-api', 'Approved Premises', 'http://localhost:4100','PROBATION'),
        ('hmpps-education-employment-api', 'Education Employment', 'http://localhost:4100','PRISON'),
        ('launchpad-auth', 'Launchpad', 'http://localhost:4100','PRISON'),
+       ('hmpps-health-and-medication-api', 'Health and medication', 'http://localhost:4100', 'PRISON'),
+       ('hmpps-managing-prisoner-apps-api', 'Managing prisoner applications', 'http://localhost:4100', 'PRISON'),
        ('G1', 'G1', 'G1','PRISON'),
        ('G2', 'G2', 'G2','PRISON'),
        ('G3', 'G3', 'G3','PRISON');

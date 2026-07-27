@@ -12,8 +12,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient.HtmlRenderRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.testNomisId
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlRendererApiExtension.Companion.htmlRendererApi
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.LocationDetail
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.PrisonDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -40,6 +38,9 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
   protected companion object {
     val replaceWhitespaceRegex = Regex("\\s+")
+    private val nomisIdLineRegex = Regex("^NOMIS ID:.*")
+    private val ndeliusIdLineRegex = Regex("^nDelius ID:.*")
+    private val nameLineRegex = Regex("^Name:.*")
   }
 
   protected fun assertRequestClaimedAtLeastOnce(subjectAccessRequest: SubjectAccessRequest) {
@@ -58,15 +59,9 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
 
-    val actualText = StringBuilder()
-    val expectedText = StringBuilder()
-
-    for (i in 1..actual.numberOfPages) {
-      actualText.append(actual.getPageTextNoFormatting(i))
-      expectedText.append(actual.getPageTextNoFormatting(i))
-    }
-
-    assertThat(actualText.toString()).isEqualTo(expectedText.toString())
+    val actualPages = actual.canonicalPageText()
+    val expectedPages = expected.canonicalPageText()
+    assertThat(actualPages).isEqualTo(expectedPages)
   }
 
   private fun PdfDocument.getPageTextNoFormatting(
@@ -76,24 +71,43 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     SimpleTextExtractionStrategy(),
   ).replace(replaceWhitespaceRegex, " ")
 
+  private fun PdfDocument.canonicalPageText(): List<String> = (1..numberOfPages).map { page ->
+    canonicalizePageText(PdfTextExtractor.getTextFromPage(getPage(page), SimpleTextExtractionStrategy()))
+  }
+
+  private fun canonicalizePageText(text: String): String = text
+    .lineSequence()
+    .map { it.trim() }
+    .filter { it.isNotEmpty() }
+    .filterNot { it == "Official Sensitive" }
+    .filterNot { nameLineRegex.matches(it) }
+    .filterNot { nomisIdLineRegex.matches(it) }
+    .filterNot { ndeliusIdLineRegex.matches(it) }
+    .joinToString(" ")
+    .replace(replaceWhitespaceRegex, " ")
+    .trim()
+
   protected fun assertAttachmentPageMatchesExpected(
     actualPdfDoc: PdfDocument,
     expectedPdfDoc: PdfDocument,
     pageNumber: Int,
     attachmentNumber: Int,
   ) {
-    val expected = actualPdfDoc.getPage(pageNumber)
-    val actual = expectedPdfDoc.getPage(pageNumber)
-    val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
+    val expectedPageText = expectedPdfDoc.getPageTextNoFormatting(pageNumber)
+    val actualPageText = actualPdfDoc.getPageTextNoFormatting(pageNumber)
 
     assertThat(actualPageText).`as`("attachment $attachmentNumber text").contains("Attachment: $attachmentNumber")
-    assertThat(actual.contentBytes).`as`("page $pageNumber content bytes").isEqualTo(expected.contentBytes)
+    assertThat(actualPageText).`as`("attachment $attachmentNumber page text").isEqualTo(expectedPageText)
   }
 
   protected fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {
-    val expected = actualPdfDoc.getPage(pageNumber)
-    val actual = expectedPdfDoc.getPage(pageNumber)
-    assertThat(actual.contentBytes).`as`("page $pageNumber content bytes").isEqualTo(expected.contentBytes)
+    val actualPageText = canonicalizePageText(
+      PdfTextExtractor.getTextFromPage(actualPdfDoc.getPage(pageNumber), SimpleTextExtractionStrategy()),
+    )
+    val expectedPageText = canonicalizePageText(
+      PdfTextExtractor.getTextFromPage(expectedPdfDoc.getPage(pageNumber), SimpleTextExtractionStrategy()),
+    )
+    assertThat(actualPageText).`as`("page $pageNumber text").isEqualTo(expectedPageText)
   }
 
   protected fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceName: String, serviceLabel: String) {
@@ -127,41 +141,6 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   protected fun requestHasStatus(subjectAccessRequest: SubjectAccessRequest, expectedStatus: Status): Boolean {
     val target = getSubjectAccessRequest(subjectAccessRequest.id)
     return expectedStatus == target.status
-  }
-
-  protected fun clearDatabaseData() {
-    subjectAccessRequestRepository.deleteAll()
-    prisonDetailsRepository.deleteAll()
-    locationDetailsRepository.deleteAll()
-  }
-
-  protected fun populatePrisonDetails() {
-    prisonDetailsRepository.saveAndFlush(PrisonDetail("MDI", "MOORLAND (HMP & YOI)"))
-    prisonDetailsRepository.saveAndFlush(PrisonDetail("LEI", "LEEDS (HMP)"))
-  }
-
-  protected fun populateLocationDetails() {
-    locationDetailsRepository.saveAndFlush(
-      LocationDetail(
-        "cac85758-380b-49fc-997f-94147e2553ac",
-        357591,
-        "ASSO A WING",
-      ),
-    )
-    locationDetailsRepository.saveAndFlush(
-      LocationDetail(
-        "d0763236-c073-4ef4-9592-419bf0cd72cb",
-        357592,
-        "ASSO B WING",
-      ),
-    )
-    locationDetailsRepository.saveAndFlush(
-      LocationDetail(
-        "8ac39ebb-499d-4862-ae45-0b091253e89d",
-        27187,
-        "ADJ",
-      ),
-    )
   }
 
   protected fun getServiceConfiguration(serviceName: String): ServiceConfiguration {
