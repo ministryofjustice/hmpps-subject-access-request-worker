@@ -11,23 +11,29 @@ import org.junit.jupiter.api.io.TempDir
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
 import java.nio.file.Path
+import java.util.UUID
 
 class OpenHtmlServicePdfRendererTest {
 
   @TempDir
   lateinit var tempDir: Path
 
-  private val renderer = OpenHtmlServicePdfRenderer()
+  private lateinit var renderer: OpenHtmlServicePdfRenderer
 
   private val subjectAccessRequest: SubjectAccessRequest = mock()
+  private lateinit var tempDirectoryService: TempDirectoryService
 
   lateinit var pdfRenderRequest: PdfRenderRequest
 
   @BeforeEach
   fun setup() {
+    tempDirectoryService = TempDirectoryService(tempDir)
+    renderer = OpenHtmlServicePdfRenderer(tempDirectoryService)
+    whenever(subjectAccessRequest.id).thenReturn(UUID.randomUUID())
     whenever(subjectAccessRequest.nomisId).thenReturn("A1234BC")
 
     pdfRenderRequest = PdfRenderRequest(

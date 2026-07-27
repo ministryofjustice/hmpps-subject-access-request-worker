@@ -8,15 +8,17 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.nio.file.Files
 import java.nio.file.Path
 
-class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
+class OpenHtmlServicePdfRenderer(
+  private val tempDirectoryService: TempDirectoryService,
+) : ServicePdfRenderer {
 
   override suspend fun generateServicePdf(
     pdfRenderRequest: PdfRenderRequest,
@@ -27,7 +29,9 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
       val rawHtml = serviceHtml.bufferedReader(Charsets.UTF_8).use { it.readText() }
       val xhtml = buildXhtmlDocument(serviceHtml = rawHtml)
 
-      val tempPath = Files.createTempFile("openhtml-service-", ".pdf")
+      val tempPath = tempDirectoryService
+        .create("${pdfRenderRequest.subjectAccessRequest.id}_openhtml_")
+        .resolve("openhtml-service.pdf")
       try {
         FileOutputStream(tempPath.toFile()).use { outputStream ->
           PdfRendererBuilder()
@@ -54,7 +58,7 @@ class OpenHtmlServicePdfRenderer : ServicePdfRenderer {
           }
         }
       } finally {
-        Files.deleteIfExists(tempPath)
+        tempPath.parent.toFile().deleteRecursively()
       }
     }
   }
