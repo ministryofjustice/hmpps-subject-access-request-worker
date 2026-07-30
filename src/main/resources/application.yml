@@ -168,4 +168,4 @@ springdoc:
     enabled: false
 
 application:
-  service-renderer: itext
+  service-renderer: openhtmltopdf
