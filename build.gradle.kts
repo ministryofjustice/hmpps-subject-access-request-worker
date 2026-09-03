@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.6"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.7"
   kotlin("plugin.spring") version "2.4.10"
   kotlin("plugin.jpa") version "2.4.10"
 }
@@ -16,10 +16,8 @@ dependencyCheck {
 ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
 
-val springDocVersion = "3.0.2"
-
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.1")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -34,14 +32,12 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.5.4")
   implementation("org.apache.commons:commons-lang3:3.20.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.2")
-  implementation("io.sentry:sentry-spring-boot-4:8.53.0")
-  implementation("io.sentry:sentry-logback:8.53.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.55.0")
+  implementation("io.sentry:sentry-logback:8.55.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.8.37")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
-  constraints {
-    implementation("org.webjars:swagger-ui:5.32.11")
-  }
+  implementation("aws.sdk.kotlin:s3:1.8.45")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
+
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.4.240")
   runtimeOnly("org.postgresql:postgresql:42.7.13")
@@ -50,16 +46,16 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.2")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
-  implementation("org.jsoup:jsoup:1.23.1")
+  implementation("org.jsoup:jsoup:1.23.2")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.0-beta2")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.1")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webclient-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("com.opencsv:opencsv:5.12.0")
-  testImplementation("org.testcontainers:testcontainers:2.0.3")
+  testImplementation("org.testcontainers:testcontainers:2.0.5")
   testImplementation("org.testcontainers:junit-jupiter:1.21.4")
 }
 
