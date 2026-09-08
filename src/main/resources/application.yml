@@ -163,12 +163,8 @@ springdoc:
   swagger-ui:
     enabled: false
     disable-swagger-default-url: true
-    version: 5.32.11
   api-docs:
     enabled: false
-  model-converters:
-    kotlin-nullable-property-customizer:
-      enabled: false
 
 application:
   service-renderer: openhtmltopdf
