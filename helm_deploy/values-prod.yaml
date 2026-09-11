@@ -22,6 +22,7 @@ generic-service:
     BACKLOG_REQUEST_PROCESSOR_INITIAL_DELAY: 5
     BACKLOG_REQUEST_PROCESSOR_POOL_SIZE: 5
     TASK_SCHEDULING_POOL_SIZE: 1
+    SCHEDULED_SUBJECT_ACCESS_REQUEST_PROCESSOR_CLAIM_THRESHOLD_MINS: 60
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
