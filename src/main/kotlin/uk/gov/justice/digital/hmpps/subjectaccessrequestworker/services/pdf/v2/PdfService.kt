@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCon
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
@@ -42,6 +43,7 @@ class PdfService(
   private val attachmentsPdfService: AttachmentsPdfService,
   private val telemetryClient: TelemetryClient,
   private val servicePdfRenderer: ServicePdfRenderer,
+  private val subjectAccessRequestService: SubjectAccessRequestService,
 ) {
 
   companion object {
@@ -88,6 +90,9 @@ class PdfService(
         "service" to serviceConfiguration.serviceName,
       )
 
+      // fail fast if request status is canceled.
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
       val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
       val serviceHtml = getServiceHtml(pdfRenderRequest, serviceConfiguration)
       log.info("converting service {} html to pdf using {}", subjectAccessRequest.id, servicePdfRenderer::class.simpleName)
@@ -107,6 +112,8 @@ class PdfService(
     pdfRenderRequest: PdfRenderRequest,
     serviceConfiguration: ServiceConfiguration,
   ) {
+    subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(pdfRenderRequest.subjectAccessRequest)
+
     val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
 
     documentStoreService.listAttachments(

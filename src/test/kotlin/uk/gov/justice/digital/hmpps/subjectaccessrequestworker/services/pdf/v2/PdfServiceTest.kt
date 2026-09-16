@@ -38,6 +38,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCon
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
@@ -55,6 +56,7 @@ class PdfServiceTest {
   private val attachmentsPdfService: AttachmentsPdfService = Mockito.mock()
   private val service1Config: ServiceConfiguration = Mockito.mock()
   private val telemetryClient: TelemetryClient = Mockito.mock()
+  private val subjectAccessRequestService: SubjectAccessRequestService = Mockito.mock()
   private val requestServiceDetail1: RequestServiceDetail = Mockito.mock()
 
   @TempDir
@@ -97,6 +99,7 @@ class PdfServiceTest {
       attachmentsPdfService = attachmentsPdfService,
       telemetryClient = telemetryClient,
       servicePdfRenderer = ITextServicePdfRenderer(),
+      subjectAccessRequestService,
     )
   }
 
@@ -224,6 +227,7 @@ class PdfServiceTest {
       attachmentsPdfService = attachmentsPdfService,
       telemetryClient = telemetryClient,
       servicePdfRenderer = servicePdfRenderer,
+      subjectAccessRequestService = subjectAccessRequestService,
     )
 
     val actualPdfPath = pdfServiceWithConfiguredRenderer.renderSubjectAccessRequestPdf(pdfRenderRequest)

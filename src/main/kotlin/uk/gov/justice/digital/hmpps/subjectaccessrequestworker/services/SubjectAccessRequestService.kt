@@ -2,10 +2,13 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.UPDATE_SAR_SERVICE_RENDER_STATUS
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICES_NOT_RENDERED
@@ -89,6 +92,15 @@ class SubjectAccessRequestService(
     updateServiceStatus(id, serviceName, null, RenderStatus.SUSPENDED)
   }
 
+  @Transactional
+  fun requireSubjectAccessRequestNotCancelled(
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = subjectAccessRequestRepository.findByIdOrNull(subjectAccessRequest.id)?.let {
+    if (Status.Cancelled == it.status) {
+      throw subjectAccessRequestCancelledException(subjectAccessRequest)
+    }
+  } ?: throw subjectAccessRequestNotFoundException(subjectAccessRequest, ProcessingEvent.CHECK_REQUEST_STATUS)
+
   private fun updateServiceStatus(id: UUID, serviceName: String, templateVersion: String?, renderStatus: RenderStatus) {
     subjectAccessRequestRepository.findById(id).ifPresentOrElse(
       { sar: SubjectAccessRequest ->
@@ -139,5 +151,26 @@ class SubjectAccessRequestService(
     errorCode = SERVICES_NOT_RENDERED,
     subjectAccessRequest = subjectAccessRequest,
     params = params,
+  )
+
+  private fun subjectAccessRequestCancelledException(
+    subjectAccessRequest: SubjectAccessRequest
+  ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
+    "subject access request has been cancelled",
+    null,
+    ProcessingEvent.CHECK_REQUEST_STATUS,
+    ErrorCode.REQUEST_CANCELLED,
+    subjectAccessRequest,
+  )
+
+  private fun subjectAccessRequestNotFoundException(
+    subjectAccessRequest: SubjectAccessRequest,
+    processingEvent: ProcessingEvent,
+  ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
+    "subject access request not found",
+    null,
+    processingEvent,
+    ErrorCode.INTERNAL_SERVER_ERROR,
+    subjectAccessRequest,
   )
 }
