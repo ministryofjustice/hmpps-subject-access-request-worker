@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.8"
-  kotlin("plugin.spring") version "2.4.10"
-  kotlin("plugin.jpa") version "2.4.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
+  kotlin("plugin.spring") version "2.4.20"
+  kotlin("plugin.jpa") version "2.4.20"
 }
 
 configurations {
@@ -17,7 +17,7 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.2")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -29,13 +29,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
-  implementation("com.github.jknack:handlebars:4.5.4")
+  implementation("com.github.jknack:handlebars:4.5.5")
   implementation("org.apache.commons:commons-lang3:3.20.0")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.2")
-  implementation("io.sentry:sentry-spring-boot-4:8.55.0")
-  implementation("io.sentry:sentry-logback:8.55.0")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.3")
+  implementation("io.sentry:sentry-spring-boot-4:8.58.0")
+  implementation("io.sentry:sentry-logback:8.58.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.8.47")
+  implementation("aws.sdk.kotlin:s3:1.9.7")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
 
   runtimeOnly("org.flywaydb:flyway-core")
@@ -43,8 +43,8 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.13")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.2")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.3")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.3.0")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
   implementation("org.jsoup:jsoup:1.23.2")
 
