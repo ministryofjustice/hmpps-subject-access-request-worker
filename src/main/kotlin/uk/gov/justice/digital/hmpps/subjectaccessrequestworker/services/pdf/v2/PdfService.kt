@@ -51,6 +51,8 @@ class PdfService(
   }
 
   suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): Path {
+    subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(pdfRenderRequest.subjectAccessRequest)
+
     telemetryClient.trackSarEvent(GENERATE_PDF_STARTED, pdfRenderRequest.subjectAccessRequest)
     log.info("generating pdf for {}", pdfRenderRequest.subjectAccessRequest.id)
 
@@ -233,6 +235,8 @@ class PdfService(
     }
 
     pdfRenderRequest.subjectAccessRequest.getSelectedServices().forEach { service ->
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(pdfRenderRequest.subjectAccessRequest)
+
       val pdfPartialPath = pdfRenderRequest.serviceDataPdfPath(service)
       getReadablePdfDocument(getInputStream(pdfPartialPath)).use { servicePartialPdf ->
         merger.merge(servicePartialPdf, 1, servicePartialPdf.numberOfPages)

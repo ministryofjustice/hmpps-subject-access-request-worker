@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
@@ -18,13 +19,17 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_COMPLETED
@@ -33,6 +38,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
@@ -44,6 +51,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.crea
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
 import java.util.UUID
@@ -241,6 +249,108 @@ class PdfServiceTest {
         eq(servicePdfPath),
         eq(serviceHtml),
       )
+  }
+
+  @Test
+  fun `should throw exception when request has status cancelled`() = runTest {
+    doThrow(
+      FatalSubjectAccessRequestException(
+        "subject access request has been cancelled",
+        null,
+        ProcessingEvent.CHECK_REQUEST_STATUS,
+        ErrorCode.REQUEST_CANCELLED,
+        subjectAccessRequest,
+      ),
+    ).whenever(subjectAccessRequestService).requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+    val actual = assertThrows<FatalSubjectAccessRequestException> { pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest) }
+
+    assertThat(actual.message).contains("subject access request has been cancelled")
+    assertThat(actual.event).isEqualTo(ProcessingEvent.CHECK_REQUEST_STATUS)
+    assertThat(actual.errorCode).isEqualTo(ErrorCode.REQUEST_CANCELLED)
+
+    val children = Files.list(pdfRenderRequest.reportDir).use { it.toList() }
+
+    assertThat(children.map { it.fileName.toString() }.toSet())
+      .containsExactlyInAnyOrderElementsOf(setOf("partials", "html"))
+
+    assertThat(children.all(Files::isDirectory)).isTrue
+
+    assertThat(children.all { dir -> Files.list(dir).use { !it.findAny().isPresent } }).isTrue
+  }
+
+  @Test
+  fun `should throw exception if request status check fails when generating service data pdf partial`() = runTest {
+    whenever(requestServiceDetail1.serviceConfiguration)
+      .thenReturn(service1Config)
+
+    whenever(service1Config.serviceName)
+      .thenReturn(serviceName)
+
+    whenever(service1Config.label)
+      .thenReturn(serviceLabel)
+
+    whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, serviceName))
+      .thenReturn("v1")
+
+    whenever(
+      documentStoreService.getDocument(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceName = serviceName,
+        outputPath = sarBaseDir.resolve("html/$serviceName.html"),
+      ),
+    ).thenReturn(
+      getHtmlInputStream(
+        path = getResourcePath("/integration-tests/html-stubs/$serviceName-expected.html"),
+      ),
+    )
+
+    doNothing()
+      .doThrow(
+        FatalSubjectAccessRequestException(
+          "subject access request has been cancelled",
+          null,
+          ProcessingEvent.CHECK_REQUEST_STATUS,
+          ErrorCode.REQUEST_CANCELLED,
+          subjectAccessRequest,
+        ),
+      ).whenever(subjectAccessRequestService).requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+    whenever(documentStoreService.listAttachments(subjectAccessRequest, serviceName))
+      .thenReturn(emptyList())
+
+    whenever(dateService.reportGenerationDate())
+      .thenReturn("1 January 2025")
+
+    whenever(dateService.reportDateFormat(dateFrom, "Start of record"))
+      .thenReturn("1 January 2024")
+
+    whenever(dateService.reportDateFormat(dateTo))
+      .thenReturn("1 January 2025")
+
+    val actual = assertThrows<FatalSubjectAccessRequestException> {
+      pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
+    }
+
+    verify(telemetryClient, times(6))
+      .trackEvent(eventCaptor.capture(), any(), isNull())
+
+    assertThat(eventCaptor.allValues).containsExactly(
+      GENERATE_PDF_STARTED.toString(),
+      GENERATE_PDF_BODY_STARTED.toString(),
+      GENERATE_PDF_COVER_STARTED.toString(),
+      GENERATE_PDF_COVER_COMPLETED.toString(),
+      GENERATE_PDF_ADD_SERVICE_DATA_STATED.toString(),
+      GENERATE_PDF_SERVICE_DATA_ADDED.toString(),
+    )
+
+    verify(subjectAccessRequestService, times(2))
+      .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+    verify(documentStoreService, times(1))
+      .getTemplateVersion(subjectAccessRequest, serviceName)
+
+    verifyNoMoreInteractions(documentStoreService, attachmentsPdfService)
   }
 
   private fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {

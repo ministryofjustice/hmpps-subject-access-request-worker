@@ -42,7 +42,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
@@ -153,8 +152,8 @@ class ReportServiceImplTest {
      */
     @Test
     fun `should make expected calls`(): Unit = runBlocking {
-      // 1 precheck and 1 check per service request
-      val expectedStatusCheckCount = 5
+      val expectedStatusCheckCount = getExpectedStatusChecks(numberOfServices = 4)
+
       subjectAccessRequest.services.addAll(
         listOf(
           createRequestServiceDetail(unsuspendedServiceConfig, PENDING),
@@ -210,7 +209,6 @@ class ReportServiceImplTest {
   inner class ErrorScenarios {
     @Test
     fun `should throw exception when selected service is suspended`(): Unit = runBlocking {
-
       subjectAccessRequest.services.addAll(
         listOf(
           createRequestServiceDetail(unsuspendedServiceConfigTwo, PENDING),
@@ -250,7 +248,7 @@ class ReportServiceImplTest {
 
     @Test
     fun `should throw exception and mark service as errored when render request fails`(): Unit = runBlocking {
-      val expectedCancelledChecks = 4
+      val expectedStatusCheckCount = getExpectedStatusChecks(numberOfServices = 3)
 
       subjectAccessRequest.services.addAll(
         listOf(
@@ -289,7 +287,7 @@ class ReportServiceImplTest {
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigThree)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigThree)
 
-      verify(subjectAccessRequestService, times(expectedCancelledChecks))
+      verify(subjectAccessRequestService, times(expectedStatusCheckCount))
         .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
     }
   }
@@ -485,4 +483,6 @@ class ReportServiceImplTest {
       null,
     )
   }
+
+  private fun getExpectedStatusChecks(numberOfServices: Int): Int = numberOfServices + 1
 }

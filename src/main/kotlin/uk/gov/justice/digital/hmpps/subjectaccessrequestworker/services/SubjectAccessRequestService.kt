@@ -154,7 +154,7 @@ class SubjectAccessRequestService(
   )
 
   private fun subjectAccessRequestCancelledException(
-    subjectAccessRequest: SubjectAccessRequest
+    subjectAccessRequest: SubjectAccessRequest,
   ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
     "subject access request has been cancelled",
     null,
