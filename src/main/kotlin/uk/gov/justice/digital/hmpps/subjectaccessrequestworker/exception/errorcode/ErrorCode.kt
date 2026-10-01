@@ -68,6 +68,8 @@ open class ErrorCode(
 
     val REQUEST_CANCELLED = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10107")
 
+    val COMPLETE_REQUEST_UNSUCCESSFUL = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10108")
+
     val DOCUMENT_UPLOAD_VERIFICATION_ERROR = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10204")
 
     val DOCUMENT_STORE_CONFLICT = ErrorCode(ErrorCodePrefix.SAR_WORKER, "10205")

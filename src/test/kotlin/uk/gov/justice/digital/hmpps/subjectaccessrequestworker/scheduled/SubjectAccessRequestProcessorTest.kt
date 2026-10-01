@@ -94,7 +94,7 @@ class SubjectAccessRequestProcessorTest {
       verify(subjectAccessRequestService, times(1)).findUnclaimed()
       verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
       verify(reportService, times(1)).generateReport(sampleSAR)
-      verify(subjectAccessRequestService, times(1)).updateStatus(sampleSAR.id, Status.Completed)
+      verify(subjectAccessRequestService, times(1)).completeRequest(sampleSAR)
       verifyNoInteractions(alertsService)
       verifyTelemetryEvents(sampleSAR, REQUEST_CLAIMED.name, REQUEST_COMPLETED.name)
     }
@@ -163,17 +163,17 @@ class SubjectAccessRequestProcessorTest {
     }
 
     @Test
-    fun `should raise expected alert when updateStatus throws an exception`() = runTest {
+    fun `should raise expected alert when complete request throws an exception`() = runTest {
       val rootCause = RuntimeException("findUnclaimed error")
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
-      whenever(subjectAccessRequestService.updateStatus(sampleSAR.id, Status.Completed)).thenThrow(rootCause)
+      whenever(subjectAccessRequestService.completeRequest(sampleSAR)).thenThrow(rootCause)
 
       subjectAccessRequestProcessor.execute()
 
       verify(subjectAccessRequestService, times(1)).findUnclaimed()
       verify(reportService, times(1)).generateReport(sampleSAR)
       verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
-      verify(subjectAccessRequestService, times(1)).updateStatus(sampleSAR.id, Status.Completed)
+      verify(subjectAccessRequestService, times(1)).completeRequest(sampleSAR)
       verifyNoMoreInteractions(subjectAccessRequestService, reportService)
       verifyTelemetryException(rootCause, sampleSAR)
 

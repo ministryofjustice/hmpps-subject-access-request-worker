@@ -49,9 +49,20 @@ class SubjectAccessRequestService(
   )
 
   @Transactional
+  fun completeRequest(subjectAccessRequest: SubjectAccessRequest) {
+    if (subjectAccessRequestRepository.completeSubjectAccessRequest(subjectAccessRequest.id) == 0) {
+      val latest = subjectAccessRequestRepository.findByIdOrNull(subjectAccessRequest.id)
+
+      if (latest == null) {
+        throw subjectAccessRequestNotFoundException(subjectAccessRequest, ProcessingEvent.REQUEST_COMPLETED)
+      }
+      throw subjectAccessRequestCompletedException(latest)
+    }
+  }
+
+  @Transactional
   fun updateStatus(id: UUID, status: Status) {
-    val requestToUpdate =
-      subjectAccessRequestRepository.findById(id)
+    val requestToUpdate = subjectAccessRequestRepository.findById(id)
 
     requestToUpdate.get().status = Status.Completed
     subjectAccessRequestRepository.save(requestToUpdate.get())
@@ -161,6 +172,17 @@ class SubjectAccessRequestService(
     ProcessingEvent.CHECK_REQUEST_STATUS,
     ErrorCode.REQUEST_CANCELLED,
     subjectAccessRequest,
+  )
+
+  private fun subjectAccessRequestCompletedException(
+    subjectAccessRequest: SubjectAccessRequest,
+  ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
+    "subject access request could not be completed due to invalid status",
+    null,
+    ProcessingEvent.REQUEST_COMPLETED,
+    ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL,
+    subjectAccessRequest,
+    mapOf("status" to subjectAccessRequest.status.name),
   )
 
   private fun subjectAccessRequestNotFoundException(

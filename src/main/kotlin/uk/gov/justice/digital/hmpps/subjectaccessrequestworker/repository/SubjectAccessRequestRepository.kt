@@ -12,7 +12,8 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 const val LOCK_TIMEOUT = "3000"
 
@@ -49,4 +50,8 @@ interface SubjectAccessRequestRepository :
     @Param("releaseThreshold") releaseThreshold: LocalDateTime,
     @Param("currentTime") currentTime: LocalDateTime,
   ): Int
+
+  @Modifying
+  @Query("UPDATE SubjectAccessRequest r SET r.status = 'Completed' WHERE r.id = :id AND r.status = 'Pending'")
+  fun completeSubjectAccessRequest(@Param("id") id: UUID): Int
 }
