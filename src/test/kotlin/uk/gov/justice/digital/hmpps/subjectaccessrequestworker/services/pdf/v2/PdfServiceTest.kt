@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import com.itextpdf.layout.element.Paragraph
 import com.microsoft.applicationinsights.TelemetryClient
 import kotlinx.coroutines.test.runTest
@@ -48,6 +45,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_FULL_DOCUMENT_MERGE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
@@ -138,17 +136,7 @@ class PdfServiceTest {
 
     @Test
     fun `should generate expected PDF when not attachment data exists`() = runTest {
-      whenever(
-        documentStoreService.getDocument(
-          subjectAccessRequest = subjectAccessRequest,
-          serviceName = service1Name,
-          outputPath = sarBaseDir.resolve("html/$service1Name.html"),
-        ),
-      ).thenReturn(
-        getHtmlInputStream(
-          path = getResourcePath("/integration-tests/html-stubs/$service1Name-expected.html"),
-        ),
-      )
+      mockGetDocumentSuccess()
 
       whenever(dateService.reportGenerationDate())
         .thenReturn("1 January 2025")
@@ -199,14 +187,15 @@ class PdfServiceTest {
       verify(attachmentsPdfService, never())
         .processAttachments(any(), any(), any())
 
-      verify(subjectAccessRequestService, times(2)).requireSubjectAccessRequestNotCancelled(
+      verify(subjectAccessRequestService, times(3)).requireSubjectAccessRequestNotCancelled(
         eq(subjectAccessRequest),
         capture(processingEventCaptor),
       )
 
-      assertThat(processingEventCaptor.allValues).hasSize(2)
+      assertThat(processingEventCaptor.allValues).hasSize(3)
       assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
       assertThat(processingEventCaptor.secondValue).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
+      assertThat(processingEventCaptor.thirdValue).isEqualTo(GENERATE_PDF_FULL_DOCUMENT_MERGE)
     }
 
     @Test
@@ -266,14 +255,15 @@ class PdfServiceTest {
           eq(serviceHtml),
         )
 
-      verify(subjectAccessRequestService, times(2)).requireSubjectAccessRequestNotCancelled(
+      verify(subjectAccessRequestService, times(3)).requireSubjectAccessRequestNotCancelled(
         eq(subjectAccessRequest),
         capture(processingEventCaptor),
       )
 
-      assertThat(processingEventCaptor.allValues).hasSize(2)
-      assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
-      assertThat(processingEventCaptor.secondValue).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
+      assertThat(processingEventCaptor.allValues).hasSize(3)
+      assertThat(processingEventCaptor.allValues[0]).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.allValues[1]).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
+      assertThat(processingEventCaptor.allValues[2]).isEqualTo(GENERATE_PDF_FULL_DOCUMENT_MERGE)
     }
   }
 
@@ -413,16 +403,55 @@ class PdfServiceTest {
 
       verifyNoMoreInteractions(servicePdfRenderer)
     }
-  }
 
-  private fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {
-    val expected = actualPdfDoc.getPage(pageNumber)
-    val actual = expectedPdfDoc.getPage(pageNumber)
+    @Test
+    fun `should throw exception when request status cancelled check fails during final pdf merge phase`() = runTest {
+      pdfService = PdfService(
+        documentStoreService = documentStoreService,
+        dateService = dateService,
+        attachmentsPdfService = attachmentsPdfService,
+        telemetryClient = telemetryClient,
+        servicePdfRenderer = ITextServicePdfRenderer(),
+        subjectAccessRequestService = subjectAccessRequestService,
+      )
 
-    val actualPageText = PdfTextExtractor.getTextFromPage(actual, SimpleTextExtractionStrategy())
-    val expectedPageText = PdfTextExtractor.getTextFromPage(expected, SimpleTextExtractionStrategy())
+      mockGetDocumentSuccess()
 
-    assertThat(actualPageText).isEqualTo(expectedPageText)
+      whenever(dateService.reportGenerationDate())
+        .thenReturn("1 January 2025")
+
+      whenever(dateService.reportDateFormat(dateFrom, "Start of record"))
+        .thenReturn("1 January 2024")
+
+      whenever(dateService.reportDateFormat(dateTo))
+        .thenReturn("1 January 2025")
+
+      val expectedException: FatalSubjectAccessRequestException = mock()
+
+      doNothing()
+        .doNothing()
+        .doThrow(expectedException)
+        .whenever(subjectAccessRequestService).requireSubjectAccessRequestNotCancelled(
+          subjectAccessRequest = eq(subjectAccessRequest),
+          event = any(),
+        )
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
+      }
+
+      assertThat(actual).isEqualTo(expectedException)
+
+      verify(subjectAccessRequestService, times(3)).requireSubjectAccessRequestNotCancelled(
+        eq(subjectAccessRequest),
+        capture(processingEventCaptor),
+      )
+
+      assertThat(processingEventCaptor.allValues).hasSize(3)
+      assertThat(processingEventCaptor.allValues[0]).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.allValues[1]).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
+      assertThat(processingEventCaptor.allValues[2]).isEqualTo(GENERATE_PDF_FULL_DOCUMENT_MERGE)
+    }
   }
 
   private fun getHtmlInputStream(path: Path): InputStream = FileInputStream(path.toFile())
@@ -433,5 +462,19 @@ class PdfServiceTest {
       ?.toPath()
       ?: fail("failed to get resource for specified path")
     return absolutePath
+  }
+
+  private suspend fun mockGetDocumentSuccess() {
+    whenever(
+      documentStoreService.getDocument(
+        subjectAccessRequest = subjectAccessRequest,
+        serviceName = service1Name,
+        outputPath = sarBaseDir.resolve("html/$service1Name.html"),
+      ),
+    ).thenReturn(
+      getHtmlInputStream(
+        path = getResourcePath("/integration-tests/html-stubs/$service1Name-expected.html"),
+      ),
+    )
   }
 }

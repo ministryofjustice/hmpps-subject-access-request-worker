@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_FULL_DOCUMENT_MERGE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
@@ -343,6 +344,11 @@ class PdfService(
   }
 
   private fun mergePartialsIntoFullReportPdf(pdfRenderRequest: PdfRenderRequest) {
+    subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+      subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+      event = GENERATE_PDF_FULL_DOCUMENT_MERGE,
+    )
+
     createWritablePdfDocument(output = pdfRenderRequest.fullReportPdfPath).use { pdf ->
       val merger = PdfMerger(pdf)
 
