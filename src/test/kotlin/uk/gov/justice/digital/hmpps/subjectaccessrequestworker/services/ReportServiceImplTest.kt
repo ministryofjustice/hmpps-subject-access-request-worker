@@ -11,7 +11,12 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
@@ -20,12 +25,15 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRender
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient.HtmlRenderResponse
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_FAILED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICE_SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus.COMPLETE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus.ERRORED
@@ -144,6 +152,8 @@ class ReportServiceImplTest {
      */
     @Test
     fun `should make expected calls`(): Unit = runBlocking {
+      val expectedStatusCheckCount = getExpectedStatusChecks(numberOfServices = 4)
+
       subjectAccessRequest.services.addAll(
         listOf(
           createRequestServiceDetail(unsuspendedServiceConfig, PENDING),
@@ -180,6 +190,9 @@ class ReportServiceImplTest {
       verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
       verify(documentStorageClient).storeDocument(subjectAccessRequest, reportPdfPath)
 
+      verify(subjectAccessRequestService, times(expectedStatusCheckCount))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
       thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfig)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfig)
@@ -203,6 +216,8 @@ class ReportServiceImplTest {
           createRequestServiceDetail(unsuspendedServiceConfigThree, PENDING),
         ),
       )
+      val expectedCancelledChecks = 4
+
       givenRenderRequestReturnsVersion(unsuspendedServiceConfigTwo, "1")
       givenRenderRequestReturnsVersion(unsuspendedServiceConfigThree, "2")
       val exception = SubjectAccessRequestException("test error")
@@ -226,10 +241,15 @@ class ReportServiceImplTest {
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigThree)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigThree)
       thenEventTrackedForServiceSuspended(suspendedServiceConfig)
+
+      verify(subjectAccessRequestService, times(expectedCancelledChecks))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
     }
 
     @Test
     fun `should throw exception and mark service as errored when render request fails`(): Unit = runBlocking {
+      val expectedStatusCheckCount = getExpectedStatusChecks(numberOfServices = 3)
+
       subjectAccessRequest.services.addAll(
         listOf(
           createRequestServiceDetail(unsuspendedServiceConfig, PENDING),
@@ -266,6 +286,95 @@ class ReportServiceImplTest {
       thenEventTrackedForRenderRequestFailed(unsuspendedServiceConfigTwo)
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigThree)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigThree)
+
+      verify(subjectAccessRequestService, times(expectedStatusCheckCount))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+    }
+  }
+
+  @Nested
+  inner class RequestCancelledStatus {
+
+    @Test
+    fun `should throw exception and fail fast when request status is Cancelled`(): Unit = runBlocking {
+      subjectAccessRequest.services.addAll(
+        listOf(createRequestServiceDetail(unsuspendedServiceConfig, PENDING)),
+      )
+
+      doThrow(
+        FatalSubjectAccessRequestException(
+          "subject access request has been cancelled",
+          null,
+          ProcessingEvent.CHECK_REQUEST_STATUS,
+          ErrorCode.REQUEST_CANCELLED,
+          subjectAccessRequest,
+        ),
+      ).whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> { service.generateReport(subjectAccessRequest) }
+
+      assertThat(actual.message).contains("subject access request has been cancelled")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.CHECK_REQUEST_STATUS)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.REQUEST_CANCELLED)
+      assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+
+      verify(htmlRendererApiClient, never()).submitRenderRequest(any(), any())
+      verify(prisonApiClient, never()).getOffenderName(any(), any())
+      verify(pdfService, never()).renderSubjectAccessRequestPdf(any())
+
+      verify(subjectAccessRequestService, times(1))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+    }
+
+    @Test
+    fun `should throw exception when request after processing first service`(): Unit = runBlocking {
+      subjectAccessRequest.services.addAll(
+        listOf(
+          createRequestServiceDetail(unsuspendedServiceConfig, PENDING),
+          createRequestServiceDetail(unsuspendedServiceConfigTwo, PENDING),
+        ),
+      )
+
+      doNothing()
+        .doNothing()
+        .doThrow(
+          FatalSubjectAccessRequestException(
+            "subject access request has been cancelled",
+            null,
+            ProcessingEvent.CHECK_REQUEST_STATUS,
+            ErrorCode.REQUEST_CANCELLED,
+            subjectAccessRequest,
+          ),
+        ).whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+      givenRenderRequestReturnsVersion(unsuspendedServiceConfig, "1")
+
+      whenever(prisonApiClient.getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!))
+        .thenReturn("Clive")
+
+      whenever(pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest))
+        .thenReturn(reportPdfPath)
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> { service.generateReport(subjectAccessRequest) }
+
+      assertThat(actual.message).contains("subject access request has been cancelled")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.CHECK_REQUEST_STATUS)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.REQUEST_CANCELLED)
+      assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+
+      verify(htmlRendererApiClient)
+        .submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfig)
+
+      thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfig, "1")
+
+      verify(subjectAccessRequestService, times(3))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+      thenEventTrackedForServicesSelected("service-1,service-2")
+      thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfig)
+      thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfig)
     }
   }
 
@@ -374,4 +483,6 @@ class ReportServiceImplTest {
       null,
     )
   }
+
+  private fun getExpectedStatusChecks(numberOfServices: Int): Int = numberOfServices + 1
 }

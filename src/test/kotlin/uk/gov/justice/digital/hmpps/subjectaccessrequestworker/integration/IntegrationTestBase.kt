@@ -129,6 +129,10 @@ abstract class IntegrationTestBase {
     return subjectAccessRequestRepository.saveAndFlush(sar)
   }
 
+  protected fun saveSubjectAccessRequest(
+    request: SubjectAccessRequest,
+  ): SubjectAccessRequest = subjectAccessRequestRepository.saveAndFlush(request)
+
   protected fun assertSubjectAccessRequestHasStatus(subjectAccessRequest: SubjectAccessRequest, status: Status) {
     assertThat(getSubjectAccessRequest(subjectAccessRequest.id).status).isEqualTo(status)
   }

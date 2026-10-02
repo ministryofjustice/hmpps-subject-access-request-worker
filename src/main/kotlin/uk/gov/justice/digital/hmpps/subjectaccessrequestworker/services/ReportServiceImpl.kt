@@ -48,6 +48,8 @@ class ReportServiceImpl(
   }
 
   override suspend fun generateReport(subjectAccessRequest: SubjectAccessRequest) {
+    subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
     generateReportHtmlForServices(subjectAccessRequest)
     val subjectName = getSubjectName(subjectAccessRequest).also { log.info("subject name: $it") }
 
@@ -69,6 +71,8 @@ class ReportServiceImpl(
     log.info("processing subject access request ${subjectAccessRequest.id}")
 
     uncompletedServices.forEach { service ->
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
       if (service.suspended) {
         log.warn("unable to render {} as it is suspended", service.serviceName)
         trackRenderServiceHtmlSuspended(service, subjectAccessRequest)

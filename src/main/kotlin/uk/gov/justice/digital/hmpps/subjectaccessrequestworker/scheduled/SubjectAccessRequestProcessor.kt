@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestService
@@ -73,7 +72,7 @@ class SubjectAccessRequestProcessor(
 
     reportService.generateReport(subjectAccessRequest)
 
-    subjectAccessRequestService.updateStatus(subjectAccessRequest.id, Status.Completed)
+    subjectAccessRequestService.completeRequest(subjectAccessRequest)
 
     stopWatch.stop()
     reportCompletedEvent(subjectAccessRequest, stopWatch)
