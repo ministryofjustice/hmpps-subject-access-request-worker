@@ -93,7 +93,11 @@ class PdfService(
         pdfRenderRequest = pdfRenderRequest,
         "service" to serviceConfiguration.serviceName,
       )
-      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
+
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = subjectAccessRequest,
+        event = GENERATE_PDF_SERVICE_DATA_ADDED,
+      )
 
       val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
       val serviceHtml = getServiceHtml(pdfRenderRequest, serviceConfiguration)
@@ -241,7 +245,10 @@ class PdfService(
         "service" to service.serviceName,
       )
 
-      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(pdfRenderRequest.subjectAccessRequest)
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+        event = GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED,
+      )
 
       val pdfPartialPath = pdfRenderRequest.serviceDataPdfPath(service)
       getReadablePdfDocument(getInputStream(pdfPartialPath)).use { servicePartialPdf ->

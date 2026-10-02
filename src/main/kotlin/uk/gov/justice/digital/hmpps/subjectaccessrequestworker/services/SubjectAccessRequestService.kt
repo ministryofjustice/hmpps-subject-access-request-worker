@@ -51,11 +51,12 @@ class SubjectAccessRequestService(
   @Transactional
   fun requireSubjectAccessRequestNotCancelled(
     subjectAccessRequest: SubjectAccessRequest,
+    event: ProcessingEvent,
   ) = subjectAccessRequestRepository.findByIdOrNull(subjectAccessRequest.id)?.let {
     if (Status.Cancelled == it.status) {
-      throw subjectAccessRequestCancelledException(subjectAccessRequest)
+      throw subjectAccessRequestCancelledException(subjectAccessRequest, event)
     }
-  } ?: throw subjectAccessRequestNotFoundException(subjectAccessRequest, ProcessingEvent.CHECK_REQUEST_STATUS)
+  } ?: throw subjectAccessRequestNotFoundException(subjectAccessRequest, event)
 
   @Transactional
   fun completeRequest(subjectAccessRequest: SubjectAccessRequest) {
@@ -169,10 +170,11 @@ class SubjectAccessRequestService(
 
   private fun subjectAccessRequestCancelledException(
     subjectAccessRequest: SubjectAccessRequest,
+    event: ProcessingEvent,
   ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
-    "subject access request has been cancelled",
+    "subject access request has status cancelled",
     null,
-    ProcessingEvent.CHECK_REQUEST_STATUS,
+    event,
     ErrorCode.REQUEST_CANCELLED,
     subjectAccessRequest,
   )

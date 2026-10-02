@@ -149,12 +149,12 @@ class SubjectAccessRequestRepositoryTest {
     }
 
     @Test
-    fun `should return 1 when request has status completed`() {
+    fun `should return 0 when request has status completed`() {
       assertThat(subjectAccessRequestRepository.completeSubjectAccessRequest(completedSar.id)).isZero()
     }
 
     @Test
-    fun `should return 1 when request has status cancelled`() {
+    fun `should return 0 when request has status cancelled`() {
       assertThat(subjectAccessRequestRepository.completeSubjectAccessRequest(sarWithStatusCancelled.id)).isZero()
     }
   }

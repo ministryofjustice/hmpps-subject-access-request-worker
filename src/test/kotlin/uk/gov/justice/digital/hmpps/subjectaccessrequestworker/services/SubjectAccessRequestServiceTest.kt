@@ -413,4 +413,64 @@ class SubjectAccessRequestServiceTest {
       verifyNoMoreInteractions(subjectAccessRequestRepository, templateVersionRepository)
     }
   }
+
+  @Nested
+  inner class RequireSubjectAccessRequestNotCancelled {
+
+    @Test
+    fun `should do nothing is request status is not cancelled`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id))
+        .thenReturn(Optional.of(sar))
+
+      service.requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = sar,
+        event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
+      )
+
+      verify(subjectAccessRequestRepository, times(1)).findById(sar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository)
+    }
+
+    @Test
+    fun `should throw exception if SAR has status cancelled`() {
+      whenever(subjectAccessRequestRepository.findById(cancelledSar.id))
+        .thenReturn(Optional.of(cancelledSar))
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        service.requireSubjectAccessRequestNotCancelled(
+          subjectAccessRequest = cancelledSar,
+          event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
+        )
+      }
+
+      assertThat(actual.message).contains("subject access request has status cancelled")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.REQUEST_CANCELLED)
+      assertThat(actual.subjectAccessRequest).isEqualTo(cancelledSar)
+
+      verify(subjectAccessRequestRepository, times(1)).findById(cancelledSar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository)
+    }
+
+    @Test
+    fun `should throw exception if SAR not found`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id))
+        .thenReturn(Optional.empty())
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        service.requireSubjectAccessRequestNotCancelled(
+          subjectAccessRequest = sar,
+          event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
+        )
+      }
+
+      assertThat(actual.message).contains("subject access request not found")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(actual.errorCode).isEqualTo(INTERNAL_SERVER_ERROR)
+      assertThat(actual.subjectAccessRequest).isEqualTo(sar)
+
+      verify(subjectAccessRequestRepository, times(1)).findById(sar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository)
+    }
+  }
 }

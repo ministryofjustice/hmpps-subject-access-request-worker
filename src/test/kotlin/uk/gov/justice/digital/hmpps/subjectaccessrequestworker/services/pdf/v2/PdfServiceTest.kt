@@ -20,17 +20,22 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.capture
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.secondValue
+import org.mockito.kotlin.thirdValue
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_COMPLETED
@@ -44,7 +49,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
@@ -77,6 +81,9 @@ class PdfServiceTest {
 
   @Captor
   lateinit var eventCaptor: ArgumentCaptor<String>
+
+  @Captor
+  lateinit var processingEventCaptor: ArgumentCaptor<ProcessingEvent>
 
   private lateinit var pdfService: PdfService
   private lateinit var pdfRenderRequest: PdfRenderRequest
@@ -114,6 +121,16 @@ class PdfServiceTest {
       servicePdfRenderer = ITextServicePdfRenderer(),
       subjectAccessRequestService = subjectAccessRequestService,
     )
+
+    whenever(requestServiceDetail1.serviceConfiguration).thenReturn(service1Config)
+    whenever(service1Config.serviceName).thenReturn(service1Name)
+    whenever(service1Config.label).thenReturn(service1Label)
+    whenever(service1Config.category).thenReturn(ServiceCategory.PRISON)
+
+    whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, service1Name))
+      .thenReturn("v1")
+    whenever(documentStoreService.listAttachments(subjectAccessRequest, service1Name))
+      .thenReturn(emptyList())
   }
 
   @Nested
@@ -121,18 +138,6 @@ class PdfServiceTest {
 
     @Test
     fun `should generate expected PDF when not attachment data exists`() = runTest {
-      whenever(requestServiceDetail1.serviceConfiguration)
-        .thenReturn(service1Config)
-
-      whenever(service1Config.serviceName)
-        .thenReturn(service1Name)
-
-      whenever(service1Config.label)
-        .thenReturn(service1Label)
-
-      whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, service1Name))
-        .thenReturn("v1")
-
       whenever(
         documentStoreService.getDocument(
           subjectAccessRequest = subjectAccessRequest,
@@ -145,9 +150,6 @@ class PdfServiceTest {
         ),
       )
 
-      whenever(documentStoreService.listAttachments(subjectAccessRequest, service1Name))
-        .thenReturn(emptyList())
-
       whenever(dateService.reportGenerationDate())
         .thenReturn("1 January 2025")
 
@@ -156,6 +158,9 @@ class PdfServiceTest {
 
       whenever(dateService.reportDateFormat(dateTo))
         .thenReturn("1 January 2025")
+
+      doNothing().whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(eq(subjectAccessRequest), any())
 
       val actualPdfPath = pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
 
@@ -166,20 +171,22 @@ class PdfServiceTest {
       verify(telemetryClient, times(12))
         .trackEvent(eventCaptor.capture(), any(), isNull())
 
-      assertThat(eventCaptor.allValues).containsExactly(
-        GENERATE_PDF_STARTED.toString(),
-        GENERATE_PDF_BODY_STARTED.toString(),
-        GENERATE_PDF_COVER_STARTED.toString(),
-        GENERATE_PDF_COVER_COMPLETED.toString(),
-        GENERATE_PDF_ADD_SERVICE_DATA_STATED.toString(),
-        GENERATE_PDF_SERVICE_DATA_ADDED.toString(),
-        GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED.toString(),
-        GENERATE_PDF_MERGE_SERVICE_PARTIALS_STARTED.toString(),
-        GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED.toString(),
-        GENERATE_PDF_MERGE_SERVICE_PARTIAL_COMPLETED.toString(),
-        GENERATE_PDF_MERGE_SERVICE_PARTIALS_COMPLETED.toString(),
-        GENERATE_PDF_BODY_COMPLETED.toString(),
-      )
+      val expectedEvents = listOf(
+        GENERATE_PDF_STARTED,
+        GENERATE_PDF_BODY_STARTED,
+        GENERATE_PDF_COVER_STARTED,
+        GENERATE_PDF_COVER_COMPLETED,
+        GENERATE_PDF_ADD_SERVICE_DATA_STATED,
+        GENERATE_PDF_SERVICE_DATA_ADDED,
+        GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
+        GENERATE_PDF_MERGE_SERVICE_PARTIALS_STARTED,
+        GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED,
+        GENERATE_PDF_MERGE_SERVICE_PARTIAL_COMPLETED,
+        GENERATE_PDF_MERGE_SERVICE_PARTIALS_COMPLETED,
+        GENERATE_PDF_BODY_COMPLETED,
+      ).map { it.name }.toTypedArray()
+
+      assertThat(eventCaptor.allValues).containsExactly(*expectedEvents)
 
       verify(documentStoreService, times(1))
         .getTemplateVersion(subjectAccessRequest, service1Name)
@@ -191,23 +198,20 @@ class PdfServiceTest {
 
       verify(attachmentsPdfService, never())
         .processAttachments(any(), any(), any())
+
+      verify(subjectAccessRequestService, times(2)).requireSubjectAccessRequestNotCancelled(
+        eq(subjectAccessRequest),
+        capture(processingEventCaptor),
+      )
+
+      assertThat(processingEventCaptor.allValues).hasSize(2)
+      assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.secondValue).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
     }
 
     @Test
     fun `should delegate service pdf generation to the configured ServicePdfRenderer`() = runTest {
       val servicePdfRenderer: ServicePdfRenderer = mock()
-
-      whenever(requestServiceDetail1.serviceConfiguration)
-        .thenReturn(service1Config)
-
-      whenever(service1Config.serviceName)
-        .thenReturn(service1Name)
-
-      whenever(service1Config.label)
-        .thenReturn(service1Label)
-
-      whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, service1Name))
-        .thenReturn("v1")
 
       val serviceHtml = getHtmlInputStream(
         path = getResourcePath("/integration-tests/html-stubs/$service1Name-expected.html"),
@@ -221,9 +225,6 @@ class PdfServiceTest {
         ),
       ).thenReturn(serviceHtml)
 
-      whenever(documentStoreService.listAttachments(subjectAccessRequest, service1Name))
-        .thenReturn(emptyList())
-
       whenever(dateService.reportGenerationDate())
         .thenReturn("1 January 2025")
 
@@ -232,6 +233,9 @@ class PdfServiceTest {
 
       whenever(dateService.reportDateFormat(dateTo))
         .thenReturn("1 January 2025")
+
+      doNothing().whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(eq(subjectAccessRequest), any())
 
       doAnswer { invocation ->
         val servicePdfPath = invocation.getArgument<Path>(1)
@@ -261,6 +265,15 @@ class PdfServiceTest {
           eq(servicePdfPath),
           eq(serviceHtml),
         )
+
+      verify(subjectAccessRequestService, times(2)).requireSubjectAccessRequestNotCancelled(
+        eq(subjectAccessRequest),
+        capture(processingEventCaptor),
+      )
+
+      assertThat(processingEventCaptor.allValues).hasSize(2)
+      assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.secondValue).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
     }
   }
 
@@ -268,7 +281,7 @@ class PdfServiceTest {
   inner class RequestCancelled {
 
     @Test
-    fun `should throw exception and not render any service partials when request has status cancelled`() = runTest {
+    fun `should throw exception and not render any service partials when request status cancelled check fails on first call`() = runTest {
       val servicePdfRenderer: ServicePdfRenderer = mock()
 
       pdfService = PdfService(
@@ -280,42 +293,37 @@ class PdfServiceTest {
         subjectAccessRequestService = subjectAccessRequestService,
       )
 
-      val expectedException = FatalSubjectAccessRequestException(
-        "subject access request could not be completed due to invalid status",
-        null,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
-        ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL,
-        subjectAccessRequest,
-      )
+      val expectedException: FatalSubjectAccessRequestException = mock()
 
-      whenever(requestServiceDetail1.serviceConfiguration)
-        .thenReturn(service1Config)
+      whenever(requestServiceDetail1.serviceConfiguration).thenReturn(service1Config)
+      whenever(service1Config.serviceName).thenReturn("1")
+      whenever(service1Config.label).thenReturn("S1")
 
-      whenever(service1Config.serviceName)
-        .thenReturn("1")
-
-      whenever(service1Config.label)
-        .thenReturn("S1")
-
-      whenever(subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(subjectAccessRequest))
-        .thenThrow(expectedException)
+      doThrow(expectedException).whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(eq(subjectAccessRequest), any())
 
       whenever(documentStoreService.getTemplateVersion(subjectAccessRequest, service1Name))
         .thenReturn("v1")
 
-      val actual =
-        assertThrows<FatalSubjectAccessRequestException> { pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest) }
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
+      }
 
-      assertThat(actual.message).contains("subject access request could not be completed due to invalid status")
-      assertThat(actual.event).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
-      assertThat(actual.errorCode).isEqualTo(ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL)
-      assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+      assertThat(actual).isEqualTo(expectedException)
 
-      verifyNoInteractions(servicePdfRenderer)
+      verify(subjectAccessRequestService, times(1)).requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = eq(subjectAccessRequest),
+        event = capture(processingEventCaptor),
+      )
+
+      assertThat(processingEventCaptor.allValues).hasSize(1)
+      assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+
+      verifyNoMoreInteractions(servicePdfRenderer, subjectAccessRequestService)
     }
 
     @Test
-    fun `should throw exception when checking request status cancelled during service partial rendering`() = runTest {
+    fun `should throw exception when request status cancelled check fails on 2nd service partial render`() = runTest {
       val servicePdfRenderer: ServicePdfRenderer = mock()
       subjectAccessRequest.services.clear()
       subjectAccessRequest.services.add(requestServiceDetail1)
@@ -330,61 +338,32 @@ class PdfServiceTest {
         subjectAccessRequestService = subjectAccessRequestService,
       )
 
-      val expectedException = FatalSubjectAccessRequestException(
-        "subject access request could not be completed due to invalid status",
-        null,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
-        ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL,
-        subjectAccessRequest,
-      )
-
-      whenever(requestServiceDetail1.serviceConfiguration)
-        .thenReturn(service1Config)
-
-      whenever(service1Config.serviceName)
-        .thenReturn("S1")
-      whenever(service1Config.label)
-        .thenReturn("S1")
-      whenever(service1Config.category)
-        .thenReturn(ServiceCategory.PRISON)
+      val expectedException: FatalSubjectAccessRequestException = mock()
 
       doNothing()
         .doThrow(expectedException)
-        .whenever(subjectAccessRequestService).requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
-
-      whenever(documentStoreService.getTemplateVersion(any(), any()))
-        .thenReturn("v1")
-      whenever(documentStoreService.listAttachments(any(), any()))
-        .thenReturn(emptyList())
+        .whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(eq(subjectAccessRequest), any())
 
       val actual = assertThrows<FatalSubjectAccessRequestException> {
         pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
       }
 
-      assertThat(actual.message).contains("subject access request could not be completed due to invalid status")
-      assertThat(actual.event).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
-      assertThat(actual.errorCode).isEqualTo(ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL)
-      assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+      assertThat(actual).isEqualTo(expectedException)
 
-      verify(telemetryClient, times(8))
-        .trackEvent(eventCaptor.capture(), any(), isNull())
-
-      val expectedEvents = listOf(
-        GENERATE_PDF_STARTED,
-        GENERATE_PDF_BODY_STARTED,
-        GENERATE_PDF_COVER_STARTED,
-        GENERATE_PDF_COVER_COMPLETED,
-        GENERATE_PDF_ADD_SERVICE_DATA_STATED,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
-        GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
+      verify(subjectAccessRequestService, times(2)).requireSubjectAccessRequestNotCancelled(
+        eq(subjectAccessRequest),
+        capture(processingEventCaptor),
       )
-      assertThat(eventCaptor.allValues).containsExactly(*expectedEvents.map { it.toString() }.toTypedArray())
+
+      assertThat(processingEventCaptor.allValues).hasSize(2)
+      assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.secondValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
 
       verify(servicePdfRenderer, times(1))
         .generateServicePdf(any(), any(), anyOrNull())
 
-      verifyNoMoreInteractions(servicePdfRenderer)
+      verifyNoMoreInteractions(servicePdfRenderer, subjectAccessRequestService)
     }
 
     @Test
@@ -403,60 +382,31 @@ class PdfServiceTest {
         subjectAccessRequestService = subjectAccessRequestService,
       )
 
-      val expectedException = FatalSubjectAccessRequestException(
-        "subject access request could not be completed due to invalid status",
-        null,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
-        ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL,
-        subjectAccessRequest,
-      )
-
-      whenever(requestServiceDetail1.serviceConfiguration)
-        .thenReturn(service1Config)
-
-      whenever(service1Config.serviceName)
-        .thenReturn("S1")
-      whenever(service1Config.label)
-        .thenReturn("S1")
-      whenever(service1Config.category)
-        .thenReturn(ServiceCategory.PRISON)
+      val expectedException: FatalSubjectAccessRequestException = mock()
 
       doNothing()
         .doNothing()
         .doThrow(expectedException)
-        .whenever(subjectAccessRequestService).requireSubjectAccessRequestNotCancelled(subjectAccessRequest)
-
-      whenever(documentStoreService.getTemplateVersion(any(), any()))
-        .thenReturn("v1")
-      whenever(documentStoreService.listAttachments(any(), any()))
-        .thenReturn(emptyList())
+        .whenever(subjectAccessRequestService).requireSubjectAccessRequestNotCancelled(
+          subjectAccessRequest = eq(subjectAccessRequest),
+          event = any(),
+        )
 
       val actual = assertThrows<FatalSubjectAccessRequestException> {
         pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest)
       }
 
-      assertThat(actual.message).contains("subject access request could not be completed due to invalid status")
-      assertThat(actual.event).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
-      assertThat(actual.errorCode).isEqualTo(ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL)
-      assertThat(actual.subjectAccessRequest).isEqualTo(subjectAccessRequest)
+      assertThat(actual).isEqualTo(expectedException)
 
-      verify(telemetryClient, times(11))
-        .trackEvent(eventCaptor.capture(), any(), isNull())
-
-      val expectedEvents = listOf(
-        GENERATE_PDF_STARTED,
-        GENERATE_PDF_BODY_STARTED,
-        GENERATE_PDF_COVER_STARTED,
-        GENERATE_PDF_COVER_COMPLETED,
-        GENERATE_PDF_ADD_SERVICE_DATA_STATED,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
-        GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
-        GENERATE_PDF_SERVICE_DATA_ADDED,
-        GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
-        GENERATE_PDF_MERGE_SERVICE_PARTIALS_STARTED,
-        GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED,
+      verify(subjectAccessRequestService, times(3)).requireSubjectAccessRequestNotCancelled(
+        eq(subjectAccessRequest),
+        capture(processingEventCaptor),
       )
-      assertThat(eventCaptor.allValues).containsExactly(*expectedEvents.map { it.toString() }.toTypedArray())
+
+      assertThat(processingEventCaptor.allValues).hasSize(3)
+      assertThat(processingEventCaptor.firstValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.secondValue).isEqualTo(GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(processingEventCaptor.thirdValue).isEqualTo(GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED)
 
       verify(servicePdfRenderer, times(2))
         .generateServicePdf(any(), any(), anyOrNull())
