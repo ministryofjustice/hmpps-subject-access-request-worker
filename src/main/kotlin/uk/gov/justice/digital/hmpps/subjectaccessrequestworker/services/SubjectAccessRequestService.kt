@@ -2,10 +2,13 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.UPDATE_SAR_SERVICE_RENDER_STATUS
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICES_NOT_RENDERED
@@ -46,11 +49,34 @@ class SubjectAccessRequestService(
   )
 
   @Transactional
-  fun updateStatus(id: UUID, status: Status) {
-    val requestToUpdate =
-      subjectAccessRequestRepository.findById(id)
+  fun requireSubjectAccessRequestNotCancelled(
+    subjectAccessRequest: SubjectAccessRequest,
+  ) = subjectAccessRequestRepository.findByIdOrNull(subjectAccessRequest.id)?.let {
+    if (Status.Cancelled == it.status) {
+      throw subjectAccessRequestCancelledException(subjectAccessRequest)
+    }
+  } ?: throw subjectAccessRequestNotFoundException(subjectAccessRequest, ProcessingEvent.CHECK_REQUEST_STATUS)
 
-    requestToUpdate.get().status = Status.Completed
+  @Transactional
+  fun completeRequest(subjectAccessRequest: SubjectAccessRequest) {
+    val updatedCount = subjectAccessRequestRepository.completeSubjectAccessRequest(subjectAccessRequest.id)
+
+    if (updatedCount == 0) {
+      val latest = subjectAccessRequestRepository.findByIdOrNull(subjectAccessRequest.id)
+        ?: throw subjectAccessRequestNotFoundException(
+          subjectAccessRequest = subjectAccessRequest,
+          processingEvent = ProcessingEvent.REQUEST_COMPLETED,
+        )
+
+      throw subjectAccessRequestCompletedException(latest)
+    }
+  }
+
+  @Transactional
+  fun updateStatus(id: UUID, status: Status) {
+    val requestToUpdate = subjectAccessRequestRepository.findById(id)
+
+    requestToUpdate.get().status = status
     subjectAccessRequestRepository.save(requestToUpdate.get())
   }
 
@@ -139,5 +165,37 @@ class SubjectAccessRequestService(
     errorCode = SERVICES_NOT_RENDERED,
     subjectAccessRequest = subjectAccessRequest,
     params = params,
+  )
+
+  private fun subjectAccessRequestCancelledException(
+    subjectAccessRequest: SubjectAccessRequest,
+  ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
+    "subject access request has been cancelled",
+    null,
+    ProcessingEvent.CHECK_REQUEST_STATUS,
+    ErrorCode.REQUEST_CANCELLED,
+    subjectAccessRequest,
+  )
+
+  private fun subjectAccessRequestCompletedException(
+    subjectAccessRequest: SubjectAccessRequest,
+  ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
+    "subject access request could not be completed due to invalid status",
+    null,
+    ProcessingEvent.REQUEST_COMPLETED,
+    ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL,
+    subjectAccessRequest,
+    mapOf("status" to subjectAccessRequest.status.name),
+  )
+
+  private fun subjectAccessRequestNotFoundException(
+    subjectAccessRequest: SubjectAccessRequest,
+    processingEvent: ProcessingEvent,
+  ): SubjectAccessRequestException = FatalSubjectAccessRequestException(
+    "subject access request not found",
+    null,
+    processingEvent,
+    ErrorCode.INTERNAL_SERVER_ERROR,
+    subjectAccessRequest,
   )
 }
