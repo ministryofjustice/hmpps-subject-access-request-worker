@@ -19,12 +19,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_FULL_DOCUMENT_MERGE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIALS_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIALS_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_FULL_DOCUMENT_MERGE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService

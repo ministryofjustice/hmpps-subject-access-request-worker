@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
-import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
@@ -30,7 +29,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICE_SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus.COMPLETE
