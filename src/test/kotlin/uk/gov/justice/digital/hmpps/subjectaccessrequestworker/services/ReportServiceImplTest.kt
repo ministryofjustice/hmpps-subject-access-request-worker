@@ -11,7 +11,10 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
@@ -20,6 +23,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRender
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient.HtmlRenderResponse
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.PrisonApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.ProbationApiClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_REQUEST_FAILED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
@@ -178,6 +182,8 @@ class ReportServiceImplTest {
       verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
       verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!)
       verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
+      verify(subjectAccessRequestService, times(1))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest, ProcessingEvent.STORE_DOCUMENT)
       verify(documentStorageClient).storeDocument(subjectAccessRequest, reportPdfPath)
 
       thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
@@ -266,6 +272,65 @@ class ReportServiceImplTest {
       thenEventTrackedForRenderRequestFailed(unsuspendedServiceConfigTwo)
       thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigThree)
       thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigThree)
+    }
+
+    @Test
+    fun `should throw exception when cancelled status check fails`(): Unit = runBlocking {
+      subjectAccessRequest.services.addAll(
+        listOf(
+          createRequestServiceDetail(unsuspendedServiceConfig, PENDING),
+          createRequestServiceDetail(unsuspendedServiceConfigTwo, ERRORED),
+          createRequestServiceDetail(unsuspendedServiceConfigThree, COMPLETE),
+          createRequestServiceDetail(unsuspendedServiceConfigFour, PENDING),
+          createRequestServiceDetail(unsuspendedServiceConfigFive, COMPLETE),
+          createRequestServiceDetail(unsuspendedServiceConfigSix, SUSPENDED),
+        ),
+      )
+
+      givenRenderRequestReturnsVersion(unsuspendedServiceConfig, "1")
+      givenRenderRequestReturnsVersion(unsuspendedServiceConfigTwo, "2")
+      givenRenderRequestReturnsVersion(unsuspendedServiceConfigFour, "3")
+      givenRenderRequestReturnsVersion(unsuspendedServiceConfigSix, "4")
+
+      whenever(prisonApiClient.getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!))
+        .thenReturn("Clive")
+      whenever(pdfService.renderSubjectAccessRequestPdf(pdfRenderRequest))
+        .thenReturn(reportPdfPath)
+
+      doThrow(SubjectAccessRequestException("cancelled request")).whenever(subjectAccessRequestService)
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest, ProcessingEvent.STORE_DOCUMENT)
+
+      assertThrows<SubjectAccessRequestException> {
+        service.generateReport(subjectAccessRequest)
+      }
+
+      verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfig)
+      verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigTwo)
+      verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigFour)
+      verify(htmlRendererApiClient).submitRenderRequest(subjectAccessRequest, unsuspendedServiceConfigSix)
+
+      thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfig, "1")
+      thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigTwo, "2")
+      thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigFour, "3")
+      thenServiceStatusUpdatedAsSuccessFor(unsuspendedServiceConfigSix, "4")
+
+      verify(subjectAccessRequestService).validateAllServicesRendered(subjectAccessRequest.id)
+      verify(prisonApiClient).getOffenderName(subjectAccessRequest, subjectAccessRequest.nomisId!!)
+      verify(pdfService).renderSubjectAccessRequestPdf(pdfRenderRequest)
+      verify(subjectAccessRequestService, times(1))
+        .requireSubjectAccessRequestNotCancelled(subjectAccessRequest, ProcessingEvent.STORE_DOCUMENT)
+      verify(documentStorageClient, never())
+        .storeDocument(subjectAccessRequest, reportPdfPath)
+
+      thenEventTrackedForServicesSelected("service-4,service-1,service-6,service-2")
+      thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfig)
+      thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfig)
+      thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigTwo)
+      thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigTwo)
+      thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigFour)
+      thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigFour)
+      thenEventTrackedForSubmitRenderRequest(unsuspendedServiceConfigSix)
+      thenEventTrackedForRenderRequestCompleted(unsuspendedServiceConfigSix)
     }
   }
 

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
 
 /**
  * TelemetryClient gets altered at runtime by the java agent and so is a no-op otherwise
@@ -16,6 +17,14 @@ class ApplicationInsightsConfiguration {
 }
 
 const val UNKNOWN_PLACEHOLDER = "unknown"
+
+fun TelemetryClient.trackPdfSarEvent(
+  event: ProcessingEvent,
+  pdfRenderRequest: PdfRenderRequest,
+  vararg kvpairs: Pair<String, String>,
+) {
+  this.trackSarEvent(event, pdfRenderRequest.subjectAccessRequest, *kvpairs)
+}
 
 fun TelemetryClient.trackSarEvent(
   event: ProcessingEvent,
