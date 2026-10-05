@@ -74,14 +74,6 @@ class SubjectAccessRequestService(
   }
 
   @Transactional
-  fun updateStatus(id: UUID, status: Status) {
-    val requestToUpdate = subjectAccessRequestRepository.findById(id)
-
-    requestToUpdate.get().status = status
-    subjectAccessRequestRepository.save(requestToUpdate.get())
-  }
-
-  @Transactional
   fun validateAllServicesRendered(id: UUID) {
     subjectAccessRequestRepository.findById(id).ifPresentOrElse(
       { sar ->
