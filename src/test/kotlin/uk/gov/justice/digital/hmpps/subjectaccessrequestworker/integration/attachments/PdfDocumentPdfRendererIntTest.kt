@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture
@@ -11,6 +12,11 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
 
 class PdfDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
+
+  @AfterEach
+  fun tearDown() {
+    subjectAccessRequestRepository.deleteAll()
+  }
 
   @ParameterizedTest
   @CsvSource(
@@ -24,7 +30,12 @@ class PdfDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
     ],
   )
   fun `should render pdfs in attachments section`(filename: String, expectedFilename: String, numPages: Int) = runBlocking {
-    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(getServiceConfiguration(), Status.Pending)
+    val sar = saveSubjectAccessRequest(
+      IntegrationTestFixture.createSubjectAccessRequestForService(
+        getServiceConfiguration(),
+        Status.Pending,
+      ),
+    )
     storeEmptyHtml(sar)
     storeAttachment(sar, filename, "application/pdf")
 

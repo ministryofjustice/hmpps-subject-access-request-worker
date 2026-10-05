@@ -30,6 +30,8 @@ class SubjectAccessRequestRepositoryTest {
     subjectAccessRequestRepository.save(sarWithPendingStatusClaimedEarlier)
     subjectAccessRequestRepository.save(sarWithSearchableCaseReference)
     subjectAccessRequestRepository.save(sarWithSearchableNdeliusId)
+    subjectAccessRequestRepository.save(sarWithStatusErrored)
+    subjectAccessRequestRepository.save(sarWithStatusCancelled)
   }
 
   @AfterEach
@@ -42,7 +44,7 @@ class SubjectAccessRequestRepositoryTest {
     @Test
     fun `returns only SAR entries that are pending and unclaimed or claimed before the given claimDateTime`() {
       val expectedUnclaimed: List<SubjectAccessRequest> = listOf(unclaimedSar, sarWithPendingStatusClaimedEarlier)
-      assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(6)
+      assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(8)
       assertThat(
         subjectAccessRequestRepository.findUnclaimed(
           claimDateTime,
@@ -110,7 +112,7 @@ class SubjectAccessRequestRepositoryTest {
         )
 
       assertThat(numberOfDbRecordsUpdated).isEqualTo(0)
-      assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(6)
+      assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(8)
       assertThat(subjectAccessRequestRepository.findById(claimedSarWithPendingStatus.id).orElseThrow())
         .usingRecursiveComparison().ignoringFields("contextId").isEqualTo(expectedUpdatedRecord)
     }
@@ -125,11 +127,35 @@ class SubjectAccessRequestRepositoryTest {
         )
 
       assertThat(numberOfDbRecordsUpdated).isEqualTo(0)
-      assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(6)
+      assertThat(subjectAccessRequestRepository.findAll().size).isEqualTo(8)
 
       val result = subjectAccessRequestRepository.findById(completedSar.id).orElseThrow()
       assertThat(result.claimDateTime).isEqualTo(LocalDateTime.parse("01/01/2024 00:05", dateTimeFormatter))
       assertThat(result.claimAttempts).isEqualTo(1)
+    }
+  }
+
+  @Nested
+  inner class CompleteSubjectAccessRequest {
+
+    @Test
+    fun `should return 0 when no matching record is found and updated`() {
+      assertThat(subjectAccessRequestRepository.completeSubjectAccessRequest(sarWithStatusErrored.id)).isZero()
+    }
+
+    @Test
+    fun `should return 1 when request has status pending`() {
+      assertThat(subjectAccessRequestRepository.completeSubjectAccessRequest(unclaimedSar.id)).isOne()
+    }
+
+    @Test
+    fun `should return 0 when request has status completed`() {
+      assertThat(subjectAccessRequestRepository.completeSubjectAccessRequest(completedSar.id)).isZero()
+    }
+
+    @Test
+    fun `should return 0 when request has status cancelled`() {
+      assertThat(subjectAccessRequestRepository.completeSubjectAccessRequest(sarWithStatusCancelled.id)).isZero()
     }
   }
 
@@ -216,6 +242,34 @@ class SubjectAccessRequestRepositoryTest {
   final val sarWithSearchableNdeliusId = SubjectAccessRequest(
     id = UUID.fromString("66666666-6666-6666-6666-666666666666"),
     status = Status.Completed,
+    dateFrom = dateFrom,
+    dateTo = dateTo,
+    sarCaseReferenceNumber = "1234abc",
+    services = mutableListOf(),
+    nomisId = "",
+    ndeliusCaseReferenceId = "testForSearch",
+    requestedBy = "Test",
+    requestDateTime = requestTimeLater,
+    claimAttempts = 1,
+    claimDateTime = claimDateTimeEarlier,
+  )
+  final val sarWithStatusErrored = SubjectAccessRequest(
+    id = UUID.fromString("77777777-7777-7777-7777-777777777777"),
+    status = Status.Errored,
+    dateFrom = dateFrom,
+    dateTo = dateTo,
+    sarCaseReferenceNumber = "1234abc",
+    services = mutableListOf(),
+    nomisId = "",
+    ndeliusCaseReferenceId = "testForSearch",
+    requestedBy = "Test",
+    requestDateTime = requestTimeLater,
+    claimAttempts = 1,
+    claimDateTime = claimDateTimeEarlier,
+  )
+  final val sarWithStatusCancelled = SubjectAccessRequest(
+    id = UUID.fromString("88888888-8888-8888-8888-888888888888"),
+    status = Status.Cancelled,
     dateFrom = dateFrom,
     dateTo = dateTo,
     sarCaseReferenceNumber = "1234abc",

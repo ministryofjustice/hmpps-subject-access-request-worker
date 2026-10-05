@@ -10,6 +10,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.capture
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -20,7 +21,9 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.AlertsService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_CLAIMED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.REQUEST_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ReportService
@@ -94,7 +97,7 @@ class SubjectAccessRequestProcessorTest {
       verify(subjectAccessRequestService, times(1)).findUnclaimed()
       verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
       verify(reportService, times(1)).generateReport(sampleSAR)
-      verify(subjectAccessRequestService, times(1)).updateStatus(sampleSAR.id, Status.Completed)
+      verify(subjectAccessRequestService, times(1)).completeRequest(sampleSAR)
       verifyNoInteractions(alertsService)
       verifyTelemetryEvents(sampleSAR, REQUEST_CLAIMED.name, REQUEST_COMPLETED.name)
     }
@@ -166,14 +169,14 @@ class SubjectAccessRequestProcessorTest {
     fun `should raise expected alert when updateStatus throws an exception`() = runTest {
       val rootCause = RuntimeException("findUnclaimed error")
       whenever(subjectAccessRequestService.findUnclaimed()).thenReturn(listOf(sampleSAR))
-      whenever(subjectAccessRequestService.updateStatus(sampleSAR.id, Status.Completed)).thenThrow(rootCause)
+      whenever(subjectAccessRequestService.completeRequest(sampleSAR)).thenThrow(rootCause)
 
       subjectAccessRequestProcessor.execute()
 
       verify(subjectAccessRequestService, times(1)).findUnclaimed()
       verify(reportService, times(1)).generateReport(sampleSAR)
       verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
-      verify(subjectAccessRequestService, times(1)).updateStatus(sampleSAR.id, Status.Completed)
+      verify(subjectAccessRequestService, times(1)).completeRequest(sampleSAR)
       verifyNoMoreInteractions(subjectAccessRequestService, reportService)
       verifyTelemetryException(rootCause, sampleSAR)
 
@@ -181,6 +184,39 @@ class SubjectAccessRequestProcessorTest {
         expectedCause = rootCause,
         subjectAccessRequest = sampleSAR,
       )
+    }
+
+    @Test
+    fun `should throw exception if complete request is unsuccessful`() = runTest {
+      whenever(subjectAccessRequestService.findUnclaimed())
+        .thenReturn(listOf(sampleSAR))
+
+      doThrow(
+        FatalSubjectAccessRequestException(
+          message = "cancel request failed",
+          event = REQUEST_COMPLETED,
+          errorCode = ErrorCode.REQUEST_CANCELLED,
+          subjectAccessRequest = sampleSAR,
+        ),
+      ).whenever(subjectAccessRequestService).completeRequest(sampleSAR)
+
+      subjectAccessRequestProcessor.execute()
+
+      verify(subjectAccessRequestService, times(1)).findUnclaimed()
+      verify(subjectAccessRequestService, times(1)).updateClaimDateTimeAndClaimAttemptsIfBeforeThreshold(sampleSAR.id)
+      verify(reportService, times(1)).generateReport(sampleSAR)
+      verify(subjectAccessRequestService, times(1)).completeRequest(sampleSAR)
+      verify(alertsService).raiseReportErrorAlert(capture(alertExceptionCaptor))
+
+      assertThat(alertExceptionCaptor.allValues).hasSize(1)
+
+      val actual = alertExceptionCaptor.allValues.first()
+      assertThat(actual.message).contains("cancel request failed")
+      assertThat(actual.event).isEqualTo(REQUEST_COMPLETED)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.REQUEST_CANCELLED)
+      assertThat(actual.subjectAccessRequest).isEqualTo(sampleSAR)
+
+      verifyTelemetryEvents(sampleSAR, REQUEST_CLAIMED.name)
     }
   }
 
