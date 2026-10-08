@@ -57,6 +57,7 @@ dependencies {
   testImplementation("com.opencsv:opencsv:5.12.0")
   testImplementation("org.testcontainers:testcontainers:2.0.5")
   testImplementation("org.testcontainers:junit-jupiter:1.21.4")
+  testImplementation("org.apache.pdfbox:pdfbox:3.0.5")
 }
 
 kotlin {
