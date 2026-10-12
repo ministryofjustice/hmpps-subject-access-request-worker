@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
-import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import org.assertj.core.api.Assertions.assertThat
@@ -64,8 +63,8 @@ class IncrementalHtmlPdfBuilderTest {
     expected: Path,
     actual: Path,
   ) {
-    Loader.loadPDF(expected.toFile()).use { expectedPdf ->
-      Loader.loadPDF(actual.toFile()).use { actualPdf ->
+    PDDocument.load(expected.toFile()).use { expectedPdf ->
+      PDDocument.load(actual.toFile()).use { actualPdf ->
 
         assertThat(expectedPdf.numberOfPages)
           .withFailMessage("actual pdf page count did not match expected")
@@ -78,6 +77,11 @@ class IncrementalHtmlPdfBuilderTest {
     }
   }
 
+  /**
+   * PDF comparison is difficult as 2 visual identical documents can have completely different underlying code.
+   * This comparison coverts each page of the expected/actual documents to an image then compares the pixels to ensure
+   * it matches. This gives us a thorough method of checking 2 PDFs look identical and bypasses aforementioned issue.
+   */
   private fun assertImagePixelsEqual(
     expectedRenderer: PDFRenderer,
     actualRenderer: PDFRenderer,
@@ -89,12 +93,12 @@ class IncrementalHtmlPdfBuilderTest {
 
       val widthDiff = abs(expectedImage.width - actualImage.width)
       assertThat(widthDiff)
-        .withFailMessage("actual page image width does not match expected")
+        .withFailMessage("actual page image width does not match expected: difference=$widthDiff")
         .isZero
 
       val heightDiff = abs(expectedImage.height - actualImage.height)
       assertThat(heightDiff)
-        .withFailMessage("actual page image height does not match expected")
+        .withFailMessage("actual page image height does not match expected: difference=$heightDiff")
         .isZero
 
       log.info("comparing page: $pageIndex expected/actual pixel values")
