@@ -52,6 +52,8 @@ dependencies {
   implementation("org.apache.pdfbox:fontbox:2.0.37")
   implementation("org.apache.pdfbox:xmpbox:2.0.37")
   implementation("org.jsoup:jsoup:1.23.2")
+  implementation("nu.validator:htmlparser:1.4.16")
+  implementation("org.jsoup:jsoup:1.21.1")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
