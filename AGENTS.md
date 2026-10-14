@@ -58,10 +58,6 @@ Run these from the repository root.
 # Run a single test class
 ./gradlew test --tests "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.SomeTestClass"
 
-# Lint (Kotlin style)
-./gradlew ktlintCheck
-./gradlew ktlintFormat   # auto-fix
-
 # Dependency checks
 ./gradlew dependencyCheckAnalyze --info
 ./gradlew dependencyUpdates --warning-mode all
@@ -75,7 +71,6 @@ before running the full `test` suite.
 
 ## Conventions
 
-- Kotlin style is enforced by `ktlintCheck`/`ktlintFormat` — run these before committing.
 - Tests mirror the main source package structure under `src/test/kotlin`.
 - Flyway migrations are append-only: never edit a migration that has already been merged; add a new
   versioned migration file instead. There are separate migration sets for H2 and PostgreSQL — keep them
@@ -90,7 +85,7 @@ before running the full `test` suite.
 ## Pull requests
 
 - Keep changes focused and avoid unrelated refactors.
-- Ensure `./gradlew ktlintCheck` and relevant tests pass before opening a PR.
+- Ensure relevant tests pass before opening a PR. Do not run ktlint Gradle tasks in this repository.
 - Update Helm chart values (`helm_deploy/`) if configuration/environment variables change.
 
 ## Dependency injection
@@ -112,4 +107,5 @@ Prefer `@BeforeAll`/`@AfterAll` over `@BeforeEach`/`@AfterEach` where possible i
 
 ## Linting
 
-Do not run `ktlintCheck` (or any ktlint gradle task) in this repository. Skip ktlint validation entirely.
+Do not run `ktlintCheck` or any other ktlint Gradle task (including `ktlintFormat`) in this repository.
+Skip ktlint validation entirely.
