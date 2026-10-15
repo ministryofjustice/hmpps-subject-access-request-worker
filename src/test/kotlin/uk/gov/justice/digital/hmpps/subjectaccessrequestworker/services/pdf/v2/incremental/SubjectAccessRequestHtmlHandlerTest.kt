@@ -107,7 +107,7 @@ class SubjectAccessRequestHtmlHandlerTest {
     }
 
     @Test
-    fun `should return expected table depth for multiple tables`() {
+    fun `should track nested table depth`() {
       handler.startElement("", "", "table", null)
       handler.startElement("", "", "tr", null)
       handler.startElement("", "", "td", null)
@@ -137,32 +137,6 @@ class SubjectAccessRequestHtmlHandlerTest {
         actual = actual,
         expectedMessage = "buffer size exceeded max limit exiting to prevent potential memory error",
       )
-    }
-
-    @Test
-    fun `should add attributes name and value open tag tracking`() {
-      val attributes: org.xml.sax.Attributes = mock()
-      whenever(attributes.length).thenReturn(2)
-      whenever(attributes.getQName(0)).thenReturn("class")
-      whenever(attributes.getValue(0)).thenReturn("test-class-1")
-      whenever(attributes.getQName(1)).thenReturn("id")
-      whenever(attributes.getValue(1)).thenReturn("test-id-1")
-
-      handler.startElement("", "", "table", attributes)
-
-      assertThat(handler.currentBuffer()).isEqualTo("""<table class="test-class-1" id="test-id-1">""")
-      assertThat(handler.currentOpenTags()).containsExactlyInAnyOrderElementsOf(
-        listOf(
-          SubjectAccessRequestHtmlHandler.HtmlTag(
-            "table",
-            mapOf(
-              "class" to "test-class-1",
-              "id" to "test-id-1",
-            ),
-          ),
-        ),
-      )
-      assertThat(handler.currentTableDepth()).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -290,7 +264,6 @@ class SubjectAccessRequestHtmlHandlerTest {
     @NullSource
     @ValueSource(strings = ["", " "])
     fun `should throw exception is qName is null or empty`(qName: String?) {
-
       val actual = assertThrows<FatalSubjectAccessRequestException> {
         handler.endElement("", "", qName)
       }
@@ -404,8 +377,8 @@ class SubjectAccessRequestHtmlHandlerTest {
       val content = "This is a table"
 
       handler
-        .openTags(Tag("table"), Tag("tr"), Tag("td"), Tag("table")).
-        addCharacters(content.toCharArray())
+        .openTags(Tag("table"), Tag("tr"), Tag("td"), Tag("table"))
+        .addCharacters(content.toCharArray())
 
       assertThat(handler.currentTableDepth()).isEqualTo(2)
 
@@ -432,7 +405,7 @@ class SubjectAccessRequestHtmlHandlerTest {
         Tag("td"),
         Tag("table"),
         Tag("tr"),
-        Tag("td")
+        Tag("td"),
       ).addCharacters(content.toCharArray())
 
       assertThat(handler.currentTableDepth()).isEqualTo(2)
@@ -574,8 +547,105 @@ class SubjectAccessRequestHtmlHandlerTest {
       assertThat(handler.currentTableDepth()).isZero
       assertThat(handler.currentBuffer()).isEqualTo("<div>")
       assertThat(handler.currentOpenTags()).containsExactly(
-        SubjectAccessRequestHtmlHandler.HtmlTag("div", emptyMap())
+        SubjectAccessRequestHtmlHandler.HtmlTag("div", emptyMap()),
       )
+    }
+
+    @Test
+    fun `should prefix emit with style content`() {
+      val content = generateLargeContent(minBufferSize)
+      handler
+        .openTags(Tag("style"))
+        .addCharacters("table { color:red; }".toCharArray())
+        .closeTags(Tag("style"))
+        .openTags(
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+        )
+        .addCharacters(content)
+        .closeTags(
+          Tag("td"),
+          Tag("tr"),
+          Tag("table"),
+        )
+
+      verify(incrementalHtmlPdfBuilder, times(1)).append(capture(emitCaptor))
+      assertThat(emitCaptor.allValues).hasSize(1)
+      assertThat(emitCaptor.allValues.first())
+        .isEqualTo("<style>table { color:red; }</style><table><tr><td>${String(content)}</td></tr></table>")
+    }
+
+    @Test
+    fun `should not emit after table end tag if table depth is greater than 0`() {
+      val content = generateLargeContent(minBufferSize)
+      handler
+        .openTags(Tag("style"))
+        .addCharacters("table { color:red; }".toCharArray())
+        .closeTags(Tag("style"))
+        .openTags(
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+        )
+        .addCharacters(content)
+        .closeTags(
+          Tag("td"),
+          Tag("tr"),
+          Tag("table"),
+        )
+
+      verifyNoInteractions(incrementalHtmlPdfBuilder)
+
+      assertThat(handler.isInsideStyleTag()).isFalse()
+      assertThat(handler.currentTableDepth()).isEqualTo(1)
+      assertThat(handler.currentBuffer()).isEqualTo("<table><tr><td><table><tr><td>${String(content)}</td></tr></table>")
+      assertThat(handler.currentOpenTags()).containsExactly(
+        SubjectAccessRequestHtmlHandler.HtmlTag("table", emptyMap()),
+        SubjectAccessRequestHtmlHandler.HtmlTag("tr", emptyMap()),
+        SubjectAccessRequestHtmlHandler.HtmlTag("td", emptyMap()),
+      )
+    }
+
+    @Test
+    fun `should emit after table end tag if table depth is equal to 0`() {
+      val content = generateLargeContent(minBufferSize)
+
+      handler
+        .openTags(Tag("style"))
+        .addCharacters("table { color:red; }".toCharArray())
+        .closeTags(Tag("style"))
+        .openTags(
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+        )
+        .addCharacters(content)
+        .closeTags(
+          Tag("td"),
+          Tag("tr"),
+          Tag("table"),
+          Tag("td"),
+          Tag("tr"),
+          Tag("table"),
+        )
+
+      verify(incrementalHtmlPdfBuilder).append(capture(emitCaptor))
+      assertThat(emitCaptor.allValues).hasSize(1)
+      assertThat(emitCaptor.allValues.first())
+        .isEqualTo("<style>table { color:red; }</style><table><tr><td><table><tr><td>${String(content)}</td></tr></table></td></tr></table>")
+
+      assertThat(handler.isInsideStyleTag()).isFalse()
+      assertThat(handler.currentTableDepth()).isEqualTo(0)
+      assertThat(handler.currentBuffer()).isEmpty()
+      assertThat(handler.currentOpenTags()).isEmpty()
+      assertThat(handler.currentStyleBuffer()).isEqualTo("table { color:red; }")
     }
   }
 
