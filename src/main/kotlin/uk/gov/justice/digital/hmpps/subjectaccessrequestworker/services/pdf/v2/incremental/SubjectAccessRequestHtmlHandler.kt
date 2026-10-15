@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
 const val MAX_BUFFER_SIZE = 1_000_000
+const val MAX_STYLE_SIZE = 1_000_000
 const val STYLE_TAG = "style"
 const val TABLE_TAG = "table"
 
@@ -70,7 +71,7 @@ class SubjectAccessRequestHtmlHandler(
   private val openTags: ArrayDeque<HtmlTag> = ArrayDeque()
   private val buffer: StringBuilder = StringBuilder()
   private var tableDepth = 0
-  private val style = StringBuilder()
+  private val styleBuffer = StringBuilder()
   private var insideStyleTag = false
 
   private val voidTags = setOf(
@@ -93,18 +94,12 @@ class SubjectAccessRequestHtmlHandler(
     private val log = LoggerFactory.getLogger(SubjectAccessRequestHtmlHandler::class.java)
   }
 
-  internal fun currentBuffer() = buffer.toString()
-
-  internal fun currentOpenTags() = openTags.toList()
-
-  internal fun currentTableDepth() = tableDepth
-
   internal fun reset() {
     this.buffer.clear()
     this.tableDepth = 0
     this.openTags.clear()
     this.insideStyleTag = false
-    this.style.clear()
+    this.styleBuffer.clear()
   }
 
   override fun startDocument() {
@@ -120,24 +115,22 @@ class SubjectAccessRequestHtmlHandler(
     qName: String?,
     attributes: Attributes?,
   ) {
-    if (qName.isNullOrBlank()) {
-      throw subjectAccessRequestHtmlHandlerException("Invalid HTML: tag name was null or empty")
-    }
+    val tagName = requireNonNullQName(qName)
 
-    if (qName == STYLE_TAG) {
+    if (tagName == STYLE_TAG) {
       insideStyleTag = true
       return
     }
 
     val attributeMap = attributes.toMap()
-    if (voidTags.contains(qName)) {
-      buffer.appendVoidTag(qName, attributeMap)
+    if (voidTags.contains(tagName)) {
+      buffer.appendVoidTag(tagName, attributeMap)
       return
     }
 
-    openTags.addLast(HtmlTag(qName, attributeMap))
+    openTags.addLast(HtmlTag(tagName, attributeMap))
     buffer.appendOpenTag(qName, attributeMap)
-    checkChunkSize()
+    requireBufferSizeNotExceeded()
 
     if (qName == TABLE_TAG) {
       incrementTableDepth()
@@ -148,12 +141,13 @@ class SubjectAccessRequestHtmlHandler(
    * Handle a characters event (text been open/close tags).
    */
   override fun characters(ch: CharArray?, start: Int, length: Int) {
-    checkChunkSize()
+    requireBufferSizeNotExceeded()
 
     if (insideStyleTag) {
       // Capture the style content in a separate buffer.
       ch?.let {
-        style.append(it, start, length)
+        styleBuffer.append(it, start, length)
+        requiredStyleBufferSizeNotExceeded()
       }
       return
     }
@@ -161,7 +155,7 @@ class SubjectAccessRequestHtmlHandler(
     ch?.let {
       // Append the text to the buffer
       buffer.append(it, start, length)
-      checkChunkSize()
+      requireBufferSizeNotExceeded()
     }
   }
 
@@ -169,27 +163,29 @@ class SubjectAccessRequestHtmlHandler(
    * Handle a close tag event.
    */
   override fun endElement(uri: String?, localName: String?, qName: String?) {
-    if (qName == STYLE_TAG) {
+    val tagName = requireNonNullQName(qName)
+
+    if (tagName == STYLE_TAG) {
       // Mark the end of the style tag.
       insideStyleTag = false
       return
     }
 
-    if (voidTags.contains(qName)) {
+    if (voidTags.contains(tagName)) {
       return
     }
 
     if (openTags.isEmpty()) {
-      throw RuntimeException("Invalid HTML - no closing tag on stack for <$qName>")
+      throw subjectAccessRequestHtmlHandlerException("Invalid HTML - no closing tag on stack for <$qName>")
     }
 
     val poppedValue = openTags.removeLast()
-    if (poppedValue.qName != qName) {
-      throw RuntimeException("Unexpected end tag: expected=$poppedValue, actual=$qName")
+    if (poppedValue.qName != tagName) {
+      throw subjectAccessRequestHtmlHandlerException("Unexpected end tag: expected=${poppedValue.qName}, actual=$tagName")
     }
 
-    buffer.appendCloseTag(qName)
-    checkChunkSize()
+    buffer.appendCloseTag(tagName)
+    requireBufferSizeNotExceeded()
 
     if (qName == TABLE_TAG) {
       decrementTableDepth()
@@ -256,7 +252,7 @@ class SubjectAccessRequestHtmlHandler(
     if (tableDepth < 0) throw RuntimeException("Invalid HTML: Table depth is negative")
   }
 
-  private fun checkChunkSize() {
+  private fun requireBufferSizeNotExceeded() {
     if (buffer.length >= MAX_BUFFER_SIZE) {
       throw subjectAccessRequestHtmlHandlerException(
         message = "buffer size exceeded max limit exiting to prevent potential memory error",
@@ -264,11 +260,33 @@ class SubjectAccessRequestHtmlHandler(
     }
   }
 
+  private fun requiredStyleBufferSizeNotExceeded() {
+    if (styleBuffer.length >= MAX_STYLE_SIZE) {
+      throw subjectAccessRequestHtmlHandlerException(
+        message = "style buffer size exceeded max limit exiting to prevent potential memory error",
+      )
+    }
+  }
+
+  private fun requireNonNullQName(
+    qName: String?,
+  ): String = qName?.takeIf { it.isNotBlank() } ?: throw subjectAccessRequestHtmlHandlerException("Invalid HTML: tag name was null or empty")
+
   /**
-   * Check if we can emit a chunk to the consumer. Emit only when the tableDepth tracker is at 0 and the buffer size is
+   * Check if we can emit a chunk to the builder. Emit only when the tableDepth tracker is at 0 and the buffer size is
    * the greater than the minimum size.
    */
   private fun canEmit(): Boolean = tableDepth == 0 && buffer.length >= minBufferSize
+
+  internal fun currentBuffer() = buffer.toString()
+
+  internal fun currentStyleBuffer() = styleBuffer.toString()
+
+  internal fun currentOpenTags() = openTags.toList()
+
+  internal fun currentTableDepth() = tableDepth
+
+  internal fun isInsideStyleTag() = insideStyleTag
 
   /**
    * Appends an opening HTML tag with attributes to the buffer.
@@ -305,7 +323,7 @@ class SubjectAccessRequestHtmlHandler(
 
   internal fun convertBufferToHtmlString(): String = buildString {
     appendOpenTag(STYLE_TAG, emptyMap())
-      .append(style)
+      .append(styleBuffer)
       .appendCloseTag(STYLE_TAG)
       .append(buffer)
   }
