@@ -13,6 +13,7 @@ Confluence overview: https://dsdmoj.atlassian.net/wiki/spaces/SARS/pages/4771479
 
 ## Tech stack
 
+- JAVA 25
 - Kotlin / Spring Boot (Gradle Kotlin DSL, `build.gradle.kts`)
 - Spring Data JPA + Flyway migrations, PostgreSQL in production, H2 for tests
 - WebFlux/WebClient for upstream HTTP calls
@@ -57,10 +58,6 @@ Run these from the repository root.
 # Run a single test class
 ./gradlew test --tests "uk.gov.justice.digital.hmpps.subjectaccessrequestworker.SomeTestClass"
 
-# Lint (Kotlin style)
-./gradlew ktlintCheck
-./gradlew ktlintFormat   # auto-fix
-
 # Dependency checks
 ./gradlew dependencyCheckAnalyze --info
 ./gradlew dependencyUpdates --warning-mode all
@@ -74,7 +71,6 @@ before running the full `test` suite.
 
 ## Conventions
 
-- Kotlin style is enforced by `ktlintCheck`/`ktlintFormat` — run these before committing.
 - Tests mirror the main source package structure under `src/test/kotlin`.
 - Flyway migrations are append-only: never edit a migration that has already been merged; add a new
   versioned migration file instead. There are separate migration sets for H2 and PostgreSQL — keep them
@@ -89,5 +85,27 @@ before running the full `test` suite.
 ## Pull requests
 
 - Keep changes focused and avoid unrelated refactors.
-- Ensure `./gradlew ktlintCheck` and relevant tests pass before opening a PR.
+- Ensure relevant tests pass before opening a PR. Do not run ktlint Gradle tasks in this repository.
 - Update Helm chart values (`helm_deploy/`) if configuration/environment variables change.
+
+## Dependency injection
+
+Prefer constructor injection over field injection in Spring components, including test classes.
+
+- In production code, declare dependencies as constructor parameters (e.g. `private val fooRepository: FooRepository`) rather than using `@Autowired` on a field.
+- In integration test classes, pass `@Autowired` repositories/beans as primary constructor parameters instead of using `@Autowired` on a `lateinit var` field.
+
+## Tests
+
+Prefer `@BeforeAll`/`@AfterAll` over `@BeforeEach`/`@AfterEach` where possible in nested integration test classes.
+
+- Use `@TestInstance(TestInstance.Lifecycle.PER_CLASS)` on the nested test class so that `@BeforeAll`/`@AfterAll` can be non-static (instance) methods.
+- Build shared fixture data once in `@BeforeAll` and clean it up once in `@AfterAll`, rather than rebuilding it before every test, when the fixture is not mutated in a way that would leak between tests.
+- When copying or adapting an integration test, preserve the full nested test structure, including `Security`, `Validation`, and `HappyPath` scenarios for each endpoint.
+- Place each `@AfterAll` method immediately after the corresponding `@BeforeAll` setup method.
+- OAuth2 propagation tests must verify the exact WireMock header value with `equalTo("Bearer ABCDE")`; do not weaken this assertion to a regex or non-empty-header matcher.
+
+## Linting
+
+Do not run `ktlintCheck` or any other ktlint Gradle task (including `ktlintFormat`) in this repository.
+Skip ktlint validation entirely.
