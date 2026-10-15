@@ -16,6 +16,8 @@ import java.util.UUID
 enum class Status {
   Pending,
   Completed,
+  Errored,
+  Cancelled,
 }
 
 @Entity

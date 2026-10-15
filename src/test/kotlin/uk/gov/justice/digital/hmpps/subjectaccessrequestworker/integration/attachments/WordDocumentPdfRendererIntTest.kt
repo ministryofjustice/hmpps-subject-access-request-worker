@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -28,6 +29,11 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
     }
   }
 
+  @AfterEach
+  fun tearDown() {
+    subjectAccessRequestRepository.deleteAll()
+  }
+
   @ParameterizedTest
   @CsvSource(
     value = [
@@ -45,7 +51,12 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
     expectedFilename: String,
     numPages: Int,
   ) = runBlocking {
-    val sar = IntegrationTestFixture.createSubjectAccessRequestForService(getServiceConfiguration(), Status.Pending)
+    val sar = saveSubjectAccessRequest(
+      IntegrationTestFixture.createSubjectAccessRequestForService(
+        getServiceConfiguration(),
+        Status.Pending,
+      ),
+    )
     storeEmptyHtml(sar)
     storeAttachment(sar, filename, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 

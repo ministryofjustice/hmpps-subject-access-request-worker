@@ -11,19 +11,25 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackPdfSarEvent
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_ADD_SERVICE_DATA_STATED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_BODY_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_COVER_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_FULL_DOCUMENT_MERGE
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIALS_COMPLETED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIALS_STARTED
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_PDF_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
@@ -42,6 +48,7 @@ class PdfService(
   private val attachmentsPdfService: AttachmentsPdfService,
   private val telemetryClient: TelemetryClient,
   private val servicePdfRenderer: ServicePdfRenderer,
+  private val subjectAccessRequestService: SubjectAccessRequestService,
 ) {
 
   companion object {
@@ -49,7 +56,7 @@ class PdfService(
   }
 
   suspend fun renderSubjectAccessRequestPdf(pdfRenderRequest: PdfRenderRequest): Path {
-    telemetryClient.trackSarEvent(GENERATE_PDF_STARTED, pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_STARTED, pdfRenderRequest)
     log.info("generating pdf for {}", pdfRenderRequest.subjectAccessRequest.id)
 
     val reportBodyPageCount = generateReportBody(pdfRenderRequest)
@@ -60,14 +67,14 @@ class PdfService(
   }
 
   private suspend fun generateReportBody(pdfRenderRequest: PdfRenderRequest): Int {
-    telemetryClient.trackSarEvent(GENERATE_PDF_BODY_STARTED, pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_BODY_STARTED, pdfRenderRequest)
 
     generateExternalCoverPage(pdfRenderRequest)
     generateInternalContentsPage(pdfRenderRequest)
     generateServicePartials(pdfRenderRequest)
     val pageCount = mergeReportBodyPartials(pdfRenderRequest)
 
-    telemetryClient.trackSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_BODY_COMPLETED, pdfRenderRequest)
     return pageCount
   }
 
@@ -75,17 +82,22 @@ class PdfService(
     val subjectAccessRequest = pdfRenderRequest.subjectAccessRequest
     val services = subjectAccessRequest.getSelectedServices()
 
-    telemetryClient.trackSarEvent(
+    telemetryClient.trackPdfSarEvent(
       event = GENERATE_PDF_ADD_SERVICE_DATA_STATED,
-      subjectAccessRequest = subjectAccessRequest,
+      pdfRenderRequest = pdfRenderRequest,
       "services" to services.serviceNames(),
     )
 
     services.forEach { serviceConfiguration ->
-      telemetryClient.trackSarEvent(
+      telemetryClient.trackPdfSarEvent(
         event = GENERATE_PDF_SERVICE_DATA_ADDED,
-        subjectAccessRequest = subjectAccessRequest,
+        pdfRenderRequest = pdfRenderRequest,
         "service" to serviceConfiguration.serviceName,
+      )
+
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = subjectAccessRequest,
+        event = GENERATE_PDF_SERVICE_DATA_ADDED,
       )
 
       val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
@@ -95,9 +107,9 @@ class PdfService(
 
       generateServiceAttachments(pdfRenderRequest, serviceConfiguration)
 
-      telemetryClient.trackSarEvent(
+      telemetryClient.trackPdfSarEvent(
         event = GENERATE_PDF_ADD_SERVICE_DATA_COMPLETED,
-        subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+        pdfRenderRequest = pdfRenderRequest,
         "service" to serviceConfiguration.serviceName,
       )
     }
@@ -140,7 +152,7 @@ class PdfService(
   }
 
   private suspend fun generateInternalContentsPage(pdfRenderRequest: PdfRenderRequest) {
-    telemetryClient.trackSarEvent(GENERATE_PDF_COVER_STARTED, pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_COVER_STARTED, pdfRenderRequest)
 
     createWritablePdfDocument(pdfRenderRequest.internalContentsPagePdfPath).use { pdf ->
       newDocument(pdf).use { document ->
@@ -176,7 +188,7 @@ class PdfService(
       }
     }
 
-    telemetryClient.trackSarEvent(GENERATE_PDF_COVER_COMPLETED, pdfRenderRequest.subjectAccessRequest)
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_COVER_COMPLETED, pdfRenderRequest)
   }
 
   private fun generateExternalCoverPage(pdfRenderRequest: PdfRenderRequest) {
@@ -213,6 +225,8 @@ class PdfService(
   private fun mergeReportBodyPartials(
     pdfRenderRequest: PdfRenderRequest,
   ): Int = createWritablePdfDocument(output = pdfRenderRequest.reportBodyPdfPath).use { reportBodyPdf ->
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_MERGE_SERVICE_PARTIALS_STARTED, pdfRenderRequest)
+
     val merger = PdfMerger(reportBodyPdf)
 
     val contentsPagePath = pdfRenderRequest.internalContentsPagePdfPath
@@ -226,6 +240,17 @@ class PdfService(
     }
 
     pdfRenderRequest.subjectAccessRequest.getSelectedServices().forEach { service ->
+      telemetryClient.trackPdfSarEvent(
+        event = GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED,
+        pdfRenderRequest = pdfRenderRequest,
+        "service" to service.serviceName,
+      )
+
+      subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+        event = GENERATE_PDF_MERGE_SERVICE_PARTIAL_STARTED,
+      )
+
       val pdfPartialPath = pdfRenderRequest.serviceDataPdfPath(service)
       getReadablePdfDocument(getInputStream(pdfPartialPath)).use { servicePartialPdf ->
         merger.merge(servicePartialPdf, 1, servicePartialPdf.numberOfPages)
@@ -237,7 +262,14 @@ class PdfService(
           merger.merge(serviceAttachmentsPdf, 1, serviceAttachmentsPdf.numberOfPages)
         }
       }
+      telemetryClient.trackPdfSarEvent(
+        event = ProcessingEvent.GENERATE_PDF_MERGE_SERVICE_PARTIAL_COMPLETED,
+        pdfRenderRequest = pdfRenderRequest,
+        "service" to service.serviceName,
+      )
     }
+
+    telemetryClient.trackPdfSarEvent(GENERATE_PDF_MERGE_SERVICE_PARTIALS_COMPLETED, pdfRenderRequest)
     reportBodyPdf.numberOfPages
   }
 
@@ -312,6 +344,11 @@ class PdfService(
   }
 
   private fun mergePartialsIntoFullReportPdf(pdfRenderRequest: PdfRenderRequest) {
+    subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+      subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+      event = GENERATE_PDF_FULL_DOCUMENT_MERGE,
+    )
+
     createWritablePdfDocument(output = pdfRenderRequest.fullReportPdfPath).use { pdf ->
       val merger = PdfMerger(pdf)
 

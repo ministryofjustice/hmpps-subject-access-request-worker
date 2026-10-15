@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.Processing
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICES_SELECTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SERVICE_SUSPENDED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_SUBMIT_RENDER_REQUEST
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
@@ -23,6 +24,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfService
+import java.nio.file.Path
 
 /**
  * New world configuration worker delegates rendering service html to html-renderer service.
@@ -57,7 +59,7 @@ class ReportServiceImpl(
       reportDir = tempDirectoryService.create("${subjectAccessRequest.id}_"),
     ).use {
       val pdfPath = pdfService.renderSubjectAccessRequestPdf(it)
-      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
+      storeDocument(subjectAccessRequest, pdfPath)
       log.info("subject access request ${subjectAccessRequest.id} completed successfully")
     }
   }
@@ -114,6 +116,15 @@ class ReportServiceImpl(
       event = ProcessingEvent.RESOLVE_SUBJECT_NAME,
       errorCode = ErrorCode.NO_SUBJECT_ID_PROVIDED,
     )
+  }
+
+  private fun storeDocument(subjectAccessRequest: SubjectAccessRequest, pdfPath: Path) {
+    subjectAccessRequestService.requireSubjectAccessRequestNotCancelled(
+      subjectAccessRequest = subjectAccessRequest,
+      event = STORE_DOCUMENT,
+    )
+
+    documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
   }
 
   private fun trackSelectedService(

@@ -16,12 +16,16 @@ import org.mockito.Captor
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GENERATE_REPORT_RENDER_ALL_COMPLETED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.UPDATE_SAR_SERVICE_RENDER_STATUS
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.INTERNAL_SERVER_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.SERVICES_NOT_RENDERED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
@@ -31,6 +35,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestServiceDetail
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
@@ -66,6 +71,7 @@ class SubjectAccessRequestServiceTest {
     category = ServiceCategory.PRISON,
   )
   private val sar = SubjectAccessRequest(id = UUID.randomUUID())
+  private val cancelledSar = SubjectAccessRequest(id = UUID.randomUUID(), status = Status.Cancelled)
   private val templateVersion = TemplateVersion(version = 1)
 
   @BeforeEach
@@ -347,5 +353,124 @@ class SubjectAccessRequestServiceTest {
       ),
       renderStatus = renderStatus,
     )
+  }
+
+  @Nested
+  inner class CompleteRequest {
+
+    @Test
+    fun `should complete request successfully`() {
+      whenever(subjectAccessRequestRepository.completeSubjectAccessRequest(sar.id)).thenReturn(1)
+
+      service.completeRequest(sar)
+
+      verify(subjectAccessRequestRepository, times(1)).completeSubjectAccessRequest(sar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository, templateVersionRepository)
+    }
+
+    @Test
+    fun `should throw exception if sar has status cancelled`() {
+      whenever(subjectAccessRequestRepository.completeSubjectAccessRequest(cancelledSar.id))
+        .thenReturn(0)
+
+      whenever(subjectAccessRequestRepository.findById(cancelledSar.id))
+        .thenReturn(Optional.of(cancelledSar))
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        service.completeRequest(cancelledSar)
+      }
+
+      assertThat(actual.message).contains("subject access request could not be completed due to invalid status")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.REQUEST_COMPLETED)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.COMPLETE_REQUEST_UNSUCCESSFUL)
+      assertThat(actual.subjectAccessRequest).isEqualTo(cancelledSar)
+      assertThat(actual.params).containsEntry("status", "Cancelled")
+
+      verify(subjectAccessRequestRepository, times(1)).completeSubjectAccessRequest(cancelledSar.id)
+      verify(subjectAccessRequestRepository, times(1)).findById(cancelledSar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository, templateVersionRepository)
+    }
+
+    @Test
+    fun `should throw exception if sar not found`() {
+      whenever(subjectAccessRequestRepository.completeSubjectAccessRequest(cancelledSar.id))
+        .thenReturn(0)
+
+      whenever(subjectAccessRequestRepository.findById(cancelledSar.id))
+        .thenReturn(Optional.empty())
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        service.completeRequest(cancelledSar)
+      }
+
+      assertThat(actual.message).contains("subject access request not found")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.REQUEST_COMPLETED)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.INTERNAL_SERVER_ERROR)
+      assertThat(actual.subjectAccessRequest).isEqualTo(cancelledSar)
+
+      verify(subjectAccessRequestRepository, times(1)).completeSubjectAccessRequest(cancelledSar.id)
+      verify(subjectAccessRequestRepository, times(1)).findById(cancelledSar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository, templateVersionRepository)
+    }
+  }
+
+  @Nested
+  inner class RequireSubjectAccessRequestNotCancelled {
+
+    @Test
+    fun `should do nothing is request status is not cancelled`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id))
+        .thenReturn(Optional.of(sar))
+
+      service.requireSubjectAccessRequestNotCancelled(
+        subjectAccessRequest = sar,
+        event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
+      )
+
+      verify(subjectAccessRequestRepository, times(1)).findById(sar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository)
+    }
+
+    @Test
+    fun `should throw exception if SAR has status cancelled`() {
+      whenever(subjectAccessRequestRepository.findById(cancelledSar.id))
+        .thenReturn(Optional.of(cancelledSar))
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        service.requireSubjectAccessRequestNotCancelled(
+          subjectAccessRequest = cancelledSar,
+          event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
+        )
+      }
+
+      assertThat(actual.message).contains("subject access request has status cancelled")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(actual.errorCode).isEqualTo(ErrorCode.REQUEST_CANCELLED)
+      assertThat(actual.subjectAccessRequest).isEqualTo(cancelledSar)
+
+      verify(subjectAccessRequestRepository, times(1)).findById(cancelledSar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository)
+    }
+
+    @Test
+    fun `should throw exception if SAR not found`() {
+      whenever(subjectAccessRequestRepository.findById(sar.id))
+        .thenReturn(Optional.empty())
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> {
+        service.requireSubjectAccessRequestNotCancelled(
+          subjectAccessRequest = sar,
+          event = ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED,
+        )
+      }
+
+      assertThat(actual.message).contains("subject access request not found")
+      assertThat(actual.event).isEqualTo(ProcessingEvent.GENERATE_PDF_SERVICE_DATA_ADDED)
+      assertThat(actual.errorCode).isEqualTo(INTERNAL_SERVER_ERROR)
+      assertThat(actual.subjectAccessRequest).isEqualTo(sar)
+
+      verify(subjectAccessRequestRepository, times(1)).findById(sar.id)
+      verifyNoMoreInteractions(subjectAccessRequestRepository)
+    }
   }
 }

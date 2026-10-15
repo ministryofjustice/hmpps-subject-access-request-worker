@@ -172,4 +172,8 @@ abstract class IntegrationTestBase {
         ),
       ),
     )
+
+  protected fun saveSubjectAccessRequest(
+    request: SubjectAccessRequest,
+  ): SubjectAccessRequest = subjectAccessRequestRepository.saveAndFlush(request)
 }

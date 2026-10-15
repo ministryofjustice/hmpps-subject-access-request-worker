@@ -49,4 +49,8 @@ interface SubjectAccessRequestRepository :
     @Param("releaseThreshold") releaseThreshold: LocalDateTime,
     @Param("currentTime") currentTime: LocalDateTime,
   ): Int
+
+  @Modifying
+  @Query("UPDATE SubjectAccessRequest r SET r.status = 'Completed' WHERE r.id = :id AND r.status = 'Pending'")
+  fun completeSubjectAccessRequest(@Param("id") id: UUID): Int
 }
