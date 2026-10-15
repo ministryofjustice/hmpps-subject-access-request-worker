@@ -345,6 +345,6 @@ class SubjectAccessRequestHtmlHandler(
     cause = null,
     subjectAccessRequest = subjectAccessRequest,
     event = ProcessingEvent.HTML_STREAMING_HANDLER,
-    errorCode = HTML_STREAM_PARSING_ERROR
+    errorCode = HTML_STREAM_PARSING_ERROR,
   )
 }
