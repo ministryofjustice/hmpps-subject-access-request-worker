@@ -229,7 +229,9 @@ class SubjectAccessRequestHtmlHandler(
 
   private fun emitFinalChunkToBuilder() {
     if (tableDepth != 0) {
-      throw RuntimeException("invalid html: Document processing ended with tableDepth > 0: actual=$tableDepth")
+      throw subjectAccessRequestHtmlHandlerException(
+        message = "invalid html: Document processing ended with tableDepth > 0: actual=$tableDepth",
+      )
     }
 
     // Close any remaining open tags to ensure the HTML is properly formatted
