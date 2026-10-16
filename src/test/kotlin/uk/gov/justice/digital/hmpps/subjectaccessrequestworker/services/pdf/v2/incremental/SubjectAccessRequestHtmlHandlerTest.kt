@@ -360,7 +360,11 @@ class SubjectAccessRequestHtmlHandlerTest {
     @Test
     fun `should decrement table depth when end tag is table`() {
       val content = "This is a table"
-      handler.openTags(Tag("table")).addCharacters(content.toCharArray())
+
+      handler
+        .openTags(Tag("table"))
+        .addCharacters(content)
+
       assertThat(handler.currentTableDepth()).isOne()
 
       handler.endElement("", null, "table")
@@ -373,12 +377,12 @@ class SubjectAccessRequestHtmlHandlerTest {
     }
 
     @Test
-    fun `should decrement table depth correctly when there is nested tabled`() {
+    fun `should decrement table depth correctly when there are nested tabled`() {
       val content = "This is a table"
 
       handler
         .openTags(Tag("table"), Tag("tr"), Tag("td"), Tag("table"))
-        .addCharacters(content.toCharArray())
+        .addCharacters(content)
 
       assertThat(handler.currentTableDepth()).isEqualTo(2)
 
@@ -399,14 +403,16 @@ class SubjectAccessRequestHtmlHandlerTest {
     fun `should not decrement table depth when inside a nested table but end element is called with a non table tag`() {
       val content = "This is a table"
 
-      handler.openTags(
-        Tag("table"),
-        Tag("tr"),
-        Tag("td"),
-        Tag("table"),
-        Tag("tr"),
-        Tag("td"),
-      ).addCharacters(content.toCharArray())
+      handler
+        .openTags(
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+        )
+        .addCharacters(content)
 
       assertThat(handler.currentTableDepth()).isEqualTo(2)
 
@@ -445,7 +451,7 @@ class SubjectAccessRequestHtmlHandlerTest {
     fun `should not emit when buffer size is less than minBufferSize`() {
       handler
         .openTags(Tag("div"))
-        .addCharacters("Hello World!".toCharArray())
+        .addCharacters("Hello World!")
         .closeTags(Tag("div"))
 
       assertThat(handler.isInsideStyleTag()).isFalse()
@@ -511,8 +517,10 @@ class SubjectAccessRequestHtmlHandlerTest {
       handler.assertIsEmpty()
 
       verify(incrementalHtmlPdfBuilder, times(1)).append(capture(emitCaptor))
-      assertThat(emitCaptor.allValues).hasSize(1)
-      assertThat(emitCaptor.allValues.first()).isEqualTo(expectedHtml)
+
+      val emitted = emitCaptor.allValues
+      assertThat(emitted).hasSize(1)
+      assertThat(emitted[0]).isEqualTo(expectedHtml)
     }
 
     @Test
@@ -526,9 +534,10 @@ class SubjectAccessRequestHtmlHandlerTest {
         .closeTags(Tag("td"), Tag("tr"), Tag("table"))
 
       verify(incrementalHtmlPdfBuilder, times(1)).append(capture(emitCaptor))
-      assertThat(emitCaptor.allValues).hasSize(1)
-      assertThat(emitCaptor.allValues.first())
-        .isEqualTo("<style></style><div><table><tr><td>${String(content)}</td></tr></table></div>")
+
+      val emitted = emitCaptor.allValues
+      assertThat(emitted).hasSize(1)
+      assertThat(emitted[0]).isEqualTo("<style></style><div><table><tr><td>${String(content)}</td></tr></table></div>")
     }
 
     @Test
@@ -556,7 +565,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       val content = generateLargeContent(minBufferSize)
       handler
         .openTags(Tag("style"))
-        .addCharacters("table { color:red; }".toCharArray())
+        .addCharacters("table { color:red; }")
         .closeTags(Tag("style"))
         .openTags(
           Tag("table"),
@@ -571,9 +580,10 @@ class SubjectAccessRequestHtmlHandlerTest {
         )
 
       verify(incrementalHtmlPdfBuilder, times(1)).append(capture(emitCaptor))
-      assertThat(emitCaptor.allValues).hasSize(1)
-      assertThat(emitCaptor.allValues.first())
-        .isEqualTo("<style>table { color:red; }</style><table><tr><td>${String(content)}</td></tr></table>")
+
+      val emitted = emitCaptor.allValues
+      assertThat(emitted).hasSize(1)
+      assertThat(emitted[0]).isEqualTo("<style>table { color:red; }</style><table><tr><td>${String(content)}</td></tr></table>")
     }
 
     @Test
@@ -581,7 +591,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       val content = generateLargeContent(minBufferSize)
       handler
         .openTags(Tag("style"))
-        .addCharacters("table { color:red; }".toCharArray())
+        .addCharacters("table { color:red; }")
         .closeTags(Tag("style"))
         .openTags(
           Tag("table"),
@@ -616,7 +626,7 @@ class SubjectAccessRequestHtmlHandlerTest {
 
       handler
         .openTags(Tag("style"))
-        .addCharacters("table { color:red; }".toCharArray())
+        .addCharacters("table { color:red; }")
         .closeTags(Tag("style"))
         .openTags(
           Tag("table"),
@@ -637,15 +647,152 @@ class SubjectAccessRequestHtmlHandlerTest {
         )
 
       verify(incrementalHtmlPdfBuilder).append(capture(emitCaptor))
-      assertThat(emitCaptor.allValues).hasSize(1)
-      assertThat(emitCaptor.allValues.first())
-        .isEqualTo("<style>table { color:red; }</style><table><tr><td><table><tr><td>${String(content)}</td></tr></table></td></tr></table>")
+
+      val emitted = emitCaptor.allValues
+      assertThat(emitted).hasSize(1)
+      assertThat(emitted[0]).isEqualTo("<style>table { color:red; }</style><table><tr><td><table><tr><td>${String(content)}</td></tr></table></td></tr></table>")
 
       assertThat(handler.isInsideStyleTag()).isFalse()
       assertThat(handler.currentTableDepth()).isEqualTo(0)
       assertThat(handler.currentBuffer()).isEmpty()
       assertThat(handler.currentOpenTags()).isEmpty()
       assertThat(handler.currentStyleBuffer()).isEqualTo("table { color:red; }")
+    }
+
+    @Test
+    fun `should emit multiple valid fragments`() {
+      val content1 = CharArray(minBufferSize + 1) { 'a' }
+      val content2 = CharArray(minBufferSize + 1) { 'b' }
+
+      handler
+        .openTags(Tag("style"))
+        .addCharacters("table { color:red; }")
+        .closeTags(Tag("style"))
+        .openTags(Tag("div"), Tag("table"), Tag("tr"), Tag("td"))
+        .addCharacters(content1)
+        .closeTags(Tag("td"), Tag("tr"), Tag("table"))
+
+      handler
+        .openTags(Tag("table"), Tag("tr"), Tag("td"))
+        .addCharacters(content2)
+        .closeTags(Tag("td"), Tag("tr"), Tag("table"))
+
+      verify(incrementalHtmlPdfBuilder, times(2)).append(capture(emitCaptor))
+
+      val emitted = emitCaptor.allValues
+      assertThat(emitted).hasSize(2)
+
+      assertThat(emitted[0]).isEqualTo("<style>table { color:red; }</style><div><table><tr><td>${String(content1)}</td></tr></table></div>")
+      assertThat(emitted[1]).isEqualTo("<style>table { color:red; }</style><div><table><tr><td>${String(content2)}</td></tr></table></div>")
+    }
+
+    @Test
+    fun `should preserve tag attributes when reopening tags after emitting chunks`() {
+      val divAttributes = mockedAttributes(
+        mapOf(
+          "id" to "div-1",
+          "class" to "sar-div-1",
+        ),
+      )
+
+      val pAttributes = mockedAttributes(
+        mapOf(
+          "id" to "p1",
+          "class" to "sar-p1",
+        ),
+      )
+
+      // Open tags with attributes
+      handler
+        .openTags(
+          Tag("div", attributes = divAttributes),
+          Tag("p", attributes = pAttributes),
+          Tag("table"),
+          Tag("tr"),
+          Tag("td"),
+        )
+        .addCharacters(generateLargeContent(minBufferSize + 1))
+        // Exceed the min buffer size and close the open table to trigger an emit event
+        .closeTags(
+          Tag("td"),
+          Tag("tr"),
+          Tag("table"),
+        )
+
+      verify(incrementalHtmlPdfBuilder, times(1)).append(capture(emitCaptor))
+
+      assertThat(handler.currentOpenTags()).containsExactly(
+        SubjectAccessRequestHtmlHandler.HtmlTag(
+          qName = "div",
+          attributes = mapOf(
+            "id" to "div-1",
+            "class" to "sar-div-1",
+          ),
+        ),
+        SubjectAccessRequestHtmlHandler.HtmlTag(
+          qName = "p",
+          attributes = mapOf(
+            "id" to "p1",
+            "class" to "sar-p1",
+          ),
+        ),
+      )
+      assertThat(handler.currentBuffer()).isEqualTo("""<div id="div-1" class="sar-div-1"><p id="p1" class="sar-p1">""")
+    }
+  }
+
+  @Nested
+  inner class EndDocument {
+    val minBufferSize = 1000
+
+    private val handler = SubjectAccessRequestHtmlHandler(
+      builder = incrementalHtmlPdfBuilder,
+      subjectAccessRequest = subjectAccessRequest,
+      minBufferSize = minBufferSize,
+    )
+
+    @BeforeEach
+    fun beforeEach() {
+      handler.reset()
+    }
+
+    @Test
+    fun `should do nothing when buffer is empty`() {
+      handler.assertIsEmpty()
+
+      handler.endDocument()
+
+      handler.assertIsEmpty()
+      verifyNoInteractions(incrementalHtmlPdfBuilder)
+    }
+
+    @Test
+    fun `should throw exception when table depth is greater than 0`() {
+      handler.openTags(Tag("table"))
+
+      val actual = assertThrows<FatalSubjectAccessRequestException> { handler.endDocument() }
+      assertSubjectAccessRequestHtmlHandlerException(
+        actual = actual,
+        expectedMessage = "invalid html: Document processing ended with tableDepth > 0: actual=1",
+      )
+      verifyNoInteractions(incrementalHtmlPdfBuilder)
+    }
+
+    @Test
+    fun `should close any open tags`() {
+      handler
+        .openTags(Tag("div"), Tag("table"), Tag("tr"), Tag("td"))
+        .addCharacters("This is the final goodbye")
+        .closeTags(Tag("td"), Tag("tr"), Tag("table"))
+
+      handler.endDocument()
+
+      verify(incrementalHtmlPdfBuilder, times(1)).append(capture(emitCaptor))
+
+      val emitted = emitCaptor.allValues
+      assertThat(emitted).hasSize(1)
+      assertThat(emitted[0]).isEqualTo("<style></style><div><table><tr><td>This is the final goodbye</td></tr></table></div>")
+      handler.assertIsEmpty()
     }
   }
 
@@ -657,13 +804,7 @@ class SubjectAccessRequestHtmlHandlerTest {
     assertThat(this.currentStyleBuffer()).isEmpty()
   }
 
-  private fun generateLargeContent(targetSize: Int): CharArray {
-    val lotsOfContent = StringBuilder()
-    do {
-      lotsOfContent.append("a")
-    } while (lotsOfContent.length < targetSize)
-    return lotsOfContent.toString().toCharArray()
-  }
+  private fun generateLargeContent(targetSize: Int): CharArray = CharArray(targetSize) { 'a' }
 
   private fun assertSubjectAccessRequestHtmlHandlerException(
     actual: FatalSubjectAccessRequestException,
@@ -686,6 +827,10 @@ class SubjectAccessRequestHtmlHandlerTest {
     return this
   }
 
+  internal fun SubjectAccessRequestHtmlHandler.addCharacters(
+    content: String,
+  ): SubjectAccessRequestHtmlHandler = this.addCharacters(content.toCharArray())
+
   internal fun SubjectAccessRequestHtmlHandler.closeTags(vararg tags: Tag): SubjectAccessRequestHtmlHandler {
     tags.forEach { tag -> this.endElement("", "", tag.qName) }
     return this
@@ -702,16 +847,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       val expectedTableDepth: Int,
     ) {
 
-      fun mockAttributes(): Attributes {
-        val attributesMock: Attributes = mock()
-        whenever(attributesMock.length).thenReturn(this.attributesMap.keys.size)
-
-        this.attributesMap.entries.forEachIndexed { index, entry ->
-          whenever(attributesMock.getQName(index)).thenReturn(entry.key)
-          whenever(attributesMock.getValue(index)).thenReturn(entry.value)
-        }
-        return attributesMock
-      }
+      fun mockAttributes(): Attributes = mockedAttributes(this.attributesMap)
 
       fun getExpectedHtmlTags(): List<SubjectAccessRequestHtmlHandler.HtmlTag> = listOf(
         SubjectAccessRequestHtmlHandler.HtmlTag(
@@ -719,6 +855,17 @@ class SubjectAccessRequestHtmlHandlerTest {
           attributes = attributesMap,
         ),
       )
+    }
+
+    fun mockedAttributes(attributesMap: Map<String, String>): Attributes {
+      val attributesMock: Attributes = mock()
+      whenever(attributesMock.length).thenReturn(attributesMap.keys.size)
+
+      attributesMap.entries.forEachIndexed { index, entry ->
+        whenever(attributesMock.getQName(index)).thenReturn(entry.key)
+        whenever(attributesMock.getValue(index)).thenReturn(entry.value)
+      }
+      return attributesMock
     }
 
     @JvmStatic
