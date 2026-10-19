@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,7 +11,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.O
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.ServicePdfRenderer
 
 @Configuration
-class RenderConfig {
+class RenderConfig(
+  private val telemetryClient: TelemetryClient,
+) {
 
   private companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -23,7 +26,7 @@ class RenderConfig {
   ): ServicePdfRenderer = when (applicationProperties.serviceRenderer) {
     ServiceRenderer.ITEXT -> ITextServicePdfRenderer()
     ServiceRenderer.OPENHTMLTOPDF -> OpenHtmlServicePdfRenderer(tempDirectoryService)
-    ServiceRenderer.ITEXT_INCREMENTAL -> ItextIncrementalServicePdfRenderer()
+    ServiceRenderer.ITEXT_INCREMENTAL -> ItextIncrementalServicePdfRenderer(telemetryClient)
   }.also { log.info("configured ServicePdfRenderer: {}", it.javaClass.name) }
 }
 

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -34,6 +35,8 @@ class SubjectAccessRequestHtmlHandlerTest {
   @Captor
   private lateinit var emitCaptor: ArgumentCaptor<String>
 
+  private var telemetryClient: TelemetryClient = mock()
+
   @Nested
   inner class StartElement {
 
@@ -41,6 +44,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       builder = incrementalHtmlPdfBuilder,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = 100,
+      telemetryClient = telemetryClient,
     )
 
     @BeforeEach
@@ -158,6 +162,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       builder = incrementalHtmlPdfBuilder,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = 100,
+      telemetryClient = telemetryClient,
     )
 
     @BeforeEach
@@ -253,6 +258,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       builder = incrementalHtmlPdfBuilder,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = 100,
+      telemetryClient = telemetryClient,
     )
 
     @BeforeEach
@@ -440,6 +446,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       builder = incrementalHtmlPdfBuilder,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = minBufferSize,
+      telemetryClient = telemetryClient,
     )
 
     @BeforeEach
@@ -749,6 +756,7 @@ class SubjectAccessRequestHtmlHandlerTest {
       builder = incrementalHtmlPdfBuilder,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = minBufferSize,
+      telemetryClient = telemetryClient,
     )
 
     @BeforeEach
