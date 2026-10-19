@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.jsoup.nodes.Entities
 import org.slf4j.LoggerFactory
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_STREAM_PARSING_ERROR
@@ -66,6 +68,7 @@ class SubjectAccessRequestHtmlHandler(
   val builder: IncrementalHtmlPdfBuilder,
   val subjectAccessRequest: SubjectAccessRequest,
   val minBufferSize: Int = 100_000,
+  val telemetryClient: TelemetryClient,
 ) : DefaultHandler() {
 
   private val openTags: ArrayDeque<HtmlTag> = ArrayDeque()
@@ -272,7 +275,15 @@ class SubjectAccessRequestHtmlHandler(
 
   private fun requireNonNullQName(
     qName: String?,
-  ): String = qName?.takeIf { it.isNotBlank() } ?: throw subjectAccessRequestHtmlHandlerException("Invalid HTML: tag name was null or empty")
+  ): String = qName?.takeIf { it.isNotBlank() }
+    ?: throw subjectAccessRequestHtmlHandlerException("Invalid HTML: tag name was null or empty")
+      .also {
+        telemetryClient.trackSarEvent(
+          event = ProcessingEvent.HTML_STREAMING_HANDLER_ERROR,
+          subjectAccessRequest = subjectAccessRequest,
+          Pair("cause", "Invalid HTML: tag name was null or empty"),
+        )
+      }
 
   /**
    * Check if we can emit a chunk to the builder. Emit only when the tableDepth tracker is at 0 and the buffer size is

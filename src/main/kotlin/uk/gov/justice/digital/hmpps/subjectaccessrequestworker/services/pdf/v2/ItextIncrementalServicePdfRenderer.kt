@@ -1,15 +1,26 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
+import com.microsoft.applicationinsights.TelemetryClient
+import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental.IncrementalHtmlPdfBuilder
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental.SubjectAccessRequestHtmlHandler
 import java.io.InputStream
-import java.nio.file.Path
 
-class ItextIncrementalServicePdfRenderer : ServicePdfRenderer {
+@Service
+class ItextIncrementalServicePdfRenderer(
+  private val telemetryClient: TelemetryClient,
+) : ServicePdfRenderer {
 
   override suspend fun generateServicePdf(
     pdfRenderRequest: PdfRenderRequest,
-    servicePdfPath: Path,
+    serviceConfiguration: ServiceConfiguration,
     serviceHtml: InputStream,
   ) {
-    TODO("Not yet implemented")
+    SubjectAccessRequestHtmlHandler(
+      builder = IncrementalHtmlPdfBuilder(pdfRenderRequest, serviceConfiguration),
+      subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+      telemetryClient = telemetryClient,
+    )
   }
 }
