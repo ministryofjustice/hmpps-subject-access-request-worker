@@ -196,6 +196,33 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }
 
+  protected fun htmlRendererSuccessfullyRendersHtml(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+    fileToAddToBucket: String,
+    templateVersion: String = "1",
+  ) = runBlocking {
+    val documentKey = htmlDocumentKey(sar, serviceName)
+
+    // Stub the wiremock API response.
+    htmlRendererApi.stubRenderResponsesWith(
+      htmlRenderRequest,
+      rendererSuccessResponse(documentKey, templateVersion),
+    )
+
+    // Put the expected Html in the bucket for later.
+    val serviceHtml = this::class.java.getResourceAsStream(fileToAddToBucket)
+      ?.bufferedReader()
+      .use { it?.readText() ?: "EMPTY" }
+
+    s3TestUtil.putFile(
+      file = S3TestUtils.S3File(documentKey, serviceHtml),
+      metadata = mapOf("template_version" to "v$templateVersion"),
+    )
+    assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
+  }
+
   fun getReportHtmlForService(serviceName: String): String = this::class.java
     .getResourceAsStream("/integration-tests/html-stubs/$serviceName-expected.html")
     ?.bufferedReader()

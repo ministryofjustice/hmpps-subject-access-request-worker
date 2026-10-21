@@ -45,7 +45,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.Subjec
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
+import java.io.File
 import java.io.InputStream
+import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.util.UUID
 
@@ -123,6 +125,13 @@ abstract class IntegrationTestBase {
   protected fun getUploadedPdfDocument(): PdfDocument = pdfDocumentFromInputStream(
     ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
   )
+
+  protected fun getUploadedPdfDocumentAsByteArray(): ByteArray = documentApi.getRequestBodyAsByteArray()
+
+  fun getUploadedPdfDocumentAsFile(filepath: Path): File {
+    filepath.toFile().writeBytes(getUploadedPdfDocumentAsByteArray())
+    return filepath.toFile()
+  }
 
   protected fun createSubjectAccessRequestWithStatus(status: Status, serviceConfig: ServiceConfiguration): SubjectAccessRequest {
     val sar = createSubjectAccessRequestForService(serviceConfig, status)

@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 
 import com.microsoft.applicationinsights.TelemetryClient
+import nu.validator.htmlparser.sax.HtmlParser
 import org.springframework.stereotype.Service
+import org.xml.sax.InputSource
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental.IncrementalHtmlPdfBuilder
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental.SubjectAccessRequestHtmlHandler
@@ -17,10 +19,16 @@ class ItextIncrementalServicePdfRenderer(
     serviceConfiguration: ServiceConfiguration,
     serviceHtml: InputStream,
   ) {
-    SubjectAccessRequestHtmlHandler(
-      builder = IncrementalHtmlPdfBuilder(pdfRenderRequest, serviceConfiguration),
-      subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-      telemetryClient = telemetryClient,
-    )
+    IncrementalHtmlPdfBuilder(pdfRenderRequest, serviceConfiguration).use { builder ->
+      val parser = HtmlParser().apply {
+        contentHandler = SubjectAccessRequestHtmlHandler(
+          builder = builder,
+          subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
+          minBufferSize = 10_000,
+          telemetryClient = telemetryClient,
+        )
+      }
+      parser.parse(InputSource(serviceHtml))
+    }
   }
 }
