@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.rendering.PDFRenderer
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -13,10 +10,9 @@ import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 import java.nio.file.Path
 import java.util.UUID
-import kotlin.io.path.toPath
-import kotlin.math.abs
 
 class IncrementalHtmlPdfBuilderTest {
 
@@ -51,78 +47,11 @@ class IncrementalHtmlPdfBuilderTest {
     IncrementalHtmlPdfBuilder(
       pdfRenderRequest = pdfRenderRequest,
       serviceConfiguration = serviceConfiguration,
-    ).use { it.append(getInputHtml("test-service-data")) }
+    ).use { it.append(PdfTestUtil.getResourceAsString("/pdf/input-html/test-service-data.html")) }
 
     val actualPdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
-    val expectedPdfPath = getResourcePath("test-service-data-expected")
+    val expectedPdfPath = PdfTestUtil.getResourcePath("/pdf/output-pdf/test-service-data-expected.pdf")
 
-    assertPdfsVisuallyEquivalent(expectedPdfPath, actualPdfPath)
+    PdfTestUtil.assertPdfsVisuallyEquivalent(expectedPdfPath, actualPdfPath)
   }
-
-  private fun assertPdfsVisuallyEquivalent(
-    expected: Path,
-    actual: Path,
-  ) {
-    PDDocument.load(expected.toFile()).use { expectedPdf ->
-      PDDocument.load(actual.toFile()).use { actualPdf ->
-
-        assertThat(expectedPdf.numberOfPages)
-          .withFailMessage("actual pdf page count did not match expected")
-          .isEqualTo(actualPdf.numberOfPages)
-
-        val expectedRenderer = PDFRenderer(expectedPdf)
-        val actualRenderer = PDFRenderer(actualPdf)
-        assertImagePixelsEqual(expectedRenderer, actualRenderer, actualPdf)
-      }
-    }
-  }
-
-  /**
-   * PDF comparison is difficult as 2 visual identical documents can have completely different underlying code.
-   * This comparison coverts each page of the expected/actual documents to an image then compares the pixels to ensure
-   * it matches. This gives us a thorough method of checking 2 PDFs look identical and bypasses aforementioned issue.
-   */
-  private fun assertImagePixelsEqual(
-    expectedRenderer: PDFRenderer,
-    actualRenderer: PDFRenderer,
-    actualPdf: PDDocument,
-  ) {
-    for (pageIndex in 0 until actualPdf.numberOfPages) {
-      val actualImage = actualRenderer.renderImageWithDPI(pageIndex, 300f)
-      val expectedImage = expectedRenderer.renderImageWithDPI(pageIndex, 300f)
-
-      val widthDiff = abs(expectedImage.width - actualImage.width)
-      assertThat(widthDiff)
-        .withFailMessage("actual page image width does not match expected: difference=$widthDiff")
-        .isZero
-
-      val heightDiff = abs(expectedImage.height - actualImage.height)
-      assertThat(heightDiff)
-        .withFailMessage("actual page image height does not match expected: difference=$heightDiff")
-        .isZero
-
-      log.info("comparing page: $pageIndex expected/actual pixel values")
-
-      for (x in 0 until actualImage.width) {
-        for (y in 0 until actualImage.height) {
-          val expectedPixel = expectedImage.getRGB(x, y)
-          val actualPixel = actualImage.getRGB(x, y)
-
-          assertThat(actualPixel)
-            .withFailMessage("page $pageIndex: pixels ($x,$y) mismatch, actual: $actualPixel, expected: $expectedPixel")
-            .isEqualTo(expectedPixel)
-        }
-      }
-    }
-  }
-
-  private fun getInputHtml(
-    filename: String,
-  ): String = this::class.java.getResourceAsStream("/pdf/input-html/$filename.html")
-    ?.bufferedReader()
-    ?.readText() ?: ""
-
-  private fun getResourcePath(
-    filename: String,
-  ): Path = this.javaClass.getResource("/pdf/output-pdf/$filename.pdf").toURI().toPath()
 }
