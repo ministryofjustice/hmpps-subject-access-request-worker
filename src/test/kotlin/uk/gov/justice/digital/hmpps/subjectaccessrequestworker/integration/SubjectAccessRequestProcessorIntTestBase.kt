@@ -48,12 +48,24 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
 
   private var attachmentNumber = 1
 
+  private val serviceConfigurations = listOf(
+    courtCaseServiceServiceConfig,
+    createAndVaryALicenseServiceConfig,
+    bookSecureMoveServiceConfig,
+    healthAndMedicationServiceConfig,
+    incentivesApiServiceConfig,
+    managingPrisonerAppsServiceConfig,
+  )
+
   @BeforeEach
   fun setup() {
     clearOauthClientCache("sar-client", "anonymousUser")
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
     templateVersionRepository.deleteAll()
+
+    serviceConfigurationRepository.saveAllAndFlush(serviceConfigurations)
+
     templateVersionRepository.save(
       TemplateVersion(
         serviceConfiguration = getServiceConfiguration("template-migrated-service"),
@@ -62,6 +74,17 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
         fileHash = "12345",
       ),
     )
+
+    serviceConfigurations.forEach {
+      templateVersionRepository.save(
+        TemplateVersion(
+          serviceConfiguration = it,
+          status = PUBLISHED,
+          version = 1,
+          fileHash = "12345",
+        ),
+      )
+    }
 
     /** Ensure the test generated reports have the same 'report generation date' as pre-generated reference reports */
     whenever(dateService.reportGenerationDate())
@@ -80,6 +103,9 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
     s3TestUtil.clearBucket()
+
+    templateVersionRepository.deleteAll()
+    serviceConfigurationRepository.deleteAll(serviceConfigurations)
   }
 
   @ParameterizedTest

@@ -36,9 +36,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Proba
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
@@ -49,6 +52,7 @@ import java.io.File
 import java.io.InputStream
 import java.nio.file.Path
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.UUID
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
@@ -185,4 +189,36 @@ abstract class IntegrationTestBase {
   protected fun saveSubjectAccessRequest(
     request: SubjectAccessRequest,
   ): SubjectAccessRequest = subjectAccessRequestRepository.saveAndFlush(request)
+
+  protected fun createTestServiceConfiguration(
+    name: String,
+    label: String,
+    url: String = "http://localhost:4100",
+    category: ServiceCategory = ServiceCategory.PRISON,
+    enabled: Boolean = true,
+    templateMigrated: Boolean = true,
+    suspended: Boolean = false,
+  ): ServiceConfiguration = ServiceConfiguration(
+    serviceName = name,
+    label = label,
+    url = url,
+    category = category,
+    enabled = enabled,
+    templateMigrated = templateMigrated,
+    suspended = suspended,
+  )
+
+  protected fun createTemplateVersion(
+    serviceConfig: ServiceConfiguration,
+    status: TemplateVersionStatus = TemplateVersionStatus.PUBLISHED,
+    version: Int = 1,
+    createdAt: LocalDateTime = LocalDateTime.now(),
+    fileHash: String? = "1234567890",
+  ): TemplateVersion = TemplateVersion(
+    serviceConfiguration = serviceConfig,
+    status = status,
+    createdAt = createdAt,
+    version = version,
+    fileHash = fileHash,
+  )
 }

@@ -32,7 +32,7 @@ class PdfDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
   fun `should render pdfs in attachments section`(filename: String, expectedFilename: String, numPages: Int) = runBlocking {
     val sar = saveSubjectAccessRequest(
       IntegrationTestFixture.createSubjectAccessRequestForService(
-        getServiceConfiguration(),
+        testServiceConfiguration,
         Status.Pending,
       ),
     )
