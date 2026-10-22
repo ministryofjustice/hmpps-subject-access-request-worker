@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -27,8 +26,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RequestSer
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 import java.nio.file.Path
@@ -38,7 +35,7 @@ import java.util.concurrent.TimeUnit
 
 @TestPropertySource(
   properties = [
-    "application.service-renderer=itext_incremental"
+    "application.service-renderer=itext_incremental",
   ],
 )
 @DirtiesContext
@@ -58,14 +55,6 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
     templateVersionRepository.deleteAll()
-    templateVersionRepository.save(
-      TemplateVersion(
-        serviceConfiguration = getServiceConfiguration("template-migrated-service"),
-        status = TemplateVersionStatus.PUBLISHED,
-        version = 1,
-        fileHash = "12345",
-      ),
-    )
   }
 
   @AfterEach
@@ -73,21 +62,24 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     clearOauthClientCache("sar-client", "anonymousUser")
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
+    templateVersionRepository.deleteAll()
+    serviceConfigurationRepository.deleteAll()
     s3TestUtil.clearBucket()
   }
 
   @ParameterizedTest
   @CsvSource(
     value = [
-      "offender-case-notes              | 1  |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
-      "hmpps-book-secure-move-api       | 27 |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
-      "hmpps-activities-management-api  | 3  |  2026-10-21 | Andrew   | SMITH     | A8731DY | ",
-      "make-recall-decision-api         | 5  |  2026-10-21 | Terrence | GREENHOLT |         | X788206 ",
+      "offender-case-notes              | Case notes                          | 1  |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
+      "hmpps-book-secure-move-api       | Book a secure move                  | 27 |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
+      "hmpps-activities-management-api  | Manage activities and appointments  | 3  |  2026-10-21 | Andrew   | SMITH     | A8731DY | ",
+      "make-recall-decision-api         | Consider a recall                   | 5  |  2026-10-21 | Terrence | GREENHOLT |         | X788206 ",
     ],
     delimiter = '|',
   )
   fun `should generate a PDF visually equal to the expected reference PDF`(
     serviceName: String,
+    serviceLabel: String,
     templateVersion: String,
     reportGenerationDate: String,
     subjectFirstName: String,
@@ -95,9 +87,7 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     nomisId: String? = null,
     ndeliusId: String? = null,
   ) = runTest {
-    val serviceConfig = getServiceConfiguration(serviceName)
-    assertThat(serviceConfig).isNotNull
-
+    val serviceConfig = setupServiceConfigurationWithTemplateVersion(serviceName, serviceLabel, templateVersion)
     val requestDate = LocalDate.parse(reportGenerationDate, DateTimeFormatter.ISO_DATE)
 
     val params = setupTestData(
@@ -165,7 +155,7 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
       htmlRenderRequest = htmlRenderRequest,
       serviceName = serviceConfig.serviceName,
       fileToAddToBucket = "/integration-tests/regression/service-html/${serviceConfig.serviceName}-${nomisId ?: ndeliusId}.html",
-      templateVersion = templateVersion
+      templateVersion = templateVersion,
     )
 
     sar.nomisId?.let {
@@ -206,8 +196,21 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     return subjectAccessRequestRepository.saveAndFlush(sar)
   }
 
+  private fun setupServiceConfigurationWithTemplateVersion(
+    serviceName: String,
+    serviceLabel: String,
+    templateVersion: String,
+  ): ServiceConfiguration = serviceConfigurationRepository.save(
+    createTestServiceConfiguration(
+      name = serviceName,
+      label = serviceLabel,
+    ),
+  ).let {
+    templateVersionRepository.save(createTemplateVersion(it, version = templateVersion.toInt()))
+    it
+  }
+
   internal fun Pair<SubjectAccessRequest, HtmlRendererApiClient.HtmlRenderRequest>.sar() = this.first
 
   internal fun Pair<SubjectAccessRequest, HtmlRendererApiClient.HtmlRenderRequest>.htmlRenderRequest() = this.second
-
 }

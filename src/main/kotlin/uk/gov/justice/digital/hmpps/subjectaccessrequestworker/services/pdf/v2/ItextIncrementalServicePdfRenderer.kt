@@ -24,7 +24,7 @@ class ItextIncrementalServicePdfRenderer(
         contentHandler = SubjectAccessRequestHtmlHandler(
           builder = builder,
           subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-          minBufferSize = 10_000,
+          minBufferSize = 50_000,
           telemetryClient = telemetryClient,
         )
       }

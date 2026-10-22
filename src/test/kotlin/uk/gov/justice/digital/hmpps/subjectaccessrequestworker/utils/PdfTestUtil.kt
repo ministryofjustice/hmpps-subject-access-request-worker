@@ -12,12 +12,12 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.fail
+import org.slf4j.LoggerFactory
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,6 +30,8 @@ import kotlin.math.abs
 class PdfTestUtil {
 
   companion object {
+
+    private val log = LoggerFactory.getLogger(PdfTestUtil::class.java)
 
     /**
      * Get a PDF Document from the specified path
@@ -102,11 +104,11 @@ class PdfTestUtil {
         PdfImageInfo(width = image.width, height = image.height, hash = hash)
       } ?: emptyList()
 
-
     fun assertPdfsVisuallyEquivalent(
       expected: Path,
       actual: Path,
     ) {
+      log.debug("comparing {} to {} for visual equality", expected.fileName, actual.fileName)
       PDDocument.load(expected.toFile()).use { expectedPdf ->
         PDDocument.load(actual.toFile()).use { actualPdf ->
 
@@ -116,7 +118,7 @@ class PdfTestUtil {
 
           val expectedRenderer = PDFRenderer(expectedPdf)
           val actualRenderer = PDFRenderer(actualPdf)
-          assertImagePixelsEqual(expectedRenderer, actualRenderer, actualPdf)
+          assertImagePixelsEqual(expected, actual, expectedRenderer, actualRenderer, actualPdf)
         }
       }
     }
@@ -127,6 +129,8 @@ class PdfTestUtil {
      * it matches. This gives us a thorough method of checking 2 PDFs look identical and bypasses aforementioned issue.
      */
     private fun assertImagePixelsEqual(
+      expectedPath: Path,
+      actualPath: Path,
       expectedRenderer: PDFRenderer,
       actualRenderer: PDFRenderer,
       actualPdf: PDDocument,
@@ -145,7 +149,13 @@ class PdfTestUtil {
           .withFailMessage("actual page $pageIndex image height does not match expected: difference=$heightDiff")
           .isZero
 
-        println("comparing page ${pageIndex + 1}/${actualPdf.numberOfPages}")
+        log.info(
+          "Comparing {}/{} pixels: page {}/{}",
+          expectedPath.fileName,
+          actualPath.fileName,
+          pageIndex + 1,
+          actualPdf.numberOfPages,
+        )
         assertPagePixelsEqual(expectedImage, actualImage, pageIndex)
       }
     }
@@ -186,6 +196,11 @@ class PdfTestUtil {
         BufferedImage.TYPE_INT_ARGB,
       )
 
+      val g = diff.createGraphics()
+      g.drawImage(expectedImage, 0, 0, null)
+      g.drawImage(actualImage, expectedImage.width + 1, 0, null)
+      g.dispose()
+
       // Create a black 1px border between the expected, actual and diff images
       for (y in 0 until expectedImage.height) {
         diff.setRGB(expectedImage.width, y, Color.BLACK.rgb)
@@ -203,19 +218,16 @@ class PdfTestUtil {
             Color.RED.rgb
           }
 
-          diff.setRGB(x, y, expectedRgb)
-          diff.setRGB(x + expectedImage.width + 1, y, actualRgb)
           diff.setRGB(x + (expectedImage.width + 1 + actualImage.width + 1), y, diffRgbVal)
         }
       }
 
       val diffPath = Files.createDirectories(Paths.get("build", "test-results", "pdf-diff"))
-      val diffFile = diffPath.resolve("page-${pageIndex}-expected-actual-diff-${System.currentTimeMillis()}.png")
+      val diffFile = diffPath.resolve("page-$pageIndex-expected-actual-diff-${System.currentTimeMillis()}.png")
 
       ImageIO.write(diff, "png", diffFile.toFile())
       return diffFile
     }
-
   }
 }
 

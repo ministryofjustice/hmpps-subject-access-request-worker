@@ -36,6 +36,45 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
 
+  protected val createAndVaryALicenseServiceConfig = createTestServiceConfiguration(
+    name = "create-and-vary-a-licence-api",
+    label = "Create and Vary a Licence",
+  )
+
+  protected val courtCaseServiceServiceConfig = createTestServiceConfiguration(
+    name = "court-case-service",
+    label = "Prepare a Case for Sentence",
+  )
+
+  protected val bookSecureMoveServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-book-secure-move-api",
+    label = "Book a Secure Move",
+  )
+
+  protected val incentivesApiServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-incentives-api",
+    label = "Incentives",
+  )
+
+  protected val managingPrisonerAppsServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-managing-prisoner-apps-api",
+    label = "Managing prisoner applications",
+  )
+
+  protected val educationWorkPlanServiceConfig: ServiceConfiguration = createTestServiceConfiguration(
+    name = "hmpps-education-and-work-plan-api",
+    label = "Learning and Work Progress",
+  )
+  protected val nonAssociationsServiceConfig: ServiceConfiguration = createTestServiceConfiguration(
+    name = "hmpps-non-associations-api",
+    label = "Learning and Work Progress",
+  )
+
+  protected val healthAndMedicationServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-health-and-medication-api",
+    label = "Health and medication",
+  )
+
   protected companion object {
     val replaceWhitespaceRegex = Regex("\\s+")
     private val nomisIdLineRegex = Regex("^NOMIS ID:.*")

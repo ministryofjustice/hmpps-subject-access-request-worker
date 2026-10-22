@@ -53,7 +53,7 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
   ) = runBlocking {
     val sar = saveSubjectAccessRequest(
       IntegrationTestFixture.createSubjectAccessRequestForService(
-        getServiceConfiguration(),
+        testServiceConfiguration,
         Status.Pending,
       ),
     )
