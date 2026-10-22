@@ -47,6 +47,8 @@ dependencies {
   implementation("com.github.ben-manes.caffeine:caffeine:3.3.1")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
   implementation("org.jsoup:jsoup:1.23.2")
+  implementation("nu.validator:htmlparser:1.4.16")
+  implementation("org.jsoup:jsoup:1.21.1")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
@@ -57,6 +59,7 @@ dependencies {
   testImplementation("com.opencsv:opencsv:5.12.0")
   testImplementation("org.testcontainers:testcontainers:2.0.5")
   testImplementation("org.testcontainers:junit-jupiter:1.21.4")
+  testImplementation("org.apache.pdfbox:pdfbox:2.0.31")
 }
 
 kotlin {

@@ -66,6 +66,25 @@ class PrisonApiMockServer : WireMockServer(8079) {
     )
   }
 
+  fun stubGetOffenderDetails(subjectId: String, firstName: String, lastName: String) {
+    stubFor(
+      get("/api/offenders/$subjectId")
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withStatus(200)
+            .withBody(
+              """
+              {
+                "firstName": "$firstName",
+                "lastName": "$lastName"
+              }
+              """.trimIndent(),
+            ),
+        ),
+    )
+  }
+
   fun stubResponseFor(subjectId: String, response: ResponseDefinitionBuilder) {
     stubFor(
       get("/api/offenders/$subjectId")

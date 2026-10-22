@@ -36,6 +36,45 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
 
+  protected val createAndVaryALicenseServiceConfig = createTestServiceConfiguration(
+    name = "create-and-vary-a-licence-api",
+    label = "Create and Vary a Licence",
+  )
+
+  protected val courtCaseServiceServiceConfig = createTestServiceConfiguration(
+    name = "court-case-service",
+    label = "Prepare a Case for Sentence",
+  )
+
+  protected val bookSecureMoveServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-book-secure-move-api",
+    label = "Book a Secure Move",
+  )
+
+  protected val incentivesApiServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-incentives-api",
+    label = "Incentives",
+  )
+
+  protected val managingPrisonerAppsServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-managing-prisoner-apps-api",
+    label = "Managing prisoner applications",
+  )
+
+  protected val educationWorkPlanServiceConfig: ServiceConfiguration = createTestServiceConfiguration(
+    name = "hmpps-education-and-work-plan-api",
+    label = "Learning and Work Progress",
+  )
+  protected val nonAssociationsServiceConfig: ServiceConfiguration = createTestServiceConfiguration(
+    name = "hmpps-non-associations-api",
+    label = "Learning and Work Progress",
+  )
+
+  protected val healthAndMedicationServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-health-and-medication-api",
+    label = "Health and medication",
+  )
+
   protected companion object {
     val replaceWhitespaceRegex = Regex("\\s+")
     private val nomisIdLineRegex = Regex("^NOMIS ID:.*")
@@ -192,6 +231,33 @@ class BaseProcessorIntTest : IntegrationTestBase() {
         documentKey,
         getReportHtmlForService(fileToAddToBucket),
       ),
+    )
+    assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
+  }
+
+  protected fun htmlRendererSuccessfullyRendersHtml(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+    fileToAddToBucket: String,
+    templateVersion: String = "1",
+  ) = runBlocking {
+    val documentKey = htmlDocumentKey(sar, serviceName)
+
+    // Stub the wiremock API response.
+    htmlRendererApi.stubRenderResponsesWith(
+      htmlRenderRequest,
+      rendererSuccessResponse(documentKey, templateVersion),
+    )
+
+    // Put the expected Html in the bucket for later.
+    val serviceHtml = this::class.java.getResourceAsStream(fileToAddToBucket)
+      ?.bufferedReader()
+      .use { it?.readText() ?: "EMPTY" }
+
+    s3TestUtil.putFile(
+      file = S3TestUtils.S3File(documentKey, serviceHtml),
+      metadata = mapOf("template_version" to "v$templateVersion"),
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }
