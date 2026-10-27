@@ -1,7 +1,7 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.12"
-  kotlin("plugin.spring") version "2.4.20"
-  kotlin("plugin.jpa") version "2.4.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.14"
+  kotlin("plugin.spring") version "2.4.21"
+  kotlin("plugin.jpa") version "2.4.21"
 }
 
 configurations {
@@ -29,21 +29,21 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
-  implementation("com.github.jknack:handlebars:4.5.5")
+  implementation("com.github.jknack:handlebars:4.5.7")
   implementation("org.apache.commons:commons-lang3:3.21.0")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.3")
-  implementation("io.sentry:sentry-spring-boot-4:8.60.0")
-  implementation("io.sentry:sentry-logback:8.60.0")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.4")
+  implementation("io.sentry:sentry-spring-boot-4:8.62.0")
+  implementation("io.sentry:sentry-logback:8.62.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.9.19")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
+  implementation("aws.sdk.kotlin:s3:1.9.25")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.5.252")
   runtimeOnly("org.postgresql:postgresql:42.7.14")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.3")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.4")
   implementation("com.github.ben-manes.caffeine:caffeine:3.3.1")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
   implementation("org.jsoup:jsoup:1.23.2")
