@@ -29,13 +29,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
-  implementation("com.github.jknack:handlebars:4.5.7")
+  implementation("com.github.jknack:handlebars:4.5.8")
   implementation("org.apache.commons:commons-lang3:3.21.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.4")
   implementation("io.sentry:sentry-spring-boot-4:8.62.0")
   implementation("io.sentry:sentry-logback:8.62.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.9.25")
+  implementation("aws.sdk.kotlin:s3:1.9.27")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
@@ -46,6 +46,11 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.4")
   implementation("com.github.ben-manes.caffeine:caffeine:3.3.1")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
+
+  // Override versions to address CVE-2026-33929
+  implementation("org.apache.pdfbox:pdfbox:2.0.37")
+  implementation("org.apache.pdfbox:fontbox:2.0.37")
+  implementation("org.apache.pdfbox:xmpbox:2.0.37")
   implementation("org.jsoup:jsoup:1.23.2")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
