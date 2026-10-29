@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.whenever
@@ -24,8 +25,14 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus.PUBLISHED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
+import java.io.ByteArrayInputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.toPath
 
 abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest() {
 
@@ -119,62 +126,76 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
       "hmpps-managing-prisoner-apps-api",
     ],
   )
-  fun `should process pending request successfully when data is held and html-renderer is enabled`(serviceName: String) = runBlocking {
-    val serviceConfig = getServiceConfiguration(serviceName)
+  fun `should process pending request successfully when data is held and html-renderer is enabled`(serviceName: String) =
+    runBlocking {
+      val serviceConfig = getServiceConfiguration(serviceName)
 
-    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
-    val htmlRenderRequest = HtmlRenderRequest(
-      subjectAccessRequest = sar,
-      serviceConfigurationId = serviceConfig.id,
-    )
+      val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
+      val htmlRenderRequest = HtmlRenderRequest(
+        subjectAccessRequest = sar,
+        serviceConfigurationId = serviceConfig.id,
+      )
 
-    hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
-    prisonApi.stubGetOffenderDetails(sar.nomisId!!)
-    documentApi.stubUploadFileSuccess(sar)
+      hmppsAuth.stubGrantToken()
+      htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+      prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+      documentApi.stubUploadFileSuccess(sar)
 
-    sarProcessor.execute()
-    await()
-      .atMost(10, TimeUnit.SECONDS)
-      .until { requestHasStatus(sar, Completed) }
+      sarProcessor.execute()
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .until { requestHasStatus(sar, Completed) }
 
-    hmppsAuth.verifyCalledOnce()
-    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
-    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+      hmppsAuth.verifyCalledOnce()
+      htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
+      documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
-    assertUploadedDocumentMatchesExpectedPdf(serviceConfig.serviceName)
-    assertSubjectAccessRequestHasStatus(sar, Completed)
-    assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
-  }
+      assertUploadedDocumentMatchesExpectedPdf(
+        expectedPath = "$referencePdfBaseDir/$serviceName-reference.pdf",
+        serviceName = serviceConfig.serviceName
+      )
+
+      assertSubjectAccessRequestHasStatus(sar, Completed)
+      assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
+    }
 
   @Test
-  fun `should process pending request successfully when data is held and html-renderer is enabled and template is migrated`() = runBlocking {
-    val serviceConfig = getServiceConfiguration("template-migrated-service")
+  fun `should process pending request successfully when data is held and html-renderer is enabled and template is migrated`() =
+    runBlocking {
+      val serviceConfig = getServiceConfiguration("template-migrated-service")
 
-    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
-    val htmlRenderRequest = HtmlRenderRequest(
-      subjectAccessRequest = sar,
-      serviceConfigurationId = serviceConfig.id,
-    )
+      val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
+      val htmlRenderRequest = HtmlRenderRequest(
+        subjectAccessRequest = sar,
+        serviceConfigurationId = serviceConfig.id,
+      )
 
-    hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
-    prisonApi.stubGetOffenderDetails(sar.nomisId!!)
-    documentApi.stubUploadFileSuccess(sar)
+      hmppsAuth.stubGrantToken()
+      htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+      prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+      documentApi.stubUploadFileSuccess(sar)
 
-    sarProcessor.execute()
-    await()
-      .atMost(10, TimeUnit.SECONDS)
-      .until { requestHasStatus(sar, Completed) }
+      sarProcessor.execute()
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .until { requestHasStatus(sar, Completed) }
 
-    hmppsAuth.verifyCalledOnce()
-    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
-    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+      hmppsAuth.verifyCalledOnce()
+      htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
+      documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
-    assertUploadedDocumentMatchesExpectedPdf(serviceConfig.serviceName)
-    assertSubjectAccessRequestHasStatus(sar, Completed)
-    assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(sar, serviceConfig.serviceName, RenderStatus.COMPLETE, 1)
-  }
+      assertUploadedDocumentMatchesExpectedPdf(
+        expectedPath = "$referencePdfBaseDir/${serviceConfig.serviceName}-reference.pdf",
+        serviceName = serviceConfig.serviceName
+      )
+      assertSubjectAccessRequestHasStatus(sar, Completed)
+      assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(
+        sar,
+        serviceConfig.serviceName,
+        RenderStatus.COMPLETE,
+        1
+      )
+    }
 
   @Test
   fun `should process pending request successfully when no data is held and html-renderer is enabled`() = runBlocking {
@@ -207,65 +228,51 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
   }
 
   @Test
-  fun `should process pending request successfully when attachments exist and html-renderer is enabled`() = runBlocking {
-    val serviceConfig = getServiceConfiguration("create-and-vary-a-licence-api")
+  fun `should process pending request successfully when attachments exist and html-renderer is enabled`() =
+    runBlocking {
+      val serviceConfig = getServiceConfiguration("create-and-vary-a-licence-api")
 
-    val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
+      val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
 
-    val htmlRenderRequest = HtmlRenderRequest(
-      subjectAccessRequest = sar,
-      serviceConfigurationId = serviceConfig.id,
-    )
+      val htmlRenderRequest = HtmlRenderRequest(
+        subjectAccessRequest = sar,
+        serviceConfigurationId = serviceConfig.id,
+      )
 
-    hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
-    storeAttachment(sar, serviceConfig.serviceName, "doc.pdf", "application/pdf")
-    storeAttachment(
-      sar,
-      serviceConfig.serviceName,
-      "doc.docx",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    )
-    storeAttachment(sar, serviceConfig.serviceName, "map.jpg", "image/jpeg")
-    storeAttachment(sar, serviceConfig.serviceName, "map.gif", "image/gif")
-    storeAttachment(sar, serviceConfig.serviceName, "map.png", "image/png")
-    storeAttachment(sar, serviceConfig.serviceName, "map.tif", "image/tiff")
-    storeAttachment(sar, serviceConfig.serviceName, "video.mp4", "video/mp4")
-    prisonApi.stubGetOffenderDetails(sar.nomisId!!)
-    documentApi.stubUploadFileSuccess(sar)
+      hmppsAuth.stubGrantToken()
+      htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+      storeAttachment(sar, serviceConfig.serviceName, "doc.pdf", "application/pdf")
+      storeAttachment(
+        sar,
+        serviceConfig.serviceName,
+        "doc.docx",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      )
+      storeAttachment(sar, serviceConfig.serviceName, "map.jpg", "image/jpeg")
+      storeAttachment(sar, serviceConfig.serviceName, "map.gif", "image/gif")
+      storeAttachment(sar, serviceConfig.serviceName, "map.png", "image/png")
+      storeAttachment(sar, serviceConfig.serviceName, "map.tif", "image/tiff")
+      storeAttachment(sar, serviceConfig.serviceName, "video.mp4", "video/mp4")
+      prisonApi.stubGetOffenderDetails(sar.nomisId!!)
+      documentApi.stubUploadFileSuccess(sar)
 
-    sarProcessor.execute()
-    await()
-      .atMost(10, TimeUnit.SECONDS)
-      .until { requestHasStatus(sar, Completed) }
+      sarProcessor.execute()
+      await()
+        .atMost(10, TimeUnit.SECONDS)
+        .until { requestHasStatus(sar, Completed) }
 
-    hmppsAuth.verifyCalledOnce()
-    htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
-    documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
+      hmppsAuth.verifyCalledOnce()
+      htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
+      documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
-    val expected = getPreGeneratedPdfDocument("${serviceConfig.serviceName}-attachments-reference.pdf")
-    val actual = getUploadedPdfDocument()
-    assertUploadedDocumentMatchesExpectedPdf(actual, expected)
-    assertAttachmentPageMatchesExpected(actual, expected, 23, 1)
-    assertPageMatchesExpected(actual, expected, 24)
-    assertPageMatchesExpected(actual, expected, 25)
-    assertPageMatchesExpected(actual, expected, 26)
-    assertAttachmentPageMatchesExpected(actual, expected, 27, 2)
-    assertPageMatchesExpected(actual, expected, 28)
-    assertPageMatchesExpected(actual, expected, 29)
+      assertUploadedDocumentMatchesExpectedPdf(
+        expectedPath = "$referencePdfBaseDir/${serviceConfig.serviceName}-attachments-reference.pdf",
+        serviceName = serviceConfig.serviceName
+      )
 
-    assertPageMatchesExpected(actual, expected, 31)
-    assertPageMatchesExpected(actual, expected, 30)
-
-    assertPageMatchesExpected(actual, expected, 32)
-    assertAttachmentPageMatchesExpected(actual, expected, 33, 3)
-    assertAttachmentPageMatchesExpected(actual, expected, 34, 4)
-    assertAttachmentPageMatchesExpected(actual, expected, 35, 5)
-    assertAttachmentPageMatchesExpected(actual, expected, 36, 6)
-    assertAttachmentPageMatchesExpected(actual, expected, 37, 7)
-    assertSubjectAccessRequestHasStatus(sar, Completed)
-    assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
-  }
+      assertSubjectAccessRequestHasStatus(sar, Completed)
+      assertSubjectAccessRequestServiceHasStatus(sar, serviceConfig.serviceName, RenderStatus.COMPLETE)
+    }
 
   fun storeAttachment(
     sar: SubjectAccessRequest,
@@ -274,13 +281,14 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     contentType: String,
   ) = runBlocking {
     val documentKey = attachmentDocumentKey(sar, serviceName, filename)
-    val content = getAttachmentBytes(filename)
+    val content = ByteArrayInputStream(getAttachmentBytes(filename))
+    val contentSize = getFileSize(filename)
     s3TestUtil.putFile(
       S3TestUtils.S3AttachmentFile(
         key = documentKey,
         content = content,
         contentType = contentType,
-        contentLength = content.size.toLong(),
+        contentLength = contentSize,
         filename = filename,
         attachmentNumber = attachmentNumber++,
         name = "Test attachment file $filename",
@@ -297,4 +305,6 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
 
   fun getAttachmentBytes(filename: String): ByteArray = this::class.java
     .getResourceAsStream("/integration-tests/attachments/$filename").use { it?.readAllBytes()!! }
+
+  fun getFileSize(filename: String) = Files.size(this::class.java.getResource("/integration-tests/attachments/$filename").toURI().toPath())
 }

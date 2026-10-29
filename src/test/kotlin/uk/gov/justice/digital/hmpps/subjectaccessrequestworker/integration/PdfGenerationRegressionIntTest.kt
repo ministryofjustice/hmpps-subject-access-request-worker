@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mockito.doAnswer
@@ -28,21 +30,22 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
-import java.nio.file.Path
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Base64
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.readBytes
 
 @TestPropertySource(
   properties = [
     "application.service-renderer=itext_incremental",
+//    "application.service-renderer=itext",
   ],
 )
 @DirtiesContext
 class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
-
-  @TempDir
-  lateinit var tempDir: Path
 
   @MockitoBean
   private lateinit var dateService: DateService
@@ -70,10 +73,11 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
   @ParameterizedTest
   @CsvSource(
     value = [
-      "offender-case-notes              | Case notes                          | 1  |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
-      "hmpps-book-secure-move-api       | Book a secure move                  | 27 |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
-      "hmpps-activities-management-api  | Manage activities and appointments  | 3  |  2026-10-21 | Andrew   | SMITH     | A8731DY | ",
-      "make-recall-decision-api         | Consider a recall                   | 5  |  2026-10-21 | Terrence | GREENHOLT |         | X788206 ",
+//      "offender-case-notes              | Case notes                          | 1  |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
+//      "hmpps-book-secure-move-api       | Book a secure move                  | 27 |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
+//      "hmpps-activities-management-api  | Manage activities and appointments  | 3  |  2026-10-21 | Andrew   | SMITH     | A8731DY | ",
+//      "make-recall-decision-api         | Consider a recall                   | 5  |  2026-10-21 | Terrence | GREENHOLT |         | X788206 ",
+      "wiremock-test-service         | Wiremock Test Service | 13  |  2026-10-26 | Dougal | WOW | A1234AA  | X788206 ",
     ],
     delimiter = '|',
   )
@@ -113,10 +117,163 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     val referencePdfPath = PdfTestUtil.getResourcePath("/integration-tests/regression/pdf-baseline/$serviceName-$subjectId-itext.pdf")
     val generatedPdf = getUploadedPdfDocumentAsFile(tempDir.resolve("$subjectId-generated.pdf"))
 
+    Files.copy(
+      generatedPdf.toPath(),
+      PdfTestUtil.getResourcePath("/integration-tests/regression").resolve("$serviceName-test-output-itext.pdf"),
+    )
+
     PdfTestUtil.assertPdfsVisuallyEquivalent(
       actual = generatedPdf.toPath(),
       expected = referencePdfPath,
     )
+  }
+
+  @Timeout(20, unit = TimeUnit.MINUTES)
+  @ParameterizedTest
+  @CsvSource(
+    value = [
+      "accredited-programmes-custody  | Accredited programmes custody | 1 | 2026-10-20 | Dougal | WOW | A1234AA ",
+    ],
+    delimiter = '|',
+  )
+  fun `should generate uber PDF`(
+    serviceName: String,
+    serviceLabel: String,
+    templateVersion: String,
+    reportGenerationDate: String,
+    subjectFirstName: String,
+    subjectLastName: String,
+    nomisId: String? = null,
+  ) {
+    val serviceConfig = setupServiceConfigurationWithTemplateVersion(serviceName, serviceLabel, templateVersion)
+    val requestDate = LocalDate.parse(reportGenerationDate, DateTimeFormatter.ISO_DATE)
+
+    val params = setupTestData(
+      serviceConfig = serviceConfig,
+      templateVersion = templateVersion,
+      reportGenerationDate = requestDate,
+      subjectFirstName = subjectFirstName,
+      subjectLastName = subjectLastName,
+      nomisId = nomisId,
+      ndeliusId = null,
+    )
+
+    runBlocking {
+      sarProcessor.execute()
+      await()
+        .atMost(3, TimeUnit.SECONDS)
+        .until { requestHasStatus(params.sar(), Status.Completed) }
+    }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderCalled(1, params.htmlRenderRequest())
+    documentApi.verifyStoreDocumentIsCalled(1, params.sar().id.toString())
+
+    val generatedPdf = getUploadedPdfDocumentAsFile(tempDir.resolve("$nomisId-generated.pdf"))
+    val referencePdfPath = PdfTestUtil.getResourcePath("/integration-tests/regression/pdf-baseline/$serviceName-$nomisId.pdf")
+
+//    Files.copy(
+//      generatedPdf.toPath(),
+//      PdfTestUtil.getResourcePath("/integration-tests/regression").resolve("$serviceName-test-output-incremental.pdf"),
+//    )
+
+    PdfTestUtil.assertPdfsVisuallyEquivalent(
+      actual = generatedPdf.toPath(),
+      expected = referencePdfPath,
+    )
+  }
+
+  //@Disabled
+  @Timeout(10, unit = TimeUnit.MINUTES)
+  @ParameterizedTest
+  @CsvSource(
+    value = [
+      "wiremock-test-service  | Wiremock test service | 1 | 2026-10-20 | Dougal | WOW | A1234AA ",
+    ],
+    delimiter = '|',
+  )
+  fun `can handle large html files`(
+    serviceName: String,
+    serviceLabel: String,
+    templateVersion: String,
+    reportGenerationDate: String,
+    subjectFirstName: String,
+    subjectLastName: String,
+    nomisId: String? = null,
+  ) {
+    val serviceConfig = setupServiceConfigurationWithTemplateVersion(serviceName, serviceLabel, templateVersion)
+    val requestDate = LocalDate.parse(reportGenerationDate, DateTimeFormatter.ISO_DATE)
+
+    val params = setupTestData(
+      serviceConfig = serviceConfig,
+      templateVersion = templateVersion,
+      reportGenerationDate = requestDate,
+      subjectFirstName = subjectFirstName,
+      subjectLastName = subjectLastName,
+      nomisId = nomisId,
+      ndeliusId = null,
+    )
+
+    runBlocking {
+      sarProcessor.execute()
+//      await()
+//        .atMost(10, TimeUnit.SECONDS)
+//        .until { requestHasStatus(params.sar(), Status.Completed) }
+    }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifyRenderCalled(1, params.htmlRenderRequest())
+    documentApi.verifyStoreDocumentIsCalled(1, params.sar().id.toString())
+
+    Files.copy(
+      getUploadedPdfDocumentAsFile(tempDir.resolve("${serviceConfig.serviceName}.pdf")).toPath(),
+      PdfTestUtil.getResourcePath("/integration-tests/regression").resolve("$serviceName-test-output-incremental.pdf"),
+    )
+  }
+
+  //@Disabled
+  @Test
+  fun `produce html`() {
+    val outputFile = PdfTestUtil.getResourcePath("/integration-tests/regression").resolve("wiremock-test-service-A1234AA.html")
+
+    val styleFile = PdfTestUtil.getResourcePath("/integration-tests/regression/service-html/").resolve("style.html")
+    val style = styleFile.toFile().readText()
+
+    val img1Path = Paths.get("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/wiremock/__files/map.jpg")
+    val image1Src = Base64.getEncoder().encodeToString(img1Path.readBytes())
+
+    val img2Path = Paths.get("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/wiremock/__files/image.png")
+    val image2Src = Base64.getEncoder().encodeToString(img2Path.readBytes())
+
+    outputFile
+      .toFile()
+      .bufferedWriter()
+      .use { writer ->
+        writer.append(PdfTestUtil.getResourceAsString("/integration-tests/regression/service-html/style.html"))
+        writer.newLine()
+        writer.write("""<html><head><meta charset="UTF-8">$style</head><body>""".trimIndent())
+
+        repeat(10000) { i ->
+          writer.newLine()
+          writer.append("""
+          <table class="summary-list">
+          <tr><td>Attachment reference</td><td>Attachment $i</td></tr>
+          <tr><td>Filename</td><td>map.jpg</td></tr>
+          <tr><td>File type</td><td>image/jpeg</td></tr>
+          <tr><td>File size</td><td>27566</td></tr>
+          <tr><td>Description</td><td>Map image</td></tr>
+          <tr><td>Image $i,1</td><td><img src="data:image/png;base64,$image1Src" alt="Inline attachment" height="400" width="null"></td></tr>
+          <tr><td>Image $i.2</td><td><img src="data:image/png;base64,$image2Src" alt="Inline attachment" height="400" width="null"></td></tr>
+          </table>
+          """.trimIndent()
+          )
+          writer.newLine()
+        }
+        writer.flush()
+        writer.write("</body></html>")
+      }
+
+    println("file:///$outputFile")
   }
 
   internal fun setupTestData(

@@ -27,6 +27,7 @@ const val PDF_LEFT_MARGIN = 35f
 class IncrementalHtmlPdfBuilder(
   private val pdfRenderRequest: PdfRenderRequest,
   private val serviceConfiguration: ServiceConfiguration,
+  private val imageStore: ImageStore,
 ) : Closeable {
 
   private companion object {
@@ -56,18 +57,20 @@ class IncrementalHtmlPdfBuilder(
   fun append(chunk: String) {
     log.info("pre-process chunk {}", memoryUsage())
 
-    HtmlConverter.convertToElements(chunk).forEach { element ->
-      when (element) {
-        is IBlockElement -> document.add(element)
-        is Image -> document.add(element)
-        is HtmlPageBreak -> document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
-        else -> {
-          throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+    HtmlConverter.convertToElements(chunk)
+      .forEach { element ->
+        when (element) {
+          is IBlockElement -> document.add(element)
+          is Image -> document.add(element)
+          is HtmlPageBreak -> document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+          else -> {
+            throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+          }
         }
       }
-    }
 
     document.flush()
+    imageStore.flush()
     log.info("post-process chunk, file:{}, {}", pdfRenderRequest.fullReportPdfPath.toUri(), memoryUsage())
   }
 

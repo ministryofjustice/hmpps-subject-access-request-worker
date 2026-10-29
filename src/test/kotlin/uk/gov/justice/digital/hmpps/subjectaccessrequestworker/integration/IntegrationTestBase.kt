@@ -50,6 +50,7 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
+import java.nio.file.Files
 import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -75,7 +76,7 @@ const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
 @AutoConfigureWebTestClient
 abstract class IntegrationTestBase {
 
-  open val referencePdfBaseDir: String = REFERENCE_PDF_BASE_DIR
+  protected open val referencePdfBaseDir: String = REFERENCE_PDF_BASE_DIR
 
   @Autowired
   protected lateinit var subjectAccessRequestRepository: SubjectAccessRequestRepository
@@ -132,10 +133,9 @@ abstract class IntegrationTestBase {
 
   protected fun getUploadedPdfDocumentAsByteArray(): ByteArray = documentApi.getRequestBodyAsByteArray()
 
-  fun getUploadedPdfDocumentAsFile(filepath: Path): File {
-    filepath.toFile().writeBytes(getUploadedPdfDocumentAsByteArray())
-    return filepath.toFile()
-  }
+  fun getUploadedPdfDocumentAsFile(
+    filepath: Path,
+  ): File = Files.write(filepath, getUploadedPdfDocumentAsByteArray()).toFile()
 
   protected fun createSubjectAccessRequestWithStatus(status: Status, serviceConfig: ServiceConfiguration): SubjectAccessRequest {
     val sar = createSubjectAccessRequestForService(serviceConfig, status)

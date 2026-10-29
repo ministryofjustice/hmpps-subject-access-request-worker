@@ -35,9 +35,11 @@ class DocumentStorageClient(
   }
 
   fun storeDocument(subjectAccessRequest: SubjectAccessRequest, bodyFilePath: Path): PostDocumentResponse {
-    log.info("Storing document with UUID ${subjectAccessRequest.id}")
+    log.info("Storing document with UUID {}, file: {}, size: {}", subjectAccessRequest.id, bodyFilePath, bodyFilePath.fileSize())
     val expectedSize = bodyFilePath.fileSize()
     val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, bodyFilePath)
+    log.info("completed document store upload")
+
     return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
   }
 
@@ -47,6 +49,7 @@ class DocumentStorageClient(
   ): PostDocumentResponse? {
     val subjectAccessRequestId = subjectAccessRequest.id
     try {
+      log.info("starting document store upload")
       return documentStorageWebClient.post().uri("$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .body(

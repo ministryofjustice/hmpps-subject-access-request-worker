@@ -21,6 +21,7 @@ class IncrementalHtmlPdfBuilderTest {
 
   private val serviceConfiguration: ServiceConfiguration = mock()
   private val subjectAccessRequest: SubjectAccessRequest = mock()
+  private val imageStore: ImageStore = mock()
 
   private lateinit var pdfRenderRequest: PdfRenderRequest
 
@@ -47,6 +48,7 @@ class IncrementalHtmlPdfBuilderTest {
     IncrementalHtmlPdfBuilder(
       pdfRenderRequest = pdfRenderRequest,
       serviceConfiguration = serviceConfiguration,
+      imageStore = imageStore,
     ).use { it.append(PdfTestUtil.getResourceAsString("/pdf/input-html/test-service-data.html")) }
 
     val actualPdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)

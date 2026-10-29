@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
 import com.microsoft.applicationinsights.TelemetryClient
+import org.apache.tika.mime.MimeTypes
 import org.jsoup.nodes.Entities
 import org.slf4j.LoggerFactory
 import org.xml.sax.Attributes
@@ -11,7 +12,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSu
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_STREAM_PARSING_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 
-const val MAX_BUFFER_SIZE = 1_000_000
+const val MAX_BUFFER_SIZE = 10_000_000
 const val MAX_STYLE_SIZE = 1_000_000
 const val STYLE_TAG = "style"
 const val TABLE_TAG = "table"
@@ -66,8 +67,9 @@ const val TABLE_TAG = "table"
  */
 class SubjectAccessRequestHtmlHandler(
   val builder: IncrementalHtmlPdfBuilder,
+  val imageStore: ImageStore,
   val subjectAccessRequest: SubjectAccessRequest,
-  val minBufferSize: Int = 100_000,
+  val minBufferSize: Int = 50_000,
   val telemetryClient: TelemetryClient,
 ) : DefaultHandler() {
 
@@ -125,7 +127,7 @@ class SubjectAccessRequestHtmlHandler(
       return
     }
 
-    val attributeMap = attributes.toMap()
+    val attributeMap = attributes.toMap(currentQName = tagName)
     if (voidTags.contains(tagName)) {
       buffer.appendVoidTag(tagName, attributeMap)
       return
@@ -341,13 +343,50 @@ class SubjectAccessRequestHtmlHandler(
       .append(buffer)
   }
 
-  fun Attributes?.toMap(): Map<String, String> = this?.let { attributes ->
+  fun Attributes?.toMap(currentQName: String): Map<String, String> = this?.let { attributes ->
     buildMap(attributes.length) {
       for (i in 0 until attributes.length) {
-        put(attributes.getQName(i), attributes.getValue(i))
+        val attrName = attributes.getQName(i)
+        val attrValue = attributes.getValue(i)
+
+        if (isNonEmptyEncodedImage(currentQName, attrName, attrValue)) {
+          putImageSrcAttribute(attrName, attrValue)
+        } else {
+          put(attrName, attrValue)
+        }
       }
     }
   } ?: emptyMap()
+
+  private fun isNonEmptyEncodedImage(
+    qName: String,
+    attrName: String,
+    value: String?,
+  ): Boolean = "img" == qName
+    && "src" == attrName
+    && !value.isNullOrEmpty()
+    && value.startsWith("data:image/")
+    && ";base64," in value
+
+  // TODO need to handle errors here.
+  private fun decodeEmbeddedImage(attrValue: String): EmbeddedImage {
+    val matches = Regex("^data:(image/.+);base64,(.*)$").find(attrValue)
+    val mimeType = matches?.let { it.groupValues[1] }?: ""
+    val src = matches?.let { it.groupValues[2] }?: ""
+    val extension = MimeTypes.getDefaultMimeTypes().forName(mimeType).extension
+
+    return EmbeddedImage(src, extension)
+  }
+
+  private fun MutableMap<String, String>.putImageSrcAttribute(attrName: String, attrValue: String) {
+    try {
+      val imagePath = imageStore.add(decodeEmbeddedImage(attrValue)).toString()
+      put(attrName, imagePath)
+    } catch (e: IllegalArgumentException) {
+      log.error("error converting attribute value {} to base64, applying storing attribute handling", attrValue, e)
+      put(attrName, attrValue)
+    }
+  }
 
   data class HtmlTag(val qName: String, val attributes: Map<String, String>)
 

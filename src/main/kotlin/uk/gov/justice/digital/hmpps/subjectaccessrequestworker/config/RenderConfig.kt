@@ -26,7 +26,7 @@ class RenderConfig(
   ): ServicePdfRenderer = when (applicationProperties.serviceRenderer) {
     ServiceRenderer.ITEXT -> ITextServicePdfRenderer()
     ServiceRenderer.OPENHTMLTOPDF -> OpenHtmlServicePdfRenderer(tempDirectoryService)
-    ServiceRenderer.ITEXT_INCREMENTAL -> ItextIncrementalServicePdfRenderer(telemetryClient)
+    ServiceRenderer.ITEXT_INCREMENTAL -> ItextIncrementalServicePdfRenderer(tempDirectoryService, telemetryClient)
   }.also { log.info("configured ServicePdfRenderer: {}", it.javaClass.name) }
 }
 

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
 import com.microsoft.applicationinsights.TelemetryClient
+import org.apache.tika.mime.MimeTypes
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -14,17 +15,23 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
+import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler
 import org.xml.sax.Attributes
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCode.Companion.HTML_STREAM_PARSING_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
+import java.util.Base64
+import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
 class SubjectAccessRequestHtmlHandlerTest {
@@ -35,7 +42,14 @@ class SubjectAccessRequestHtmlHandlerTest {
   @Captor
   private lateinit var emitCaptor: ArgumentCaptor<String>
 
+  @Captor
+  private lateinit var imageStoreValueCaptor: ArgumentCaptor<ByteArray>
+
+  @Captor
+  private lateinit var imageStoreKetCaptor: ArgumentCaptor<String>
+
   private var telemetryClient: TelemetryClient = mock()
+  private val imageStore: ImageStore = mock()
 
   @Nested
   inner class StartElement {
@@ -43,6 +57,7 @@ class SubjectAccessRequestHtmlHandlerTest {
     private val handler = SubjectAccessRequestHtmlHandler(
       builder = incrementalHtmlPdfBuilder,
       subjectAccessRequest = subjectAccessRequest,
+      imageStore = imageStore,
       minBufferSize = 100,
       telemetryClient = telemetryClient,
     )
@@ -160,6 +175,7 @@ class SubjectAccessRequestHtmlHandlerTest {
 
     private val handler = SubjectAccessRequestHtmlHandler(
       builder = incrementalHtmlPdfBuilder,
+      imageStore = imageStore,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = 100,
       telemetryClient = telemetryClient,
@@ -256,6 +272,7 @@ class SubjectAccessRequestHtmlHandlerTest {
 
     private val handler = SubjectAccessRequestHtmlHandler(
       builder = incrementalHtmlPdfBuilder,
+      imageStore = imageStore,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = 100,
       telemetryClient = telemetryClient,
@@ -444,6 +461,7 @@ class SubjectAccessRequestHtmlHandlerTest {
 
     private val handler = SubjectAccessRequestHtmlHandler(
       builder = incrementalHtmlPdfBuilder,
+      imageStore = imageStore,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = minBufferSize,
       telemetryClient = telemetryClient,
@@ -754,6 +772,7 @@ class SubjectAccessRequestHtmlHandlerTest {
 
     private val handler = SubjectAccessRequestHtmlHandler(
       builder = incrementalHtmlPdfBuilder,
+      imageStore = imageStore,
       subjectAccessRequest = subjectAccessRequest,
       minBufferSize = minBufferSize,
       telemetryClient = telemetryClient,
@@ -801,6 +820,133 @@ class SubjectAccessRequestHtmlHandlerTest {
       assertThat(emitted).hasSize(1)
       assertThat(emitted[0]).isEqualTo("<style></style><div><table><tr><td>This is the final goodbye</td></tr></table></div>")
       handler.assertIsEmpty()
+    }
+  }
+
+  @Nested
+  inner class InlineImages {
+
+    private val handler = SubjectAccessRequestHtmlHandler(
+      builder = incrementalHtmlPdfBuilder,
+      imageStore = imageStore,
+      subjectAccessRequest = subjectAccessRequest,
+      minBufferSize = 1000,
+      telemetryClient = telemetryClient,
+    )
+
+    private val jpgImageFile = PdfTestUtil.getResourcePath("/integration-tests/attachments/map.jpg").toFile()
+
+//    @Test
+//    fun `should add decoded image to image store`() {
+//      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
+//      val expectedImageData = Base64.getDecoder().decode(encodedImage)
+//
+//      handler.startElement(
+//        null, null, "img",
+//        mockedAttributes(
+//          mapOf(
+//            "src" to "data:image/jpg;base64,$encodedImage"
+//          ),
+//        ),
+//      )
+//
+//      verify(imageStore, times(1)).add(capture(imageStoreKetCaptor), capture(imageStoreValueCaptor))
+//
+//      assertThat(imageStoreValueCaptor.allValues).hasSize(1)
+//      assertThat(imageStoreValueCaptor.firstValue).isEqualTo(expectedImageData)
+//
+//      assertThat(imageStoreKetCaptor.allValues).hasSize(1)
+//      val imageId = imageStoreKetCaptor.firstValue
+//      assertThat(handler.currentBuffer()).contains("""<img src="inline-image://$imageId"/>""")
+//    }
+
+    @Test
+    fun `should not add images to imageStore when src does not start with data image prefix`() {
+      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
+
+      handler.startElement(
+        null, null, "img",
+        mockedAttributes(
+          mapOf(
+            "src" to encodedImage,
+          ),
+        ),
+      )
+
+      verifyNoInteractions(imageStore)
+      assertThat(handler.currentBuffer()).isEqualTo("""<img src="$encodedImage"/>""")
+      assertThat(handler.currentOpenTags()).isEmpty()
+      assertThat(handler.currentTableDepth()).isEqualTo(0)
+    }
+
+    @Test
+    fun `should not add images to imageStore when src does not start with encoding prefix`() {
+      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
+
+      handler.startElement(
+        null, null, "img",
+        mockedAttributes(
+          mapOf(
+            "src" to "data:image,$encodedImage",
+          ),
+        ),
+      )
+
+      verifyNoInteractions(imageStore)
+      assertThat(handler.currentBuffer()).isEqualTo("""<img src="data:image,$encodedImage"/>""")
+      assertThat(handler.currentOpenTags()).isEmpty()
+      assertThat(handler.currentTableDepth()).isEqualTo(0)
+    }
+
+    @Test
+    fun `should not add images to imageStore and add to buffer when img src is not valid b64 encoded value`() {
+      handler.startElement(
+        null, null, "img",
+        mockedAttributes(
+          mapOf(
+            "src" to "data:image/jpg;base64,not-valid-base64-encoded-value",
+          ),
+        ),
+      )
+
+      verifyNoInteractions(imageStore)
+      assertThat(handler.currentBuffer()).isEqualTo("""<img src="data:image/jpg;base64,not-valid-base64-encoded-value"/>""")
+      assertThat(handler.currentOpenTags()).isEmpty()
+      assertThat(handler.currentTableDepth()).isEqualTo(0)
+    }
+
+//    @Test
+//    fun `should add empty value to imageStore when img srr starts with valid prefix and no other data`() {
+//      val expectedImageStoreValue = Base64.getEncoder().encode("".toByteArray())
+//
+//      handler.startElement(
+//        null, null, "img",
+//        mockedAttributes(
+//          mapOf(
+//            "src" to "data:image/jpg;base64,",
+//          ),
+//        ),
+//      )
+//
+//      verify(imageStore, times(1)).put(capture(imageStoreKetCaptor), capture(imageStoreValueCaptor))
+//
+//      assertThat(imageStoreValueCaptor.allValues).hasSize(1)
+//      assertThat(imageStoreValueCaptor.firstValue).isEqualTo(expectedImageStoreValue)
+//
+//      assertThat(imageStoreKetCaptor.allValues).hasSize(1)
+//
+//      val imageId = imageStoreKetCaptor.firstValue
+//      assertThat(handler.currentBuffer()).contains("""<img src="inline-image://$imageId"/>""")
+//    }
+
+    @Test
+    fun `should do something`() {
+      val src = """data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASIAAAE8CAYAAABkYrxdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAABxXBJREFUeNrsvQmwbel5FfbteZ95uPN9Y/frfj1LsqS2JMuSWrIsIQvbsjHYJgm2oYCExKGCQ0KKQEEVSYVAJQ6V2BQQCE4cGzCkIIDxRIRtWZYsqd3z3G"""
+      val result = Regex("^data:(image/.+);base64,(.*)$").find(src)
+      val mime = result?.groupValues?.get(1)
+
+      val x = MimeTypes.getDefaultMimeTypes().forName(mime).extension
+      println(x)
     }
   }
 
