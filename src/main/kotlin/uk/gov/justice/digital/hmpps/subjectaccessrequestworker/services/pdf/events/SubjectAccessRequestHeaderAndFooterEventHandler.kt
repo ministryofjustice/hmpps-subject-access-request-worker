@@ -12,10 +12,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-data class PageMargins(val left: Float, val right: Float, val top: Float)
-
 open class SubjectAccessRequestHeaderAndFooterEventHandler(
-  //val document: Document,
   val pageMargins: PageMargins,
   val subjectName: String,
   val nomisId: String?,
@@ -26,8 +23,21 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
     const val BOTTOM_PADDING: Int = 20
     const val FONT_SIZE: Float = 10f
     const val PAGE_FOOTER_TEXT: String = "Official Sensitive"
-    val helveticaFont: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
   }
+
+  private val helveticaFont: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
+  private val helveticaBoldFont: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
+
+  private val subjectIdLabel = nomisId?.let { "NOMIS ID: " } ?: ndeliusCaseReferenceId?.let { "nDelius ID: " } ?: ""
+  private val subjectIdValue = nomisId ?: ndeliusCaseReferenceId ?: ""
+
+  private val rightHeaderParagraph = Paragraph()
+    .add(Text("Name: ").setFont(helveticaBoldFont))
+    .add(Text(subjectName).setFont(helveticaFont))
+    .add(Text("\n"))
+    .add(Text(subjectIdLabel).setFont(helveticaBoldFont))
+    .add(Text(subjectIdValue).setFont(helveticaFont))
+
 
   override fun onAcceptedEvent(event: AbstractPdfDocumentEvent?) {
     val documentEvent = event as PdfDocumentEvent
@@ -50,17 +60,7 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
     }
   }
 
-  open fun getRightHeaderParagraph(): Paragraph {
-    val subjectIdLabel = nomisId?.let { "NOMIS ID: " } ?: ndeliusCaseReferenceId?.let { "nDelius ID: " } ?: ""
-    val subjectIdValue = nomisId ?: ndeliusCaseReferenceId ?: ""
-
-    return Paragraph()
-      .add(Text("Name: ").setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)))
-      .add(Text(subjectName).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA)))
-      .add(Text("\n"))
-      .add(Text(subjectIdLabel).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)))
-      .add(Text(subjectIdValue).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA)))
-  }
+  open fun getRightHeaderParagraph(): Paragraph  = rightHeaderParagraph
 }
 
 class SubjectAccessRequestOfficialSensitiveFooterEventHandler(
@@ -73,3 +73,5 @@ class SubjectAccessRequestOfficialSensitiveFooterEventHandler(
 ) {
   override fun getRightHeaderParagraph(): Paragraph = Paragraph()
 }
+
+class PageMargins(val left: Float, val right: Float, val top: Float)

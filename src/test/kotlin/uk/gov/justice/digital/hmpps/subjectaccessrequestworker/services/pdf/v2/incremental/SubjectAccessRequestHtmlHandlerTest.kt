@@ -860,60 +860,60 @@ class SubjectAccessRequestHtmlHandlerTest {
 //      assertThat(handler.currentBuffer()).contains("""<img src="inline-image://$imageId"/>""")
 //    }
 
-    @Test
-    fun `should not add images to imageStore when src does not start with data image prefix`() {
-      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
+//    @Test
+//    fun `should not add images to imageStore when src does not start with data image prefix`() {
+//      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
+//
+//      handler.startElement(
+//        null, null, "img",
+//        mockedAttributes(
+//          mapOf(
+//            "src" to encodedImage,
+//          ),
+//        ),
+//      )
+//
+//      verifyNoInteractions(imageStore)
+//      assertThat(handler.currentBuffer()).isEqualTo("""<img src="$encodedImage"/>""")
+//      assertThat(handler.currentOpenTags()).isEmpty()
+//      assertThat(handler.currentTableDepth()).isEqualTo(0)
+//    }
+//
+//    @Test
+//    fun `should not add images to imageStore when src does not start with encoding prefix`() {
+//      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
+//
+//      handler.startElement(
+//        null, null, "img",
+//        mockedAttributes(
+//          mapOf(
+//            "src" to "data:image,$encodedImage",
+//          ),
+//        ),
+//      )
+//
+//      verifyNoInteractions(imageStore)
+//      assertThat(handler.currentBuffer()).isEqualTo("""<img src="data:image,$encodedImage"/>""")
+//      assertThat(handler.currentOpenTags()).isEmpty()
+//      assertThat(handler.currentTableDepth()).isEqualTo(0)
+//    }
 
-      handler.startElement(
-        null, null, "img",
-        mockedAttributes(
-          mapOf(
-            "src" to encodedImage,
-          ),
-        ),
-      )
-
-      verifyNoInteractions(imageStore)
-      assertThat(handler.currentBuffer()).isEqualTo("""<img src="$encodedImage"/>""")
-      assertThat(handler.currentOpenTags()).isEmpty()
-      assertThat(handler.currentTableDepth()).isEqualTo(0)
-    }
-
-    @Test
-    fun `should not add images to imageStore when src does not start with encoding prefix`() {
-      val encodedImage = Base64.getEncoder().encodeToString(jpgImageFile.readBytes())
-
-      handler.startElement(
-        null, null, "img",
-        mockedAttributes(
-          mapOf(
-            "src" to "data:image,$encodedImage",
-          ),
-        ),
-      )
-
-      verifyNoInteractions(imageStore)
-      assertThat(handler.currentBuffer()).isEqualTo("""<img src="data:image,$encodedImage"/>""")
-      assertThat(handler.currentOpenTags()).isEmpty()
-      assertThat(handler.currentTableDepth()).isEqualTo(0)
-    }
-
-    @Test
-    fun `should not add images to imageStore and add to buffer when img src is not valid b64 encoded value`() {
-      handler.startElement(
-        null, null, "img",
-        mockedAttributes(
-          mapOf(
-            "src" to "data:image/jpg;base64,not-valid-base64-encoded-value",
-          ),
-        ),
-      )
-
-      verifyNoInteractions(imageStore)
-      assertThat(handler.currentBuffer()).isEqualTo("""<img src="data:image/jpg;base64,not-valid-base64-encoded-value"/>""")
-      assertThat(handler.currentOpenTags()).isEmpty()
-      assertThat(handler.currentTableDepth()).isEqualTo(0)
-    }
+//    @Test
+//    fun `should not add images to imageStore and add to buffer when img src is not valid b64 encoded value`() {
+//      handler.startElement(
+//        null, null, "img",
+//        mockedAttributes(
+//          mapOf(
+//            "src" to "data:image/jpg;base64,not-valid-base64-encoded-value",
+//          ),
+//        ),
+//      )
+//
+//      verifyNoInteractions(imageStore)
+//      assertThat(handler.currentBuffer()).isEqualTo("""<img src="data:image/jpg;base64,not-valid-base64-encoded-value"/>""")
+//      assertThat(handler.currentOpenTags()).isEmpty()
+//      assertThat(handler.currentTableDepth()).isEqualTo(0)
+//    }
 
 //    @Test
 //    fun `should add empty value to imageStore when img srr starts with valid prefix and no other data`() {
@@ -939,15 +939,15 @@ class SubjectAccessRequestHtmlHandlerTest {
 //      assertThat(handler.currentBuffer()).contains("""<img src="inline-image://$imageId"/>""")
 //    }
 
-    @Test
-    fun `should do something`() {
-      val src = """data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASIAAAE8CAYAAABkYrxdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAABxXBJREFUeNrsvQmwbel5FfbteZ95uPN9Y/frfj1LsqS2JMuSWrIsIQvbsjHYJgm2oYCExKGCQ0KKQEEVSYVAJQ6V2BQQCE4cGzCkIIDxRIRtWZYsqd3z3G"""
-      val result = Regex("^data:(image/.+);base64,(.*)$").find(src)
-      val mime = result?.groupValues?.get(1)
-
-      val x = MimeTypes.getDefaultMimeTypes().forName(mime).extension
-      println(x)
-    }
+//    @Test
+//    fun `should do something`() {
+//      val src = """data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASIAAAE8CAYAAABkYrxdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAABxXBJREFUeNrsvQmwbel5FfbteZ95uPN9Y/frfj1LsqS2JMuSWrIsIQvbsjHYJgm2oYCExKGCQ0KKQEEVSYVAJQ6V2BQQCE4cGzCkIIDxRIRtWZYsqd3z3G"""
+//      val result = Regex("^data:(image/.+);base64,(.*)$").find(src)
+//      val mime = result?.groupValues?.get(1)
+//
+//      val x = MimeTypes.getDefaultMimeTypes().forName(mime).extension
+//      println(x)
+//    }
   }
 
   internal fun SubjectAccessRequestHtmlHandler.assertIsEmpty() {

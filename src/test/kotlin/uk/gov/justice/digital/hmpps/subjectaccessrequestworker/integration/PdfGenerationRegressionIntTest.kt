@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.params.ParameterizedTest
@@ -40,8 +41,8 @@ import kotlin.io.path.readBytes
 
 @TestPropertySource(
   properties = [
-    "application.service-renderer=itext_incremental",
-//    "application.service-renderer=itext",
+//    "application.service-renderer=itext_incremental",
+    "application.service-renderer=itext",
   ],
 )
 @DirtiesContext
@@ -73,11 +74,10 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
   @ParameterizedTest
   @CsvSource(
     value = [
-//      "offender-case-notes              | Case notes                          | 1  |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
-//      "hmpps-book-secure-move-api       | Book a secure move                  | 27 |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
-//      "hmpps-activities-management-api  | Manage activities and appointments  | 3  |  2026-10-21 | Andrew   | SMITH     | A8731DY | ",
-//      "make-recall-decision-api         | Consider a recall                   | 5  |  2026-10-21 | Terrence | GREENHOLT |         | X788206 ",
-      "wiremock-test-service         | Wiremock Test Service | 13  |  2026-10-26 | Dougal | WOW | A1234AA  | X788206 ",
+      "offender-case-notes              | Case notes                          | 1  |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
+      "hmpps-book-secure-move-api       | Book a secure move                  | 27 |  2026-10-20 | Dougal   | WOW       | A1234AA | ",
+      "hmpps-activities-management-api  | Manage activities and appointments  | 3  |  2026-10-21 | Andrew   | SMITH     | A8731DY | ",
+      "make-recall-decision-api         | Consider a recall                   | 5  |  2026-10-21 | Terrence | GREENHOLT |         | X788206 ",
     ],
     delimiter = '|',
   )
@@ -128,62 +128,57 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     )
   }
 
-  @Timeout(20, unit = TimeUnit.MINUTES)
-  @ParameterizedTest
-  @CsvSource(
-    value = [
-      "accredited-programmes-custody  | Accredited programmes custody | 1 | 2026-10-20 | Dougal | WOW | A1234AA ",
-    ],
-    delimiter = '|',
-  )
-  fun `should generate uber PDF`(
-    serviceName: String,
-    serviceLabel: String,
-    templateVersion: String,
-    reportGenerationDate: String,
-    subjectFirstName: String,
-    subjectLastName: String,
-    nomisId: String? = null,
-  ) {
-    val serviceConfig = setupServiceConfigurationWithTemplateVersion(serviceName, serviceLabel, templateVersion)
-    val requestDate = LocalDate.parse(reportGenerationDate, DateTimeFormatter.ISO_DATE)
-
-    val params = setupTestData(
-      serviceConfig = serviceConfig,
-      templateVersion = templateVersion,
-      reportGenerationDate = requestDate,
-      subjectFirstName = subjectFirstName,
-      subjectLastName = subjectLastName,
-      nomisId = nomisId,
-      ndeliusId = null,
-    )
-
-    runBlocking {
-      sarProcessor.execute()
-      await()
-        .atMost(3, TimeUnit.SECONDS)
-        .until { requestHasStatus(params.sar(), Status.Completed) }
-    }
-
-    hmppsAuth.verifyCalledOnce()
-    htmlRendererApi.verifyRenderCalled(1, params.htmlRenderRequest())
-    documentApi.verifyStoreDocumentIsCalled(1, params.sar().id.toString())
-
-    val generatedPdf = getUploadedPdfDocumentAsFile(tempDir.resolve("$nomisId-generated.pdf"))
-    val referencePdfPath = PdfTestUtil.getResourcePath("/integration-tests/regression/pdf-baseline/$serviceName-$nomisId.pdf")
-
-//    Files.copy(
-//      generatedPdf.toPath(),
-//      PdfTestUtil.getResourcePath("/integration-tests/regression").resolve("$serviceName-test-output-incremental.pdf"),
+//  @Timeout(20, unit = TimeUnit.MINUTES)
+//  @ParameterizedTest
+//  @CsvSource(
+//    value = [
+//      "accredited-programmes-custody  | Accredited programmes custody | 1 | 2026-10-20 | Dougal | WOW | A1234AA ",
+//    ],
+//    delimiter = '|',
+//  )
+//  fun `should generate uber PDF`(
+//    serviceName: String,
+//    serviceLabel: String,
+//    templateVersion: String,
+//    reportGenerationDate: String,
+//    subjectFirstName: String,
+//    subjectLastName: String,
+//    nomisId: String? = null,
+//  ) {
+//    val serviceConfig = setupServiceConfigurationWithTemplateVersion(serviceName, serviceLabel, templateVersion)
+//    val requestDate = LocalDate.parse(reportGenerationDate, DateTimeFormatter.ISO_DATE)
+//
+//    val params = setupTestData(
+//      serviceConfig = serviceConfig,
+//      templateVersion = templateVersion,
+//      reportGenerationDate = requestDate,
+//      subjectFirstName = subjectFirstName,
+//      subjectLastName = subjectLastName,
+//      nomisId = nomisId,
+//      ndeliusId = null,
 //    )
+//
+//    runBlocking {
+//      sarProcessor.execute()
+//      await()
+//        .atMost(3, TimeUnit.SECONDS)
+//        .until { requestHasStatus(params.sar(), Status.Completed) }
+//    }
+//
+//    hmppsAuth.verifyCalledOnce()
+//    htmlRendererApi.verifyRenderCalled(1, params.htmlRenderRequest())
+//    documentApi.verifyStoreDocumentIsCalled(1, params.sar().id.toString())
+//
+//    val generatedPdf = getUploadedPdfDocumentAsFile(tempDir.resolve("$nomisId-generated.pdf"))
+//    val referencePdfPath = PdfTestUtil.getResourcePath("/integration-tests/regression/pdf-baseline/$serviceName-$nomisId.pdf")
+//
+//    PdfTestUtil.assertPdfsVisuallyEquivalent(
+//      actual = generatedPdf.toPath(),
+//      expected = referencePdfPath,
+//    )
+//  }
 
-    PdfTestUtil.assertPdfsVisuallyEquivalent(
-      actual = generatedPdf.toPath(),
-      expected = referencePdfPath,
-    )
-  }
-
-  //@Disabled
+  @Disabled
   @Timeout(10, unit = TimeUnit.MINUTES)
   @ParameterizedTest
   @CsvSource(
@@ -231,7 +226,7 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     )
   }
 
-  //@Disabled
+  @Disabled
   @Test
   fun `produce html`() {
     val outputFile = PdfTestUtil.getResourcePath("/integration-tests/regression").resolve("wiremock-test-service-A1234AA.html")

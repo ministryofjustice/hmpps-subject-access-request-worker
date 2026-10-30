@@ -11,6 +11,7 @@ import com.itextpdf.layout.properties.AreaBreakType
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.PageMargins
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.InputStream
@@ -31,7 +32,7 @@ class ITextServicePdfRenderer : ServicePdfRenderer {
         pdf.addEventHandler(
           PdfDocumentEvent.END_PAGE,
           SubjectAccessRequestHeaderAndFooterEventHandler(
-            document = document,
+            pageMargins = PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin),
             subjectName = pdfRenderRequest.subjectName,
             nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
             ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,

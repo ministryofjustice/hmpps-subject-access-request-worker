@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.Document
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.SubjectAccessRequestService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.attachments.AttachmentsPdfService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.PageMargins
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestOfficialSensitiveFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
@@ -133,7 +134,7 @@ class PdfService(
           pdf.addEventHandler(
             PdfDocumentEvent.END_PAGE,
             SubjectAccessRequestHeaderAndFooterEventHandler(
-              document = attachmentsDocument,
+              pageMargins = PageMargins(left = attachmentsDocument.leftMargin, right = attachmentsDocument.rightMargin, top = attachmentsDocument.topMargin),
               subjectName = pdfRenderRequest.subjectName,
               nomisId = subjectAccessRequest.nomisId,
               ndeliusCaseReferenceId = subjectAccessRequest.ndeliusCaseReferenceId,
@@ -157,7 +158,7 @@ class PdfService(
       newDocument(pdf).use { document ->
         pdf.addEventHandler(
           PdfDocumentEvent.END_PAGE,
-          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin)),
         )
 
         val contentsPageText = Paragraph()
@@ -195,7 +196,7 @@ class PdfService(
       newDocument(pdf).use { document ->
         pdf.addEventHandler(
           PdfDocumentEvent.END_PAGE,
-          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin)),
         )
 
         val coverPageText = Paragraph()
@@ -280,7 +281,7 @@ class PdfService(
       newDocument(pdf).use { document ->
         pdf.addEventHandler(
           PdfDocumentEvent.END_PAGE,
-          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin)),
         )
 
         val coverPageText = Paragraph()
@@ -324,7 +325,7 @@ class PdfService(
       newDocument(pdf).use { document ->
         pdf.addEventHandler(
           PdfDocumentEvent.END_PAGE,
-          SubjectAccessRequestOfficialSensitiveFooterEventHandler(document),
+          SubjectAccessRequestOfficialSensitiveFooterEventHandler(PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin)),
         )
 
         val endPageText = Paragraph()
