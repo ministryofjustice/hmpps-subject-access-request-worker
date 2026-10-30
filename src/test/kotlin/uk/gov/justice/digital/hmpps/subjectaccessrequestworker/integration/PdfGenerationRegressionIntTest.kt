@@ -239,12 +239,6 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
     val styleFile = PdfTestUtil.getResourcePath("/integration-tests/regression/service-html/").resolve("style.html")
     val style = styleFile.toFile().readText()
 
-    val img1Path = Paths.get("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/wiremock/__files/map.jpg")
-    val image1Src = Base64.getEncoder().encodeToString(img1Path.readBytes())
-
-    val img2Path = Paths.get("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/wiremock/__files/image.png")
-    val image2Src = Base64.getEncoder().encodeToString(img2Path.readBytes())
-
     outputFile
       .toFile()
       .bufferedWriter()
@@ -262,8 +256,9 @@ class PdfGenerationRegressionIntTest : BaseProcessorIntTest() {
           <tr><td>File type</td><td>image/jpeg</td></tr>
           <tr><td>File size</td><td>27566</td></tr>
           <tr><td>Description</td><td>Map image</td></tr>
-          <tr><td>Image $i,1</td><td><img src="data:image/png;base64,$image1Src" alt="Inline attachment" height="400" width="null"></td></tr>
-          <tr><td>Image $i.2</td><td><img src="data:image/png;base64,$image2Src" alt="Inline attachment" height="400" width="null"></td></tr>
+          <tr><td>Image $i,1</td><td><img src="http://localhost:8090/download/$i/map.jpg" alt="Inline attachment" height="400" width="null"></td></tr>
+          <tr><td>Image $i.2</td><td><img src="http://localhost:8090/download/$i/image.png" alt="Inline attachment" height="400" width="null"></td></tr>
+
           </table>
           """.trimIndent()
           )

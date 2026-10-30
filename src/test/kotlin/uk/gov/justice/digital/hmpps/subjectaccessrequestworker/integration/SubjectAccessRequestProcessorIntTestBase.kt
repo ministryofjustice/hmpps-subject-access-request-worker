@@ -281,7 +281,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     contentType: String,
   ) = runBlocking {
     val documentKey = attachmentDocumentKey(sar, serviceName, filename)
-    val content = ByteArrayInputStream(getAttachmentBytes(filename))
+    val content = getAttachmentBytes(filename)
     val contentSize = getFileSize(filename)
     s3TestUtil.putFile(
       S3TestUtils.S3AttachmentFile(

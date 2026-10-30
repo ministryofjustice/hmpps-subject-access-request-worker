@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.incremental
 
+import com.itextpdf.html2pdf.ConverterProperties
 import com.itextpdf.html2pdf.HtmlConverter
 import com.itextpdf.html2pdf.attach.impl.layout.HtmlPageBreak
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -13,6 +14,7 @@ import com.itextpdf.layout.properties.AreaBreakType
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.PageMargins
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.memoryUsage
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2.PdfRenderRequest
@@ -38,7 +40,9 @@ class IncrementalHtmlPdfBuilder(
     PdfWriter(
       FileOutputStream(pdfRenderRequest.serviceDataPdfPath(serviceConfiguration).toFile()),
     ),
-  )
+  ).apply {
+    isFlushUnusedObjects = true
+  }
 
   private val document = Document(pdfDocument).apply {
     setMargins(PDF_TOP_MARGIN, PDF_RIGHT_MARGIN, PDF_BOTTOM_MARGIN, PDF_LEFT_MARGIN)
@@ -46,7 +50,7 @@ class IncrementalHtmlPdfBuilder(
     pdfDocument.addEventHandler(
       PdfDocumentEvent.END_PAGE,
       SubjectAccessRequestHeaderAndFooterEventHandler(
-        document = this,
+        pageMargins = PageMargins(left = this.leftMargin, right = this.rightMargin, top = this.topMargin),
         subjectName = pdfRenderRequest.subjectName,
         nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
         ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,
@@ -56,8 +60,9 @@ class IncrementalHtmlPdfBuilder(
 
   fun append(chunk: String) {
     log.info("pre-process chunk {}", memoryUsage())
-
-    HtmlConverter.convertToElements(chunk)
+    val props = ConverterProperties()
+    props.setImmediateFlush(true)
+    HtmlConverter.convertToElements(chunk, props)
       .forEach { element ->
         when (element) {
           is IBlockElement -> document.add(element)

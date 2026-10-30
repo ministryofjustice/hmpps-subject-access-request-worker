@@ -12,8 +12,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
+data class PageMargins(val left: Float, val right: Float, val top: Float)
+
 open class SubjectAccessRequestHeaderAndFooterEventHandler(
-  val document: Document,
+  //val document: Document,
+  val pageMargins: PageMargins,
   val subjectName: String,
   val nomisId: String?,
   val ndeliusCaseReferenceId: String?,
@@ -23,21 +26,21 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
     const val BOTTOM_PADDING: Int = 20
     const val FONT_SIZE: Float = 10f
     const val PAGE_FOOTER_TEXT: String = "Official Sensitive"
+    val helveticaFont: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
   }
 
   override fun onAcceptedEvent(event: AbstractPdfDocumentEvent?) {
     val documentEvent = event as PdfDocumentEvent
-    val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = documentEvent.page.pageSize
-    val leftCoord = pageSize.left + document.leftMargin
-    val rightCoord = pageSize.right - document.rightMargin
+    val leftCoord = pageSize.left + pageMargins.left
+    val rightCoord = pageSize.right - pageMargins.right
     val midCoord = (leftCoord + rightCoord) / 2
-    val headerY: Float = pageSize.top - document.topMargin
+    val headerY: Float = pageSize.top - pageMargins.top
     val footerY: Float = pageSize.bottom + BOTTOM_PADDING
     val canvas = Canvas(documentEvent.page, pageSize)
 
     canvas.use {
-      it.setFont(font)
+      it.setFont(helveticaFont)
         .setFontSize(FONT_SIZE)
         .showTextAligned(Paragraph(), leftCoord, headerY, TextAlignment.LEFT) // should this use empty string?
         .simulateBold()
@@ -61,9 +64,9 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
 }
 
 class SubjectAccessRequestOfficialSensitiveFooterEventHandler(
-  document: Document,
+  pageMargins: PageMargins,
 ) : SubjectAccessRequestHeaderAndFooterEventHandler(
-  document = document,
+  pageMargins,
   subjectName = "",
   nomisId = null,
   ndeliusCaseReferenceId = null,

@@ -29,7 +29,7 @@ class ItextIncrementalServicePdfRenderer(
             builder = builder,
             imageStore = imageStore,
             subjectAccessRequest = pdfRenderRequest.subjectAccessRequest,
-            minBufferSize = 50_000,
+            minBufferSize = 30_000,
             telemetryClient = telemetryClient,
           )
         }
