@@ -60,7 +60,9 @@ class SubjectAccessRequestService(
 
   @Transactional
   fun completeRequest(subjectAccessRequest: SubjectAccessRequest) {
+    log.info("mark request completed")
     val updatedCount = subjectAccessRequestRepository.completeSubjectAccessRequest(subjectAccessRequest.id)
+    log.info("mark request completed count? {}", updatedCount)
 
     if (updatedCount == 0) {
       val latest = subjectAccessRequestRepository.findByIdOrNull(subjectAccessRequest.id)

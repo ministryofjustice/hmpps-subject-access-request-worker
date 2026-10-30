@@ -13,7 +13,7 @@ import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
 open class SubjectAccessRequestHeaderAndFooterEventHandler(
-  val document: Document,
+  val pageMargins: PageMargins,
   val subjectName: String,
   val nomisId: String?,
   val ndeliusCaseReferenceId: String?,
@@ -25,19 +25,32 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
     const val PAGE_FOOTER_TEXT: String = "Official Sensitive"
   }
 
+  private val helveticaFont: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
+  private val helveticaBoldFont: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)
+
+  private val subjectIdLabel = nomisId?.let { "NOMIS ID: " } ?: ndeliusCaseReferenceId?.let { "nDelius ID: " } ?: ""
+  private val subjectIdValue = nomisId ?: ndeliusCaseReferenceId ?: ""
+
+  private val rightHeaderParagraph = Paragraph()
+    .add(Text("Name: ").setFont(helveticaBoldFont))
+    .add(Text(subjectName).setFont(helveticaFont))
+    .add(Text("\n"))
+    .add(Text(subjectIdLabel).setFont(helveticaBoldFont))
+    .add(Text(subjectIdValue).setFont(helveticaFont))
+
+
   override fun onAcceptedEvent(event: AbstractPdfDocumentEvent?) {
     val documentEvent = event as PdfDocumentEvent
-    val font: PdfFont = PdfFontFactory.createFont(StandardFonts.HELVETICA)
     val pageSize = documentEvent.page.pageSize
-    val leftCoord = pageSize.left + document.leftMargin
-    val rightCoord = pageSize.right - document.rightMargin
+    val leftCoord = pageSize.left + pageMargins.left
+    val rightCoord = pageSize.right - pageMargins.right
     val midCoord = (leftCoord + rightCoord) / 2
-    val headerY: Float = pageSize.top - document.topMargin
+    val headerY: Float = pageSize.top - pageMargins.top
     val footerY: Float = pageSize.bottom + BOTTOM_PADDING
     val canvas = Canvas(documentEvent.page, pageSize)
 
     canvas.use {
-      it.setFont(font)
+      it.setFont(helveticaFont)
         .setFontSize(FONT_SIZE)
         .showTextAligned(Paragraph(), leftCoord, headerY, TextAlignment.LEFT) // should this use empty string?
         .simulateBold()
@@ -47,26 +60,18 @@ open class SubjectAccessRequestHeaderAndFooterEventHandler(
     }
   }
 
-  open fun getRightHeaderParagraph(): Paragraph {
-    val subjectIdLabel = nomisId?.let { "NOMIS ID: " } ?: ndeliusCaseReferenceId?.let { "nDelius ID: " } ?: ""
-    val subjectIdValue = nomisId ?: ndeliusCaseReferenceId ?: ""
-
-    return Paragraph()
-      .add(Text("Name: ").setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)))
-      .add(Text(subjectName).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA)))
-      .add(Text("\n"))
-      .add(Text(subjectIdLabel).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)))
-      .add(Text(subjectIdValue).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA)))
-  }
+  open fun getRightHeaderParagraph(): Paragraph  = rightHeaderParagraph
 }
 
 class SubjectAccessRequestOfficialSensitiveFooterEventHandler(
-  document: Document,
+  pageMargins: PageMargins,
 ) : SubjectAccessRequestHeaderAndFooterEventHandler(
-  document = document,
+  pageMargins,
   subjectName = "",
   nomisId = null,
   ndeliusCaseReferenceId = null,
 ) {
   override fun getRightHeaderParagraph(): Paragraph = Paragraph()
 }
+
+class PageMargins(val left: Float, val right: Float, val top: Float)

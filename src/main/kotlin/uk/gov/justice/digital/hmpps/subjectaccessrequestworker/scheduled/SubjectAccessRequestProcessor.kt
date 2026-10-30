@@ -72,6 +72,7 @@ class SubjectAccessRequestProcessor(
 
     reportService.generateReport(subjectAccessRequest)
 
+    log.info("pdf generation and storage completed successfully")
     subjectAccessRequestService.completeRequest(subjectAccessRequest)
 
     stopWatch.stop()

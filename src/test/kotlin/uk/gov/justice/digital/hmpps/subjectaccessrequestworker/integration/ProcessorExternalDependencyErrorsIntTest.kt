@@ -47,9 +47,10 @@ import java.util.concurrent.TimeUnit
 class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
 
   private val alertCaptor = argumentCaptor<SubjectAccessRequestException>()
-  private var serviceConfig: ServiceConfiguration? = null
-  private var serviceConfigTwo: ServiceConfiguration? = null
-  private var serviceConfigThree: ServiceConfiguration? = null
+
+  private val bookSecureMoveTemplateVersion = createTemplateVersion(bookSecureMoveServiceConfig)
+  private val educationWorkPlanTemplateVersion = createTemplateVersion(educationWorkPlanServiceConfig)
+  private val nonAssociationsTemplateVersion = createTemplateVersion(nonAssociationsServiceConfig)
 
   @MockitoBean
   protected lateinit var alertService: AlertsService
@@ -64,14 +65,39 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
 
   @BeforeEach
   fun setup() {
-    serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
-    serviceConfigTwo = getServiceConfiguration("hmpps-education-and-work-plan-api")
-    serviceConfigThree = getServiceConfiguration("hmpps-non-associations-api")
+    serviceConfigurationRepository.saveAll(
+      listOf(
+        bookSecureMoveServiceConfig,
+        educationWorkPlanServiceConfig,
+        nonAssociationsServiceConfig,
+      ),
+    )
+    templateVersionRepository.saveAll(
+      listOf(
+        bookSecureMoveTemplateVersion,
+        educationWorkPlanTemplateVersion,
+        nonAssociationsTemplateVersion,
+      ),
+    )
   }
 
   @AfterEach
   fun cleanup() {
     subjectAccessRequestRepository.deleteAll()
+    templateVersionRepository.deleteAll(
+      listOf(
+        bookSecureMoveTemplateVersion,
+        educationWorkPlanTemplateVersion,
+        nonAssociationsTemplateVersion,
+      ),
+    )
+    serviceConfigurationRepository.deleteAll(
+      listOf(
+        bookSecureMoveServiceConfig,
+        educationWorkPlanServiceConfig,
+        nonAssociationsServiceConfig,
+      ),
+    )
   }
 
   @ParameterizedTest
@@ -99,10 +125,16 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
 
   @Test
   fun `should raise expected alert when multiple services and HTML Renderer returns error status for one`(): Unit = runBlocking {
-    val subjectAccessRequest = createPrisonSubjectAccessRequest(listOf(serviceConfig!!, serviceConfigTwo!!, serviceConfigThree!!))
-    val htmlRendererRequestOne = createHtmlRenderRequest(subjectAccessRequest, serviceConfig!!)
-    val htmlRendererRequestTwo = createHtmlRenderRequest(subjectAccessRequest, serviceConfigTwo!!)
-    val htmlRendererRequestThree = createHtmlRenderRequest(subjectAccessRequest, serviceConfigThree!!)
+    val subjectAccessRequest = createPrisonSubjectAccessRequest(
+      listOf(
+        bookSecureMoveServiceConfig,
+        educationWorkPlanServiceConfig,
+        nonAssociationsServiceConfig,
+      ),
+    )
+    val htmlRendererRequestOne = createHtmlRenderRequest(subjectAccessRequest, bookSecureMoveServiceConfig)
+    val htmlRendererRequestTwo = createHtmlRenderRequest(subjectAccessRequest, educationWorkPlanServiceConfig)
+    val htmlRendererRequestThree = createHtmlRenderRequest(subjectAccessRequest, nonAssociationsServiceConfig)
 
     hmppsAuth.stubGrantToken()
     stubHtmlRendererSuccess(htmlRendererRequestOne)
@@ -216,7 +248,7 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     subjectAccessRequest.services.add(
       RequestServiceDetail(
         subjectAccessRequest = subjectAccessRequest,
-        serviceConfiguration = serviceConfig!!,
+        serviceConfiguration = bookSecureMoveServiceConfig,
         renderStatus = RenderStatus.PENDING,
       ),
     )
@@ -238,7 +270,9 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     verifyHtmlRendererIsCalled(htmlRendererRequest)
   }
 
-  private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest = createPrisonSubjectAccessRequest(listOf(serviceConfig!!))
+  private fun createPrisonSubjectAccessRequest(): SubjectAccessRequest = createPrisonSubjectAccessRequest(
+    listOf(bookSecureMoveServiceConfig),
+  )
 
   private fun createPrisonSubjectAccessRequest(services: List<ServiceConfiguration>): SubjectAccessRequest {
     val subjectAccessRequest = SubjectAccessRequest(
@@ -280,7 +314,7 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     subjectAccessRequest.services.add(
       RequestServiceDetail(
         subjectAccessRequest = subjectAccessRequest,
-        serviceConfiguration = serviceConfig!!,
+        serviceConfiguration = bookSecureMoveServiceConfig,
         renderStatus = RenderStatus.PENDING,
       ),
     )
@@ -288,7 +322,7 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
     return subjectAccessRequest
   }
 
-  private fun createHtmlRenderRequest(sar: SubjectAccessRequest) = createHtmlRenderRequest(sar, serviceConfig!!)
+  private fun createHtmlRenderRequest(sar: SubjectAccessRequest) = createHtmlRenderRequest(sar, bookSecureMoveServiceConfig)
 
   private fun createHtmlRenderRequest(sar: SubjectAccessRequest, serviceConfiguration: ServiceConfiguration) = HtmlRenderRequest(
     subjectAccessRequest = sar,

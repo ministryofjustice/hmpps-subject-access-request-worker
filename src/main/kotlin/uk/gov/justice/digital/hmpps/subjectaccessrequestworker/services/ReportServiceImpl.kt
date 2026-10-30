@@ -59,6 +59,7 @@ class ReportServiceImpl(
       reportDir = tempDirectoryService.create("${subjectAccessRequest.id}_"),
     ).use {
       val pdfPath = pdfService.renderSubjectAccessRequestPdf(it)
+      log.info("uploading subject access request ${subjectAccessRequest.id} PDF file in document store")
       storeDocument(subjectAccessRequest, pdfPath)
       log.info("subject access request ${subjectAccessRequest.id} completed successfully")
     }

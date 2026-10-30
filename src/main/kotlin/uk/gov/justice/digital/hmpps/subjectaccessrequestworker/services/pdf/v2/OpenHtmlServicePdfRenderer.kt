@@ -8,13 +8,14 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.TempDirectoryService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.PageMargins
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.nio.file.Path
 
 class OpenHtmlServicePdfRenderer(
   private val tempDirectoryService: TempDirectoryService,
@@ -22,10 +23,11 @@ class OpenHtmlServicePdfRenderer(
 
   override suspend fun generateServicePdf(
     pdfRenderRequest: PdfRenderRequest,
-    servicePdfPath: Path,
+    serviceConfiguration: ServiceConfiguration,
     serviceHtml: InputStream,
   ) {
     withContext(Dispatchers.IO) {
+      val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)
       val rawHtml = serviceHtml.bufferedReader(Charsets.UTF_8).use { it.readText() }
       val xhtml = buildXhtmlDocument(serviceHtml = rawHtml)
 
@@ -46,7 +48,7 @@ class OpenHtmlServicePdfRenderer(
             outputPdf.addEventHandler(
               PdfDocumentEvent.END_PAGE,
               SubjectAccessRequestHeaderAndFooterEventHandler(
-                document = document,
+                pageMargins = PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin),
                 subjectName = pdfRenderRequest.subjectName,
                 nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
                 ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,

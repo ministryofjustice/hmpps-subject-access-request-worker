@@ -35,6 +35,9 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-4:8.62.0")
   implementation("io.sentry:sentry-logback:8.62.0")
   implementation("commons-io:commons-io:2.22.0")
+  implementation("aws.sdk.kotlin:s3:1.9.7")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
+  implementation("org.apache.tika:tika-core:3.2.0")
   implementation("aws.sdk.kotlin:s3:1.9.27")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
 
@@ -52,6 +55,8 @@ dependencies {
   implementation("org.apache.pdfbox:fontbox:2.0.37")
   implementation("org.apache.pdfbox:xmpbox:2.0.37")
   implementation("org.jsoup:jsoup:1.23.2")
+  implementation("nu.validator:htmlparser:1.4.16")
+  implementation("org.jsoup:jsoup:1.21.1")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
@@ -62,6 +67,7 @@ dependencies {
   testImplementation("com.opencsv:opencsv:5.12.0")
   testImplementation("org.testcontainers:testcontainers:2.0.5")
   testImplementation("org.testcontainers:junit-jupiter:1.21.4")
+  testImplementation("org.apache.pdfbox:pdfbox:2.0.31")
 }
 
 kotlin {

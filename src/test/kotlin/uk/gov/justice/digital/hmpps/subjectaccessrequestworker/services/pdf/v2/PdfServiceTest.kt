@@ -227,7 +227,8 @@ class PdfServiceTest {
         .requireSubjectAccessRequestNotCancelled(eq(subjectAccessRequest), any())
 
       doAnswer { invocation ->
-        val servicePdfPath = invocation.getArgument<Path>(1)
+        val serviceConfig = invocation.getArgument<ServiceConfiguration>(1)
+        val servicePdfPath = pdfRenderRequest.serviceDataPdfPath(serviceConfig)
         createWritablePdfDocument(servicePdfPath).use { pdf ->
           newDocument(pdf).use { doc -> doc.add(Paragraph("stub content")) }
         }
@@ -251,7 +252,7 @@ class PdfServiceTest {
       verify(servicePdfRenderer, times(1))
         .generateServicePdf(
           eq(pdfRenderRequest),
-          eq(servicePdfPath),
+          eq(service1Config),
           eq(serviceHtml),
         )
 

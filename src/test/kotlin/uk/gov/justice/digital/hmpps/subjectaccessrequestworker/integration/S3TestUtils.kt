@@ -45,11 +45,12 @@ class S3TestUtils(
     }
   }
 
-  fun putFile(file: S3File) = runBlocking {
+  fun putFile(file: S3File, metadata: Map<String, String>? = null) = runBlocking {
     s3.putObject {
       bucket = s3Properties.bucketName
       key = file.key
       body = ByteStream.fromString(file.content)
+      this.metadata = metadata ?: emptyMap()
     }
   }
 

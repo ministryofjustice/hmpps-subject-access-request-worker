@@ -9,11 +9,12 @@ import com.itextpdf.layout.element.IBlockElement
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.properties.AreaBreakType
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.PageMargins
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newDocument
 import java.io.InputStream
-import java.nio.file.Path
 
 class ITextServicePdfRenderer : ServicePdfRenderer {
 
@@ -23,15 +24,15 @@ class ITextServicePdfRenderer : ServicePdfRenderer {
 
   override suspend fun generateServicePdf(
     pdfRenderRequest: PdfRenderRequest,
-    servicePdfPath: Path,
+    serviceConfiguration: ServiceConfiguration,
     serviceHtml: InputStream,
   ) {
-    createWritablePdfDocument(output = servicePdfPath).use { pdf ->
+    createWritablePdfDocument(output = pdfRenderRequest.serviceDataPdfPath(serviceConfiguration)).use { pdf ->
       newDocument(pdf).use { document ->
         pdf.addEventHandler(
           PdfDocumentEvent.END_PAGE,
           SubjectAccessRequestHeaderAndFooterEventHandler(
-            document = document,
+            pageMargins = PageMargins(left = document.leftMargin, right = document.rightMargin, top = document.topMargin),
             subjectName = pdfRenderRequest.subjectName,
             nomisId = pdfRenderRequest.subjectAccessRequest.nomisId,
             ndeliusCaseReferenceId = pdfRenderRequest.subjectAccessRequest.ndeliusCaseReferenceId,

@@ -20,7 +20,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.WebClientRetriesSpec
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.UUID
 import kotlin.io.path.fileSize
 
 @Service
@@ -35,11 +38,22 @@ class DocumentStorageClient(
   }
 
   fun storeDocument(subjectAccessRequest: SubjectAccessRequest, bodyFilePath: Path): PostDocumentResponse {
-    log.info("Storing document with UUID ${subjectAccessRequest.id}")
+    log.info("Storing document with UUID {}, file: {}, size: {}", subjectAccessRequest.id, bodyFilePath, bodyFilePath.fileSize())
     val expectedSize = bodyFilePath.fileSize()
     val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, bodyFilePath)
+    log.info("completed document store upload")
+
     return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
   }
+
+  // TODO temp by pass document store upload
+//  fun storeDocument(subjectAccessRequest: SubjectAccessRequest, bodyFilePath: Path): PostDocumentResponse {
+//    log.info("Storing document with UUID {}, file: {}, size: {}", subjectAccessRequest.id, bodyFilePath, bodyFilePath.fileSize())
+//    val dest = Paths.get("/Users/david.llewellyn/development/hmpps-subject-access-request-worker/src/test/resources/integration-tests/regression/document-store-out/${subjectAccessRequest.id}.pdf")
+//    Files.copy(bodyFilePath, dest)
+//
+//    return PostDocumentResponse(documentUuid = UUID.randomUUID().toString(), documentFilename = dest.toFile().name)
+//  }
 
   private fun executeStoreDocumentRequest(
     subjectAccessRequest: SubjectAccessRequest,
@@ -47,6 +61,7 @@ class DocumentStorageClient(
   ): PostDocumentResponse? {
     val subjectAccessRequestId = subjectAccessRequest.id
     try {
+      log.info("starting document store upload")
       return documentStorageWebClient.post().uri("$UPLOAD_DOCUMENT_PATH/$subjectAccessRequestId")
         .header("Service-Name", "DPS-Subject-Access-Requests")
         .body(

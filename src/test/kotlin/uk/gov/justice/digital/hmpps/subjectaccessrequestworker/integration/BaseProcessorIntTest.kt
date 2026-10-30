@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
-import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.io.TempDir
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -18,11 +18,16 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.TemplateVersionRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.utils.PdfTestUtil
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
+import java.nio.file.Path
 
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
 @Testcontainers
 class BaseProcessorIntTest : IntegrationTestBase() {
+
+  @TempDir
+  lateinit var tempDir: Path
 
   @Autowired
   protected lateinit var sarProcessor: SubjectAccessRequestProcessor
@@ -36,78 +41,55 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
 
-  protected companion object {
-    val replaceWhitespaceRegex = Regex("\\s+")
-    private val nomisIdLineRegex = Regex("^NOMIS ID:.*")
-    private val ndeliusIdLineRegex = Regex("^nDelius ID:.*")
-    private val nameLineRegex = Regex("^Name:.*")
-  }
+  protected val createAndVaryALicenseServiceConfig = createTestServiceConfiguration(
+    name = "create-and-vary-a-licence-api",
+    label = "Create and Vary a Licence",
+  )
 
-  protected fun assertRequestClaimedAtLeastOnce(subjectAccessRequest: SubjectAccessRequest) {
-    val target = getSubjectAccessRequest(subjectAccessRequest.id)
-    assertThat(target.claimDateTime).isNotNull()
-    assertThat(target.claimAttempts).isGreaterThanOrEqualTo(1)
-  }
+  protected val courtCaseServiceServiceConfig = createTestServiceConfiguration(
+    name = "court-case-service",
+    label = "Prepare a Case for Sentence",
+  )
 
-  protected fun assertUploadedDocumentMatchesExpectedPdf(serviceName: String) {
-    val expected = getPreGeneratedPdfDocument("$serviceName-reference.pdf")
-    val actual = getUploadedPdfDocument()
+  protected val bookSecureMoveServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-book-secure-move-api",
+    label = "Book a Secure Move",
+  )
 
-    assertUploadedDocumentMatchesExpectedPdf(actual, expected)
-  }
+  protected val incentivesApiServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-incentives-api",
+    label = "Incentives",
+  )
 
-  protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
-    assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
+  protected val managingPrisonerAppsServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-managing-prisoner-apps-api",
+    label = "Managing prisoner applications",
+  )
 
-    val actualPages = actual.canonicalPageText()
-    val expectedPages = expected.canonicalPageText()
-    assertThat(actualPages).isEqualTo(expectedPages)
-  }
+  protected val educationWorkPlanServiceConfig: ServiceConfiguration = createTestServiceConfiguration(
+    name = "hmpps-education-and-work-plan-api",
+    label = "Learning and Work Progress",
+  )
+  protected val nonAssociationsServiceConfig: ServiceConfiguration = createTestServiceConfiguration(
+    name = "hmpps-non-associations-api",
+    label = "Learning and Work Progress",
+  )
 
-  private fun PdfDocument.getPageTextNoFormatting(
-    pageNumber: Int,
-  ): String = PdfTextExtractor.getTextFromPage(
-    this.getPage(pageNumber),
-    SimpleTextExtractionStrategy(),
-  ).replace(replaceWhitespaceRegex, " ")
+  protected val healthAndMedicationServiceConfig = createTestServiceConfiguration(
+    name = "hmpps-health-and-medication-api",
+    label = "Health and medication",
+  )
 
-  private fun PdfDocument.canonicalPageText(): List<String> = (1..numberOfPages).map { page ->
-    canonicalizePageText(PdfTextExtractor.getTextFromPage(getPage(page), SimpleTextExtractionStrategy()))
-  }
-
-  private fun canonicalizePageText(text: String): String = text
-    .lineSequence()
-    .map { it.trim() }
-    .filter { it.isNotEmpty() }
-    .filterNot { it == "Official Sensitive" }
-    .filterNot { nameLineRegex.matches(it) }
-    .filterNot { nomisIdLineRegex.matches(it) }
-    .filterNot { ndeliusIdLineRegex.matches(it) }
-    .joinToString(" ")
-    .replace(replaceWhitespaceRegex, " ")
-    .trim()
-
-  protected fun assertAttachmentPageMatchesExpected(
-    actualPdfDoc: PdfDocument,
-    expectedPdfDoc: PdfDocument,
-    pageNumber: Int,
-    attachmentNumber: Int,
-  ) {
-    val expectedPageText = expectedPdfDoc.getPageTextNoFormatting(pageNumber)
-    val actualPageText = actualPdfDoc.getPageTextNoFormatting(pageNumber)
-
-    assertThat(actualPageText).`as`("attachment $attachmentNumber text").contains("Attachment: $attachmentNumber")
-    assertThat(actualPageText).`as`("attachment $attachmentNumber page text").isEqualTo(expectedPageText)
-  }
-
-  protected fun assertPageMatchesExpected(actualPdfDoc: PdfDocument, expectedPdfDoc: PdfDocument, pageNumber: Int) {
-    val actualPageText = canonicalizePageText(
-      PdfTextExtractor.getTextFromPage(actualPdfDoc.getPage(pageNumber), SimpleTextExtractionStrategy()),
+  protected fun assertUploadedDocumentMatchesExpectedPdf(expectedPath: String, serviceName: String) {
+    val referencePdfPath = PdfTestUtil.getResourcePath( expectedPath)
+    val generatedPdf = getUploadedPdfDocumentAsFile(
+      tempDir.resolve("$serviceName-${System.currentTimeMillis()}-generated.pdf")
     )
-    val expectedPageText = canonicalizePageText(
-      PdfTextExtractor.getTextFromPage(expectedPdfDoc.getPage(pageNumber), SimpleTextExtractionStrategy()),
+
+    PdfTestUtil.assertPdfsVisuallyEquivalent(
+      actual = generatedPdf.toPath(),
+      expected = referencePdfPath,
     )
-    assertThat(actualPageText).`as`("page $pageNumber text").isEqualTo(expectedPageText)
   }
 
   protected fun assertUploadedDocumentMatchesExpectedNoDataHeldPdf(serviceName: String, serviceLabel: String) {
@@ -192,6 +174,33 @@ class BaseProcessorIntTest : IntegrationTestBase() {
         documentKey,
         getReportHtmlForService(fileToAddToBucket),
       ),
+    )
+    assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
+  }
+
+  protected fun htmlRendererSuccessfullyRendersHtml(
+    sar: SubjectAccessRequest,
+    htmlRenderRequest: HtmlRenderRequest,
+    serviceName: String,
+    fileToAddToBucket: String,
+    templateVersion: String = "1",
+  ) = runBlocking {
+    val documentKey = htmlDocumentKey(sar, serviceName)
+
+    // Stub the wiremock API response.
+    htmlRendererApi.stubRenderResponsesWith(
+      htmlRenderRequest,
+      rendererSuccessResponse(documentKey, templateVersion),
+    )
+
+    // Put the expected Html in the bucket for later.
+    val serviceHtml = this::class.java.getResourceAsStream(fileToAddToBucket)
+      ?.bufferedReader()
+      .use { it?.readText() ?: "EMPTY" }
+
+    s3TestUtil.putFile(
+      file = S3TestUtils.S3File(documentKey, serviceHtml),
+      metadata = mapOf("template_version" to "v$templateVersion"),
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }
