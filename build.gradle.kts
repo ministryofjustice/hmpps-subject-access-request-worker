@@ -46,6 +46,11 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.4")
   implementation("com.github.ben-manes.caffeine:caffeine:3.3.1")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
+
+  // Override versions to address CVE-2026-33929
+  implementation("org.apache.pdfbox:pdfbox:2.0.37")
+  implementation("org.apache.pdfbox:fontbox:2.0.37")
+  implementation("org.apache.pdfbox:xmpbox:2.0.37")
   implementation("org.jsoup:jsoup:1.23.2")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
