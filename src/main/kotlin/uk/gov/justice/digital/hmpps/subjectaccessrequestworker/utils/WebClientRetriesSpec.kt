@@ -17,11 +17,8 @@ import reactor.util.retry.RetryBackoffSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_REQUEST_RETRY
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_RETRIES_EXHAUSTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.DOCUMENT_STORE_CONFLICT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.NON_RETRYABLE_CLIENT_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.HtmlRendererTemplateException
@@ -202,11 +199,10 @@ class WebClientRetriesSpec(
     event: ProcessingEvent,
   ) {
     telemetryClient.trackSarEvent(
-      event = CLIENT_RETRIES_EXHAUSTED,
+      event = event.retriesExhaustedEventName(),
       subjectAccessRequest = subjectAccessRequest,
       "retryAttempts" to signal.totalRetries().toString(),
       "cause" to (signal.failure().cause?.message ?: "null"),
-      "event" to event.name,
       "totalRetries" to signal.totalRetries().toString(),
     )
   }
@@ -225,9 +221,8 @@ class WebClientRetriesSpec(
     }
 
     telemetryClient.trackSarEvent(
-      event = NON_RETRYABLE_CLIENT_ERROR,
+      event = event.nonRetryableErrorEventName(),
       subjectAccessRequest = subjectAccessRequest,
-      "event" to event.name,
       *kvPairs.toTypedArray(),
     )
   }
@@ -256,10 +251,9 @@ class WebClientRetriesSpec(
     val errorMessage = errorResponse?.developerMessage ?: signal.failure().message ?: "N/A"
 
     telemetryClient.trackSarEvent(
-      event = CLIENT_REQUEST_RETRY,
+      event = event.retryEventName(),
       subjectAccessRequest = subjectAccessRequest,
-      "event" to event.name,
-      "errorCode" to errorCode,
+      "errorCode" to ErrorCode(errorCodePrefix, errorCode).getCodeStr(),
       "errorMessage" to errorMessage,
       "totalRetries" to signal.totalRetries().toString(),
     )
@@ -272,4 +266,8 @@ class WebClientRetriesSpec(
   }
 
   private fun Map<String, Any>.formatted(): String = this.entries.joinToString(",") { "${it.key}=${it.value}" }
+
+  private fun ProcessingEvent.retryEventName(): String = "${this.name}_REQUEST_RETRY"
+  private fun ProcessingEvent.retriesExhaustedEventName(): String = "${this.name}_RETRIES_EXHAUSTED"
+  private fun ProcessingEvent.nonRetryableErrorEventName(): String = "${this.name}_NON_RETRYABLE_ERROR"
 }

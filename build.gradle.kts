@@ -35,7 +35,7 @@ dependencies {
   implementation("io.sentry:sentry-spring-boot-4:8.62.0")
   implementation("io.sentry:sentry-logback:8.62.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.9.27")
+  implementation("aws.sdk.kotlin:s3:1.9.29")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
