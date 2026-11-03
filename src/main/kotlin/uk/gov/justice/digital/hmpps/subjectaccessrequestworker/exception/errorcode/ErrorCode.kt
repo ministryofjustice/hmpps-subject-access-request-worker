@@ -13,9 +13,9 @@ open class ErrorCode(
   ) : this(errorPrefix, status.value().toString())
 
   constructor(
-    staus: Int,
+    status: Int,
     errorPrefix: ErrorCodePrefix,
-  ) : this(errorPrefix, staus.toString())
+  ) : this(errorPrefix, status.toString())
 
   fun getCodeStr(): String = "${errorPrefix.prefix}_$code"
 
