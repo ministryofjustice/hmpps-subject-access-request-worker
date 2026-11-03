@@ -121,7 +121,7 @@ class ProbationApiClientIntTest : BaseClientIntTest() {
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
         "uri" to "/probation-case/$SUBJECT_ID",
-        "httpStatus" to stubResponse.status,
+        "httpStatus" to stubResponse.status.toString(),
       ),
     )
   }

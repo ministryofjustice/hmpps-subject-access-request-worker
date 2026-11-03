@@ -25,7 +25,7 @@ fun <T : Throwable?> assertExpectedSubjectAccessRequestException(
   expectedEvent: ProcessingEvent? = null,
   expectedErrorCode: ErrorCode,
   expectedSubjectAccessRequest: SubjectAccessRequest? = null,
-  expectedParams: Map<String, *>? = null,
+  expectedParams: Map<String, String>? = null,
 ) {
   assertThat(actual.cause)
     .withFailMessage("actual.cause was null expected type: ${expectedCause.simpleName}")
@@ -50,7 +50,7 @@ fun assertExpectedSubjectAccessRequestExceptionWithCauseNull(
   expectedEvent: ProcessingEvent? = null,
   expectedErrorCode: ErrorCode,
   expectedSubjectAccessRequest: SubjectAccessRequest? = null,
-  expectedParams: Map<String, *>? = null,
+  expectedParams: Map<String, String>? = null,
 ) {
   assertThat(actual.cause).isNull()
 

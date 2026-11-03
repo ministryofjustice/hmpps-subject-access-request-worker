@@ -135,8 +135,8 @@ class DocumentStorageClient(
         errorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
         subjectAccessRequest = subjectAccessRequest,
         params = mapOf(
-          "expectedFileSize" to expectedFileSize,
-          "actualFileSize" to postDocumentResponse.fileSize,
+          "expectedFileSize" to expectedFileSize.toString(),
+          "actualFileSize" to postDocumentResponse.fileSize.toString(),
           "documentUuid" to postDocumentResponse.documentUuid,
           "documentFileHash" to postDocumentResponse.fileHash,
         ),

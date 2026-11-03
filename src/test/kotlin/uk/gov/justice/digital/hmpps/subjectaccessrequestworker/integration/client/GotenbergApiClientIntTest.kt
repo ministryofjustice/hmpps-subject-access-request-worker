@@ -55,7 +55,7 @@ class GotenbergApiClientIntTest : BaseClientIntTest() {
       expectedParams = mapOf(
         "filename" to FILE_TO_CONVERT,
         "uri" to "${gotenbergApi.baseUrl()}/forms/libreoffice/convert",
-        "httpStatus" to stubResponse.status,
+        "httpStatus" to stubResponse.status.toString(),
       ),
     )
   }

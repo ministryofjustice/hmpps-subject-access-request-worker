@@ -31,11 +31,19 @@ fun TelemetryClient.trackSarEvent(
   subjectAccessRequest: SubjectAccessRequest?,
   vararg kvpairs: Pair<String, String>,
 ) {
+  this.trackSarEvent(event.name, subjectAccessRequest, *kvpairs)
+}
+
+fun TelemetryClient.trackSarEvent(
+  event: String,
+  subjectAccessRequest: SubjectAccessRequest?,
+  vararg kvpairs: Pair<String, String>,
+) {
   val id = subjectAccessRequest?.sarCaseReferenceNumber ?: UNKNOWN_PLACEHOLDER
   val contextId = subjectAccessRequest?.contextId.toString()
 
   this.trackEvent(
-    event.name,
+    event,
     mapOf(
       "sarId" to id,
       "UUID" to subjectAccessRequest?.id.toString(),

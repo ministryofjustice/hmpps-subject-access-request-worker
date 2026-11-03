@@ -12,6 +12,11 @@ open class ErrorCode(
     errorPrefix: ErrorCodePrefix,
   ) : this(errorPrefix, status.value().toString())
 
+  constructor(
+    status: Int,
+    errorPrefix: ErrorCodePrefix,
+  ) : this(errorPrefix, status.toString())
+
   fun getCodeStr(): String = "${errorPrefix.prefix}_$code"
 
   override fun toString(): String = getCodeStr()

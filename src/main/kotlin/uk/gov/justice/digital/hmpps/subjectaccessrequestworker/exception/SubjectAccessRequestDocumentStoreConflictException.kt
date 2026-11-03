@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 
 class SubjectAccessRequestDocumentStoreConflictException(
   subjectAccessRequest: SubjectAccessRequest? = null,
-  params: Map<String, *>? = null,
+  params: Map<String, String>? = null,
 ) : SubjectAccessRequestException(
   "subject access request document store upload unsuccessful: document already exists",
   null,

@@ -252,9 +252,9 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     )
 
     assertThat(eventNameCaptor.allValues).hasSize(3)
-    assertThat(eventNameCaptor.firstValue).isEqualTo(ProcessingEvent.CLIENT_REQUEST_RETRY.name)
-    assertThat(eventNameCaptor.secondValue).isEqualTo(ProcessingEvent.CLIENT_REQUEST_RETRY.name)
-    assertThat(eventNameCaptor.thirdValue).isEqualTo(ProcessingEvent.CLIENT_RETRIES_EXHAUSTED.name)
+    assertThat(eventNameCaptor.firstValue).isEqualTo("HTML_RENDERER_REQUEST_REQUEST_RETRY")
+    assertThat(eventNameCaptor.secondValue).isEqualTo("HTML_RENDERER_REQUEST_REQUEST_RETRY")
+    assertThat(eventNameCaptor.thirdValue).isEqualTo("HTML_RENDERER_REQUEST_RETRIES_EXHAUSTED")
 
     repeat(2) { i ->
       assertThat(propertiesCaptor.allValues[i]).containsAllEntriesOf(
@@ -262,8 +262,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
           "sarId" to subjectAccessRequest.sarCaseReferenceNumber,
           "UUID" to subjectAccessRequest.id.toString(),
           "contextId" to subjectAccessRequest.contextId.toString(),
-          "event" to ProcessingEvent.HTML_RENDERER_REQUEST.name,
-          "errorCode" to "1234567890",
+          "errorCode" to ErrorCode(ErrorCodePrefix.SAR_HTML_RENDERER, "1234567890").getCodeStr(),
           "errorMessage" to "A cow goes...",
           "totalRetries" to i.toString(),
         ),
@@ -275,7 +274,6 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
         "sarId" to subjectAccessRequest.sarCaseReferenceNumber,
         "UUID" to subjectAccessRequest.id.toString(),
         "contextId" to subjectAccessRequest.contextId.toString(),
-        "event" to ProcessingEvent.HTML_RENDERER_REQUEST.name,
         "totalRetries" to "2",
       ),
     )
@@ -307,7 +305,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
       "serviceName" to serviceName,
       "serviceUrl" to serviceUrl,
       "uri" to "http://localhost:${htmlRendererApi.port()}/subject-access-request/render",
-      "httpStatus" to stubErrorResponse.status,
+      "httpStatus" to stubErrorResponse.status.toString(),
     ),
   )
 

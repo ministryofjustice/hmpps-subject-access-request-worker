@@ -17,11 +17,8 @@ import reactor.util.retry.RetryBackoffSpec
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_REQUEST_RETRY
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.CLIENT_RETRIES_EXHAUSTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.DOCUMENT_STORE_CONFLICT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.NON_RETRYABLE_CLIENT_ERROR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.STORE_DOCUMENT
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.HtmlRendererTemplateException
@@ -71,7 +68,7 @@ class WebClientRetriesSpec(
     event: ProcessingEvent,
     subjectAccessRequest: SubjectAccessRequest? = null,
     errorCodePrefix: ErrorCodePrefix,
-    params: Map<String, Any>? = null,
+    params: Map<String, String>? = null,
   ): RetryBackoffSpec = Retry
     .backoff(maxRetries, backOff)
     .filter { err ->
@@ -88,7 +85,7 @@ class WebClientRetriesSpec(
     subjectAccessRequest: SubjectAccessRequest?,
     event: ProcessingEvent,
     errorCodePrefix: ErrorCodePrefix,
-    params: Map<String, Any>? = null,
+    params: Map<String, String>? = null,
   ) = BiFunction<RetryBackoffSpec, RetrySignal, Throwable> { _, signal ->
     telemetryClient.clientRetriesExhausted(subjectAccessRequest, signal, event)
 
@@ -161,15 +158,15 @@ class WebClientRetriesSpec(
     event: ProcessingEvent,
     subjectAccessRequest: SubjectAccessRequest? = null,
     errorCodePrefix: ErrorCodePrefix,
-    params: Map<String, Any>? = null,
+    params: Map<String, String>? = null,
   ) = { response: ClientResponse ->
-    val moddedParams = buildMap<String, Any> {
+    val moddedParams = buildMap<String, String> {
       params?.let { putAll(it) }
       putIfAbsent("uri", response.request().uri.toString())
-      putIfAbsent("httpStatus", response.statusCode())
+      putIfAbsent("httpStatus", response.statusCode().toString())
     }
 
-    telemetryClient.nonRetryableClientError(subjectAccessRequest, event, params)
+    telemetryClient.nonRetryableClientError(subjectAccessRequest, event, moddedParams)
 
     Mono.error<SubjectAccessRequestException>(
       FatalSubjectAccessRequestException(
@@ -190,45 +187,39 @@ class WebClientRetriesSpec(
         subjectAccessRequest = subjectAccessRequest,
         mapOf(
           "uri" to response.request().uri.toString(),
-          "httpStatus" to response.statusCode(),
+          "httpStatus" to response.statusCode().toString(),
         ),
       ),
     )
   }
+
+  internal fun RetrySignal.retriesExhaustedEventProperties(): Array<Pair<String, String>> = arrayOf(
+    "retryAttempts" to this.totalRetries().toString(),
+    "cause" to (this.failure().cause?.message ?: "null"),
+    "totalRetries" to this.totalRetries().toString(),
+  )
 
   fun TelemetryClient.clientRetriesExhausted(
     subjectAccessRequest: SubjectAccessRequest?,
     signal: RetrySignal,
     event: ProcessingEvent,
   ) {
-    telemetryClient.trackSarEvent(
-      event = CLIENT_RETRIES_EXHAUSTED,
+    this.trackSarEvent(
+      event = event.retriesExhaustedEventName(),
       subjectAccessRequest = subjectAccessRequest,
-      "retryAttempts" to signal.totalRetries().toString(),
-      "cause" to (signal.failure().cause?.message ?: "null"),
-      "event" to event.name,
-      "totalRetries" to signal.totalRetries().toString(),
+      *signal.retriesExhaustedEventProperties(),
     )
   }
 
   fun TelemetryClient.nonRetryableClientError(
     subjectAccessRequest: SubjectAccessRequest?,
     event: ProcessingEvent,
-    params: Map<String, Any>? = null,
+    params: Map<String, String> = emptyMap(),
   ) {
-    val kvPairs = mutableListOf(
-      Pair("event", event.name),
-    )
-    // Convert params to list of pair<String, String>
-    params?.entries?.forEach { entry ->
-      kvPairs.add(Pair(entry.key, entry.value.toString()))
-    }
-
     telemetryClient.trackSarEvent(
-      event = NON_RETRYABLE_CLIENT_ERROR,
+      event = event.nonRetryableErrorEventName(),
       subjectAccessRequest = subjectAccessRequest,
-      "event" to event.name,
-      *kvPairs.toTypedArray(),
+      *params.toList().toTypedArray(),
     )
   }
 
@@ -249,17 +240,16 @@ class WebClientRetriesSpec(
     subjectAccessRequest: SubjectAccessRequest?,
     event: ProcessingEvent,
     errorCodePrefix: ErrorCodePrefix,
-    params: Map<String, Any>? = null,
+    params: Map<String, String>? = null,
   ) {
     val errorResponse = webClientErrorResponseService.getBodyAsErrorResponseOrNull(signal)
     val errorCode = errorResponse?.errorCode ?: "N/A"
     val errorMessage = errorResponse?.developerMessage ?: signal.failure().message ?: "N/A"
 
     telemetryClient.trackSarEvent(
-      event = CLIENT_REQUEST_RETRY,
+      event = event.retryEventName(),
       subjectAccessRequest = subjectAccessRequest,
-      "event" to event.name,
-      "errorCode" to errorCode,
+      "errorCode" to ErrorCode(errorCodePrefix, errorCode).getCodeStr(),
       "errorMessage" to errorMessage,
       "totalRetries" to signal.totalRetries().toString(),
     )
@@ -272,4 +262,8 @@ class WebClientRetriesSpec(
   }
 
   private fun Map<String, Any>.formatted(): String = this.entries.joinToString(",") { "${it.key}=${it.value}" }
+
+  private fun ProcessingEvent.retryEventName(): String = "${this.name}_REQUEST_RETRY"
+  private fun ProcessingEvent.retriesExhaustedEventName(): String = "${this.name}_RETRIES_EXHAUSTED"
+  private fun ProcessingEvent.nonRetryableErrorEventName(): String = "${this.name}_NON_RETRYABLE_ERROR"
 }
