@@ -33,7 +33,7 @@ class NomisMappingApiClient(
         webClientRetriesSpec.is4xxStatus(),
         webClientRetriesSpec.throw4xxStatusFatalError(
           event = GET_LOCATION_MAPPING,
-          params = mapOf("nomisLocationId" to nomisLocationId),
+          params = mapOf("nomisLocationId" to nomisLocationId.toString()),
           errorCodePrefix = ErrorCodePrefix.NOMIS_API,
         ),
       )
@@ -41,7 +41,7 @@ class NomisMappingApiClient(
       .retryWhen(
         webClientRetriesSpec.retry5xxAndClientRequestErrors(
           event = GET_LOCATION_MAPPING,
-          params = mapOf("nomisLocationId" to nomisLocationId),
+          params = mapOf("nomisLocationId" to nomisLocationId.toString()),
           errorCodePrefix = ErrorCodePrefix.NOMIS_API,
         ),
       )

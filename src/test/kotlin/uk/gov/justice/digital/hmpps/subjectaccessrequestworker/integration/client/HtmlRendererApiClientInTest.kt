@@ -305,7 +305,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
       "serviceName" to serviceName,
       "serviceUrl" to serviceUrl,
       "uri" to "http://localhost:${htmlRendererApi.port()}/subject-access-request/render",
-      "httpStatus" to stubErrorResponse.status,
+      "httpStatus" to stubErrorResponse.status.toString(),
     ),
   )
 

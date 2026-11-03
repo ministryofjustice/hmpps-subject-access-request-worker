@@ -75,7 +75,7 @@ class LocationsApiClientIntTest : BaseClientIntTest() {
       expectedParams = mapOf(
         "dpsLocationId" to LOCATION_DPS_ID,
         "uri" to "${locationsApi.baseUrl()}/locations/$LOCATION_DPS_ID",
-        "httpStatus" to stubResponse.status,
+        "httpStatus" to stubResponse.status.toString(),
       ),
     )
   }

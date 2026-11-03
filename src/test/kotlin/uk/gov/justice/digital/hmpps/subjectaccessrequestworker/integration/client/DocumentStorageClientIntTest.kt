@@ -149,7 +149,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       ),
       expectedParams = mapOf(
         "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-        "httpStatus" to stubErrorResponse.status,
+        "httpStatus" to stubErrorResponse.status.toString(),
       ),
     )
 
@@ -180,7 +180,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedParams = mapOf(
         "uri" to "${documentApi.baseUrl()}/documents/SUBJECT_ACCESS_REQUEST_REPORT/$subjectAccessRequestId",
-        "httpStatus" to HttpStatus.CONFLICT,
+        "httpStatus" to HttpStatus.CONFLICT.toString(),
       ),
     )
 
@@ -319,8 +319,8 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       expectedSubjectAccessRequest = subjectAccessRequest,
       expectedErrorCode = ErrorCode.DOCUMENT_UPLOAD_VERIFICATION_ERROR,
       expectedParams = mapOf(
-        "expectedFileSize" to pdfPath.fileSize(),
-        "actualFileSize" to incorrectFileSize,
+        "expectedFileSize" to pdfPath.fileSize().toString(),
+        "actualFileSize" to incorrectFileSize.toString(),
         "documentUuid" to subjectAccessRequestId.toString(),
         "documentFileHash" to fileHash(pdfContent),
       ),

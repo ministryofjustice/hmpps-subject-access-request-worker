@@ -74,9 +74,9 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       expectedEvent = ProcessingEvent.GET_LOCATION_MAPPING,
       expectedErrorCode = ErrorCode(ErrorCodePrefix.NOMIS_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
-        "nomisLocationId" to LOCATION_NOMIS_ID,
+        "nomisLocationId" to LOCATION_NOMIS_ID.toString(),
         "uri" to "${nomisMappingsApi.baseUrl()}/api/locations/nomis/$LOCATION_NOMIS_ID",
-        "httpStatus" to stubResponse.status,
+        "httpStatus" to stubResponse.status.toString(),
       ),
     )
   }
@@ -111,7 +111,7 @@ class NomisMappingsApiClientIntTest : BaseClientIntTest() {
       expectedEvent = ProcessingEvent.GET_LOCATION_MAPPING,
       expectedErrorCode = ErrorCode(ErrorCodePrefix.NOMIS_API, stubResponse.status.value().toString()),
       expectedParams = mapOf(
-        "nomisLocationId" to LOCATION_NOMIS_ID,
+        "nomisLocationId" to LOCATION_NOMIS_ID.toString(),
       ),
     )
   }

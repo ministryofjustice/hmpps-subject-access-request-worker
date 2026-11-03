@@ -5,11 +5,22 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.capture
+import org.mockito.kotlin.firstValue
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.util.retry.Retry.RetrySignal
 import reactor.util.retry.RetryBackoffSpec
@@ -20,7 +31,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorco
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.errorcode.ErrorCodePrefix
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
+import java.net.URI
+import java.util.UUID
 
+@ExtendWith(MockitoExtension::class)
 class WebClientRetriesSpecTest {
 
   private val objectMapper = ObjectMapper()
@@ -34,6 +48,12 @@ class WebClientRetriesSpecTest {
   private val failure: WebClientResponseException = mock()
   private val webClientErrorResponseService: WebClientErrorResponseService = WebClientErrorResponseService()
 
+  @Captor
+  private lateinit var eventNameCaptor: ArgumentCaptor<String>
+
+  @Captor
+  private lateinit var eventPropertiesCaptor: ArgumentCaptor<Map<String, String>>
+
   private val errorResponseJson = objectMapper.writeValueAsString(
     ErrorResponse(
       status = 400,
@@ -46,6 +66,11 @@ class WebClientRetriesSpecTest {
     webClientConfiguration,
     webClientErrorResponseService,
     telemetryClient,
+  )
+
+  private val sar = SubjectAccessRequest(
+    sarCaseReferenceNumber = "TEST123",
+    contextId = UUID.randomUUID(),
   )
 
   @BeforeEach
@@ -82,6 +107,76 @@ class WebClientRetriesSpecTest {
       expectedErrorCode = ErrorCode(
         ErrorCodePrefix.LOCATION_API,
         "666",
+      ),
+    )
+  }
+
+  @Test
+  fun `should log the expected app insight events when handling retry exhausted error`() {
+    whenever(headers.contentType)
+      .thenReturn(MediaType.APPLICATION_JSON)
+
+    whenever(failure.getResponseBodyAs(String::class.java))
+      .thenReturn(errorResponseJson)
+
+    webClientRetriesSpec.get5xxExhaustedHandler(
+      sar,
+      ProcessingEvent.STORE_DOCUMENT,
+      ErrorCodePrefix.DOCUMENT_STORE,
+    ).apply(retryBackoffSpec, signal)
+
+    verify(telemetryClient, times(1))
+      .trackEvent(capture(eventNameCaptor), capture(eventPropertiesCaptor), isNull())
+
+    assertThat(eventNameCaptor.allValues).hasSize(1)
+    assertThat(eventNameCaptor.firstValue).isEqualTo("STORE_DOCUMENT_RETRIES_EXHAUSTED")
+
+    assertThat(eventPropertiesCaptor.allValues).hasSize(1)
+    assertThat(eventPropertiesCaptor.firstValue).containsExactlyInAnyOrderEntriesOf(
+      mapOf(
+        "sarId" to sar.sarCaseReferenceNumber,
+        "UUID" to sar.id.toString(),
+        "contextId" to sar.contextId.toString(),
+        "retryAttempts" to "2",
+        "cause" to "null",
+        "totalRetries" to "2",
+      ),
+    )
+  }
+
+  @Test
+  fun `should log expected app insights event for non retryable error`() {
+    val someId = UUID.randomUUID().toString()
+    val params = mapOf("someId" to someId)
+    val response: ClientResponse = mock()
+    val request: HttpRequest = mock()
+
+    whenever(response.request()).thenReturn(request)
+    whenever(request.uri).thenReturn(URI.create("http://localhost/some/service"))
+    whenever(response.statusCode()).thenReturn(HttpStatus.UNAUTHORIZED)
+
+    webClientRetriesSpec.throw4xxStatusFatalError(
+      ProcessingEvent.RENDER_TEMPLATE,
+      sar,
+      ErrorCodePrefix.SAR_HTML_RENDERER,
+      params,
+    ).invoke(response)
+
+    verify(telemetryClient, times(1))
+      .trackEvent(capture(eventNameCaptor), capture(eventPropertiesCaptor), isNull())
+
+    assertThat(eventNameCaptor.allValues).hasSize(1)
+    assertThat(eventNameCaptor.firstValue).isEqualTo("RENDER_TEMPLATE_NON_RETRYABLE_ERROR")
+
+    assertThat(eventPropertiesCaptor.allValues).hasSize(1)
+    assertThat(eventPropertiesCaptor.firstValue).containsExactlyInAnyOrderEntriesOf(
+      mapOf(
+        "sarId" to sar.sarCaseReferenceNumber,
+        "UUID" to sar.id.toString(),
+        "contextId" to sar.contextId.toString(),
+        "someId" to someId,
+        "uri" to "http://localhost/some/service",
+        "httpStatus" to HttpStatus.UNAUTHORIZED.toString(),
       ),
     )
   }

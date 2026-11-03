@@ -104,7 +104,7 @@ class PrisonApiClientIntTest : BaseClientIntTest() {
       expectedParams = mapOf(
         "subjectId" to SUBJECT_ID,
         "uri" to "${prisonApi.baseUrl()}/api/offenders/$SUBJECT_ID",
-        "httpStatus" to stubResponse.status,
+        "httpStatus" to stubResponse.status.toString(),
       ),
     )
   }
