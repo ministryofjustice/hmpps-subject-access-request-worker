@@ -162,6 +162,7 @@ logging:
 springdoc:
   swagger-ui:
     enabled: false
+    version: 5.34.1
     filter: true
     disable-swagger-default-url: true
   api-docs:
