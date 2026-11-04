@@ -119,3 +119,6 @@ For multiple environments add block for each environment e.g
 To execute a request select the appropriate Environment from the `Run with <ENV>` drop down at the top of the file. 
 
 :warning: **Make sure to add the environment config file to your `.gitignore` file to ensure it is not accidentally commited.**
+
+### SAR Backlog Processor
+For details of the backlog utility components, see the [Backlog README](src/main/kotlin/uk/gov/justice/digital/hrker/backlog/utils/README.md)
