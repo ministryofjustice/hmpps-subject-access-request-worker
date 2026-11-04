@@ -16,6 +16,10 @@ dependencyCheck {
 ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
 
+// Keep these versions pinned when running useLatestVersions.
+val pdfboxVersion = "2.0.37"
+val jsoupVersion = "1.23.2"
+
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
@@ -52,10 +56,10 @@ dependencies {
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
 
   // Override versions to address CVE-2026-33929
-  implementation("org.apache.pdfbox:pdfbox:3.0.8")
-  implementation("org.apache.pdfbox:fontbox:3.0.8")
-  implementation("org.apache.pdfbox:xmpbox:3.0.8")
-  implementation("org.jsoup:jsoup:1.24.1")
+  implementation("org.apache.pdfbox:pdfbox:$pdfboxVersion")
+  implementation("org.apache.pdfbox:fontbox:$pdfboxVersion")
+  implementation("org.apache.pdfbox:xmpbox:$pdfboxVersion")
+  implementation("org.jsoup:jsoup:$jsoupVersion")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
