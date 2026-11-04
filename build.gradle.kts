@@ -16,6 +16,10 @@ dependencyCheck {
 ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
 
+// Keep these versions pinned when running useLatestVersions.
+val pdfboxVersion = "2.0.37"
+val jsoupVersion = "1.23.2"
+
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
@@ -37,6 +41,10 @@ dependencies {
   implementation("commons-io:commons-io:2.22.0")
   implementation("aws.sdk.kotlin:s3:1.9.29")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
+  // Temporarily pin swagger-ui for dompurify issues CVE-2026-11680(2-4)
+  constraints {
+    implementation("org.webjars:swagger-ui:5.34.1")
+  }
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.5.252")
@@ -48,10 +56,10 @@ dependencies {
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
 
   // Override versions to address CVE-2026-33929
-  implementation("org.apache.pdfbox:pdfbox:2.0.37")
-  implementation("org.apache.pdfbox:fontbox:2.0.37")
-  implementation("org.apache.pdfbox:xmpbox:2.0.37")
-  implementation("org.jsoup:jsoup:1.23.2")
+  implementation("org.apache.pdfbox:pdfbox:$pdfboxVersion")
+  implementation("org.apache.pdfbox:fontbox:$pdfboxVersion")
+  implementation("org.apache.pdfbox:xmpbox:$pdfboxVersion")
+  implementation("org.jsoup:jsoup:$jsoupVersion")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
