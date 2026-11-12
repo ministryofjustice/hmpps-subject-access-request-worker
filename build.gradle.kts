@@ -17,8 +17,8 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
 
 // Keep these versions pinned when running useLatestVersions.
-val pdfboxVersion = "3.0.8"
-val jsoupVersion = "1.24.1"
+val pdfboxVersion = "2.0.37"
+val jsoupVersion = "1.23.2"
 
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.1.0")
