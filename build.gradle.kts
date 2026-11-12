@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.14"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.15"
   kotlin("plugin.spring") version "2.4.21"
   kotlin("plugin.jpa") version "2.4.21"
 }
@@ -21,7 +21,7 @@ val pdfboxVersion = "2.0.37"
 val jsoupVersion = "1.23.2"
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.1.0")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -34,12 +34,12 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-jackson2")
   implementation("com.github.spullara.mustache.java:compiler:0.9.14")
   implementation("com.github.jknack:handlebars:4.5.8")
-  implementation("org.apache.commons:commons-lang3:3.21.0")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.4")
-  implementation("io.sentry:sentry-spring-boot-4:8.62.0")
-  implementation("io.sentry:sentry-logback:8.62.0")
+  implementation("org.apache.commons:commons-lang3:3.22.0")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.23.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.64.0")
+  implementation("io.sentry:sentry-logback:8.64.0")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.9.29")
+  implementation("aws.sdk.kotlin:s3:1.9.35")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
   // Temporarily pin swagger-ui for dompurify issues CVE-2026-11680(2-4)
   constraints {
@@ -51,7 +51,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.14")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.4")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.23.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.3.1")
   implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
 
@@ -61,7 +61,7 @@ dependencies {
   implementation("org.apache.pdfbox:xmpbox:$pdfboxVersion")
   implementation("org.jsoup:jsoup:$jsoupVersion")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.1.0")
   testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webclient-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
