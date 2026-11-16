@@ -2,6 +2,13 @@ info.app:
   name: Hmpps Subject Access Request Worker
   version: 1.0
 
+slack:
+  api-url: https://slack.com/api
+  environment: ${SENTRY_ENV:local}
+  bot:
+    auth: ${SAR_SLACK_BOT_AUTH_TOKEN}
+    dev-help-channel-id: ${DEV_HELP_SLACK_CHANNEL_ID}
+
 spring:
   application:
     name: hmpps-subject-access-request-worker

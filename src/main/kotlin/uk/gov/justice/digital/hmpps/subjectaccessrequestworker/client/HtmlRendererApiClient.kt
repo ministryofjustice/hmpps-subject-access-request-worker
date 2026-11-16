@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.InternalServiceSlackAlertService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.ACQUIRE_AUTH_TOKEN
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.HTML_RENDERER_REQUEST
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.FatalSubjectAccessRequestException
@@ -20,6 +21,7 @@ import java.util.UUID
 class HtmlRendererApiClient(
   private val sarHtmlRendererApiWebClient: WebClient,
   private val webClientRetriesSpec: WebClientRetriesSpec,
+  private val internalServiceSlackAlertService: InternalServiceSlackAlertService,
 ) {
 
   fun submitRenderRequest(
@@ -55,27 +57,46 @@ class HtmlRendererApiClient(
         ),
       )
       .block()!!
-  } catch (ex: ClientAuthorizationException) {
-    throw FatalSubjectAccessRequestException(
-      message = "sarHtmlRendererApiClient error authorization exception",
-      cause = ex,
-      event = ACQUIRE_AUTH_TOKEN,
-      errorCode = HTML_RENDERER_AUTH_ERROR,
-      params = mapOf(
-        "cause" to ex.cause?.message,
-      ),
+  } catch (ex: Exception) {
+    internalServiceSlackAlertService.sendServiceCallFailedAlert(
+      destination = "SAR HTML renderer",
+      operation = "POST /subject-access-request/render",
+      requestId = subjectAccessRequest.id,
+      serviceName = serviceConfiguration.serviceName,
     )
+    if (ex is ClientAuthorizationException) {
+      throw FatalSubjectAccessRequestException(
+        message = "sarHtmlRendererApiClient error authorization exception",
+        cause = ex,
+        event = ACQUIRE_AUTH_TOKEN,
+        errorCode = HTML_RENDERER_AUTH_ERROR,
+        params = mapOf(
+          "cause" to ex.cause?.message,
+        ),
+      )
+    }
+    throw ex
   }
 
   fun getServiceSummary(
     subjectDataHeldRequest: SubjectDataHeldRequest,
-  ): ResponseEntity<SubjectDataHeldResponse>? = sarHtmlRendererApiWebClient
-    .post()
-    .uri("/subject-access-request/subject-data-held-summary")
-    .bodyValue(subjectDataHeldRequest)
-    .retrieve()
-    .toEntity(SubjectDataHeldResponse::class.java)
-    .block()
+  ): ResponseEntity<SubjectDataHeldResponse>? = try {
+    sarHtmlRendererApiWebClient
+      .post()
+      .uri("/subject-access-request/subject-data-held-summary")
+      .bodyValue(subjectDataHeldRequest)
+      .retrieve()
+      .toEntity(SubjectDataHeldResponse::class.java)
+      .block()
+  } catch (ex: Exception) {
+    internalServiceSlackAlertService.sendServiceCallFailedAlert(
+      destination = "SAR HTML renderer",
+      operation = "POST /subject-access-request/subject-data-held-summary",
+      requestId = null,
+      serviceName = subjectDataHeldRequest.serviceName,
+    )
+    throw ex
+  }
 
   data class SubjectDataHeldRequest(
     val nomisId: String? = null,
