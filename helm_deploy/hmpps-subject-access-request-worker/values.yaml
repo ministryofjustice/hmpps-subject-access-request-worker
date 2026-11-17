@@ -17,9 +17,9 @@ generic-service:
 
   resources:
     limits:
-      memory: 3Gi
+      memory: 16Gi
     requests:
-      memory: 2Gi
+      memory: 12Gi
 
   env:
     JAVA_OPTS: "-Xmx2g"
