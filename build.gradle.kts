@@ -22,6 +22,7 @@ val jsoupVersion = "1.23.2"
 
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.1.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-lib:2.10.0")
   implementation("org.springframework.boot:spring-boot-starter-webclient")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
