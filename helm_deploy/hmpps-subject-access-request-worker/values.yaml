@@ -33,6 +33,8 @@ generic-service:
   namespace_secrets:
     hmpps-subject-access-request-worker:
       SENTRY_DSN: "SENTRY_DSN"
+      SAR_SLACK_BOT_AUTH_TOKEN: "SAR_SLACK_BOT_AUTH_TOKEN"
+      DEV_HELP_SLACK_CHANNEL_ID: "DEV_HELP_SLACK_CHANNEL_ID"
     hmpps-subject-access-request-worker-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
     hmpps-subject-access-request-worker-client-creds:

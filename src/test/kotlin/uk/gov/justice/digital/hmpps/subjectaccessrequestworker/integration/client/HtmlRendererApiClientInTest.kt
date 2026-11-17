@@ -9,14 +9,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.web.reactive.function.client.WebClientResponseException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.InternalServiceSlackAlertService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.HtmlRendererApiClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.WebClientConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent
@@ -45,7 +49,9 @@ import java.util.UUID
     "html-renderer.enabled=true",
   ],
 )
-class HtmlRendererApiClientInTest : BaseClientIntTest() {
+class HtmlRendererApiClientInTest(
+  @Autowired private val internalServiceSlackAlertService: InternalServiceSlackAlertService,
+) : BaseClientIntTest() {
 
   @Autowired
   private lateinit var htmlRendererApiClient: HtmlRendererApiClient
@@ -96,6 +102,39 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderNeverCalled()
+    verify(internalServiceSlackAlertService).sendServiceCallFailedAlert(
+      "SAR HTML renderer",
+      "POST /subject-access-request/render",
+      subjectAccessRequest.id,
+      serviceName,
+    )
+  }
+
+  @Test
+  fun `should alert HAAR when subject data summary call fails`() {
+    val request = HtmlRendererApiClient.SubjectDataHeldRequest(
+      nomisId = testNomisId,
+      serviceName = serviceName,
+      serviceUrl = serviceUrl,
+    )
+    hmppsAuth.stubGrantToken()
+    htmlRendererApi.stubSubjectDataHeldResponse(
+      subjectDataHeldRequest = request,
+      responseDefinition = rendererErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR),
+    )
+
+    assertThrows<WebClientResponseException.InternalServerError> {
+      htmlRendererApiClient.getServiceSummary(request)
+    }
+
+    hmppsAuth.verifyCalledOnce()
+    htmlRendererApi.verifySubjectDataHeldSummaryCalled(times = 1, expectedBody = request)
+    verify(internalServiceSlackAlertService).sendServiceCallFailedAlert(
+      "SAR HTML renderer",
+      "POST /subject-access-request/subject-data-held-summary",
+      null,
+      serviceName,
+    )
   }
 
   @Test
@@ -121,6 +160,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 1, expectedBody = expectedRequest)
+    verify(internalServiceSlackAlertService, never()).sendServiceCallFailedAlert(any(), any(), any(), any())
   }
 
   @Test
@@ -147,6 +187,7 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
 
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 2, expectedBody = expectedRequest)
+    verify(internalServiceSlackAlertService, never()).sendServiceCallFailedAlert(any(), any(), any(), any())
   }
 
   @ParameterizedTest
@@ -209,6 +250,12 @@ class HtmlRendererApiClientInTest : BaseClientIntTest() {
     )
     hmppsAuth.verifyCalledOnce()
     htmlRendererApi.verifyRenderCalled(times = 3, expectedBody = expectedRequest)
+    verify(internalServiceSlackAlertService).sendServiceCallFailedAlert(
+      "SAR HTML renderer",
+      "POST /subject-access-request/render",
+      subjectAccessRequest.id,
+      serviceName,
+    )
   }
 
   @Test

@@ -1,3 +1,8 @@
+slack:
+  bot:
+    auth: test-slack-token
+    dev-help-channel-id: HAAR_TEST_CHANNEL
+
 spring:
 
   flyway:

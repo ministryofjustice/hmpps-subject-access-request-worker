@@ -16,7 +16,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.InternalServiceSlackAlertService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration.IntegrationTestFixture.Companion.createSubjectAccessRequestForService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.DocumentApiExtension.Companion.documentApi
@@ -67,6 +69,7 @@ const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
 @ActiveProfiles("test")
 @DirtiesContext
 @AutoConfigureWebTestClient
+@MockitoBean(types = [InternalServiceSlackAlertService::class])
 abstract class IntegrationTestBase {
 
   open val referencePdfBaseDir: String = REFERENCE_PDF_BASE_DIR
