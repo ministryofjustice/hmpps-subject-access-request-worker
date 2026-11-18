@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.times
+import org.mockito.kotlin.verifyNoInteractions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.codec.DecodingException
 import org.springframework.http.HttpStatus
@@ -22,6 +23,7 @@ import org.springframework.security.oauth2.client.ClientAuthorizationException
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientRequestException
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.InternalServiceSlackAlertService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.client.DocumentStorageClient
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_FAILURE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_SUCCESS
@@ -47,7 +49,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.io.path.fileSize
 
-class DocumentStorageClientIntTest : BaseClientIntTest() {
+class DocumentStorageClientIntTest(
+  @Autowired private val internalServiceSlackAlertService: InternalServiceSlackAlertService,
+) : BaseClientIntTest() {
 
   @TempDir
   lateinit var tempDirPath: Path
@@ -157,6 +161,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       times = 1,
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
+    verifyUploadAlert()
   }
 
   @Test
@@ -188,6 +193,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       times = 1,
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
+    verifyUploadAlert()
   }
 
   @ParameterizedTest
@@ -220,6 +226,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       times = 3,
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
+    verifyUploadAlert()
   }
 
   @Test
@@ -241,6 +248,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       times = 2,
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
+    verifyNoInteractions(internalServiceSlackAlertService)
   }
 
   @Test
@@ -249,10 +257,10 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       .baseUrl("http://localhost:${documentApi.port() + 10}")
       .build()
 
-    documentStorageClient = DocumentStorageClient(webClientWithIncorrectUrl, webClientRetriesSpec, telemetryClient)
+    val client = DocumentStorageClient(webClientWithIncorrectUrl, webClientRetriesSpec, telemetryClient, internalServiceSlackAlertService)
 
     val ex = assertThrows<SubjectAccessRequestRetryExhaustedException> {
-      documentStorageClient.storeDocument(subjectAccessRequest, pdfPath)
+      client.storeDocument(subjectAccessRequest, pdfPath)
     }
 
     assertExpectedSubjectAccessRequestException(
@@ -271,6 +279,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
     assertThat(ex.cause?.message).containsIgnoringCase("connection refused")
 
     documentApi.verifyNeverCalled()
+    verifyUploadAlert()
   }
 
   @ParameterizedTest
@@ -295,6 +304,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
 
     hmppsAuth.verifyCalledOnce()
     documentApi.verifyNeverCalled()
+    verifyUploadAlert()
   }
 
   @Test
@@ -336,6 +346,7 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       pdfContent,
       incorrectFileSize,
     )
+    verifyUploadAlert()
   }
 
   @Test
@@ -388,6 +399,15 @@ class DocumentStorageClientIntTest : BaseClientIntTest() {
       subjectAccessRequestId = subjectAccessRequestId.toString(),
     )
     verifyFileSizeVerifySuccessTelemetryEvent(subjectAccessRequest, pdfContent)
+  }
+
+  private fun verifyUploadAlert() {
+    verify(internalServiceSlackAlertService).sendServiceCallFailedAlert(
+      "Document API",
+      "POST /documents/SUBJECT_ACCESS_REQUEST_REPORT/{id}",
+      subjectAccessRequestId,
+      null,
+    )
   }
 
   fun createTestPdf(input: String): Path {

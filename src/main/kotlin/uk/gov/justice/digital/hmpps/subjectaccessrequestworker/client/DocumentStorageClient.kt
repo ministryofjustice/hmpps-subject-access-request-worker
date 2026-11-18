@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.alerting.InternalServiceSlackAlertService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.trackSarEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_FAILURE
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.FILE_SIZE_VERIFY_SUCCESS
@@ -28,6 +29,7 @@ class DocumentStorageClient(
   private val documentStorageWebClient: WebClient,
   val webClientRetriesSpec: WebClientRetriesSpec,
   val telemetryClient: TelemetryClient,
+  private val internalServiceSlackAlertService: InternalServiceSlackAlertService,
 ) {
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -37,8 +39,18 @@ class DocumentStorageClient(
   fun storeDocument(subjectAccessRequest: SubjectAccessRequest, bodyFilePath: Path): PostDocumentResponse {
     log.info("Storing document with UUID ${subjectAccessRequest.id}")
     val expectedSize = bodyFilePath.fileSize()
-    val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, bodyFilePath)
-    return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
+    try {
+      val postDocumentResponse = executeStoreDocumentRequest(subjectAccessRequest, bodyFilePath)
+      return verifyUploadedFileSize(postDocumentResponse, subjectAccessRequest, expectedSize)
+    } catch (ex: SubjectAccessRequestException) {
+      internalServiceSlackAlertService.sendServiceCallFailedAlert(
+        destination = "Document API",
+        operation = "POST $UPLOAD_DOCUMENT_PATH/{id}",
+        requestId = subjectAccessRequest.id,
+        serviceName = null,
+      )
+      throw ex
+    }
   }
 
   private fun executeStoreDocumentRequest(
