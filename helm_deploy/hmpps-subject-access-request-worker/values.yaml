@@ -16,10 +16,10 @@ generic-service:
     tlsSecretName: hmpps-subject-access-request-worker-cert
 
   resources:
-    limits:
-      memory: 3Gi
     requests:
-      memory: 2Gi
+      memory: 12Gi
+    limits:
+      memory: 16Gi
 
   env:
     JAVA_OPTS: "-Xmx2g"
