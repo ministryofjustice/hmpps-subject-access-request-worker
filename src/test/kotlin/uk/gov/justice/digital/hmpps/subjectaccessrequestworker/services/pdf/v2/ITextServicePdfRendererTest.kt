@@ -8,13 +8,17 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.mock
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DocumentStoreService
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getInputStream
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.getReadablePdfDocument
 import java.nio.file.Path
 
+@ExtendWith(MockitoExtension::class)
 class ITextServicePdfRendererTest {
 
   @TempDir
@@ -23,6 +27,10 @@ class ITextServicePdfRendererTest {
   lateinit var pdfRenderRequest: PdfRenderRequest
 
   private val subjectAccessRequest: SubjectAccessRequest = mock()
+  private val documentStoreService: DocumentStoreService = mock()
+  private val sarResourceRetriever: SarResourceRetriever = SarResourceRetriever(documentStoreService)
+
+  private val renderer = ITextServicePdfRenderer(sarResourceRetriever)
 
   @BeforeEach
   fun setup() {
@@ -32,8 +40,6 @@ class ITextServicePdfRendererTest {
       reportDir = tempDir,
     )
   }
-
-  private val renderer = ITextServicePdfRenderer()
 
   @Test
   fun `should render html content to a valid pdf`() = runTest {
@@ -67,7 +73,7 @@ class ITextServicePdfRendererTest {
   }
 
   @Test
-  fun `should render an image element to the pdf`() = runTest {
+  fun `should render an encoded image element to the pdf`() = runTest {
     val base64Png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     val html = """<img src="data:image/png;base64,$base64Png" style="display:block;" />"""
     val outputPath = tempDir.resolve("service.pdf")

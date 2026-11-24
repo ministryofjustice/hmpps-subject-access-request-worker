@@ -15,8 +15,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.TemplateVersionRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
@@ -26,12 +24,6 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
   @Autowired
   protected lateinit var sarProcessor: SubjectAccessRequestProcessor
-
-  @Autowired
-  protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
-
-  @Autowired
-  protected lateinit var templateVersionRepository: TemplateVersionRepository
 
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
@@ -141,12 +133,6 @@ class BaseProcessorIntTest : IntegrationTestBase() {
   protected fun requestHasStatus(subjectAccessRequest: SubjectAccessRequest, expectedStatus: Status): Boolean {
     val target = getSubjectAccessRequest(subjectAccessRequest.id)
     return expectedStatus == target.status
-  }
-
-  protected fun getServiceConfiguration(serviceName: String): ServiceConfiguration {
-    val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
-    assertThat(serviceConfig).isNotNull
-    return serviceConfig!!
   }
 
   protected fun htmlRendererSuccessfullyRendersHtml(

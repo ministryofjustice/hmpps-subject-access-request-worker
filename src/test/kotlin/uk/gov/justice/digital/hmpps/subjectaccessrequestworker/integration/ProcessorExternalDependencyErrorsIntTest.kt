@@ -64,14 +64,21 @@ class ProcessorExternalDependencyErrorsIntTest : BaseProcessorIntTest() {
 
   @BeforeEach
   fun setup() {
-    serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
-    serviceConfigTwo = getServiceConfiguration("hmpps-education-and-work-plan-api")
-    serviceConfigThree = getServiceConfiguration("hmpps-non-associations-api")
+    serviceConfig = createServiceConfiguration("hmpps-book-secure-move-api", "Book a Secure Move")
+    createTemplateVersion(serviceConfiguration = serviceConfig!!, fileHash = "")
+
+    serviceConfigTwo = createServiceConfiguration("hmpps-education-and-work-plan-api", "Personal Learning Plan")
+    createTemplateVersion(serviceConfiguration = serviceConfigTwo!!, fileHash = "")
+
+    serviceConfigThree = createServiceConfiguration("hmpps-non-associations-api", "Non-associations")
+    createTemplateVersion(serviceConfiguration = serviceConfigThree!!, fileHash = "")
   }
 
   @AfterEach
   fun cleanup() {
     subjectAccessRequestRepository.deleteAll()
+    templateVersionRepository.deleteAll()
+    serviceConfigurationService.deleteAll()
   }
 
   @ParameterizedTest
