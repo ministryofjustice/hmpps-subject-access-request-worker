@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.15"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.1.2"
   kotlin("plugin.spring") version "2.4.21"
   kotlin("plugin.jpa") version "2.4.21"
 }
@@ -17,8 +17,8 @@ ext["okhttp.version"] = "5.0.0-alpha.14"
 ext["kotlin-coroutines.version"] = "1.11.0"
 
 // Keep these versions pinned when running useLatestVersions.
-val pdfboxVersion = "2.0.37"
-val jsoupVersion = "1.23.2"
+val pdfboxVersion = "3.0.8"
+val jsoupVersion = "1.24.1"
 
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.1.0")
@@ -29,7 +29,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.json:json:20260814")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-  implementation("com.itextpdf:itext7-core:9.8.0")
+  implementation("com.itextpdf:itext7-core:9.8.1")
   implementation("com.itextpdf:html2pdf:6.3.4")
   implementation("org.springframework.boot:spring-boot-starter-mustache")
   implementation("org.springframework.boot:spring-boot-jackson2")
@@ -37,10 +37,10 @@ dependencies {
   implementation("com.github.jknack:handlebars:4.5.8")
   implementation("org.apache.commons:commons-lang3:3.22.0")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.23.0")
-  implementation("io.sentry:sentry-spring-boot-4:8.64.0")
-  implementation("io.sentry:sentry-logback:8.64.0")
+  implementation("io.sentry:sentry-spring-boot-4:8.65.1")
+  implementation("io.sentry:sentry-logback:8.65.1")
   implementation("commons-io:commons-io:2.22.0")
-  implementation("aws.sdk.kotlin:s3:1.9.35")
+  implementation("aws.sdk.kotlin:s3:1.9.44")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
   // Temporarily pin swagger-ui for dompurify issues CVE-2026-11680(2-4)
   constraints {
@@ -49,7 +49,7 @@ dependencies {
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("com.h2database:h2:2.5.252")
-  runtimeOnly("org.postgresql:postgresql:42.7.14")
+  runtimeOnly("org.postgresql:postgresql:42.7.15")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
   implementation("org.apache.commons:commons-csv:1.14.1")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.23.0")
