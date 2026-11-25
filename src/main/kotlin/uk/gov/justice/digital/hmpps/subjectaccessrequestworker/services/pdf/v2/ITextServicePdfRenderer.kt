@@ -48,7 +48,9 @@ class ITextServicePdfRenderer(
             is Image -> document.add(element)
             is HtmlPageBreak -> document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
             else -> {
-              throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+              throw SubjectAccessRequestException(
+                "Unsupported element type found ${element.javaClass}, SAR ${pdfRenderRequest.subjectAccessRequest.id}",
+              )
             }
           }
         }

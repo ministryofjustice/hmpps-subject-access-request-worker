@@ -35,6 +35,7 @@ class OpenHtmlServicePdfRenderer(
       try {
         FileOutputStream(tempPath.toFile()).use { outputStream ->
           PdfRendererBuilder()
+            // .useUriResolver() // TODO explore this
             .useFastMode()
             .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
             .toStream(outputStream)

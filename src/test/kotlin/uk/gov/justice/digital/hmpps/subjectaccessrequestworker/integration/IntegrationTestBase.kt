@@ -144,6 +144,8 @@ abstract class IntegrationTestBase {
     ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
   )
 
+  protected fun getUploadedPdfDocumentAsByteArray(): ByteArray = documentApi.getRequestBodyAsByteArray()
+
   protected fun createSubjectAccessRequestWithStatus(status: Status, serviceConfig: ServiceConfiguration): SubjectAccessRequest {
     val sar = createSubjectAccessRequestForService(serviceConfig, status)
     return subjectAccessRequestRepository.saveAndFlush(sar)

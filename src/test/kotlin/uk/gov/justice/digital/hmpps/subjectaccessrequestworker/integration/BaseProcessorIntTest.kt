@@ -17,6 +17,9 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
 @Testcontainers
@@ -47,6 +50,10 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
     assertUploadedDocumentMatchesExpectedPdf(actual, expected)
   }
+
+  fun getUploadedPdfDocumentAsFile(
+    filepath: Path,
+  ): File = Files.write(filepath, getUploadedPdfDocumentAsByteArray()).toFile()
 
   protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)

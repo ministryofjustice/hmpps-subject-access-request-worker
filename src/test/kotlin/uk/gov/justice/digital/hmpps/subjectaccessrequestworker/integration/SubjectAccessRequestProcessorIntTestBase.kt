@@ -71,7 +71,11 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
       .thenReturn("1 January 2024")
 
     attachmentNumber = 1
+
+    customSetup()
   }
+
+  abstract fun customSetup()
 
   @AfterEach
   fun cleanup() {
