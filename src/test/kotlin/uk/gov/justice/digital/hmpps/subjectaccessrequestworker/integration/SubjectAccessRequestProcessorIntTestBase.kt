@@ -9,6 +9,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.testcontainers.containers.GenericContainer
@@ -24,6 +28,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAcc
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus.PUBLISHED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest() {
@@ -65,10 +70,16 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     /** Ensure the test generated reports have the same 'report generation date' as pre-generated reference reports */
     whenever(dateService.reportGenerationDate())
       .thenReturn(REPORT_GENERATION_DATE)
-    whenever(dateService.reportDateFormat(LocalDate.of(2025, 1, 1)))
-      .thenReturn("1 January 2025")
-    whenever(dateService.reportDateFormat(LocalDate.of(2024, 1, 1), "Start of record"))
-      .thenReturn("1 January 2024")
+
+    doAnswer { invocation ->
+      val input = invocation.arguments[0] as LocalDate?
+      input?.format(DateTimeFormatter.ofPattern("d MMMM yyyy")) ?: "Start of record"
+    }.whenever(dateService).reportDateFormat(anyOrNull())
+
+    doAnswer { invocation ->
+      val input = invocation.arguments[0] as LocalDate?
+      input?.format(DateTimeFormatter.ofPattern("d MMMM yyyy")) ?: invocation.arguments[1] as String
+    }.whenever(dateService).reportDateFormat(anyOrNull(), eq("Start of record"))
 
     attachmentNumber = 1
 
@@ -113,7 +124,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -142,7 +153,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -204,7 +215,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     storeAttachment(sar, serviceConfig.serviceName, "doc.pdf", "application/pdf")
     storeAttachment(
       sar,

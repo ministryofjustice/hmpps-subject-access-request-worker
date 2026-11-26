@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.integration
 import kotlinx.coroutines.runBlocking
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestPropertySource
@@ -15,10 +16,11 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Priso
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
 @Import(S3TestUtils::class)
-@TestPropertySource(properties = ["application.service-renderer=itext"])
+@TestPropertySource(properties = ["application.service-renderer.use=itext"])
 class SubjectAccessRequestProcessorITextIntTest : SubjectAccessRequestProcessorIntTestBase() {
   override val referencePdfBaseDir: String = "$REFERENCE_PDF_BASE_DIR/itext"
 
@@ -29,11 +31,14 @@ class SubjectAccessRequestProcessorITextIntTest : SubjectAccessRequestProcessorI
     s3TestUtils.clearBucket()
   }
 
+  @TempDir
+  lateinit var tempDirPath: Path
+
   @Test
   fun `should retrieve image tags with custom inline attachments url from S3 bucket`() = runBlocking {
     val serviceConfig = createServiceConfiguration(
-      serviceName = "test-service-inline-attachments",
-      label = "Test Service Inline Attachments",
+      serviceName = "mock-service-itext-inline-attachments",
+      label = "Mock Service iText Inline Attachments",
     )
     createTemplateVersion(
       serviceConfiguration = serviceConfig,
@@ -42,12 +47,12 @@ class SubjectAccessRequestProcessorITextIntTest : SubjectAccessRequestProcessorI
 
     addInlineAttachmentToBucket(
       filename = "map.jpg",
-      documentKey = "$testSubjectAccessRequestId/test-service-inline-attachments/inline-attachments/35eab234-d32f-4008-9ad7-9af5aef7e985.jpg",
+      attachmentFilename = "35eab234-d32f-4008-9ad7-9af5aef7e985.jpg",
     )
 
     addInlineAttachmentToBucket(
       filename = "large.jpg",
-      documentKey = "$testSubjectAccessRequestId/test-service-inline-attachments/inline-attachments/d3e0ace5-3bd5-4f88-bf33-4343c15fd89e.jpg",
+      attachmentFilename = "d3e0ace5-3bd5-4f88-bf33-4343c15fd89e.jpg",
     )
 
     val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
@@ -57,7 +62,7 @@ class SubjectAccessRequestProcessorITextIntTest : SubjectAccessRequestProcessorI
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -70,6 +75,8 @@ class SubjectAccessRequestProcessorITextIntTest : SubjectAccessRequestProcessorI
     htmlRendererApi.verifyRenderCalled(1, htmlRenderRequest)
     documentApi.verifyStoreDocumentIsCalled(1, sar.id.toString())
 
+    val out = getUploadedPdfDocumentAsFile(tempDirPath.resolve("actual.pdf"))
+
     assertUploadedDocumentMatchesExpectedPdf(serviceConfig.serviceName)
     assertSubjectAccessRequestHasStatus(sar, Completed)
     assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(
@@ -80,11 +87,11 @@ class SubjectAccessRequestProcessorITextIntTest : SubjectAccessRequestProcessorI
     )
   }
 
-  private fun addInlineAttachmentToBucket(filename: String, documentKey: String) {
+  private fun addInlineAttachmentToBucket(filename: String, attachmentFilename: String) {
     val image2Bytes = getAttachmentBytes(filename)
     s3TestUtils.putFile(
       S3TestUtils.S3AttachmentFile(
-        key = documentKey,
+        key = "$testSubjectAccessRequestId/mock-service-itext-inline-attachments/inline-attachments/$attachmentFilename",
         content = image2Bytes,
         contentType = "image/jpg",
         contentLength = image2Bytes.size.toLong(),

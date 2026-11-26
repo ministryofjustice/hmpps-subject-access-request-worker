@@ -20,6 +20,7 @@ import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.String
 
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
 @Testcontainers
@@ -146,11 +147,15 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,
+    templateVersion: String = "1",
+    metadata: Map<String, String>,
   ) = stubHtmlRendererSuccess(
     sar = sar,
     htmlRenderRequest = htmlRenderRequest,
     serviceName = serviceName,
     fileToAddToBucket = serviceName,
+    templateVersion = templateVersion,
+    metadata = metadata,
   )
 
   protected fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
@@ -170,6 +175,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     serviceName: String,
     fileToAddToBucket: String,
     templateVersion: String = "1",
+    metadata: Map<String, String> = emptyMap(),
   ) = runBlocking {
     val documentKey = htmlDocumentKey(sar, serviceName)
 
@@ -181,10 +187,11 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
     // Put the expected Html in the bucket for later.
     s3TestUtil.putFile(
-      S3TestUtils.S3File(
+      file = S3TestUtils.S3File(
         documentKey,
         getReportHtmlForService(fileToAddToBucket),
       ),
+      metadata = metadata
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }

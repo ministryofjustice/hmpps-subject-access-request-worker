@@ -160,8 +160,7 @@ abstract class IntegrationTestBase {
   }
 
   protected fun assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(subjectAccessRequest: SubjectAccessRequest, serviceName: String, status: RenderStatus, version: Int) {
-    val service =
-      getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!
+    val service = getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!
     assertThat(service.renderStatus).isEqualTo(status)
     assertThat(service.templateVersion).isNotNull().returns(version) { it?.version }
   }
@@ -228,18 +227,16 @@ abstract class IntegrationTestBase {
     status: TemplateVersionStatus = TemplateVersionStatus.PUBLISHED,
     version: Int = 1,
     createdAt: LocalDateTime = LocalDateTime.now(),
-  ) {
-    templateVersionRepository.saveAndFlush(
-      TemplateVersion(
-        id = UUID.randomUUID(),
-        serviceConfiguration,
-        status,
-        version,
-        createdAt,
-        fileHash,
-      ),
-    )
-  }
+  ): TemplateVersion = templateVersionRepository.saveAndFlush(
+    TemplateVersion(
+      id = UUID.randomUUID(),
+      serviceConfiguration,
+      status,
+      version,
+      createdAt,
+      fileHash,
+    ),
+  )
 
   protected fun getServiceConfigurationOrError(serviceName: String): ServiceConfiguration {
     val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
