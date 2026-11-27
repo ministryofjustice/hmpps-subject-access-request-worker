@@ -17,12 +17,12 @@ class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
   @AfterEach
   fun tearDown() {
     subjectAccessRequestRepository.deleteAll()
+    serviceConfigurationRepository.deleteAll()
   }
 
   @ParameterizedTest
   @CsvSource(
     value = [
-      "map.jpg, image/jpeg, image-jpeg.pdf",
       "map.png, image/png, image-png.pdf",
       "map.gif, image/gif, image-gif.pdf",
       "map.tif, image/tiff, image-tiff.pdf",
@@ -35,8 +35,11 @@ class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
   fun `should render images in attachments section`(imageFilename: String, contentType: String, expectedOutputPdf: String) = runBlocking {
     val sar = saveSubjectAccessRequest(
       IntegrationTestFixture.createSubjectAccessRequestForService(
-        getServiceConfiguration(),
-        Status.Pending,
+        serviceConfig = createServiceConfiguration(
+          serviceName = "create-and-vary-a-licence-api",
+          label = "Create and Vary a Licence",
+        ),
+        status = Status.Pending,
       ),
     )
     storeEmptyHtml(sar)

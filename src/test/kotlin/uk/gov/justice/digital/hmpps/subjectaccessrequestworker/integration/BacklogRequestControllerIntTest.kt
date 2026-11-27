@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCon
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceSummary
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.BacklogRequestService
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceConfigurationService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -35,9 +34,6 @@ class BacklogRequestControllerIntTest : IntegrationTestBase() {
 
   @Autowired
   lateinit var backlogRequestService: BacklogRequestService
-
-  @Autowired
-  lateinit var serviceConfigurationService: ServiceConfigurationService
 
   @Autowired
   lateinit var serviceSummaryRepository: ServiceSummaryRepository

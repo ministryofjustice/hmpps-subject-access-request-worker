@@ -38,17 +38,25 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.Proba
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceOneApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.ServiceTwoApiExtension
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStatus
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCategory
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.LocationDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.PrisonDetailsRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.SubjectAccessRequestRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.TemplateVersionRepository
+import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceConfigurationService
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
 import java.util.UUID
 
 const val REFERENCE_PDF_BASE_DIR = "/integration-tests/reference-pdfs"
@@ -76,6 +84,15 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var subjectAccessRequestRepository: SubjectAccessRequestRepository
+
+  @Autowired
+  protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
+
+  @Autowired
+  protected lateinit var serviceConfigurationService: ServiceConfigurationService
+
+  @Autowired
+  protected lateinit var templateVersionRepository: TemplateVersionRepository
 
   @Autowired
   protected lateinit var prisonDetailsRepository: PrisonDetailsRepository
@@ -127,6 +144,8 @@ abstract class IntegrationTestBase {
     ByteArrayInputStream(documentApi.getRequestBodyAsByteArray()),
   )
 
+  protected fun getUploadedPdfDocumentAsByteArray(): ByteArray = documentApi.getRequestBodyAsByteArray()
+
   protected fun createSubjectAccessRequestWithStatus(status: Status, serviceConfig: ServiceConfiguration): SubjectAccessRequest {
     val sar = createSubjectAccessRequestForService(serviceConfig, status)
     return subjectAccessRequestRepository.saveAndFlush(sar)
@@ -140,11 +159,24 @@ abstract class IntegrationTestBase {
     assertThat(getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!.renderStatus).isEqualTo(status)
   }
 
-  protected fun assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(subjectAccessRequest: SubjectAccessRequest, serviceName: String, status: RenderStatus, version: Int) {
-    val service =
-      getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!
-    assertThat(service.renderStatus).isEqualTo(status)
-    assertThat(service.templateVersion).isNotNull().returns(version) { it?.version }
+  protected fun assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(
+    subjectAccessRequest: SubjectAccessRequest,
+    serviceName: String,
+    expectedStatus: RenderStatus,
+    expectedVersion: Int?,
+  ) {
+    val service = getSubjectAccessRequest(subjectAccessRequest.id)
+      .services
+      .find { it.serviceConfiguration.serviceName == serviceName }!!
+
+    assertThat(service.renderStatus).isEqualTo(expectedStatus)
+
+    if (expectedVersion != null) {
+      assertThat(service.templateVersion).isNotNull()
+      assertThat(service.templateVersion!!.version).isEqualTo(expectedVersion)
+    } else {
+      assertThat(service.templateVersion).isNull()
+    }
   }
 
   protected fun getSubjectAccessRequest(id: UUID): SubjectAccessRequest {
@@ -179,4 +211,50 @@ abstract class IntegrationTestBase {
   protected fun saveSubjectAccessRequest(
     request: SubjectAccessRequest,
   ): SubjectAccessRequest = subjectAccessRequestRepository.saveAndFlush(request)
+
+  protected fun createServiceConfiguration(
+    serviceName: String,
+    label: String,
+    url: String = "http://localhost:4100",
+    enabled: Boolean = true,
+    templateMigrated: Boolean = true,
+    category: ServiceCategory = ServiceCategory.PRISON,
+    suspended: Boolean = false,
+    suspendedAt: Instant? = null,
+  ) = serviceConfigurationRepository.saveAndFlush(
+    ServiceConfiguration(
+      id = UUID.randomUUID(),
+      serviceName,
+      label,
+      url,
+      enabled,
+      templateMigrated,
+      category,
+      suspended,
+      suspendedAt,
+    ),
+  )
+
+  protected fun createTemplateVersion(
+    serviceConfiguration: ServiceConfiguration,
+    fileHash: String,
+    status: TemplateVersionStatus = TemplateVersionStatus.PUBLISHED,
+    version: Int = 1,
+    createdAt: LocalDateTime = LocalDateTime.now(),
+  ): TemplateVersion = templateVersionRepository.saveAndFlush(
+    TemplateVersion(
+      id = UUID.randomUUID(),
+      serviceConfiguration,
+      status,
+      version,
+      createdAt,
+      fileHash,
+    ),
+  )
+
+  protected fun getServiceConfigurationOrError(serviceName: String): ServiceConfiguration {
+    val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
+    assertThat(serviceConfig).isNotNull()
+    return serviceConfig!!
+  }
 }

@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceCat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.BacklogRequestRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceSummaryRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.ServiceConfigurationService
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
@@ -22,9 +21,6 @@ abstract class BaseBacklogRequestIntTest : IntegrationTestBase() {
 
   @Autowired
   protected lateinit var backlogRequestRepository: BacklogRequestRepository
-
-  @Autowired
-  protected lateinit var serviceConfigurationService: ServiceConfigurationService
 
   @Autowired
   protected lateinit var serviceSummaryRepository: ServiceSummaryRepository

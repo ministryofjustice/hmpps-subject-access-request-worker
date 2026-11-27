@@ -86,4 +86,3 @@ Content-Type: text/plain
 
 < ./test-template.mustache
 --customBoundary--
-

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
@@ -83,6 +84,9 @@ class PdfServiceTest {
   @Captor
   lateinit var processingEventCaptor: ArgumentCaptor<ProcessingEvent>
 
+  @Mock
+  private lateinit var sarResourceRetriever: SarResourceRetriever
+
   private lateinit var pdfService: PdfService
   private lateinit var pdfRenderRequest: PdfRenderRequest
 
@@ -116,7 +120,7 @@ class PdfServiceTest {
       dateService = dateService,
       attachmentsPdfService = attachmentsPdfService,
       telemetryClient = telemetryClient,
-      servicePdfRenderer = ITextServicePdfRenderer(),
+      servicePdfRenderer = ITextServicePdfRenderer(sarResourceRetriever),
       subjectAccessRequestService = subjectAccessRequestService,
     )
 
@@ -411,7 +415,7 @@ class PdfServiceTest {
         dateService = dateService,
         attachmentsPdfService = attachmentsPdfService,
         telemetryClient = telemetryClient,
-        servicePdfRenderer = ITextServicePdfRenderer(),
+        servicePdfRenderer = ITextServicePdfRenderer(sarResourceRetriever),
         subjectAccessRequestService = subjectAccessRequestService,
       )
 

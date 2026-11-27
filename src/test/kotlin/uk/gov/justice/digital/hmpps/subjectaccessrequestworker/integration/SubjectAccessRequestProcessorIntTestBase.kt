@@ -8,7 +8,10 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
+import org.junit.jupiter.params.provider.CsvSource
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.testcontainers.containers.GenericContainer
@@ -21,10 +24,10 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.RenderStat
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status.Completed
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersion
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.TemplateVersionStatus.PUBLISHED
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.DateService
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest() {
@@ -54,22 +57,28 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
     templateVersionRepository.deleteAll()
-    templateVersionRepository.save(
-      TemplateVersion(
-        serviceConfiguration = getServiceConfiguration("template-migrated-service"),
-        status = PUBLISHED,
-        version = 1,
-        fileHash = "12345",
-      ),
+    serviceConfigurationRepository.deleteAll()
+
+    createTemplateVersion(
+      createServiceConfiguration("template-migrated-service", "Migrated Service One"),
+      status = PUBLISHED,
+      version = 1,
+      fileHash = "12345",
     )
 
     /** Ensure the test generated reports have the same 'report generation date' as pre-generated reference reports */
     whenever(dateService.reportGenerationDate())
       .thenReturn(REPORT_GENERATION_DATE)
-    whenever(dateService.reportDateFormat(LocalDate.of(2025, 1, 1)))
-      .thenReturn("1 January 2025")
-    whenever(dateService.reportDateFormat(LocalDate.of(2024, 1, 1), "Start of record"))
-      .thenReturn("1 January 2024")
+
+    doAnswer { invocation ->
+      val input = invocation.arguments[0] as LocalDate?
+      input?.format(DateTimeFormatter.ofPattern("d MMMM yyyy")) ?: "Start of record"
+    }.whenever(dateService).reportDateFormat(anyOrNull())
+
+    doAnswer { invocation ->
+      val input = invocation.arguments[0] as LocalDate?
+      input?.format(DateTimeFormatter.ofPattern("d MMMM yyyy")) ?: invocation.arguments[1] as String
+    }.whenever(dateService).reportDateFormat(anyOrNull(), eq("Start of record"))
 
     attachmentNumber = 1
   }
@@ -79,22 +88,29 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     clearOauthClientCache("sar-client", "anonymousUser")
     clearOauthClientCache("hmpps-subject-access-request", "anonymousUser")
     subjectAccessRequestRepository.deleteAll()
+    templateVersionRepository.deleteAll()
+    serviceConfigurationService.deleteAll()
     s3TestUtil.clearBucket()
   }
 
   @ParameterizedTest
-  @ValueSource(
-    strings = [
-      "court-case-service",
-      "create-and-vary-a-licence-api",
-      "hmpps-book-secure-move-api",
-      "hmpps-health-and-medication-api",
-      "hmpps-incentives-api",
-      "hmpps-managing-prisoner-apps-api",
+  @CsvSource(
+    value = [
+      "court-case-service               | Prepare a Case for Sentence",
+      "create-and-vary-a-licence-api    | Create and Vary a Licence",
+      "hmpps-book-secure-move-api       | Book a Secure Move",
+      "hmpps-health-and-medication-api  | Health and medication",
+      "hmpps-incentives-api             | Incentives",
+      "hmpps-managing-prisoner-apps-api | Managing prisoner applications",
     ],
+    delimiter = '|',
   )
-  fun `should process pending request successfully when data is held and html-renderer is enabled`(serviceName: String) = runBlocking {
-    val serviceConfig = getServiceConfiguration(serviceName)
+  fun `should process pending request successfully when data is held and html-renderer is enabled`(
+    serviceName: String,
+    serviceLabel: String,
+  ) = runBlocking {
+    val serviceConfig = createServiceConfiguration(serviceName, serviceLabel)
+    createTemplateVersion(serviceConfig, "1234")
 
     val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
     val htmlRenderRequest = HtmlRenderRequest(
@@ -103,7 +119,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -123,7 +139,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
 
   @Test
   fun `should process pending request successfully when data is held and html-renderer is enabled and template is migrated`() = runBlocking {
-    val serviceConfig = getServiceConfiguration("template-migrated-service")
+    val serviceConfig = getServiceConfigurationOrError("template-migrated-service")
 
     val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
     val htmlRenderRequest = HtmlRenderRequest(
@@ -132,7 +148,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     prisonApi.stubGetOffenderDetails(sar.nomisId!!)
     documentApi.stubUploadFileSuccess(sar)
 
@@ -152,7 +168,8 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
 
   @Test
   fun `should process pending request successfully when no data is held and html-renderer is enabled`() = runBlocking {
-    val serviceConfig = getServiceConfiguration("hmpps-book-secure-move-api")
+    val serviceConfig = createServiceConfiguration("hmpps-book-secure-move-api", "Book a Secure Move")
+    createTemplateVersion(serviceConfig, "1234")
 
     val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
 
@@ -182,7 +199,8 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
 
   @Test
   fun `should process pending request successfully when attachments exist and html-renderer is enabled`() = runBlocking {
-    val serviceConfig = getServiceConfiguration("create-and-vary-a-licence-api")
+    val serviceConfig = createServiceConfiguration("create-and-vary-a-licence-api", "Create and Vary a Licence")
+    createTemplateVersion(serviceConfig, "1234")
 
     val sar = insertSubjectAccessRequest(serviceConfig, Status.Pending)
 
@@ -192,7 +210,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     )
 
     hmppsAuth.stubGrantToken()
-    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName)
+    htmlRendererSuccessfullyRendersHtml(sar, htmlRenderRequest, serviceConfig.serviceName, metadata = emptyMap())
     storeAttachment(sar, serviceConfig.serviceName, "doc.pdf", "application/pdf")
     storeAttachment(
       sar,

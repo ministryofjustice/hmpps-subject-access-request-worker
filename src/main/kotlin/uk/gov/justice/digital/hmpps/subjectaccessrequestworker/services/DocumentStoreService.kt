@@ -7,6 +7,7 @@ import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.GetObjectResponse
 import aws.smithy.kotlin.runtime.content.toByteArray
 import aws.smithy.kotlin.runtime.content.writeToFile
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.config.S3Properties
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.events.ProcessingEvent.GET_ATTACHMENT
@@ -30,13 +31,18 @@ class DocumentStoreService(
   private val s3: S3Client,
   private val s3Properties: S3Properties,
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(DocumentStoreService::class.java)
+  }
+
   suspend fun getDocument(subjectAccessRequest: SubjectAccessRequest, serviceName: String): InputStream? = try {
     s3.getObject(
       GetObjectRequest {
         bucket = s3Properties.bucketName
         key = "${subjectAccessRequest.id}/$serviceName.html"
       },
-    ) { ByteArrayInputStream(getResponseAsInputStream(it)) }
+    ) { ByteArrayInputStream(getResponseAsByteArray(it)) }
   } catch (ex: Exception) {
     throw getDocumentException(subjectAccessRequest, ex, serviceName)
   }
@@ -103,7 +109,7 @@ class DocumentStoreService(
         bucket = s3Properties.bucketName
         key = attachmentInfo.key
       },
-    ) { ByteArrayInputStream(getResponseAsInputStream(it)) }
+    ) { ByteArrayInputStream(getResponseAsByteArray(it)) }
     Attachment(
       data = data,
       info = attachmentInfo,
@@ -118,6 +124,30 @@ class DocumentStoreService(
       params = mapOf(
         "serviceName" to serviceName,
         "attachmentKey" to attachmentInfo.key,
+      ),
+    )
+  }
+
+  suspend fun getInlineAttachment(
+    documentKey: String,
+  ): ByteArrayInputStream = try {
+    s3.getObject(
+      GetObjectRequest {
+        bucket = s3Properties.bucketName
+        key = documentKey
+      },
+    ) {
+      log.info("getting inline attachment from store: {}", documentKey)
+      ByteArrayInputStream(getResponseAsByteArray(it))
+    }
+  } catch (ex: Exception) {
+    throw SubjectAccessRequestException(
+      message = "failed to get inline-attachment from bucket",
+      event = GET_ATTACHMENT,
+      errorCode = S3_GET_ERROR,
+      cause = ex,
+      params = mapOf(
+        "inlineAttachment" to documentKey,
       ),
     )
   }
@@ -141,8 +171,8 @@ class DocumentStoreService(
     )
   }
 
-  private suspend fun getResponseAsInputStream(response: GetObjectResponse) = response.body
-    ?.toByteArray() ?: ByteArray(0)
+  private suspend fun getResponseAsByteArray(response: GetObjectResponse) = response.body
+    ?.toByteArray() ?: ByteArray(0).also { log.info("getResponseAsByteArray empty byte array case") }
 
   private fun getDocumentException(
     subjectAccessRequest: SubjectAccessRequest,

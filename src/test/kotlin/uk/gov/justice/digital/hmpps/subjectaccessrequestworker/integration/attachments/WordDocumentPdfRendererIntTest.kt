@@ -32,6 +32,7 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
   @AfterEach
   fun tearDown() {
     subjectAccessRequestRepository.deleteAll()
+    serviceConfigurationRepository.deleteAll()
   }
 
   @ParameterizedTest
@@ -53,7 +54,10 @@ class WordDocumentPdfRendererIntTest : BasePdfRendererIntTest() {
   ) = runBlocking {
     val sar = saveSubjectAccessRequest(
       IntegrationTestFixture.createSubjectAccessRequestForService(
-        getServiceConfiguration(),
+        createServiceConfiguration(
+          serviceName = "create-and-vary-a-licence-api",
+          label = "Create and Vary a Licence",
+        ),
         Status.Pending,
       ),
     )

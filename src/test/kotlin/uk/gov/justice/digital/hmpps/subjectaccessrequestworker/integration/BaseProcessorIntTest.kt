@@ -15,10 +15,12 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.mockservers.HtmlR
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.Status
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.models.SubjectAccessRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.ServiceConfigurationRepository
-import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.repository.TemplateVersionRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.scheduled.SubjectAccessRequestProcessor
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.String
 
 @Import(S3TestUtils::class, NoSchedulingConfig::class)
 @Testcontainers
@@ -26,12 +28,6 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
   @Autowired
   protected lateinit var sarProcessor: SubjectAccessRequestProcessor
-
-  @Autowired
-  protected lateinit var serviceConfigurationRepository: ServiceConfigurationRepository
-
-  @Autowired
-  protected lateinit var templateVersionRepository: TemplateVersionRepository
 
   @Autowired
   protected lateinit var s3TestUtil: S3TestUtils
@@ -55,6 +51,10 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
     assertUploadedDocumentMatchesExpectedPdf(actual, expected)
   }
+
+  fun getUploadedPdfDocumentAsFile(
+    filepath: Path,
+  ): File = Files.write(filepath, getUploadedPdfDocumentAsByteArray()).toFile()
 
   protected fun assertUploadedDocumentMatchesExpectedPdf(actual: PdfDocument, expected: PdfDocument) {
     assertThat(actual.numberOfPages).isEqualTo(expected.numberOfPages)
@@ -143,21 +143,19 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     return expectedStatus == target.status
   }
 
-  protected fun getServiceConfiguration(serviceName: String): ServiceConfiguration {
-    val serviceConfig = serviceConfigurationRepository.findByServiceName(serviceName)
-    assertThat(serviceConfig).isNotNull
-    return serviceConfig!!
-  }
-
   protected fun htmlRendererSuccessfullyRendersHtml(
     sar: SubjectAccessRequest,
     htmlRenderRequest: HtmlRenderRequest,
     serviceName: String,
+    templateVersion: String = "1",
+    metadata: Map<String, String>,
   ) = stubHtmlRendererSuccess(
     sar = sar,
     htmlRenderRequest = htmlRenderRequest,
     serviceName = serviceName,
     fileToAddToBucket = serviceName,
+    templateVersion = templateVersion,
+    metadata = metadata,
   )
 
   protected fun htmlRendererSuccessfullyRendersHtmlNoDataHeld(
@@ -177,6 +175,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
     serviceName: String,
     fileToAddToBucket: String,
     templateVersion: String = "1",
+    metadata: Map<String, String> = emptyMap(),
   ) = runBlocking {
     val documentKey = htmlDocumentKey(sar, serviceName)
 
@@ -188,10 +187,11 @@ class BaseProcessorIntTest : IntegrationTestBase() {
 
     // Put the expected Html in the bucket for later.
     s3TestUtil.putFile(
-      S3TestUtils.S3File(
+      file = S3TestUtils.S3File(
         documentKey,
         getReportHtmlForService(fileToAddToBucket),
       ),
+      metadata = metadata,
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }

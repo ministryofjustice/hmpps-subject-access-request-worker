@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.kernel.utils.PdfMerger
+import com.openhtmltopdf.extend.FSStreamFactory
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,6 +19,7 @@ import java.nio.file.Path
 
 class OpenHtmlServicePdfRenderer(
   private val tempDirectoryService: TempDirectoryService,
+  private val fsStreamFactory: FSStreamFactory,
 ) : ServicePdfRenderer {
 
   override suspend fun generateServicePdf(
@@ -35,6 +37,8 @@ class OpenHtmlServicePdfRenderer(
       try {
         FileOutputStream(tempPath.toFile()).use { outputStream ->
           PdfRendererBuilder()
+            .useProtocolsStreamImplementation(fsStreamFactory)
+            .useHttpStreamImplementation(fsStreamFactory)
             .useFastMode()
             .withHtmlContent(xhtml, servicePdfPath.parent.toUri().toString())
             .toStream(outputStream)

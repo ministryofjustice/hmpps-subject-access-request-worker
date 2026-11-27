@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.v2
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy
+import com.openhtmltopdf.extend.FSStreamFactory
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -25,6 +26,7 @@ class OpenHtmlServicePdfRendererTest {
   private lateinit var renderer: OpenHtmlServicePdfRenderer
 
   private val subjectAccessRequest: SubjectAccessRequest = mock()
+  private val fsStreamFactory: FSStreamFactory = mock()
   private lateinit var tempDirectoryService: TempDirectoryService
 
   lateinit var pdfRenderRequest: PdfRenderRequest
@@ -32,7 +34,7 @@ class OpenHtmlServicePdfRendererTest {
   @BeforeEach
   fun setup() {
     tempDirectoryService = TempDirectoryService(tempDir)
-    renderer = OpenHtmlServicePdfRenderer(tempDirectoryService)
+    renderer = OpenHtmlServicePdfRenderer(tempDirectoryService, fsStreamFactory)
     whenever(subjectAccessRequest.id).thenReturn(UUID.randomUUID())
     whenever(subjectAccessRequest.nomisId).thenReturn("A1234BC")
 

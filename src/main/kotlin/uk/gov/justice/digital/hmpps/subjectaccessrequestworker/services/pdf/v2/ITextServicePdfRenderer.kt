@@ -8,6 +8,7 @@ import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.IBlockElement
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.properties.AreaBreakType
+import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.exception.SubjectAccessRequestException
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.createWritablePdfDocument
 import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.events.SubjectAccessRequestHeaderAndFooterEventHandler
@@ -15,10 +16,13 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequestworker.services.pdf.newD
 import java.io.InputStream
 import java.nio.file.Path
 
-class ITextServicePdfRenderer : ServicePdfRenderer {
+@Service
+class ITextServicePdfRenderer(
+  val sarResourceRetriever: SarResourceRetriever,
+) : ServicePdfRenderer {
 
-  companion object {
-    private val converterProperties: ConverterProperties = ConverterProperties()
+  private val converterProperties: ConverterProperties = ConverterProperties().apply {
+    resourceRetriever = sarResourceRetriever
   }
 
   override suspend fun generateServicePdf(
@@ -44,7 +48,9 @@ class ITextServicePdfRenderer : ServicePdfRenderer {
             is Image -> document.add(element)
             is HtmlPageBreak -> document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
             else -> {
-              throw SubjectAccessRequestException("Unsupported element type found ${element.javaClass}")
+              throw SubjectAccessRequestException(
+                "Unsupported element type found ${element.javaClass}, SAR ${pdfRenderRequest.subjectAccessRequest.id}",
+              )
             }
           }
         }
