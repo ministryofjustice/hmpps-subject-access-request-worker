@@ -159,10 +159,24 @@ abstract class IntegrationTestBase {
     assertThat(getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!.renderStatus).isEqualTo(status)
   }
 
-  protected fun assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(subjectAccessRequest: SubjectAccessRequest, serviceName: String, status: RenderStatus, version: Int) {
-    val service = getSubjectAccessRequest(subjectAccessRequest.id).services.find { it.serviceConfiguration.serviceName == serviceName }!!
-    assertThat(service.renderStatus).isEqualTo(status)
-    assertThat(service.templateVersion).isNotNull().returns(version) { it?.version }
+  protected fun assertSubjectAccessRequestServiceHasStatusAndTemplateVersion(
+    subjectAccessRequest: SubjectAccessRequest,
+    serviceName: String,
+    expectedStatus: RenderStatus,
+    expectedVersion: Int?,
+  ) {
+    val service = getSubjectAccessRequest(subjectAccessRequest.id)
+      .services
+      .find { it.serviceConfiguration.serviceName == serviceName }!!
+
+    assertThat(service.renderStatus).isEqualTo(expectedStatus)
+
+    if (expectedVersion != null) {
+      assertThat(service.templateVersion).isNotNull()
+      assertThat(service.templateVersion!!.version).isEqualTo(expectedVersion)
+    } else {
+      assertThat(service.templateVersion).isNull()
+    }
   }
 
   protected fun getSubjectAccessRequest(id: UUID): SubjectAccessRequest {

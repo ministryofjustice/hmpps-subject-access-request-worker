@@ -191,7 +191,7 @@ class BaseProcessorIntTest : IntegrationTestBase() {
         documentKey,
         getReportHtmlForService(fileToAddToBucket),
       ),
-      metadata = metadata
+      metadata = metadata,
     )
     assertThat(s3TestUtil.documentExists(documentKey)).isTrue()
   }

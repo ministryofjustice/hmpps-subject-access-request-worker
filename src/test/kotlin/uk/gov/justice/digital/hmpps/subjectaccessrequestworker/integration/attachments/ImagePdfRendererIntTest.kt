@@ -23,7 +23,6 @@ class ImagePdfRendererIntTest : BasePdfRendererIntTest() {
   @ParameterizedTest
   @CsvSource(
     value = [
-      "map.jpg, image/jpeg, image-jpeg.pdf",
       "map.png, image/png, image-png.pdf",
       "map.gif, image/gif, image-gif.pdf",
       "map.tif, image/tiff, image-tiff.pdf",

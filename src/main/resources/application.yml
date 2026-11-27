@@ -177,4 +177,3 @@ springdoc:
 
 application:
   service-renderer: openhtmltopdf
-  pdf-uri-retriever: s3

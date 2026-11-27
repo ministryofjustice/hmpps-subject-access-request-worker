@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.eq
@@ -82,11 +81,7 @@ abstract class SubjectAccessRequestProcessorIntTestBase : BaseProcessorIntTest()
     }.whenever(dateService).reportDateFormat(anyOrNull(), eq("Start of record"))
 
     attachmentNumber = 1
-
-    customSetup()
   }
-
-  abstract fun customSetup()
 
   @AfterEach
   fun cleanup() {
